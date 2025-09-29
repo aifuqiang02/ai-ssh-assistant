@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
 
 export const useAppStore = defineStore('app', () => {
   // 应用状态
@@ -120,8 +121,17 @@ export const useAppStore = defineStore('app', () => {
   
   // 打开设置页面
   const openSettings = () => {
-    // 这里可以导航到设置页面或打开设置模态框
+    // 导航到设置页面
     console.log('Opening settings...')
+    
+    // 在组件外部无法直接使用 useRouter，需要在调用的地方处理路由
+    // 这里我们发出一个事件或者设置一个状态标记
+    currentRoute.value = '/settings'
+    
+    // 触发自定义事件来通知路由变化
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('navigate-to-settings'))
+    }
   }
   
   // 重置应用状态

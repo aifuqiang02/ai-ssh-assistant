@@ -111,6 +111,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useAppStore } from '@/stores/app'
 import { useThemeStore } from '@/stores/theme'
 import { useStorageStore } from '@/stores/storage'
@@ -121,6 +122,7 @@ import RightPanel from '@/components/layout/RightPanel.vue'
 import GlobalModals from '@/components/common/GlobalModals.vue'
 import NotificationContainer from '@/components/common/NotificationContainer.vue'
 
+const router = useRouter()
 const appStore = useAppStore()
 const themeStore = useThemeStore()
 const storageStore = useStorageStore()
@@ -194,8 +196,9 @@ const closeTab = (tabId: string) => {
 }
 
 const openSettings = () => {
-  // 打开设置页面
-  appStore.openSettings()
+  // 打开设置页面 - 直接在这里处理路由跳转
+  console.log('Navigating to settings...')
+  router.push('/settings')
 }
 
 const toggleRightPanel = () => {
@@ -273,7 +276,7 @@ const handleKeydown = (event: KeyboardEvent) => {
   // Ctrl/Cmd + , 打开设置
   if ((event.ctrlKey || event.metaKey) && event.key === ',') {
     event.preventDefault()
-    appStore.openSettings()
+    openSettings()
   }
 
   // F12 切换开发者工具
