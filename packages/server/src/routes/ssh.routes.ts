@@ -1,5 +1,5 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
-import { logger } from '../utils/logger.js'
+import { logger } from '../utils/safe-logger.js'
 
 export async function sshRoutes(fastify: FastifyInstance) {
   // 获取 SSH 连接列表
@@ -314,3 +314,4 @@ export async function sshRoutes(fastify: FastifyInstance) {
     }
   })
 }
+

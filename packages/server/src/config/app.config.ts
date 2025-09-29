@@ -198,3 +198,4 @@ export function printConfig() {
   console.log(`   AI Services: ${config.ai.openai.apiKey ? 'OpenAI ✓' : 'OpenAI ✗'} ${config.ai.anthropic.apiKey ? 'Anthropic ✓' : 'Anthropic ✗'}`)
   console.log(`   Features: Docs=${config.enableDocs} Metrics=${config.enableMetrics} Debug=${config.debug}`)
 }
+

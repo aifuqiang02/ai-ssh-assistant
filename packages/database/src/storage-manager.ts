@@ -69,7 +69,6 @@ export class StorageManager {
   private syncTimer?: NodeJS.Timeout
   private isAuthenticated = false
   private currentUser?: { id: string; email?: string; username?: string }
-  private currentAdapter?: BaseStorageAdapter
 
   constructor(options: StorageManagerOptions) {
     const defaultOptions = {
@@ -547,18 +546,17 @@ export class StorageManager {
     }
 
     // 如果启用了自动同步，先同步本地数据到云端
-    if (this.options.autoOptions?.autoSync && this.localAdapter) {
+  if (this.options.autoOptions?.autoSync && this.localAdapter) {
       try {
         console.log('Syncing local data to cloud before switching...')
-        await this.syncLocalToCloud()
-      } catch (error) {
-        console.error('Failed to sync local data to cloud:', error)
-      }
+      await this.syncLocalToCloud()
+    } catch (error) {
+      console.error('Failed to sync local data to cloud:', error)
     }
-
-    this.currentAdapter = this.cloudAdapter
-    console.log('Switched to cloud storage')
   }
+
+  console.log('Switched to cloud storage')
+}
 
   /**
    * 切换到本地存储
@@ -569,7 +567,6 @@ export class StorageManager {
       return
     }
 
-    this.currentAdapter = this.localAdapter
     console.log('Switched to local storage')
   }
 
@@ -590,31 +587,4 @@ export class StorageManager {
     // await this.cloudAdapter.migrateData(localData)
   }
 
-  /**
-   * 获取当前活跃的适配器
-   */
-  private getCurrentAdapter(): BaseStorageAdapter {
-    if (this.currentAdapter) {
-      return this.currentAdapter
-    }
-
-    // 根据模式和认证状态自动选择适配器
-    if (this.options.mode === 'auto') {
-      if (this.isAuthenticated && this.cloudAdapter) {
-        this.currentAdapter = this.cloudAdapter
-      } else if (this.localAdapter) {
-        this.currentAdapter = this.localAdapter
-      }
-    } else if (this.options.mode === 'cloud' && this.cloudAdapter) {
-      this.currentAdapter = this.cloudAdapter
-    } else if (this.localAdapter) {
-      this.currentAdapter = this.localAdapter
-    }
-
-    if (!this.currentAdapter) {
-      throw new Error('No storage adapter available')
-    }
-
-    return this.currentAdapter
-  }
 }

@@ -72,7 +72,7 @@
       <div 
         v-for="item in currentMenuItems" 
         :key="item.id"
-        @click="executeMenuAction(item.action)"
+        @click="executeMenuAction(item.action || '')"
         class="vscode-dropdown-item"
       >
         <span>{{ item.label }}</span>
@@ -100,18 +100,30 @@ const menus = ref([
 ])
 
 // 菜单项配置
-const menuItems = {
+interface MenuItem {
+  id: string
+  label: string
+  action: string
+  shortcut?: string
+  type?: string
+}
+
+interface MenuItems {
+  [key: string]: MenuItem[]
+}
+
+const menuItems: MenuItems = {
   file: [
     { id: 'new', label: '新建连接', action: 'new-connection', shortcut: 'Ctrl+N' },
     { id: 'open', label: '打开文件', action: 'open-file', shortcut: 'Ctrl+O' },
     { id: 'save', label: '保存', action: 'save', shortcut: 'Ctrl+S' },
-    { id: 'separator1', type: 'separator' },
+    { id: 'separator1', label: '', action: '', type: 'separator' },
     { id: 'exit', label: '退出', action: 'exit', shortcut: 'Alt+F4' }
   ],
   edit: [
     { id: 'undo', label: '撤销', action: 'undo', shortcut: 'Ctrl+Z' },
     { id: 'redo', label: '重做', action: 'redo', shortcut: 'Ctrl+Y' },
-    { id: 'separator1', type: 'separator' },
+    { id: 'separator1', label: '', action: '', type: 'separator' },
     { id: 'copy', label: '复制', action: 'copy', shortcut: 'Ctrl+C' },
     { id: 'paste', label: '粘贴', action: 'paste', shortcut: 'Ctrl+V' }
   ],
@@ -160,7 +172,7 @@ const executeMenuAction = (action: string) => {
       // 切换侧边栏逻辑
       break
     case 'toggle-fullscreen':
-      if (window.electronAPI) {
+      if (window.electronAPI?.toggleFullscreen) {
         window.electronAPI.toggleFullscreen()
       }
       break
@@ -169,19 +181,19 @@ const executeMenuAction = (action: string) => {
 }
 
 const minimizeWindow = () => {
-  if (window.electronAPI) {
+  if (window.electronAPI?.minimizeWindow) {
     window.electronAPI.minimizeWindow()
   }
 }
 
 const maximizeWindow = () => {
-  if (window.electronAPI) {
+  if (window.electronAPI?.maximizeWindow) {
     window.electronAPI.maximizeWindow()
   }
 }
 
 const closeWindow = () => {
-  if (window.electronAPI) {
+  if (window.electronAPI?.closeWindow) {
     window.electronAPI.closeWindow()
   }
 }

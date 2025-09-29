@@ -1,5 +1,5 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
-import { logger } from '../utils/logger.js'
+import { logger } from '../utils/safe-logger.js'
 import { userService, UserResponse } from '../services/user.service.js'
 
 interface LoginBody {
@@ -435,3 +435,4 @@ export async function authRoutes(fastify: FastifyInstance) {
     }
   })
 }
+

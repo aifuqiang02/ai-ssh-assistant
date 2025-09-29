@@ -18,7 +18,7 @@ interface ApiResponse<T = any> {
 }
 
 // 通用API请求处理器
-ipcMain.handle('api:request', async (event, request: ApiRequest): Promise<ApiResponse> => {
+ipcMain.handle('api:request', async (_, request: ApiRequest): Promise<ApiResponse> => {
   const { endpoint, method, data, headers = {} } = request
   const url = `${API_BASE_URL}${endpoint}`
 
@@ -58,7 +58,7 @@ ipcMain.handle('api:request', async (event, request: ApiRequest): Promise<ApiRes
 })
 
 // 认证相关API处理器
-ipcMain.handle('api:auth:login', async (event, credentials: { email: string; password: string; rememberMe?: boolean }) => {
+ipcMain.handle('api:auth:login', async (_, credentials: { email: string; password: string; rememberMe?: boolean }) => {
   const url = `${API_BASE_URL}/auth/login`
   
   try {
@@ -84,7 +84,7 @@ ipcMain.handle('api:auth:login', async (event, credentials: { email: string; pas
   }
 })
 
-ipcMain.handle('api:auth:register', async (event, userData: { email: string; username: string; password: string }) => {
+ipcMain.handle('api:auth:register', async (_, userData: { email: string; username: string; password: string }) => {
   const url = `${API_BASE_URL}/auth/register`
   
   try {
@@ -110,7 +110,7 @@ ipcMain.handle('api:auth:register', async (event, userData: { email: string; use
   }
 })
 
-ipcMain.handle('api:auth:logout', async (event, token?: string) => {
+ipcMain.handle('api:auth:logout', async (_, token?: string) => {
   const url = `${API_BASE_URL}/auth/logout`
   const headers: Record<string, string> = { 'Content-Type': 'application/json' }
   
@@ -140,7 +140,7 @@ ipcMain.handle('api:auth:logout', async (event, token?: string) => {
   }
 })
 
-ipcMain.handle('api:auth:refresh', async (event, refreshToken: string) => {
+ipcMain.handle('api:auth:refresh', async (_, refreshToken: string) => {
   const url = `${API_BASE_URL}/auth/refresh`
   
   try {
@@ -166,7 +166,7 @@ ipcMain.handle('api:auth:refresh', async (event, refreshToken: string) => {
   }
 })
 
-ipcMain.handle('api:auth:verify', async (event, token: string) => {
+ipcMain.handle('api:auth:verify', async (_, token: string) => {
   const url = `${API_BASE_URL}/auth/verify`
   
   try {

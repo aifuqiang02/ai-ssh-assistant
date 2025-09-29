@@ -1,5 +1,5 @@
 import Redis from 'ioredis'
-import { logger } from '../utils/logger.js'
+import { logger } from '../utils/safe-logger.js'
 
 interface RedisConfig {
   host: string
@@ -146,7 +146,7 @@ class RedisManager {
   static async get(key: string): Promise<string | null> {
     try {
       if (!RedisManager.isConnectionActive()) {
-        logger.warn('Redis is not connected, cannot get key:', key)
+        logger.warn('Redis is not connected, cannot get key: %s', key)
         return null
       }
 
@@ -164,7 +164,7 @@ class RedisManager {
   static async set(key: string, value: string, ttl?: number): Promise<boolean> {
     try {
       if (!RedisManager.isConnectionActive()) {
-        logger.warn('Redis is not connected, cannot set key:', key)
+        logger.warn('Redis is not connected, cannot set key: %s', key)
         return false
       }
 
@@ -189,7 +189,7 @@ class RedisManager {
   static async del(key: string): Promise<boolean> {
     try {
       if (!RedisManager.isConnectionActive()) {
-        logger.warn('Redis is not connected, cannot delete key:', key)
+        logger.warn('Redis is not connected, cannot delete key: %s', key)
         return false
       }
 
@@ -204,3 +204,4 @@ class RedisManager {
 }
 
 export default RedisManager
+

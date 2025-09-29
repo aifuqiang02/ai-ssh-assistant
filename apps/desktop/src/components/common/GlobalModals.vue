@@ -144,6 +144,41 @@
 <script setup lang="ts">
 import { ref, reactive, nextTick } from 'vue'
 
+// 扩展Window接口以包含$modal属性
+declare global {
+  interface Window {
+    $modal: {
+      showConfirm: (options: {
+        title?: string
+        message: string
+        type?: 'info' | 'danger'
+        okText?: string
+        cancelText?: string
+        onOk?: () => void
+        onCancel?: () => void
+      }) => void
+      showAlert: (options: {
+        title?: string
+        message: string
+        type?: 'info' | 'success' | 'error' | 'warning'
+        okText?: string
+        onOk?: () => void
+      }) => void
+      showPrompt: (options: {
+        title?: string
+        message: string
+        placeholder?: string
+        inputType?: string
+        defaultValue?: string
+        okText?: string
+        cancelText?: string
+        onOk?: (value: string) => void
+        onCancel?: () => void
+      }) => void
+    }
+  }
+}
+
 // 模态框状态
 const confirmModal = reactive({
   visible: false,

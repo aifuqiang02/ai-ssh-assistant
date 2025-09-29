@@ -1,7 +1,7 @@
 // 直接导入生成的 Prisma 客户端，避免包装层问题
 import { PrismaClient, User, UserRole } from '../../../database/src/generated/client-postgresql/index.js'
 import bcrypt from 'bcryptjs'
-import { logger } from '../utils/logger.js'
+import { logger } from '../utils/safe-logger.js'
 import Database from '../config/database.js'
 
 export interface CreateUserData {
@@ -306,3 +306,4 @@ export class UserService {
 
 // 导出单例实例
 export const userService = new UserService()
+

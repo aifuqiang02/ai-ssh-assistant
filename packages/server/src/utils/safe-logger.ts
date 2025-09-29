@@ -1,7 +1,7 @@
 import pino from 'pino'
 
 // 创建日志实例
-export const logger = pino({
+const pinoLogger = pino({
   level: process.env.LOG_LEVEL || 'info',
   transport: process.env.NODE_ENV !== 'production' ? {
     target: 'pino-pretty',
@@ -13,7 +13,27 @@ export const logger = pino({
   } : undefined
 })
 
-// 导出日志级别类型
+// 类型安全的 logger 包装器
+export const logger = {
+  error: (...args: any[]) => (pinoLogger.error as any)(...args),
+  warn: (...args: any[]) => (pinoLogger.warn as any)(...args),
+  info: (...args: any[]) => (pinoLogger.info as any)(...args),
+  debug: (...args: any[]) => (pinoLogger.debug as any)(...args),
+  trace: (...args: any[]) => (pinoLogger.trace as any)(...args),
+  fatal: (...args: any[]) => (pinoLogger.fatal as any)(...args),
+  child: (bindings: Record<string, any>) => {
+    const childLogger = pinoLogger.child(bindings)
+    return {
+      error: (...args: any[]) => (childLogger.error as any)(...args),
+      warn: (...args: any[]) => (childLogger.warn as any)(...args),
+      info: (...args: any[]) => (childLogger.info as any)(...args),
+      debug: (...args: any[]) => (childLogger.debug as any)(...args),
+      trace: (...args: any[]) => (childLogger.trace as any)(...args),
+      fatal: (...args: any[]) => (childLogger.fatal as any)(...args),
+    }
+  }
+}
+
 export type LogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal'
 
 // 创建子日志器的辅助函数
@@ -50,4 +70,3 @@ export const loggerMiddleware = {
 
 // 默认导出
 export default logger
-

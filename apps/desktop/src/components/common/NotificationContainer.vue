@@ -87,7 +87,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 
 interface NotificationAction {
   label: string
@@ -242,6 +242,21 @@ defineExpose({
   info
 })
 
+// 扩展Window接口以包含$notification属性
+declare global {
+  interface Window {
+    $notification: {
+      add: typeof addNotification
+      remove: typeof removeNotification
+      clear: typeof clearAll
+      success: typeof success
+      error: typeof error
+      warning: typeof warning
+      info: typeof info
+    }
+  }
+}
+
 // 注册到全局
 if (typeof window !== 'undefined') {
   window.$notification = {
@@ -257,7 +272,7 @@ if (typeof window !== 'undefined') {
 
 onMounted(() => {
   // 监听来自主进程的通知
-  if (window.electronAPI) {
+  if (window.electronAPI?.onNotification) {
     window.electronAPI.onNotification((notification: any) => {
       addNotification(notification)
     })

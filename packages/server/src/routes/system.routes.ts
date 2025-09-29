@@ -1,5 +1,5 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
-import { logger } from '../utils/logger.js'
+import { logger } from '../utils/safe-logger.js'
 
 export async function systemRoutes(fastify: FastifyInstance) {
   // 获取系统信息
@@ -401,3 +401,4 @@ export async function systemRoutes(fastify: FastifyInstance) {
     }
   })
 }
+

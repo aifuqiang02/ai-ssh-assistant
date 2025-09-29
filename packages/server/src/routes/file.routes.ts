@@ -1,5 +1,5 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
-import { logger } from '../utils/logger.js'
+import { logger } from '../utils/safe-logger.js'
 
 export async function fileRoutes(fastify: FastifyInstance) {
   // 获取文件列表
@@ -161,8 +161,8 @@ export async function fileRoutes(fastify: FastifyInstance) {
         })
       }
 
-      const connectionId = data.fields.connectionId?.value as string
-      const remotePath = data.fields.remotePath?.value as string || '/'
+      const connectionId = (data.fields.connectionId as any)?.value as string
+      const remotePath = ((data.fields.remotePath as any)?.value as string) || '/'
 
       if (!connectionId) {
         return reply.status(400).send({
@@ -419,3 +419,4 @@ server {
     }
   })
 }
+

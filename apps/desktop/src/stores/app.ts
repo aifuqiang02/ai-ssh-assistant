@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
 
 export const useAppStore = defineStore('app', () => {
   // 应用状态
@@ -52,9 +51,11 @@ export const useAppStore = defineStore('app', () => {
   // 加载设置
   const loadSettings = async () => {
     try {
-      const savedSettings = localStorage.getItem('app-settings')
-      if (savedSettings) {
-        settings.value = { ...settings.value, ...JSON.parse(savedSettings) }
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const savedSettings = localStorage.getItem('app-settings')
+        if (savedSettings) {
+          settings.value = { ...settings.value, ...JSON.parse(savedSettings) }
+        }
       }
     } catch (err) {
       console.error('Failed to load settings:', err)
@@ -64,7 +65,9 @@ export const useAppStore = defineStore('app', () => {
   // 保存设置
   const saveSettings = async () => {
     try {
-      localStorage.setItem('app-settings', JSON.stringify(settings.value))
+      if (typeof window !== 'undefined' && window.localStorage) {
+        localStorage.setItem('app-settings', JSON.stringify(settings.value))
+      }
     } catch (err) {
       console.error('Failed to save settings:', err)
       throw new Error('保存设置失败')

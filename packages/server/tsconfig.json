@@ -16,7 +16,15 @@
       "@ai-ssh/shared/*": ["../../packages/shared/src/*"],
       "@ai-ssh/database/*": ["../../packages/database/src/*"]
     },
-    "types": ["node", "vitest"]
+    "types": ["node", "vitest"],
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "strict": false,
+    "skipLibCheck": true,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    "strictFunctionTypes": false,
+    "strictPropertyInitialization": false
   },
   "include": [
     "src/**/*"

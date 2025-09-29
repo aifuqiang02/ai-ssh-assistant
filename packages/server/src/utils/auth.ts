@@ -1,20 +1,10 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
-import { logger } from './logger.js'
+import { logger } from './safe-logger.js'
 
 // 扩展 Fastify 类型
 declare module 'fastify' {
   interface FastifyInstance {
     authenticate: (request: FastifyRequest, reply: FastifyReply) => Promise<void>
-  }
-  
-  interface FastifyRequest {
-    user?: {
-      userId: string
-      username: string
-      role: string
-      iat: number
-      exp: number
-    }
   }
 }
 
@@ -23,7 +13,7 @@ export async function authenticate(request: FastifyRequest, reply: FastifyReply)
   try {
     await request.jwtVerify()
   } catch (error) {
-    logger.warn('JWT verification failed:', error)
+    logger.warn('JWT verification failed: %s', String(error))
     reply.status(401).send({
       success: false,
       message: '认证失败，请重新登录',
@@ -47,7 +37,7 @@ export function requireRole(roles: string | string[]) {
       })
     }
     
-    if (!allowedRoles.includes(user.role)) {
+    if (!allowedRoles.includes((user as any).role)) {
       return reply.status(403).send({
         success: false,
         message: '权限不足',
@@ -58,10 +48,11 @@ export function requireRole(roles: string | string[]) {
 }
 
 // 可选认证中间件（不强制要求登录）
-export async function optionalAuth(request: FastifyRequest, reply: FastifyReply) {
+export async function optionalAuth(request: FastifyRequest, _reply: FastifyReply) {
   try {
     await request.jwtVerify()
   } catch (error) {
     // 忽略认证错误，允许匿名访问
   }
 }
+

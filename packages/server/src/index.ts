@@ -1,5 +1,5 @@
 import { buildApp } from './app.js'
-import { logger } from './utils/logger.js'
+import { logger } from './utils/safe-logger.js'
 import { config } from './config/app.config.js'
 import Database from './config/database.js'
 import RedisManager from './config/redis.js'
@@ -46,7 +46,7 @@ async function startServer() {
 
         process.exit(0)
       } catch (error) {
-        logger.error('Error during shutdown:', error)
+        logger.error('Error during shutdown:', String(error))
         process.exit(1)
       }
     }
@@ -57,20 +57,21 @@ async function startServer() {
 
     // 处理未捕获的异常
     process.on('uncaughtException', (error) => {
-      logger.error('Uncaught Exception:', error)
+      logger.error('Uncaught Exception:', String(error))
       process.exit(1)
     })
 
-    process.on('unhandledRejection', (reason, promise) => {
-      logger.error('Unhandled Rejection at:', promise, 'reason:', reason)
+    process.on('unhandledRejection', (reason: Error, promise: Promise<any>) => {
+      logger.error('Unhandled Rejection at: %o, reason: %s', promise, String(reason))
       process.exit(1)
     })
 
   } catch (error) {
-    logger.error('Failed to start server:', error)
+    logger.error('Failed to start server:', String(error))
     process.exit(1)
   }
 }
 
 // 启动服务器
 startServer()
+

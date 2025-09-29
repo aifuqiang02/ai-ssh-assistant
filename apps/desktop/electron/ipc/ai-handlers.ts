@@ -9,7 +9,7 @@ interface AIService {
 }
 
 class MockAIService implements AIService {
-  async chat(message: string, context?: any): Promise<string> {
+  async chat(message: string): Promise<string> {
     // 模拟 AI 聊天响应
     await this.delay(1000 + Math.random() * 2000)
     
@@ -24,7 +24,7 @@ class MockAIService implements AIService {
     return responses[Math.floor(Math.random() * responses.length)]
   }
 
-  async analyze(data: any): Promise<any> {
+  async analyze(): Promise<any> {
     // 模拟数据分析
     await this.delay(1500)
     
@@ -113,18 +113,18 @@ class MockAIService implements AIService {
 const aiService = new MockAIService()
 
 // 注册 IPC 处理器
-ipcMain.handle('ai:chat', async (_, message: string, context?: any) => {
+ipcMain.handle('ai:chat', async (_, message: string) => {
   try {
-    return await aiService.chat(message, context)
+    return await aiService.chat(message)
   } catch (error) {
     console.error('AI chat error:', error)
     throw error
   }
 })
 
-ipcMain.handle('ai:analyze', async (_, data: any) => {
+ipcMain.handle('ai:analyze', async (_) => {
   try {
-    return await aiService.analyze(data)
+    return await aiService.analyze()
   } catch (error) {
     console.error('AI analyze error:', error)
     throw error

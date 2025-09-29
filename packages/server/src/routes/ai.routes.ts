@@ -1,5 +1,5 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
-import { logger } from '../utils/logger.js'
+import { logger } from '../utils/safe-logger.js'
 
 export async function aiRoutes(fastify: FastifyInstance) {
   // AI 聊天
@@ -345,3 +345,4 @@ function generateCommandSuggestions(input: string, context?: any): any[] {
 
   return suggestions.slice(0, 5) // 最多返回5个建议
 }
+

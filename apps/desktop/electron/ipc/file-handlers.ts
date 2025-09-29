@@ -105,7 +105,7 @@ class FileSystemManager {
   async uploadFile(localPath: string, remotePath: string, connectionId: string): Promise<void> {
     // 这里应该实现 SFTP 上传功能
     // 目前返回模拟结果
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       setTimeout(() => {
         console.log(`Uploading ${localPath} to ${remotePath} via connection ${connectionId}`)
         
@@ -126,7 +126,7 @@ class FileSystemManager {
   async downloadFile(remotePath: string, localPath: string, connectionId: string): Promise<void> {
     // 这里应该实现 SFTP 下载功能
     // 目前返回模拟结果
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       setTimeout(() => {
         console.log(`Downloading ${remotePath} to ${localPath} via connection ${connectionId}`)
         

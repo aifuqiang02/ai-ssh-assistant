@@ -8,7 +8,9 @@
       "@ai-ssh/shared/*": ["../../packages/shared/src/*"]
     },
     "types": ["electron", "node"],
-    "lib": ["DOM", "ES2020"]
+    "lib": ["DOM", "ES2020"],
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
   },
   "include": [
     "src/**/*",

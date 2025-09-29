@@ -121,6 +121,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 
+
 const appVersion = ref('1.0.0')
 
 const systemInfo = ref({
@@ -132,8 +133,8 @@ const systemInfo = ref({
 
 const openExternal = (url: string) => {
   // 在 Electron 环境中打开外部链接
-  if (window.electronAPI) {
-    window.electronAPI.openExternal(url)
+  if (window.electronAPI?.system?.openExternal) {
+    window.electronAPI.system.openExternal(url)
   } else {
     window.open(url, '_blank')
   }
@@ -141,8 +142,8 @@ const openExternal = (url: string) => {
 
 onMounted(() => {
   // 获取系统信息
-  if (window.electronAPI) {
-    window.electronAPI.getSystemInfo().then((info: any) => {
+  if (window.electronAPI?.system?.getSystemInfo) {
+    window.electronAPI.system.getSystemInfo().then((info: any) => {
       systemInfo.value = info
     })
   }

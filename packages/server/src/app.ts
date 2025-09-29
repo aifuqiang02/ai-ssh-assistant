@@ -7,7 +7,7 @@ import multipart from '@fastify/multipart'
 import rateLimit from '@fastify/rate-limit'
 
 import { config } from './config/app.config.js'
-import { logger } from './utils/logger.js'
+import { logger } from './utils/safe-logger.js'
 import { authenticate } from './utils/auth.js'
 import Database from './config/database.js'
 import RedisManager from './config/redis.js'
@@ -145,7 +145,7 @@ export async function buildApp(): Promise<FastifyInstance> {
         }
       }
     }
-  }, async (request, reply) => {
+  }, async (_request, reply) => {
     try {
       // 检查数据库连接
       await Database.getInstance().$queryRaw`SELECT 1`
@@ -165,7 +165,7 @@ export async function buildApp(): Promise<FastifyInstance> {
         }
       }
     } catch (error) {
-      logger.error('Health check failed:', error)
+      logger.error('Health check failed:', String(error))
       reply.status(503)
       return {
         status: 'unhealthy',
@@ -235,7 +235,7 @@ export async function buildApp(): Promise<FastifyInstance> {
   app.setErrorHandler(async (error, request, reply) => {
     const statusCode = error.statusCode || 500
     
-    logger.error('Request error:', {
+    logger.error({
       error: error.message,
       stack: error.stack,
       url: request.url,
@@ -243,7 +243,7 @@ export async function buildApp(): Promise<FastifyInstance> {
       headers: request.headers,
       body: request.body,
       statusCode
-    })
+    }, 'Request error:')
 
     // 验证错误
     if (error.validation) {
@@ -253,7 +253,7 @@ export async function buildApp(): Promise<FastifyInstance> {
         errors: error.validation.map(err => ({
           field: err.instancePath?.replace('/', '') || err.schemaPath,
           message: err.message,
-          value: err.data
+          value: (err as any).data
         }))
       })
     }
@@ -272,7 +272,7 @@ export async function buildApp(): Promise<FastifyInstance> {
       return reply.status(429).send({
         success: false,
         message: 'Too many requests',
-        retryAfter: error.retryAfter
+        retryAfter: (error as any).retryAfter
       })
     }
 
@@ -301,20 +301,21 @@ export async function buildApp(): Promise<FastifyInstance> {
 
   // 请求日志钩子
   app.addHook('onRequest', async (request) => {
-    logger.info(`${request.method} ${request.url}`, {
+    logger.info({
       ip: request.ip,
       userAgent: request.headers['user-agent']
-    })
+    }, `${request.method} ${request.url}`)
   })
 
   // 响应日志钩子
   app.addHook('onResponse', async (request, reply) => {
     const responseTime = reply.elapsedTime
-    logger.info(`${request.method} ${request.url} - ${reply.statusCode}`, {
+    logger.info({
       responseTime: `${responseTime.toFixed(2)}ms`,
       contentLength: reply.getHeader('content-length')
-    })
+    }, `${request.method} ${request.url} - ${reply.statusCode}`)
   })
 
   return app
 }
+

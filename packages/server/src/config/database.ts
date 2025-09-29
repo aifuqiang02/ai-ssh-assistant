@@ -1,4 +1,4 @@
-import { logger } from '../utils/logger.js'
+import { logger } from '../utils/safe-logger.js'
 // 直接导入 Prisma 客户端，避免浏览器兼容层的问题
 import { PrismaClient } from '../../../database/src/generated/client-postgresql/index.js'
 
@@ -106,3 +106,4 @@ class Database {
 }
 
 export default Database
+

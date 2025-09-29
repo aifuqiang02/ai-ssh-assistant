@@ -297,7 +297,7 @@ const handleKeydown = (event: KeyboardEvent) => {
   if (event.key === 'F11') {
     event.preventDefault()
     isFullscreen.value = !isFullscreen.value
-    if (window.electronAPI) {
+    if (window.electronAPI?.toggleFullscreen) {
       window.electronAPI.toggleFullscreen()
     }
   }
@@ -311,7 +311,7 @@ const handleKeydown = (event: KeyboardEvent) => {
   // F12 切换开发者工具
   if (event.key === 'F12') {
     event.preventDefault()
-    if (window.electronAPI && window.electronAPI.toggleDevTools) {
+    if (window.electronAPI?.toggleDevTools) {
       window.electronAPI.toggleDevTools()
         .then((opened: boolean) => {
           console.log('DevTools toggled via Vue:', opened ? 'opened' : 'closed')
@@ -379,7 +379,7 @@ onMounted(async () => {
   window.addEventListener('close-right-panel', closeRightPanel)
   
   // 监听全屏状态变化
-  if (window.electronAPI) {
+  if (window.electronAPI?.onFullscreenChange) {
     window.electronAPI.onFullscreenChange((fullscreen: boolean) => {
       isFullscreen.value = fullscreen
     })

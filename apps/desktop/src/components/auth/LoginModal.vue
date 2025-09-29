@@ -230,8 +230,8 @@ const handleLogin = async () => {
       const storageStore = useStorageStore()
       await storageStore.setUserAuthenticated({
         id: user.id,
-        email: user.email,
-        username: user.username
+        email: user.email ?? undefined,
+        username: user.username ?? undefined
       })
 
       emit('login-success', user)
@@ -307,8 +307,8 @@ const handleRegister = async () => {
           const storageStore = useStorageStore()
           await storageStore.setUserAuthenticated({
             id: user.id,
-            email: user.email,
-            username: user.username
+            email: user.email ?? undefined,
+            username: user.username ?? undefined
           })
 
           emit('login-success', user)

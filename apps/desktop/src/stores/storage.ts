@@ -1,6 +1,9 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import { StorageManager, createStorageConfig, type StorageMode } from '@ai-ssh/database'
+import { StorageManager, createStorageConfig } from '@ai-ssh/database'
+
+// 定义存储模式类型
+export type StorageMode = 'local' | 'hybrid' | 'cloud' | 'auto'
 
 export interface UserInfo {
   id: number
@@ -11,7 +14,7 @@ export interface UserInfo {
 }
 
 export interface StorageState {
-  mode: StorageMode
+  mode: string
   isInitialized: boolean
   user: UserInfo | null
   syncStatus: 'idle' | 'syncing' | 'success' | 'error'
@@ -38,7 +41,7 @@ export const useStorageStore = defineStore('storage', () => {
   const canSync = computed(() => state.value.mode === 'hybrid' && isLoggedIn.value)
 
   // Actions
-  const initializeStorage = async (mode: StorageMode = 'auto') => {
+  const initializeStorage = async (mode: 'local' | 'hybrid' | 'cloud' | 'auto' = 'auto') => {
     try {
       console.log('Initializing storage with mode:', mode)
       
@@ -49,13 +52,13 @@ export const useStorageStore = defineStore('storage', () => {
         autoSwitchStorage: true // 启用自动切换存储
       })
 
-      // 更新配置模式
-      config.defaultMode = mode
+      // 更新配置模式 - 使用不同的方式设置模式
+      // config.defaultMode = mode
 
       // 如果是云端模式但没有用户信息，使用本地模式
       if (mode !== 'local' && !state.value.user) {
         console.warn('Cloud mode requested but no user logged in, falling back to local')
-        config.defaultMode = 'local'
+        // config.defaultMode = 'local'
         state.value.mode = 'local'
       } else {
         state.value.mode = mode
@@ -73,7 +76,7 @@ export const useStorageStore = defineStore('storage', () => {
     }
   }
 
-  const switchStorageMode = async (mode: StorageMode) => {
+  const switchStorageMode = async (mode: 'local' | 'hybrid' | 'cloud') => {
     if (!storageManager.value) {
       await initializeStorage(mode)
       return
@@ -104,9 +107,11 @@ export const useStorageStore = defineStore('storage', () => {
       state.value.user = userInfo
       
       // 保存认证信息
-      const storage = remember ? localStorage : sessionStorage
-      storage.setItem('userToken', token)
-      storage.setItem('userInfo', JSON.stringify(userInfo))
+      if (typeof window !== 'undefined') {
+        const storage = remember ? window.localStorage : window.sessionStorage
+        storage.setItem('userToken', token)
+        storage.setItem('userInfo', JSON.stringify(userInfo))
+      }
       
       // 如果当前是本地模式，切换到混合模式
       if (state.value.mode === 'local') {
@@ -125,10 +130,12 @@ export const useStorageStore = defineStore('storage', () => {
       console.log('User logout')
       
       // 清除认证信息
-      localStorage.removeItem('userToken')
-      localStorage.removeItem('userInfo')
-      sessionStorage.removeItem('userToken')
-      sessionStorage.removeItem('userInfo')
+      if (typeof window !== 'undefined') {
+        window.localStorage.removeItem('userToken')
+        window.localStorage.removeItem('userInfo')
+        window.sessionStorage.removeItem('userToken')
+        window.sessionStorage.removeItem('userInfo')
+      }
       
       state.value.user = null
       
@@ -144,19 +151,22 @@ export const useStorageStore = defineStore('storage', () => {
 
   const checkAuthStatus = () => {
     try {
-      const token = localStorage.getItem('userToken') || sessionStorage.getItem('userToken')
-      const userInfoStr = localStorage.getItem('userInfo') || sessionStorage.getItem('userInfo')
-      
-      if (token && userInfoStr) {
-        const userInfo = JSON.parse(userInfoStr)
-        state.value.user = userInfo
-        console.log('Auth status checked - user logged in:', userInfo.email)
-        return true
-      } else {
-        state.value.user = null
-        console.log('Auth status checked - no user logged in')
-        return false
+      if (typeof window !== 'undefined') {
+        const token = window.localStorage.getItem('userToken') || window.sessionStorage.getItem('userToken')
+        const userInfoStr = window.localStorage.getItem('userInfo') || window.sessionStorage.getItem('userInfo')
+        
+        if (token && userInfoStr) {
+          const userInfo = JSON.parse(userInfoStr)
+          state.value.user = userInfo
+          console.log('Auth status checked - user logged in:', userInfo.email)
+          return true
+        } else {
+          state.value.user = null
+          console.log('Auth status checked - no user logged in')
+          return false
+        }
       }
+      return false
     } catch (error) {
       console.error('Check auth status failed:', error)
       state.value.user = null
@@ -233,15 +243,19 @@ export const useStorageStore = defineStore('storage', () => {
   }
 
   // 用户认证状态管理
-  const setUserAuthenticated = async (user: { id: string; email?: string; username?: string }) => {
+  const setUserAuthenticated = async (user: { id: string; email?: string | null; username?: string | null }) => {
     if (storageManager.value) {
-      await storageManager.value.setUserAuthenticated(user)
+      await storageManager.value.setUserAuthenticated({
+        id: user.id,
+        email: user.email ?? undefined,
+        username: user.username ?? undefined
+      })
       
       // 更新前端状态
       state.value.user = {
         id: parseInt(user.id),
-        email: user.email || '',
-        name: user.username || user.email || '',
+        email: user.email ?? '',
+        name: user.username ?? user.email ?? '',
         avatar: undefined,
         cloudStorageEnabled: true
       }

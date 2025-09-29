@@ -1,5 +1,5 @@
-import { logger } from '../utils/logger.js'
-import { PrismaClient } from '@prisma/client'
+import { logger } from '../utils/safe-logger.js'
+import { PrismaClient } from '../../../database/src/generated/client-postgresql/index.js'
 
 /**
  * 云数据库配置 - 专门用于用户认证和云端数据存储
@@ -102,3 +102,4 @@ class CloudDatabase {
 }
 
 export default CloudDatabase
+

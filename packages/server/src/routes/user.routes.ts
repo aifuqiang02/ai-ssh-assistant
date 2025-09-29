@@ -1,5 +1,5 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
-import { logger } from '../utils/logger.js'
+import { logger } from '../utils/safe-logger.js'
 
 interface UpdateProfileBody {
   username?: string
@@ -330,3 +330,4 @@ export async function userRoutes(fastify: FastifyInstance) {
     }
   })
 }
+

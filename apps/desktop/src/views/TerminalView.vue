@@ -29,9 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-
-const terminalOutput = ref<string[]>([])
+import { onMounted } from 'vue'
 
 onMounted(() => {
   console.log('TerminalView mounted')
