@@ -113,6 +113,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useAppStore } from '@/stores/app'
 import { useThemeStore } from '@/stores/theme'
+import { useStorageStore } from '@/stores/storage'
 import AppTitleBar from '@/components/layout/AppTitleBar.vue'
 import AppSidebar from '@/components/layout/AppSidebar.vue'
 import AppStatusBar from '@/components/layout/AppStatusBar.vue'
@@ -122,6 +123,7 @@ import NotificationContainer from '@/components/common/NotificationContainer.vue
 
 const appStore = useAppStore()
 const themeStore = useThemeStore()
+const storageStore = useStorageStore()
 
 // 响应式数据
 const isFullscreen = ref(false)
@@ -297,10 +299,47 @@ const handleResize = () => {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   // 初始化应用
   appStore.initialize()
   themeStore.initialize()
+  
+  // 初始化存储管理器
+  try {
+    // 检查用户登录状态
+    const isLoggedIn = storageStore.checkAuthStatus()
+    
+    // 根据登录状态和用户设置确定存储模式
+    const savedSettings = localStorage.getItem('appSettings')
+    let storageMode = 'local' // 默认本地存储
+    
+    if (savedSettings) {
+      try {
+        const settings = JSON.parse(savedSettings)
+        storageMode = settings.storageMode || 'local'
+      } catch (error) {
+        console.error('Parse settings error:', error)
+      }
+    }
+    
+    // 如果设置为云端模式但未登录，fallback到本地模式
+    if (storageMode !== 'local' && !isLoggedIn) {
+      console.warn('Cloud storage requested but user not logged in, using local storage')
+      storageMode = 'local'
+    }
+    
+    await storageStore.initializeStorage(storageMode as any)
+    console.log('Storage initialized with mode:', storageMode)
+  } catch (error) {
+    console.error('Storage initialization failed:', error)
+    // 如果存储初始化失败，fallback到本地模式
+    try {
+      await storageStore.initializeStorage('local')
+      console.log('Fallback to local storage successful')
+    } catch (fallbackError) {
+      console.error('Fallback storage initialization failed:', fallbackError)
+    }
+  }
   
   // 绑定事件监听器
   document.addEventListener('keydown', handleKeydown)
@@ -315,7 +354,15 @@ onMounted(() => {
   }
 })
 
-onUnmounted(() => {
+onUnmounted(async () => {
+  // 断开存储连接
+  try {
+    await storageStore.disconnect()
+    console.log('Storage disconnected')
+  } catch (error) {
+    console.error('Storage disconnect error:', error)
+  }
+  
   // 清理事件监听器
   document.removeEventListener('keydown', handleKeydown)
   window.removeEventListener('resize', handleResize)

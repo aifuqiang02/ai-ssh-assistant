@@ -111,7 +111,7 @@ async function main() {
   console.log('✅ 系统配置创建完成')
 
   // 创建示例会话组
-  const _defaultGroup = await prisma.sessionGroup.upsert({
+  const defaultGroup = await prisma.sessionGroup.upsert({
     where: { id: 'default-group-' + admin.id },
     update: {},
     create: {
@@ -125,7 +125,7 @@ async function main() {
       }
     }
   })
-  console.log('✅ 默认会话组创建完成')
+  console.log('✅ 默认会话组创建完成:', defaultGroup.name)
 
   // 创建示例聊天会话
   const chatSession = await prisma.chatSession.create({

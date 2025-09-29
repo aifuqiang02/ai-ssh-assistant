@@ -60,16 +60,20 @@ export class StorageManager {
   private syncTimer?: NodeJS.Timeout
 
   constructor(options: StorageManagerOptions) {
-    this.options = {
-      mode: 'local',
+    const defaultOptions = {
+      mode: 'local' as const,
       hybridOptions: {
-        primaryStorage: 'local',
+        primaryStorage: 'local' as const,
         fallbackEnabled: true,
-        syncStrategy: 'periodic',
+        syncStrategy: 'periodic' as const,
         syncInterval: 5 * 60 * 1000, // 5分钟
-        conflictResolution: 'merge',
+        conflictResolution: 'merge' as const,
         offlineMode: true
-      },
+      }
+    }
+    
+    this.options = {
+      ...defaultOptions,
       ...options
     }
 

@@ -3,7 +3,7 @@
  * 支持多种云数据库服务：PostgreSQL、MySQL、MongoDB等
  */
 
-import { PrismaClient } from '../generated/client'
+import { PrismaClient } from '../client-browser'
 import { BaseStorageAdapter, StorageOptions, SyncResult } from './base.adapter'
 
 export interface CloudStorageOptions extends StorageOptions {
@@ -17,7 +17,7 @@ export interface CloudStorageOptions extends StorageOptions {
 }
 
 export class CloudStorageAdapter extends BaseStorageAdapter {
-  private prisma: PrismaClient
+  private prisma: any
   private cloudOptions: CloudStorageOptions
 
   constructor(options: CloudStorageOptions = {}) {

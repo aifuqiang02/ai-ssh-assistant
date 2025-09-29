@@ -1,23 +1,5 @@
-// Prisma 客户端实例
+// Prisma 客户端实例 - 支持浏览器和Node.js环境
 
-import { PrismaClient } from './generated/client'
-
-let prisma: PrismaClient
-
-declare global {
-  var __prisma: PrismaClient | undefined
-}
-
-if (process.env.NODE_ENV === 'production') {
-  prisma = new PrismaClient()
-} else {
-  if (!global.__prisma) {
-    global.__prisma = new PrismaClient({
-      log: ['query', 'error', 'warn'],
-    })
-  }
-  prisma = global.__prisma
-}
-
-export { prisma }
-export default prisma
+// 重新导出浏览器兼容的客户端
+export { PrismaClient, prisma } from './client-browser'
+export { default } from './client-browser'

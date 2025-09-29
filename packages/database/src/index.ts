@@ -1,6 +1,5 @@
 // 数据库相关导出
-
-export * from './client'
+export { PrismaClient, prisma } from './client'
 export * from './types'
 
 // 存储管理器

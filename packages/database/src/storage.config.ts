@@ -5,6 +5,29 @@
 
 import { StorageManagerOptions } from './storage-manager'
 
+// 安全的环境变量访问函数 - 支持浏览器和Node.js环境
+function getEnv(key: string, defaultValue?: string): string | undefined {
+  if (typeof process !== 'undefined' && process.env) {
+    return process.env[key] || defaultValue
+  }
+  
+  // 在浏览器环境中，可以使用 import.meta.env (Vite) 或其他方式
+  if (typeof window !== 'undefined' && (window as any).ENV) {
+    return (window as any).ENV[key] || defaultValue
+  }
+  
+  // 如果在Vite环境中，尝试使用import.meta.env
+  try {
+    if (typeof import.meta !== 'undefined' && (import.meta as any).env) {
+      return ((import.meta as any).env as any)[key] || defaultValue
+    }
+  } catch (e) {
+    // ignore
+  }
+  
+  return defaultValue
+}
+
 export interface StorageConfig {
   // 默认存储模式
   defaultMode: 'local' | 'cloud' | 'hybrid'
@@ -42,12 +65,12 @@ export const defaultStorageConfig: StorageConfig = {
   development: {
     mode: 'hybrid',
     localOptions: {
-      connectionString: process.env.LOCAL_DATABASE_URL || 'file:./dev.db',
+      connectionString: getEnv('LOCAL_DATABASE_URL', 'file:./dev.db'),
       enabled: true
     },
     cloudOptions: {
-      connectionString: process.env.DATABASE_URL,
-      enabled: !!process.env.DATABASE_URL,
+      connectionString: getEnv('DATABASE_URL'),
+      enabled: !!getEnv('DATABASE_URL'),
       provider: 'postgresql',
       ssl: false,
       retryAttempts: 2,
@@ -67,11 +90,11 @@ export const defaultStorageConfig: StorageConfig = {
   production: {
     mode: 'hybrid',
     localOptions: {
-      connectionString: process.env.LOCAL_DATABASE_URL || 'file:./app.db',
+      connectionString: getEnv('LOCAL_DATABASE_URL', 'file:./app.db'),
       enabled: true
     },
     cloudOptions: {
-      connectionString: process.env.DATABASE_URL,
+      connectionString: getEnv('DATABASE_URL'),
       enabled: true,
       provider: 'postgresql',
       ssl: true,
@@ -93,7 +116,7 @@ export const defaultStorageConfig: StorageConfig = {
   test: {
     mode: 'local',
     localOptions: {
-      connectionString: process.env.TEST_DATABASE_URL || 'file:./test.db',
+      connectionString: getEnv('TEST_DATABASE_URL', 'file:./test.db'),
       enabled: true
     },
     cloudOptions: {
@@ -111,7 +134,7 @@ export const defaultStorageConfig: StorageConfig = {
 
 // 根据环境和用户偏好生成存储配置
 export function createStorageConfig(
-  env: string = process.env.NODE_ENV || 'development',
+  env: string = getEnv('NODE_ENV', 'development')!,
   userPrefs?: StorageConfig['userPreferences']
 ): StorageManagerOptions {
   const baseConfig = defaultStorageConfig[env as keyof StorageConfig] as StorageManagerOptions
@@ -179,7 +202,7 @@ export const storagePresets = {
       enabled: false
     },
     cloudOptions: {
-      connectionString: process.env.DATABASE_URL,
+      connectionString: getEnv('DATABASE_URL'),
       enabled: true,
       provider: 'postgresql' as const,
       ssl: true,
@@ -195,7 +218,7 @@ export const storagePresets = {
       enabled: true
     },
     cloudOptions: {
-      connectionString: process.env.DATABASE_URL,
+      connectionString: getEnv('DATABASE_URL'),
       enabled: true,
       provider: 'postgresql' as const,
       ssl: true,
@@ -220,7 +243,7 @@ export const storagePresets = {
       enabled: true
     },
     cloudOptions: {
-      connectionString: process.env.DATABASE_URL,
+      connectionString: getEnv('DATABASE_URL'),
       enabled: true,
       provider: 'postgresql' as const,
       ssl: true,
@@ -240,12 +263,17 @@ export const storagePresets = {
 
 // 环境检测和自动配置
 export function autoDetectStorageConfig(): StorageManagerOptions {
-  const env = process.env.NODE_ENV || 'development'
   
   // 检测运行环境
-  const isElectron = typeof window !== 'undefined' && window.process?.type === 'renderer'
-  const isMobile = typeof navigator !== 'undefined' && /Mobile|Android|iPhone|iPad/.test(navigator.userAgent)
-  const hasCloudUrl = !!process.env.DATABASE_URL
+  const isElectron = typeof globalThis !== 'undefined' && 
+    typeof (globalThis as any).window !== 'undefined' && 
+    (globalThis as any).window.process?.type === 'renderer'
+  
+  const isMobile = typeof globalThis !== 'undefined' && 
+    typeof (globalThis as any).navigator !== 'undefined' && 
+    /Mobile|Android|iPhone|iPad/.test((globalThis as any).navigator.userAgent)
+  
+  const hasCloudUrl = !!getEnv('DATABASE_URL')
   
   // 根据环境自动选择配置
   if (isElectron) {
