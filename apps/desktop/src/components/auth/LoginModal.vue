@@ -2,11 +2,15 @@
   <div v-if="showModal" class="login-modal-overlay fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
     <div class="login-modal bg-vscode-bg-light border border-vscode-border rounded-lg shadow-lg w-96 p-6">
       <div class="modal-header mb-6">
-        <h2 class="text-xl font-semibold text-vscode-fg mb-2">云端存储登录</h2>
-        <p class="text-vscode-fg-muted text-sm">登录以启用云端数据同步功能</p>
+        <h2 class="text-xl font-semibold text-vscode-fg mb-2">
+          {{ isLoginMode ? '云端存储登录' : '创建新账号' }}
+        </h2>
+        <p class="text-vscode-fg-muted text-sm">
+          {{ isLoginMode ? '登录以启用云端数据同步功能' : '注册账号以启用云端数据同步功能' }}
+        </p>
       </div>
 
-      <form @submit.prevent="handleLogin" class="space-y-4">
+      <form @submit.prevent="handleSubmit" class="space-y-4">
         <!-- 邮箱 -->
         <div class="form-group">
           <label for="email" class="block text-sm font-medium text-vscode-fg mb-2">邮箱</label>
@@ -29,12 +33,41 @@
             type="password"
             required
             class="w-full px-3 py-2 border rounded-md bg-vscode-bg border-vscode-border text-vscode-fg focus:outline-none focus:border-vscode-accent"
-            placeholder="请输入密码"
+            :placeholder="isLoginMode ? '请输入密码' : '请设置密码（至少6位）'"
+            :minlength="isLoginMode ? undefined : 6"
           />
         </div>
 
-        <!-- 记住登录 -->
-        <div class="form-group flex items-center">
+        <!-- 确认密码 (仅注册模式) -->
+        <div v-if="!isLoginMode" class="form-group">
+          <label for="confirmPassword" class="block text-sm font-medium text-vscode-fg mb-2">确认密码</label>
+          <input
+            id="confirmPassword"
+            v-model="confirmPassword"
+            type="password"
+            required
+            class="w-full px-3 py-2 border rounded-md bg-vscode-bg border-vscode-border text-vscode-fg focus:outline-none focus:border-vscode-accent"
+            placeholder="请再次输入密码"
+            minlength="6"
+          />
+        </div>
+
+        <!-- 用户名 (仅注册模式) -->
+        <div v-if="!isLoginMode" class="form-group">
+          <label for="username" class="block text-sm font-medium text-vscode-fg mb-2">用户名</label>
+          <input
+            id="username"
+            v-model="username"
+            type="text"
+            required
+            class="w-full px-3 py-2 border rounded-md bg-vscode-bg border-vscode-border text-vscode-fg focus:outline-none focus:border-vscode-accent"
+            placeholder="请输入用户名"
+            minlength="2"
+          />
+        </div>
+
+        <!-- 记住登录 (仅登录模式) -->
+        <div v-if="isLoginMode" class="form-group flex items-center">
           <input
             id="remember"
             v-model="rememberMe"
@@ -42,6 +75,20 @@
             class="w-4 h-4 text-vscode-accent bg-vscode-bg border-vscode-border rounded"
           />
           <label for="remember" class="ml-2 text-sm text-vscode-fg-muted">记住登录状态</label>
+        </div>
+
+        <!-- 服务条款 (仅注册模式) -->
+        <div v-if="!isLoginMode" class="form-group flex items-center">
+          <input
+            id="agreeTerms"
+            v-model="agreeTerms"
+            type="checkbox"
+            required
+            class="w-4 h-4 text-vscode-accent bg-vscode-bg border-vscode-border rounded"
+          />
+          <label for="agreeTerms" class="ml-2 text-sm text-vscode-fg-muted">
+            我已阅读并同意 <a href="#" class="text-vscode-accent hover:underline">服务条款</a>
+          </label>
         </div>
 
         <!-- 错误信息 -->
@@ -63,8 +110,8 @@
             :disabled="isLoading"
             class="flex-1 vscode-button primary"
           >
-            <span v-if="isLoading">登录中...</span>
-            <span v-else>登录</span>
+            <span v-if="isLoading">{{ isLoginMode ? '登录中...' : '注册中...' }}</span>
+            <span v-else>{{ isLoginMode ? '登录' : '注册' }}</span>
           </button>
         </div>
 
@@ -85,6 +132,8 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import apiService from '../../services/api.service'
+import { useStorageStore } from '../../stores/storage'
 
 interface Props {
   show: boolean
@@ -101,7 +150,10 @@ const emit = defineEmits<Emits>()
 const showModal = ref(props.show)
 const email = ref('')
 const password = ref('')
+const confirmPassword = ref('')
+const username = ref('')
 const rememberMe = ref(false)
+const agreeTerms = ref(false)
 const errorMessage = ref('')
 const isLoading = ref(false)
 const isLoginMode = ref(true)
@@ -116,7 +168,10 @@ watch(() => props.show, (newVal) => {
 const resetForm = () => {
   email.value = ''
   password.value = ''
+  confirmPassword.value = ''
+  username.value = ''
   rememberMe.value = false
+  agreeTerms.value = false
   errorMessage.value = ''
   isLoading.value = false
 }
@@ -131,6 +186,14 @@ const toggleMode = () => {
   errorMessage.value = ''
 }
 
+const handleSubmit = async () => {
+  if (isLoginMode.value) {
+    await handleLogin()
+  } else {
+    await handleRegister()
+  }
+}
+
 const handleLogin = async () => {
   if (!email.value || !password.value) {
     errorMessage.value = '请填写完整的登录信息'
@@ -141,56 +204,140 @@ const handleLogin = async () => {
   errorMessage.value = ''
 
   try {
-    // 这里替换为实际的登录API调用
-    const response = await mockLogin(email.value, password.value)
+    // 调用真实的登录API
+    const response = await apiService.login({
+      email: email.value,
+      password: password.value,
+      rememberMe: rememberMe.value
+    })
     
-    if (response.success) {
+    if (response.success && response.data) {
       // 保存用户信息和token
+      const { user, accessToken } = response.data
+      
       if (rememberMe.value) {
-        localStorage.setItem('userToken', response.token)
-        localStorage.setItem('userInfo', JSON.stringify(response.user))
+        localStorage.setItem('userToken', accessToken)
+        localStorage.setItem('userInfo', JSON.stringify(user))
       } else {
-        sessionStorage.setItem('userToken', response.token)
-        sessionStorage.setItem('userInfo', JSON.stringify(response.user))
+        sessionStorage.setItem('userToken', accessToken)
+        sessionStorage.setItem('userInfo', JSON.stringify(user))
       }
 
-      emit('login-success', response.user)
+      // 设置API服务的token
+      apiService.setToken(accessToken)
+
+      // 通知存储管理器用户已认证 - 自动切换到云端存储
+      const storageStore = useStorageStore()
+      await storageStore.setUserAuthenticated({
+        id: user.id,
+        email: user.email,
+        username: user.username
+      })
+
+      emit('login-success', user)
       closeModal()
     } else {
       errorMessage.value = response.message || '登录失败，请检查邮箱和密码'
     }
   } catch (error) {
     console.error('Login error:', error)
-    errorMessage.value = '网络错误，请稍后重试'
+    if (error instanceof Error) {
+      errorMessage.value = error.message
+    } else {
+      errorMessage.value = '网络错误，请稍后重试'
+    }
   } finally {
     isLoading.value = false
   }
 }
 
-// 模拟登录API - 实际项目中替换为真实API
-const mockLogin = async (email: string, password: string) => {
-  await new Promise(resolve => setTimeout(resolve, 1500)) // 模拟网络延迟
-  
-  // 模拟登录验证
-  if (email === 'demo@example.com' && password === 'demo123') {
-    return {
-      success: true,
-      token: 'mock-jwt-token-' + Date.now(),
-      user: {
-        id: 1,
-        email: email,
-        name: '演示用户',
-        avatar: '',
-        cloudStorageEnabled: true
+const handleRegister = async () => {
+  // 验证注册表单
+  if (!email.value || !password.value || !confirmPassword.value || !username.value) {
+    errorMessage.value = '请填写完整的注册信息'
+    return
+  }
+
+  if (password.value.length < 6) {
+    errorMessage.value = '密码长度至少6位'
+    return
+  }
+
+  if (password.value !== confirmPassword.value) {
+    errorMessage.value = '两次输入的密码不一致'
+    return
+  }
+
+  if (!agreeTerms.value) {
+    errorMessage.value = '请同意服务条款'
+    return
+  }
+
+  isLoading.value = true
+  errorMessage.value = ''
+
+  try {
+    // 调用真实的注册API
+    const response = await apiService.register({
+      email: email.value,
+      password: password.value,
+      username: username.value
+    })
+    
+    if (response.success && response.data) {
+      // 注册成功，自动登录
+      try {
+        const loginResponse = await apiService.login({
+          email: email.value,
+          password: password.value,
+          rememberMe: false
+        })
+
+        if (loginResponse.success && loginResponse.data) {
+          const { user, accessToken } = loginResponse.data
+          
+          // 保存用户信息和token
+          localStorage.setItem('userToken', accessToken)
+          localStorage.setItem('userInfo', JSON.stringify(user))
+          
+          // 设置API服务的token
+          apiService.setToken(accessToken)
+
+          // 通知存储管理器用户已认证 - 自动切换到云端存储
+          const storageStore = useStorageStore()
+          await storageStore.setUserAuthenticated({
+            id: user.id,
+            email: user.email,
+            username: user.username
+          })
+
+          emit('login-success', user)
+          closeModal()
+        } else {
+          // 注册成功但自动登录失败，提示用户手动登录
+          errorMessage.value = '注册成功！请手动登录'
+          isLoginMode.value = true // 切换到登录模式
+        }
+      } catch (loginError) {
+        console.error('Auto login after register failed:', loginError)
+        errorMessage.value = '注册成功！请手动登录'
+        isLoginMode.value = true // 切换到登录模式
       }
+    } else {
+      errorMessage.value = response.message || '注册失败，请稍后重试'
     }
-  } else {
-    return {
-      success: false,
-      message: '邮箱或密码错误'
+  } catch (error) {
+    console.error('Register error:', error)
+    if (error instanceof Error) {
+      errorMessage.value = error.message
+    } else {
+      errorMessage.value = '网络错误，请稍后重试'
     }
+  } finally {
+    isLoading.value = false
   }
 }
+
 </script>
 
 <style scoped>

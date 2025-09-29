@@ -1,8 +1,9 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
 import { logger } from '../utils/logger.js'
+import { userService, UserResponse } from '../services/user.service.js'
 
 interface LoginBody {
-  username: string
+  email: string
   password: string
   rememberMe?: boolean
 }
@@ -11,7 +12,6 @@ interface RegisterBody {
   username: string
   email: string
   password: string
-  confirmPassword: string
 }
 
 interface RefreshTokenBody {
@@ -26,9 +26,9 @@ export async function authRoutes(fastify: FastifyInstance) {
       tags: ['认证'],
       body: {
         type: 'object',
-        required: ['username', 'password'],
+        required: ['email', 'password'],
         properties: {
-          username: { type: 'string', minLength: 3, maxLength: 50 },
+          email: { type: 'string', format: 'email' },
           password: { type: 'string', minLength: 6, maxLength: 100 },
           rememberMe: { type: 'boolean', default: false }
         }
@@ -46,10 +46,14 @@ export async function authRoutes(fastify: FastifyInstance) {
                   type: 'object',
                   properties: {
                     id: { type: 'string' },
+                    uuid: { type: 'string' },
                     username: { type: 'string' },
                     email: { type: 'string' },
+                    avatar: { type: 'string' },
                     role: { type: 'string' },
-                    lastLogin: { type: 'string' }
+                    isActive: { type: 'boolean' },
+                    createdAt: { type: 'string' },
+                    updatedAt: { type: 'string' }
                   }
                 },
                 accessToken: { type: 'string' },
@@ -71,57 +75,98 @@ export async function authRoutes(fastify: FastifyInstance) {
     }
   }, async (request: FastifyRequest<{ Body: LoginBody }>, reply: FastifyReply) => {
     try {
-      const { username, password, rememberMe } = request.body
+      const { email, password, rememberMe } = request.body
 
-      // 模拟用户验证
-      if (username === 'admin' && password === 'admin123') {
-        const user = {
-          id: '1',
-          username: 'admin',
-          email: 'admin@example.com',
-          role: 'admin',
-          lastLogin: new Date().toISOString()
-        }
-
-        const accessToken = fastify.jwt.sign(
-          { 
-            userId: user.id, 
-            username: user.username, 
-            role: user.role 
-          },
-          { 
-            expiresIn: rememberMe ? '7d' : '1d' 
-          }
-        )
-
-        const refreshToken = fastify.jwt.sign(
-          { 
-            userId: user.id, 
-            type: 'refresh' 
-          },
-          { 
-            expiresIn: '30d' 
-          }
-        )
-
-        logger.info(`User ${username} logged in successfully`)
-
-        return reply.send({
-          success: true,
-          message: '登录成功',
-          data: {
-            user,
-            accessToken,
-            refreshToken,
-            expiresIn: rememberMe ? 7 * 24 * 60 * 60 : 24 * 60 * 60 // seconds
-          }
+      // 验证邮箱格式
+      if (!userService.validateEmailFormat(email)) {
+        return reply.status(400).send({
+          success: false,
+          message: '邮箱格式不正确',
+          code: 'INVALID_EMAIL_FORMAT'
         })
       }
 
-      return reply.status(401).send({
-        success: false,
-        message: '用户名或密码错误',
-        code: 'INVALID_CREDENTIALS'
+      // 查找用户
+      const user = await userService.findUserByEmail(email)
+      if (!user) {
+        return reply.status(401).send({
+          success: false,
+          message: '邮箱或密码错误',
+          code: 'INVALID_CREDENTIALS'
+        })
+      }
+
+      // 检查用户是否激活
+      if (!user.isActive) {
+        return reply.status(401).send({
+          success: false,
+          message: '账户已被禁用',
+          code: 'ACCOUNT_DISABLED'
+        })
+      }
+
+      // 验证密码
+      const isPasswordValid = await userService.validatePassword(user, password)
+      if (!isPasswordValid) {
+        return reply.status(401).send({
+          success: false,
+          message: '邮箱或密码错误',
+          code: 'INVALID_CREDENTIALS'
+        })
+      }
+
+      // 更新最后登录时间
+      await userService.updateLastLogin(user.id)
+
+      // 生成JWT令牌
+      const accessToken = fastify.jwt.sign(
+        { 
+          userId: user.id,
+          uuid: user.uuid, 
+          username: user.username,
+          email: user.email,
+          role: user.role 
+        },
+        { 
+          expiresIn: rememberMe ? '7d' : '1d' 
+        }
+      )
+
+      const refreshToken = fastify.jwt.sign(
+        { 
+          userId: user.id,
+          uuid: user.uuid,
+          type: 'refresh' 
+        },
+        { 
+          expiresIn: '30d' 
+        }
+      )
+
+      // 返回用户信息（不包含密码）
+      const userResponse: UserResponse = {
+        id: user.id,
+        uuid: user.uuid,
+        email: user.email,
+        username: user.username,
+        avatar: user.avatar,
+        role: user.role,
+        isActive: user.isActive,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt
+      }
+
+      logger.info(`User ${user.username} (${email}) logged in successfully`)
+
+      return reply.send({
+        success: true,
+        message: '登录成功',
+        data: {
+          user: userResponse,
+          accessToken,
+          refreshToken,
+          expiresIn: rememberMe ? 7 * 24 * 60 * 60 : 24 * 60 * 60 // seconds
+        }
       })
     } catch (error) {
       logger.error('Login error:', error)
@@ -140,12 +185,11 @@ export async function authRoutes(fastify: FastifyInstance) {
       tags: ['认证'],
       body: {
         type: 'object',
-        required: ['username', 'email', 'password', 'confirmPassword'],
+        required: ['username', 'email', 'password'],
         properties: {
-          username: { type: 'string', minLength: 3, maxLength: 50 },
+          username: { type: 'string', minLength: 2, maxLength: 50 },
           email: { type: 'string', format: 'email' },
-          password: { type: 'string', minLength: 6, maxLength: 100 },
-          confirmPassword: { type: 'string', minLength: 6, maxLength: 100 }
+          password: { type: 'string', minLength: 6, maxLength: 100 }
         }
       },
       response: {
@@ -161,10 +205,14 @@ export async function authRoutes(fastify: FastifyInstance) {
                   type: 'object',
                   properties: {
                     id: { type: 'string' },
+                    uuid: { type: 'string' },
                     username: { type: 'string' },
                     email: { type: 'string' },
+                    avatar: { type: 'string' },
                     role: { type: 'string' },
-                    createdAt: { type: 'string' }
+                    isActive: { type: 'boolean' },
+                    createdAt: { type: 'string' },
+                    updatedAt: { type: 'string' }
                   }
                 }
               }
@@ -175,27 +223,65 @@ export async function authRoutes(fastify: FastifyInstance) {
     }
   }, async (request: FastifyRequest<{ Body: RegisterBody }>, reply: FastifyReply) => {
     try {
-      const { username, email, password, confirmPassword } = request.body
+      const { username, email, password } = request.body
 
-      // 验证密码确认
-      if (password !== confirmPassword) {
+      // 验证邮箱格式
+      if (!userService.validateEmailFormat(email)) {
         return reply.status(400).send({
           success: false,
-          message: '密码确认不匹配',
-          code: 'PASSWORD_MISMATCH'
+          message: '邮箱格式不正确',
+          code: 'INVALID_EMAIL_FORMAT'
         })
       }
 
-      // 模拟用户创建
-      const user = {
-        id: Date.now().toString(),
-        username,
-        email,
-        role: 'user',
-        createdAt: new Date().toISOString()
+      // 验证用户名格式
+      const usernameValidation = userService.validateUsernameFormat(username)
+      if (!usernameValidation.isValid) {
+        return reply.status(400).send({
+          success: false,
+          message: usernameValidation.message,
+          code: 'INVALID_USERNAME_FORMAT'
+        })
       }
 
-      logger.info(`New user registered: ${username}`)
+      // 验证密码强度
+      const passwordValidation = userService.validatePasswordStrength(password)
+      if (!passwordValidation.isValid) {
+        return reply.status(400).send({
+          success: false,
+          message: passwordValidation.message,
+          code: 'WEAK_PASSWORD'
+        })
+      }
+
+      // 检查邮箱是否已存在
+      const emailExists = await userService.isEmailExists(email)
+      if (emailExists) {
+        return reply.status(409).send({
+          success: false,
+          message: '该邮箱已被注册',
+          code: 'EMAIL_EXISTS'
+        })
+      }
+
+      // 检查用户名是否已存在
+      const usernameExists = await userService.isUsernameExists(username)
+      if (usernameExists) {
+        return reply.status(409).send({
+          success: false,
+          message: '该用户名已被使用',
+          code: 'USERNAME_EXISTS'
+        })
+      }
+
+      // 创建用户
+      const user = await userService.createUser({
+        email,
+        username,
+        password
+      })
+
+      logger.info(`New user registered: ${username} (${email})`)
 
       return reply.status(201).send({
         success: true,
@@ -204,9 +290,28 @@ export async function authRoutes(fastify: FastifyInstance) {
       })
     } catch (error) {
       logger.error('Register error:', error)
+      
+      // 处理已知错误
+      if (error instanceof Error) {
+        if (error.message.includes('该邮箱已被注册')) {
+          return reply.status(409).send({
+            success: false,
+            message: error.message,
+            code: 'EMAIL_EXISTS'
+          })
+        }
+        if (error.message.includes('该用户名已被使用')) {
+          return reply.status(409).send({
+            success: false,
+            message: error.message,
+            code: 'USERNAME_EXISTS'
+          })
+        }
+      }
+
       return reply.status(500).send({
         success: false,
-        message: '注册失败',
+        message: '注册失败，请稍后重试',
         code: 'REGISTER_ERROR'
       })
     }

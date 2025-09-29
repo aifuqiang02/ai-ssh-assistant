@@ -29,206 +29,15 @@ export type SSHConnection = $Result.DefaultSelection<Prisma.$SSHConnectionPayloa
  */
 export type ChatSession = $Result.DefaultSelection<Prisma.$ChatSessionPayload>
 /**
- * Model Topic
- * 
- */
-export type Topic = $Result.DefaultSelection<Prisma.$TopicPayload>
-/**
  * Model Message
  * 
  */
 export type Message = $Result.DefaultSelection<Prisma.$MessagePayload>
 /**
- * Model MessageFile
- * 
- */
-export type MessageFile = $Result.DefaultSelection<Prisma.$MessageFilePayload>
-/**
- * Model File
- * 
- */
-export type File = $Result.DefaultSelection<Prisma.$FilePayload>
-/**
  * Model CommandLog
  * 
  */
 export type CommandLog = $Result.DefaultSelection<Prisma.$CommandLogPayload>
-/**
- * Model UsageStats
- * 
- */
-export type UsageStats = $Result.DefaultSelection<Prisma.$UsageStatsPayload>
-/**
- * Model ApiKey
- * 
- */
-export type ApiKey = $Result.DefaultSelection<Prisma.$ApiKeyPayload>
-/**
- * Model SystemConfig
- * 
- */
-export type SystemConfig = $Result.DefaultSelection<Prisma.$SystemConfigPayload>
-/**
- * Model SessionGroup
- * 
- */
-export type SessionGroup = $Result.DefaultSelection<Prisma.$SessionGroupPayload>
-/**
- * Model Plugin
- * 
- */
-export type Plugin = $Result.DefaultSelection<Prisma.$PluginPayload>
-/**
- * Model KnowledgeBase
- * 
- */
-export type KnowledgeBase = $Result.DefaultSelection<Prisma.$KnowledgeBasePayload>
-/**
- * Model KnowledgeDocument
- * 
- */
-export type KnowledgeDocument = $Result.DefaultSelection<Prisma.$KnowledgeDocumentPayload>
-
-/**
- * Enums
- */
-export namespace $Enums {
-  export const UserRole: {
-  USER: 'USER',
-  ADMIN: 'ADMIN',
-  PREMIUM: 'PREMIUM'
-};
-
-export type UserRole = (typeof UserRole)[keyof typeof UserRole]
-
-
-export const SSHAuthType: {
-  PASSWORD: 'PASSWORD',
-  PRIVATE_KEY: 'PRIVATE_KEY',
-  SSH_AGENT: 'SSH_AGENT'
-};
-
-export type SSHAuthType = (typeof SSHAuthType)[keyof typeof SSHAuthType]
-
-
-export const ConnectionStatus: {
-  CONNECTED: 'CONNECTED',
-  DISCONNECTED: 'DISCONNECTED',
-  CONNECTING: 'CONNECTING',
-  ERROR: 'ERROR'
-};
-
-export type ConnectionStatus = (typeof ConnectionStatus)[keyof typeof ConnectionStatus]
-
-
-export const SessionType: {
-  CHAT: 'CHAT',
-  SSH: 'SSH',
-  MIXED: 'MIXED'
-};
-
-export type SessionType = (typeof SessionType)[keyof typeof SessionType]
-
-
-export const MessageRole: {
-  USER: 'USER',
-  ASSISTANT: 'ASSISTANT',
-  SYSTEM: 'SYSTEM',
-  FUNCTION: 'FUNCTION',
-  TOOL: 'TOOL'
-};
-
-export type MessageRole = (typeof MessageRole)[keyof typeof MessageRole]
-
-
-export const SafetyLevel: {
-  SAFE: 'SAFE',
-  CAUTION: 'CAUTION',
-  DANGEROUS: 'DANGEROUS'
-};
-
-export type SafetyLevel = (typeof SafetyLevel)[keyof typeof SafetyLevel]
-
-
-export const ApiKeyType: {
-  PERSONAL: 'PERSONAL',
-  SERVICE: 'SERVICE',
-  TEMPORARY: 'TEMPORARY'
-};
-
-export type ApiKeyType = (typeof ApiKeyType)[keyof typeof ApiKeyType]
-
-
-export const ConfigType: {
-  STRING: 'STRING',
-  NUMBER: 'NUMBER',
-  BOOLEAN: 'BOOLEAN',
-  JSON: 'JSON',
-  ARRAY: 'ARRAY'
-};
-
-export type ConfigType = (typeof ConfigType)[keyof typeof ConfigType]
-
-
-export const KnowledgeType: {
-  DOCUMENT: 'DOCUMENT',
-  FAQ: 'FAQ',
-  COMMAND: 'COMMAND',
-  SCRIPT: 'SCRIPT'
-};
-
-export type KnowledgeType = (typeof KnowledgeType)[keyof typeof KnowledgeType]
-
-
-export const DocumentStatus: {
-  ACTIVE: 'ACTIVE',
-  ARCHIVED: 'ARCHIVED',
-  DELETED: 'DELETED'
-};
-
-export type DocumentStatus = (typeof DocumentStatus)[keyof typeof DocumentStatus]
-
-}
-
-export type UserRole = $Enums.UserRole
-
-export const UserRole: typeof $Enums.UserRole
-
-export type SSHAuthType = $Enums.SSHAuthType
-
-export const SSHAuthType: typeof $Enums.SSHAuthType
-
-export type ConnectionStatus = $Enums.ConnectionStatus
-
-export const ConnectionStatus: typeof $Enums.ConnectionStatus
-
-export type SessionType = $Enums.SessionType
-
-export const SessionType: typeof $Enums.SessionType
-
-export type MessageRole = $Enums.MessageRole
-
-export const MessageRole: typeof $Enums.MessageRole
-
-export type SafetyLevel = $Enums.SafetyLevel
-
-export const SafetyLevel: typeof $Enums.SafetyLevel
-
-export type ApiKeyType = $Enums.ApiKeyType
-
-export const ApiKeyType: typeof $Enums.ApiKeyType
-
-export type ConfigType = $Enums.ConfigType
-
-export const ConfigType: typeof $Enums.ConfigType
-
-export type KnowledgeType = $Enums.KnowledgeType
-
-export const KnowledgeType: typeof $Enums.KnowledgeType
-
-export type DocumentStatus = $Enums.DocumentStatus
-
-export const DocumentStatus: typeof $Enums.DocumentStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -384,16 +193,6 @@ export class PrismaClient<
   get chatSession(): Prisma.ChatSessionDelegate<ExtArgs>;
 
   /**
-   * `prisma.topic`: Exposes CRUD operations for the **Topic** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more Topics
-    * const topics = await prisma.topic.findMany()
-    * ```
-    */
-  get topic(): Prisma.TopicDelegate<ExtArgs>;
-
-  /**
    * `prisma.message`: Exposes CRUD operations for the **Message** model.
     * Example usage:
     * ```ts
@@ -404,26 +203,6 @@ export class PrismaClient<
   get message(): Prisma.MessageDelegate<ExtArgs>;
 
   /**
-   * `prisma.messageFile`: Exposes CRUD operations for the **MessageFile** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more MessageFiles
-    * const messageFiles = await prisma.messageFile.findMany()
-    * ```
-    */
-  get messageFile(): Prisma.MessageFileDelegate<ExtArgs>;
-
-  /**
-   * `prisma.file`: Exposes CRUD operations for the **File** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more Files
-    * const files = await prisma.file.findMany()
-    * ```
-    */
-  get file(): Prisma.FileDelegate<ExtArgs>;
-
-  /**
    * `prisma.commandLog`: Exposes CRUD operations for the **CommandLog** model.
     * Example usage:
     * ```ts
@@ -432,76 +211,6 @@ export class PrismaClient<
     * ```
     */
   get commandLog(): Prisma.CommandLogDelegate<ExtArgs>;
-
-  /**
-   * `prisma.usageStats`: Exposes CRUD operations for the **UsageStats** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more UsageStats
-    * const usageStats = await prisma.usageStats.findMany()
-    * ```
-    */
-  get usageStats(): Prisma.UsageStatsDelegate<ExtArgs>;
-
-  /**
-   * `prisma.apiKey`: Exposes CRUD operations for the **ApiKey** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more ApiKeys
-    * const apiKeys = await prisma.apiKey.findMany()
-    * ```
-    */
-  get apiKey(): Prisma.ApiKeyDelegate<ExtArgs>;
-
-  /**
-   * `prisma.systemConfig`: Exposes CRUD operations for the **SystemConfig** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more SystemConfigs
-    * const systemConfigs = await prisma.systemConfig.findMany()
-    * ```
-    */
-  get systemConfig(): Prisma.SystemConfigDelegate<ExtArgs>;
-
-  /**
-   * `prisma.sessionGroup`: Exposes CRUD operations for the **SessionGroup** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more SessionGroups
-    * const sessionGroups = await prisma.sessionGroup.findMany()
-    * ```
-    */
-  get sessionGroup(): Prisma.SessionGroupDelegate<ExtArgs>;
-
-  /**
-   * `prisma.plugin`: Exposes CRUD operations for the **Plugin** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more Plugins
-    * const plugins = await prisma.plugin.findMany()
-    * ```
-    */
-  get plugin(): Prisma.PluginDelegate<ExtArgs>;
-
-  /**
-   * `prisma.knowledgeBase`: Exposes CRUD operations for the **KnowledgeBase** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more KnowledgeBases
-    * const knowledgeBases = await prisma.knowledgeBase.findMany()
-    * ```
-    */
-  get knowledgeBase(): Prisma.KnowledgeBaseDelegate<ExtArgs>;
-
-  /**
-   * `prisma.knowledgeDocument`: Exposes CRUD operations for the **KnowledgeDocument** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more KnowledgeDocuments
-    * const knowledgeDocuments = await prisma.knowledgeDocument.findMany()
-    * ```
-    */
-  get knowledgeDocument(): Prisma.KnowledgeDocumentDelegate<ExtArgs>;
 }
 
 export namespace Prisma {
@@ -946,18 +655,8 @@ export namespace Prisma {
     User: 'User',
     SSHConnection: 'SSHConnection',
     ChatSession: 'ChatSession',
-    Topic: 'Topic',
     Message: 'Message',
-    MessageFile: 'MessageFile',
-    File: 'File',
-    CommandLog: 'CommandLog',
-    UsageStats: 'UsageStats',
-    ApiKey: 'ApiKey',
-    SystemConfig: 'SystemConfig',
-    SessionGroup: 'SessionGroup',
-    Plugin: 'Plugin',
-    KnowledgeBase: 'KnowledgeBase',
-    KnowledgeDocument: 'KnowledgeDocument'
+    CommandLog: 'CommandLog'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -973,7 +672,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "user" | "sSHConnection" | "chatSession" | "topic" | "message" | "messageFile" | "file" | "commandLog" | "usageStats" | "apiKey" | "systemConfig" | "sessionGroup" | "plugin" | "knowledgeBase" | "knowledgeDocument"
+      modelProps: "user" | "sSHConnection" | "chatSession" | "message" | "commandLog"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1187,76 +886,6 @@ export namespace Prisma {
           }
         }
       }
-      Topic: {
-        payload: Prisma.$TopicPayload<ExtArgs>
-        fields: Prisma.TopicFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.TopicFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$TopicPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.TopicFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$TopicPayload>
-          }
-          findFirst: {
-            args: Prisma.TopicFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$TopicPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.TopicFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$TopicPayload>
-          }
-          findMany: {
-            args: Prisma.TopicFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$TopicPayload>[]
-          }
-          create: {
-            args: Prisma.TopicCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$TopicPayload>
-          }
-          createMany: {
-            args: Prisma.TopicCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.TopicCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$TopicPayload>[]
-          }
-          delete: {
-            args: Prisma.TopicDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$TopicPayload>
-          }
-          update: {
-            args: Prisma.TopicUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$TopicPayload>
-          }
-          deleteMany: {
-            args: Prisma.TopicDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.TopicUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          upsert: {
-            args: Prisma.TopicUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$TopicPayload>
-          }
-          aggregate: {
-            args: Prisma.TopicAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateTopic>
-          }
-          groupBy: {
-            args: Prisma.TopicGroupByArgs<ExtArgs>
-            result: $Utils.Optional<TopicGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.TopicCountArgs<ExtArgs>
-            result: $Utils.Optional<TopicCountAggregateOutputType> | number
-          }
-        }
-      }
       Message: {
         payload: Prisma.$MessagePayload<ExtArgs>
         fields: Prisma.MessageFieldRefs
@@ -1327,146 +956,6 @@ export namespace Prisma {
           }
         }
       }
-      MessageFile: {
-        payload: Prisma.$MessageFilePayload<ExtArgs>
-        fields: Prisma.MessageFileFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.MessageFileFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$MessageFilePayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.MessageFileFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$MessageFilePayload>
-          }
-          findFirst: {
-            args: Prisma.MessageFileFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$MessageFilePayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.MessageFileFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$MessageFilePayload>
-          }
-          findMany: {
-            args: Prisma.MessageFileFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$MessageFilePayload>[]
-          }
-          create: {
-            args: Prisma.MessageFileCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$MessageFilePayload>
-          }
-          createMany: {
-            args: Prisma.MessageFileCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.MessageFileCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$MessageFilePayload>[]
-          }
-          delete: {
-            args: Prisma.MessageFileDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$MessageFilePayload>
-          }
-          update: {
-            args: Prisma.MessageFileUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$MessageFilePayload>
-          }
-          deleteMany: {
-            args: Prisma.MessageFileDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.MessageFileUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          upsert: {
-            args: Prisma.MessageFileUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$MessageFilePayload>
-          }
-          aggregate: {
-            args: Prisma.MessageFileAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateMessageFile>
-          }
-          groupBy: {
-            args: Prisma.MessageFileGroupByArgs<ExtArgs>
-            result: $Utils.Optional<MessageFileGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.MessageFileCountArgs<ExtArgs>
-            result: $Utils.Optional<MessageFileCountAggregateOutputType> | number
-          }
-        }
-      }
-      File: {
-        payload: Prisma.$FilePayload<ExtArgs>
-        fields: Prisma.FileFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.FileFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$FilePayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.FileFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$FilePayload>
-          }
-          findFirst: {
-            args: Prisma.FileFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$FilePayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.FileFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$FilePayload>
-          }
-          findMany: {
-            args: Prisma.FileFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$FilePayload>[]
-          }
-          create: {
-            args: Prisma.FileCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$FilePayload>
-          }
-          createMany: {
-            args: Prisma.FileCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.FileCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$FilePayload>[]
-          }
-          delete: {
-            args: Prisma.FileDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$FilePayload>
-          }
-          update: {
-            args: Prisma.FileUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$FilePayload>
-          }
-          deleteMany: {
-            args: Prisma.FileDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.FileUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          upsert: {
-            args: Prisma.FileUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$FilePayload>
-          }
-          aggregate: {
-            args: Prisma.FileAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateFile>
-          }
-          groupBy: {
-            args: Prisma.FileGroupByArgs<ExtArgs>
-            result: $Utils.Optional<FileGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.FileCountArgs<ExtArgs>
-            result: $Utils.Optional<FileCountAggregateOutputType> | number
-          }
-        }
-      }
       CommandLog: {
         payload: Prisma.$CommandLogPayload<ExtArgs>
         fields: Prisma.CommandLogFieldRefs
@@ -1534,496 +1023,6 @@ export namespace Prisma {
           count: {
             args: Prisma.CommandLogCountArgs<ExtArgs>
             result: $Utils.Optional<CommandLogCountAggregateOutputType> | number
-          }
-        }
-      }
-      UsageStats: {
-        payload: Prisma.$UsageStatsPayload<ExtArgs>
-        fields: Prisma.UsageStatsFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.UsageStatsFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UsageStatsPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.UsageStatsFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UsageStatsPayload>
-          }
-          findFirst: {
-            args: Prisma.UsageStatsFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UsageStatsPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.UsageStatsFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UsageStatsPayload>
-          }
-          findMany: {
-            args: Prisma.UsageStatsFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UsageStatsPayload>[]
-          }
-          create: {
-            args: Prisma.UsageStatsCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UsageStatsPayload>
-          }
-          createMany: {
-            args: Prisma.UsageStatsCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.UsageStatsCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UsageStatsPayload>[]
-          }
-          delete: {
-            args: Prisma.UsageStatsDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UsageStatsPayload>
-          }
-          update: {
-            args: Prisma.UsageStatsUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UsageStatsPayload>
-          }
-          deleteMany: {
-            args: Prisma.UsageStatsDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.UsageStatsUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          upsert: {
-            args: Prisma.UsageStatsUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UsageStatsPayload>
-          }
-          aggregate: {
-            args: Prisma.UsageStatsAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateUsageStats>
-          }
-          groupBy: {
-            args: Prisma.UsageStatsGroupByArgs<ExtArgs>
-            result: $Utils.Optional<UsageStatsGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.UsageStatsCountArgs<ExtArgs>
-            result: $Utils.Optional<UsageStatsCountAggregateOutputType> | number
-          }
-        }
-      }
-      ApiKey: {
-        payload: Prisma.$ApiKeyPayload<ExtArgs>
-        fields: Prisma.ApiKeyFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.ApiKeyFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ApiKeyPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.ApiKeyFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ApiKeyPayload>
-          }
-          findFirst: {
-            args: Prisma.ApiKeyFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ApiKeyPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.ApiKeyFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ApiKeyPayload>
-          }
-          findMany: {
-            args: Prisma.ApiKeyFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ApiKeyPayload>[]
-          }
-          create: {
-            args: Prisma.ApiKeyCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ApiKeyPayload>
-          }
-          createMany: {
-            args: Prisma.ApiKeyCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.ApiKeyCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ApiKeyPayload>[]
-          }
-          delete: {
-            args: Prisma.ApiKeyDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ApiKeyPayload>
-          }
-          update: {
-            args: Prisma.ApiKeyUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ApiKeyPayload>
-          }
-          deleteMany: {
-            args: Prisma.ApiKeyDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.ApiKeyUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          upsert: {
-            args: Prisma.ApiKeyUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ApiKeyPayload>
-          }
-          aggregate: {
-            args: Prisma.ApiKeyAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateApiKey>
-          }
-          groupBy: {
-            args: Prisma.ApiKeyGroupByArgs<ExtArgs>
-            result: $Utils.Optional<ApiKeyGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.ApiKeyCountArgs<ExtArgs>
-            result: $Utils.Optional<ApiKeyCountAggregateOutputType> | number
-          }
-        }
-      }
-      SystemConfig: {
-        payload: Prisma.$SystemConfigPayload<ExtArgs>
-        fields: Prisma.SystemConfigFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.SystemConfigFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SystemConfigPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.SystemConfigFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SystemConfigPayload>
-          }
-          findFirst: {
-            args: Prisma.SystemConfigFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SystemConfigPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.SystemConfigFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SystemConfigPayload>
-          }
-          findMany: {
-            args: Prisma.SystemConfigFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SystemConfigPayload>[]
-          }
-          create: {
-            args: Prisma.SystemConfigCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SystemConfigPayload>
-          }
-          createMany: {
-            args: Prisma.SystemConfigCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.SystemConfigCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SystemConfigPayload>[]
-          }
-          delete: {
-            args: Prisma.SystemConfigDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SystemConfigPayload>
-          }
-          update: {
-            args: Prisma.SystemConfigUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SystemConfigPayload>
-          }
-          deleteMany: {
-            args: Prisma.SystemConfigDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.SystemConfigUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          upsert: {
-            args: Prisma.SystemConfigUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SystemConfigPayload>
-          }
-          aggregate: {
-            args: Prisma.SystemConfigAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateSystemConfig>
-          }
-          groupBy: {
-            args: Prisma.SystemConfigGroupByArgs<ExtArgs>
-            result: $Utils.Optional<SystemConfigGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.SystemConfigCountArgs<ExtArgs>
-            result: $Utils.Optional<SystemConfigCountAggregateOutputType> | number
-          }
-        }
-      }
-      SessionGroup: {
-        payload: Prisma.$SessionGroupPayload<ExtArgs>
-        fields: Prisma.SessionGroupFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.SessionGroupFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SessionGroupPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.SessionGroupFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SessionGroupPayload>
-          }
-          findFirst: {
-            args: Prisma.SessionGroupFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SessionGroupPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.SessionGroupFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SessionGroupPayload>
-          }
-          findMany: {
-            args: Prisma.SessionGroupFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SessionGroupPayload>[]
-          }
-          create: {
-            args: Prisma.SessionGroupCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SessionGroupPayload>
-          }
-          createMany: {
-            args: Prisma.SessionGroupCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.SessionGroupCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SessionGroupPayload>[]
-          }
-          delete: {
-            args: Prisma.SessionGroupDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SessionGroupPayload>
-          }
-          update: {
-            args: Prisma.SessionGroupUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SessionGroupPayload>
-          }
-          deleteMany: {
-            args: Prisma.SessionGroupDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.SessionGroupUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          upsert: {
-            args: Prisma.SessionGroupUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SessionGroupPayload>
-          }
-          aggregate: {
-            args: Prisma.SessionGroupAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateSessionGroup>
-          }
-          groupBy: {
-            args: Prisma.SessionGroupGroupByArgs<ExtArgs>
-            result: $Utils.Optional<SessionGroupGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.SessionGroupCountArgs<ExtArgs>
-            result: $Utils.Optional<SessionGroupCountAggregateOutputType> | number
-          }
-        }
-      }
-      Plugin: {
-        payload: Prisma.$PluginPayload<ExtArgs>
-        fields: Prisma.PluginFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.PluginFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PluginPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.PluginFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PluginPayload>
-          }
-          findFirst: {
-            args: Prisma.PluginFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PluginPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.PluginFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PluginPayload>
-          }
-          findMany: {
-            args: Prisma.PluginFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PluginPayload>[]
-          }
-          create: {
-            args: Prisma.PluginCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PluginPayload>
-          }
-          createMany: {
-            args: Prisma.PluginCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.PluginCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PluginPayload>[]
-          }
-          delete: {
-            args: Prisma.PluginDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PluginPayload>
-          }
-          update: {
-            args: Prisma.PluginUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PluginPayload>
-          }
-          deleteMany: {
-            args: Prisma.PluginDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.PluginUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          upsert: {
-            args: Prisma.PluginUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PluginPayload>
-          }
-          aggregate: {
-            args: Prisma.PluginAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregatePlugin>
-          }
-          groupBy: {
-            args: Prisma.PluginGroupByArgs<ExtArgs>
-            result: $Utils.Optional<PluginGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.PluginCountArgs<ExtArgs>
-            result: $Utils.Optional<PluginCountAggregateOutputType> | number
-          }
-        }
-      }
-      KnowledgeBase: {
-        payload: Prisma.$KnowledgeBasePayload<ExtArgs>
-        fields: Prisma.KnowledgeBaseFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.KnowledgeBaseFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$KnowledgeBasePayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.KnowledgeBaseFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$KnowledgeBasePayload>
-          }
-          findFirst: {
-            args: Prisma.KnowledgeBaseFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$KnowledgeBasePayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.KnowledgeBaseFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$KnowledgeBasePayload>
-          }
-          findMany: {
-            args: Prisma.KnowledgeBaseFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$KnowledgeBasePayload>[]
-          }
-          create: {
-            args: Prisma.KnowledgeBaseCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$KnowledgeBasePayload>
-          }
-          createMany: {
-            args: Prisma.KnowledgeBaseCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.KnowledgeBaseCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$KnowledgeBasePayload>[]
-          }
-          delete: {
-            args: Prisma.KnowledgeBaseDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$KnowledgeBasePayload>
-          }
-          update: {
-            args: Prisma.KnowledgeBaseUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$KnowledgeBasePayload>
-          }
-          deleteMany: {
-            args: Prisma.KnowledgeBaseDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.KnowledgeBaseUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          upsert: {
-            args: Prisma.KnowledgeBaseUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$KnowledgeBasePayload>
-          }
-          aggregate: {
-            args: Prisma.KnowledgeBaseAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateKnowledgeBase>
-          }
-          groupBy: {
-            args: Prisma.KnowledgeBaseGroupByArgs<ExtArgs>
-            result: $Utils.Optional<KnowledgeBaseGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.KnowledgeBaseCountArgs<ExtArgs>
-            result: $Utils.Optional<KnowledgeBaseCountAggregateOutputType> | number
-          }
-        }
-      }
-      KnowledgeDocument: {
-        payload: Prisma.$KnowledgeDocumentPayload<ExtArgs>
-        fields: Prisma.KnowledgeDocumentFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.KnowledgeDocumentFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$KnowledgeDocumentPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.KnowledgeDocumentFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$KnowledgeDocumentPayload>
-          }
-          findFirst: {
-            args: Prisma.KnowledgeDocumentFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$KnowledgeDocumentPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.KnowledgeDocumentFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$KnowledgeDocumentPayload>
-          }
-          findMany: {
-            args: Prisma.KnowledgeDocumentFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$KnowledgeDocumentPayload>[]
-          }
-          create: {
-            args: Prisma.KnowledgeDocumentCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$KnowledgeDocumentPayload>
-          }
-          createMany: {
-            args: Prisma.KnowledgeDocumentCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.KnowledgeDocumentCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$KnowledgeDocumentPayload>[]
-          }
-          delete: {
-            args: Prisma.KnowledgeDocumentDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$KnowledgeDocumentPayload>
-          }
-          update: {
-            args: Prisma.KnowledgeDocumentUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$KnowledgeDocumentPayload>
-          }
-          deleteMany: {
-            args: Prisma.KnowledgeDocumentDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.KnowledgeDocumentUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          upsert: {
-            args: Prisma.KnowledgeDocumentUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$KnowledgeDocumentPayload>
-          }
-          aggregate: {
-            args: Prisma.KnowledgeDocumentAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateKnowledgeDocument>
-          }
-          groupBy: {
-            args: Prisma.KnowledgeDocumentGroupByArgs<ExtArgs>
-            result: $Utils.Optional<KnowledgeDocumentGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.KnowledgeDocumentCountArgs<ExtArgs>
-            result: $Utils.Optional<KnowledgeDocumentCountAggregateOutputType> | number
           }
         }
       }
@@ -2192,12 +1191,6 @@ export namespace Prisma {
     chatSessions: number
     messages: number
     commandLogs: number
-    usageStats: number
-    apiKeys: number
-    sessionGroups: number
-    plugins: number
-    knowledgeBases: number
-    files: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2205,12 +1198,6 @@ export namespace Prisma {
     chatSessions?: boolean | UserCountOutputTypeCountChatSessionsArgs
     messages?: boolean | UserCountOutputTypeCountMessagesArgs
     commandLogs?: boolean | UserCountOutputTypeCountCommandLogsArgs
-    usageStats?: boolean | UserCountOutputTypeCountUsageStatsArgs
-    apiKeys?: boolean | UserCountOutputTypeCountApiKeysArgs
-    sessionGroups?: boolean | UserCountOutputTypeCountSessionGroupsArgs
-    plugins?: boolean | UserCountOutputTypeCountPluginsArgs
-    knowledgeBases?: boolean | UserCountOutputTypeCountKnowledgeBasesArgs
-    files?: boolean | UserCountOutputTypeCountFilesArgs
   }
 
   // Custom InputTypes
@@ -2252,58 +1239,18 @@ export namespace Prisma {
     where?: CommandLogWhereInput
   }
 
-  /**
-   * UserCountOutputType without action
-   */
-  export type UserCountOutputTypeCountUsageStatsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: UsageStatsWhereInput
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
-  export type UserCountOutputTypeCountApiKeysArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: ApiKeyWhereInput
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
-  export type UserCountOutputTypeCountSessionGroupsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: SessionGroupWhereInput
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
-  export type UserCountOutputTypeCountPluginsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: PluginWhereInput
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
-  export type UserCountOutputTypeCountKnowledgeBasesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: KnowledgeBaseWhereInput
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
-  export type UserCountOutputTypeCountFilesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: FileWhereInput
-  }
-
 
   /**
    * Count Type SSHConnectionCountOutputType
    */
 
   export type SSHConnectionCountOutputType = {
+    chatSessions: number
     commandLogs: number
   }
 
   export type SSHConnectionCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    chatSessions?: boolean | SSHConnectionCountOutputTypeCountChatSessionsArgs
     commandLogs?: boolean | SSHConnectionCountOutputTypeCountCommandLogsArgs
   }
 
@@ -2321,6 +1268,13 @@ export namespace Prisma {
   /**
    * SSHConnectionCountOutputType without action
    */
+  export type SSHConnectionCountOutputTypeCountChatSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ChatSessionWhereInput
+  }
+
+  /**
+   * SSHConnectionCountOutputType without action
+   */
   export type SSHConnectionCountOutputTypeCountCommandLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: CommandLogWhereInput
   }
@@ -2332,12 +1286,10 @@ export namespace Prisma {
 
   export type ChatSessionCountOutputType = {
     messages: number
-    topics: number
   }
 
   export type ChatSessionCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     messages?: boolean | ChatSessionCountOutputTypeCountMessagesArgs
-    topics?: boolean | ChatSessionCountOutputTypeCountTopicsArgs
   }
 
   // Custom InputTypes
@@ -2356,137 +1308,6 @@ export namespace Prisma {
    */
   export type ChatSessionCountOutputTypeCountMessagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: MessageWhereInput
-  }
-
-  /**
-   * ChatSessionCountOutputType without action
-   */
-  export type ChatSessionCountOutputTypeCountTopicsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: TopicWhereInput
-  }
-
-
-  /**
-   * Count Type TopicCountOutputType
-   */
-
-  export type TopicCountOutputType = {
-    messages: number
-  }
-
-  export type TopicCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    messages?: boolean | TopicCountOutputTypeCountMessagesArgs
-  }
-
-  // Custom InputTypes
-  /**
-   * TopicCountOutputType without action
-   */
-  export type TopicCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the TopicCountOutputType
-     */
-    select?: TopicCountOutputTypeSelect<ExtArgs> | null
-  }
-
-  /**
-   * TopicCountOutputType without action
-   */
-  export type TopicCountOutputTypeCountMessagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: MessageWhereInput
-  }
-
-
-  /**
-   * Count Type MessageCountOutputType
-   */
-
-  export type MessageCountOutputType = {
-    files: number
-  }
-
-  export type MessageCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    files?: boolean | MessageCountOutputTypeCountFilesArgs
-  }
-
-  // Custom InputTypes
-  /**
-   * MessageCountOutputType without action
-   */
-  export type MessageCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the MessageCountOutputType
-     */
-    select?: MessageCountOutputTypeSelect<ExtArgs> | null
-  }
-
-  /**
-   * MessageCountOutputType without action
-   */
-  export type MessageCountOutputTypeCountFilesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: MessageFileWhereInput
-  }
-
-
-  /**
-   * Count Type FileCountOutputType
-   */
-
-  export type FileCountOutputType = {
-    messages: number
-  }
-
-  export type FileCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    messages?: boolean | FileCountOutputTypeCountMessagesArgs
-  }
-
-  // Custom InputTypes
-  /**
-   * FileCountOutputType without action
-   */
-  export type FileCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the FileCountOutputType
-     */
-    select?: FileCountOutputTypeSelect<ExtArgs> | null
-  }
-
-  /**
-   * FileCountOutputType without action
-   */
-  export type FileCountOutputTypeCountMessagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: MessageFileWhereInput
-  }
-
-
-  /**
-   * Count Type KnowledgeBaseCountOutputType
-   */
-
-  export type KnowledgeBaseCountOutputType = {
-    documents: number
-  }
-
-  export type KnowledgeBaseCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    documents?: boolean | KnowledgeBaseCountOutputTypeCountDocumentsArgs
-  }
-
-  // Custom InputTypes
-  /**
-   * KnowledgeBaseCountOutputType without action
-   */
-  export type KnowledgeBaseCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the KnowledgeBaseCountOutputType
-     */
-    select?: KnowledgeBaseCountOutputTypeSelect<ExtArgs> | null
-  }
-
-  /**
-   * KnowledgeBaseCountOutputType without action
-   */
-  export type KnowledgeBaseCountOutputTypeCountDocumentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: KnowledgeDocumentWhereInput
   }
 
 
@@ -2511,10 +1332,11 @@ export namespace Prisma {
     username: string | null
     password: string | null
     avatar: string | null
-    role: $Enums.UserRole | null
+    role: string | null
     isActive: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
+    settings: string | null
   }
 
   export type UserMaxAggregateOutputType = {
@@ -2524,10 +1346,11 @@ export namespace Prisma {
     username: string | null
     password: string | null
     avatar: string | null
-    role: $Enums.UserRole | null
+    role: string | null
     isActive: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
+    settings: string | null
   }
 
   export type UserCountAggregateOutputType = {
@@ -2557,6 +1380,7 @@ export namespace Prisma {
     isActive?: true
     createdAt?: true
     updatedAt?: true
+    settings?: true
   }
 
   export type UserMaxAggregateInputType = {
@@ -2570,6 +1394,7 @@ export namespace Prisma {
     isActive?: true
     createdAt?: true
     updatedAt?: true
+    settings?: true
   }
 
   export type UserCountAggregateInputType = {
@@ -2666,11 +1491,11 @@ export namespace Prisma {
     username: string | null
     password: string | null
     avatar: string | null
-    role: $Enums.UserRole
+    role: string
     isActive: boolean
     createdAt: Date
     updatedAt: Date
-    settings: JsonValue | null
+    settings: string | null
     _count: UserCountAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
@@ -2706,12 +1531,6 @@ export namespace Prisma {
     chatSessions?: boolean | User$chatSessionsArgs<ExtArgs>
     messages?: boolean | User$messagesArgs<ExtArgs>
     commandLogs?: boolean | User$commandLogsArgs<ExtArgs>
-    usageStats?: boolean | User$usageStatsArgs<ExtArgs>
-    apiKeys?: boolean | User$apiKeysArgs<ExtArgs>
-    sessionGroups?: boolean | User$sessionGroupsArgs<ExtArgs>
-    plugins?: boolean | User$pluginsArgs<ExtArgs>
-    knowledgeBases?: boolean | User$knowledgeBasesArgs<ExtArgs>
-    files?: boolean | User$filesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2748,12 +1567,6 @@ export namespace Prisma {
     chatSessions?: boolean | User$chatSessionsArgs<ExtArgs>
     messages?: boolean | User$messagesArgs<ExtArgs>
     commandLogs?: boolean | User$commandLogsArgs<ExtArgs>
-    usageStats?: boolean | User$usageStatsArgs<ExtArgs>
-    apiKeys?: boolean | User$apiKeysArgs<ExtArgs>
-    sessionGroups?: boolean | User$sessionGroupsArgs<ExtArgs>
-    plugins?: boolean | User$pluginsArgs<ExtArgs>
-    knowledgeBases?: boolean | User$knowledgeBasesArgs<ExtArgs>
-    files?: boolean | User$filesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2765,12 +1578,6 @@ export namespace Prisma {
       chatSessions: Prisma.$ChatSessionPayload<ExtArgs>[]
       messages: Prisma.$MessagePayload<ExtArgs>[]
       commandLogs: Prisma.$CommandLogPayload<ExtArgs>[]
-      usageStats: Prisma.$UsageStatsPayload<ExtArgs>[]
-      apiKeys: Prisma.$ApiKeyPayload<ExtArgs>[]
-      sessionGroups: Prisma.$SessionGroupPayload<ExtArgs>[]
-      plugins: Prisma.$PluginPayload<ExtArgs>[]
-      knowledgeBases: Prisma.$KnowledgeBasePayload<ExtArgs>[]
-      files: Prisma.$FilePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2779,11 +1586,11 @@ export namespace Prisma {
       username: string | null
       password: string | null
       avatar: string | null
-      role: $Enums.UserRole
+      role: string
       isActive: boolean
       createdAt: Date
       updatedAt: Date
-      settings: Prisma.JsonValue | null
+      settings: string | null
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -3152,12 +1959,6 @@ export namespace Prisma {
     chatSessions<T extends User$chatSessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$chatSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChatSessionPayload<ExtArgs>, T, "findMany"> | Null>
     messages<T extends User$messagesArgs<ExtArgs> = {}>(args?: Subset<T, User$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany"> | Null>
     commandLogs<T extends User$commandLogsArgs<ExtArgs> = {}>(args?: Subset<T, User$commandLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommandLogPayload<ExtArgs>, T, "findMany"> | Null>
-    usageStats<T extends User$usageStatsArgs<ExtArgs> = {}>(args?: Subset<T, User$usageStatsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UsageStatsPayload<ExtArgs>, T, "findMany"> | Null>
-    apiKeys<T extends User$apiKeysArgs<ExtArgs> = {}>(args?: Subset<T, User$apiKeysArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApiKeyPayload<ExtArgs>, T, "findMany"> | Null>
-    sessionGroups<T extends User$sessionGroupsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionGroupsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionGroupPayload<ExtArgs>, T, "findMany"> | Null>
-    plugins<T extends User$pluginsArgs<ExtArgs> = {}>(args?: Subset<T, User$pluginsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PluginPayload<ExtArgs>, T, "findMany"> | Null>
-    knowledgeBases<T extends User$knowledgeBasesArgs<ExtArgs> = {}>(args?: Subset<T, User$knowledgeBasesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$KnowledgeBasePayload<ExtArgs>, T, "findMany"> | Null>
-    files<T extends User$filesArgs<ExtArgs> = {}>(args?: Subset<T, User$filesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3193,11 +1994,11 @@ export namespace Prisma {
     readonly username: FieldRef<"User", 'String'>
     readonly password: FieldRef<"User", 'String'>
     readonly avatar: FieldRef<"User", 'String'>
-    readonly role: FieldRef<"User", 'UserRole'>
+    readonly role: FieldRef<"User", 'String'>
     readonly isActive: FieldRef<"User", 'Boolean'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
-    readonly settings: FieldRef<"User", 'Json'>
+    readonly settings: FieldRef<"User", 'String'>
   }
     
 
@@ -3403,7 +2204,6 @@ export namespace Prisma {
      * The data used to create many Users.
      */
     data: UserCreateManyInput | UserCreateManyInput[]
-    skipDuplicates?: boolean
   }
 
   /**
@@ -3418,7 +2218,6 @@ export namespace Prisma {
      * The data used to create many Users.
      */
     data: UserCreateManyInput | UserCreateManyInput[]
-    skipDuplicates?: boolean
   }
 
   /**
@@ -3592,126 +2391,6 @@ export namespace Prisma {
   }
 
   /**
-   * User.usageStats
-   */
-  export type User$usageStatsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the UsageStats
-     */
-    select?: UsageStatsSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: UsageStatsInclude<ExtArgs> | null
-    where?: UsageStatsWhereInput
-    orderBy?: UsageStatsOrderByWithRelationInput | UsageStatsOrderByWithRelationInput[]
-    cursor?: UsageStatsWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: UsageStatsScalarFieldEnum | UsageStatsScalarFieldEnum[]
-  }
-
-  /**
-   * User.apiKeys
-   */
-  export type User$apiKeysArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the ApiKey
-     */
-    select?: ApiKeySelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ApiKeyInclude<ExtArgs> | null
-    where?: ApiKeyWhereInput
-    orderBy?: ApiKeyOrderByWithRelationInput | ApiKeyOrderByWithRelationInput[]
-    cursor?: ApiKeyWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: ApiKeyScalarFieldEnum | ApiKeyScalarFieldEnum[]
-  }
-
-  /**
-   * User.sessionGroups
-   */
-  export type User$sessionGroupsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SessionGroup
-     */
-    select?: SessionGroupSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SessionGroupInclude<ExtArgs> | null
-    where?: SessionGroupWhereInput
-    orderBy?: SessionGroupOrderByWithRelationInput | SessionGroupOrderByWithRelationInput[]
-    cursor?: SessionGroupWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: SessionGroupScalarFieldEnum | SessionGroupScalarFieldEnum[]
-  }
-
-  /**
-   * User.plugins
-   */
-  export type User$pluginsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Plugin
-     */
-    select?: PluginSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PluginInclude<ExtArgs> | null
-    where?: PluginWhereInput
-    orderBy?: PluginOrderByWithRelationInput | PluginOrderByWithRelationInput[]
-    cursor?: PluginWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: PluginScalarFieldEnum | PluginScalarFieldEnum[]
-  }
-
-  /**
-   * User.knowledgeBases
-   */
-  export type User$knowledgeBasesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the KnowledgeBase
-     */
-    select?: KnowledgeBaseSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: KnowledgeBaseInclude<ExtArgs> | null
-    where?: KnowledgeBaseWhereInput
-    orderBy?: KnowledgeBaseOrderByWithRelationInput | KnowledgeBaseOrderByWithRelationInput[]
-    cursor?: KnowledgeBaseWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: KnowledgeBaseScalarFieldEnum | KnowledgeBaseScalarFieldEnum[]
-  }
-
-  /**
-   * User.files
-   */
-  export type User$filesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the File
-     */
-    select?: FileSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FileInclude<ExtArgs> | null
-    where?: FileWhereInput
-    orderBy?: FileOrderByWithRelationInput | FileOrderByWithRelationInput[]
-    cursor?: FileWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: FileScalarFieldEnum | FileScalarFieldEnum[]
-  }
-
-  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3752,14 +2431,17 @@ export namespace Prisma {
     host: string | null
     port: number | null
     username: string | null
-    authType: $Enums.SSHAuthType | null
+    authType: string | null
     password: string | null
     privateKey: string | null
+    publicKey: string | null
     passphrase: string | null
-    status: $Enums.ConnectionStatus | null
+    status: string | null
     lastUsed: Date | null
+    isActive: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
+    meta: string | null
     userId: string | null
   }
 
@@ -3769,14 +2451,17 @@ export namespace Prisma {
     host: string | null
     port: number | null
     username: string | null
-    authType: $Enums.SSHAuthType | null
+    authType: string | null
     password: string | null
     privateKey: string | null
+    publicKey: string | null
     passphrase: string | null
-    status: $Enums.ConnectionStatus | null
+    status: string | null
     lastUsed: Date | null
+    isActive: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
+    meta: string | null
     userId: string | null
   }
 
@@ -3789,9 +2474,11 @@ export namespace Prisma {
     authType: number
     password: number
     privateKey: number
+    publicKey: number
     passphrase: number
     status: number
     lastUsed: number
+    isActive: number
     createdAt: number
     updatedAt: number
     meta: number
@@ -3817,11 +2504,14 @@ export namespace Prisma {
     authType?: true
     password?: true
     privateKey?: true
+    publicKey?: true
     passphrase?: true
     status?: true
     lastUsed?: true
+    isActive?: true
     createdAt?: true
     updatedAt?: true
+    meta?: true
     userId?: true
   }
 
@@ -3834,11 +2524,14 @@ export namespace Prisma {
     authType?: true
     password?: true
     privateKey?: true
+    publicKey?: true
     passphrase?: true
     status?: true
     lastUsed?: true
+    isActive?: true
     createdAt?: true
     updatedAt?: true
+    meta?: true
     userId?: true
   }
 
@@ -3851,9 +2544,11 @@ export namespace Prisma {
     authType?: true
     password?: true
     privateKey?: true
+    publicKey?: true
     passphrase?: true
     status?: true
     lastUsed?: true
+    isActive?: true
     createdAt?: true
     updatedAt?: true
     meta?: true
@@ -3953,15 +2648,17 @@ export namespace Prisma {
     host: string
     port: number
     username: string
-    authType: $Enums.SSHAuthType
+    authType: string
     password: string | null
     privateKey: string | null
+    publicKey: string | null
     passphrase: string | null
-    status: $Enums.ConnectionStatus
+    status: string
     lastUsed: Date | null
+    isActive: boolean
     createdAt: Date
     updatedAt: Date
-    meta: JsonValue | null
+    meta: string | null
     userId: string
     _count: SSHConnectionCountAggregateOutputType | null
     _avg: SSHConnectionAvgAggregateOutputType | null
@@ -3993,14 +2690,17 @@ export namespace Prisma {
     authType?: boolean
     password?: boolean
     privateKey?: boolean
+    publicKey?: boolean
     passphrase?: boolean
     status?: boolean
     lastUsed?: boolean
+    isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     meta?: boolean
     userId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
+    chatSessions?: boolean | SSHConnection$chatSessionsArgs<ExtArgs>
     commandLogs?: boolean | SSHConnection$commandLogsArgs<ExtArgs>
     _count?: boolean | SSHConnectionCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["sSHConnection"]>
@@ -4014,9 +2714,11 @@ export namespace Prisma {
     authType?: boolean
     password?: boolean
     privateKey?: boolean
+    publicKey?: boolean
     passphrase?: boolean
     status?: boolean
     lastUsed?: boolean
+    isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     meta?: boolean
@@ -4033,9 +2735,11 @@ export namespace Prisma {
     authType?: boolean
     password?: boolean
     privateKey?: boolean
+    publicKey?: boolean
     passphrase?: boolean
     status?: boolean
     lastUsed?: boolean
+    isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     meta?: boolean
@@ -4044,6 +2748,7 @@ export namespace Prisma {
 
   export type SSHConnectionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
+    chatSessions?: boolean | SSHConnection$chatSessionsArgs<ExtArgs>
     commandLogs?: boolean | SSHConnection$commandLogsArgs<ExtArgs>
     _count?: boolean | SSHConnectionCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -4055,6 +2760,7 @@ export namespace Prisma {
     name: "SSHConnection"
     objects: {
       user: Prisma.$UserPayload<ExtArgs>
+      chatSessions: Prisma.$ChatSessionPayload<ExtArgs>[]
       commandLogs: Prisma.$CommandLogPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -4063,15 +2769,17 @@ export namespace Prisma {
       host: string
       port: number
       username: string
-      authType: $Enums.SSHAuthType
+      authType: string
       password: string | null
       privateKey: string | null
+      publicKey: string | null
       passphrase: string | null
-      status: $Enums.ConnectionStatus
+      status: string
       lastUsed: Date | null
+      isActive: boolean
       createdAt: Date
       updatedAt: Date
-      meta: Prisma.JsonValue | null
+      meta: string | null
       userId: string
     }, ExtArgs["result"]["sSHConnection"]>
     composites: {}
@@ -4438,6 +3146,7 @@ export namespace Prisma {
   export interface Prisma__SSHConnectionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    chatSessions<T extends SSHConnection$chatSessionsArgs<ExtArgs> = {}>(args?: Subset<T, SSHConnection$chatSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChatSessionPayload<ExtArgs>, T, "findMany"> | Null>
     commandLogs<T extends SSHConnection$commandLogsArgs<ExtArgs> = {}>(args?: Subset<T, SSHConnection$commandLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommandLogPayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -4473,15 +3182,17 @@ export namespace Prisma {
     readonly host: FieldRef<"SSHConnection", 'String'>
     readonly port: FieldRef<"SSHConnection", 'Int'>
     readonly username: FieldRef<"SSHConnection", 'String'>
-    readonly authType: FieldRef<"SSHConnection", 'SSHAuthType'>
+    readonly authType: FieldRef<"SSHConnection", 'String'>
     readonly password: FieldRef<"SSHConnection", 'String'>
     readonly privateKey: FieldRef<"SSHConnection", 'String'>
+    readonly publicKey: FieldRef<"SSHConnection", 'String'>
     readonly passphrase: FieldRef<"SSHConnection", 'String'>
-    readonly status: FieldRef<"SSHConnection", 'ConnectionStatus'>
+    readonly status: FieldRef<"SSHConnection", 'String'>
     readonly lastUsed: FieldRef<"SSHConnection", 'DateTime'>
+    readonly isActive: FieldRef<"SSHConnection", 'Boolean'>
     readonly createdAt: FieldRef<"SSHConnection", 'DateTime'>
     readonly updatedAt: FieldRef<"SSHConnection", 'DateTime'>
-    readonly meta: FieldRef<"SSHConnection", 'Json'>
+    readonly meta: FieldRef<"SSHConnection", 'String'>
     readonly userId: FieldRef<"SSHConnection", 'String'>
   }
     
@@ -4688,7 +3399,6 @@ export namespace Prisma {
      * The data used to create many SSHConnections.
      */
     data: SSHConnectionCreateManyInput | SSHConnectionCreateManyInput[]
-    skipDuplicates?: boolean
   }
 
   /**
@@ -4703,7 +3413,6 @@ export namespace Prisma {
      * The data used to create many SSHConnections.
      */
     data: SSHConnectionCreateManyInput | SSHConnectionCreateManyInput[]
-    skipDuplicates?: boolean
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -4801,6 +3510,26 @@ export namespace Prisma {
   }
 
   /**
+   * SSHConnection.chatSessions
+   */
+  export type SSHConnection$chatSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChatSession
+     */
+    select?: ChatSessionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChatSessionInclude<ExtArgs> | null
+    where?: ChatSessionWhereInput
+    orderBy?: ChatSessionOrderByWithRelationInput | ChatSessionOrderByWithRelationInput[]
+    cursor?: ChatSessionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ChatSessionScalarFieldEnum | ChatSessionScalarFieldEnum[]
+  }
+
+  /**
    * SSHConnection.commandLogs
    */
   export type SSHConnection$commandLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4848,42 +3577,37 @@ export namespace Prisma {
   export type ChatSessionMinAggregateOutputType = {
     id: string | null
     title: string | null
-    model: string | null
-    type: $Enums.SessionType | null
-    isActive: boolean | null
-    pinned: boolean | null
-    group: string | null
+    type: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    config: string | null
+    meta: string | null
     userId: string | null
+    sshConnectionId: string | null
   }
 
   export type ChatSessionMaxAggregateOutputType = {
     id: string | null
     title: string | null
-    model: string | null
-    type: $Enums.SessionType | null
-    isActive: boolean | null
-    pinned: boolean | null
-    group: string | null
+    type: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    config: string | null
+    meta: string | null
     userId: string | null
+    sshConnectionId: string | null
   }
 
   export type ChatSessionCountAggregateOutputType = {
     id: number
     title: number
-    model: number
     type: number
-    isActive: number
-    pinned: number
-    group: number
     createdAt: number
     updatedAt: number
     config: number
     meta: number
     userId: number
+    sshConnectionId: number
     _all: number
   }
 
@@ -4891,42 +3615,37 @@ export namespace Prisma {
   export type ChatSessionMinAggregateInputType = {
     id?: true
     title?: true
-    model?: true
     type?: true
-    isActive?: true
-    pinned?: true
-    group?: true
-    createdAt?: true
-    updatedAt?: true
-    userId?: true
-  }
-
-  export type ChatSessionMaxAggregateInputType = {
-    id?: true
-    title?: true
-    model?: true
-    type?: true
-    isActive?: true
-    pinned?: true
-    group?: true
-    createdAt?: true
-    updatedAt?: true
-    userId?: true
-  }
-
-  export type ChatSessionCountAggregateInputType = {
-    id?: true
-    title?: true
-    model?: true
-    type?: true
-    isActive?: true
-    pinned?: true
-    group?: true
     createdAt?: true
     updatedAt?: true
     config?: true
     meta?: true
     userId?: true
+    sshConnectionId?: true
+  }
+
+  export type ChatSessionMaxAggregateInputType = {
+    id?: true
+    title?: true
+    type?: true
+    createdAt?: true
+    updatedAt?: true
+    config?: true
+    meta?: true
+    userId?: true
+    sshConnectionId?: true
+  }
+
+  export type ChatSessionCountAggregateInputType = {
+    id?: true
+    title?: true
+    type?: true
+    createdAt?: true
+    updatedAt?: true
+    config?: true
+    meta?: true
+    userId?: true
+    sshConnectionId?: true
     _all?: true
   }
 
@@ -5004,17 +3723,14 @@ export namespace Prisma {
 
   export type ChatSessionGroupByOutputType = {
     id: string
-    title: string | null
-    model: string
-    type: $Enums.SessionType
-    isActive: boolean
-    pinned: boolean
-    group: string
+    title: string
+    type: string
     createdAt: Date
     updatedAt: Date
-    config: JsonValue | null
-    meta: JsonValue | null
+    config: string | null
+    meta: string | null
     userId: string
+    sshConnectionId: string | null
     _count: ChatSessionCountAggregateOutputType | null
     _min: ChatSessionMinAggregateOutputType | null
     _max: ChatSessionMaxAggregateOutputType | null
@@ -5037,83 +3753,73 @@ export namespace Prisma {
   export type ChatSessionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     title?: boolean
-    model?: boolean
     type?: boolean
-    isActive?: boolean
-    pinned?: boolean
-    group?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     config?: boolean
     meta?: boolean
     userId?: boolean
+    sshConnectionId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
+    sshConnection?: boolean | ChatSession$sshConnectionArgs<ExtArgs>
     messages?: boolean | ChatSession$messagesArgs<ExtArgs>
-    topics?: boolean | ChatSession$topicsArgs<ExtArgs>
     _count?: boolean | ChatSessionCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["chatSession"]>
 
   export type ChatSessionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     title?: boolean
-    model?: boolean
     type?: boolean
-    isActive?: boolean
-    pinned?: boolean
-    group?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     config?: boolean
     meta?: boolean
     userId?: boolean
+    sshConnectionId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
+    sshConnection?: boolean | ChatSession$sshConnectionArgs<ExtArgs>
   }, ExtArgs["result"]["chatSession"]>
 
   export type ChatSessionSelectScalar = {
     id?: boolean
     title?: boolean
-    model?: boolean
     type?: boolean
-    isActive?: boolean
-    pinned?: boolean
-    group?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     config?: boolean
     meta?: boolean
     userId?: boolean
+    sshConnectionId?: boolean
   }
 
   export type ChatSessionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
+    sshConnection?: boolean | ChatSession$sshConnectionArgs<ExtArgs>
     messages?: boolean | ChatSession$messagesArgs<ExtArgs>
-    topics?: boolean | ChatSession$topicsArgs<ExtArgs>
     _count?: boolean | ChatSessionCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ChatSessionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
+    sshConnection?: boolean | ChatSession$sshConnectionArgs<ExtArgs>
   }
 
   export type $ChatSessionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "ChatSession"
     objects: {
       user: Prisma.$UserPayload<ExtArgs>
+      sshConnection: Prisma.$SSHConnectionPayload<ExtArgs> | null
       messages: Prisma.$MessagePayload<ExtArgs>[]
-      topics: Prisma.$TopicPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      title: string | null
-      model: string
-      type: $Enums.SessionType
-      isActive: boolean
-      pinned: boolean
-      group: string
+      title: string
+      type: string
       createdAt: Date
       updatedAt: Date
-      config: Prisma.JsonValue | null
-      meta: Prisma.JsonValue | null
+      config: string | null
+      meta: string | null
       userId: string
+      sshConnectionId: string | null
     }, ExtArgs["result"]["chatSession"]>
     composites: {}
   }
@@ -5479,8 +4185,8 @@ export namespace Prisma {
   export interface Prisma__ChatSessionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    sshConnection<T extends ChatSession$sshConnectionArgs<ExtArgs> = {}>(args?: Subset<T, ChatSession$sshConnectionArgs<ExtArgs>>): Prisma__SSHConnectionClient<$Result.GetResult<Prisma.$SSHConnectionPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     messages<T extends ChatSession$messagesArgs<ExtArgs> = {}>(args?: Subset<T, ChatSession$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany"> | Null>
-    topics<T extends ChatSession$topicsArgs<ExtArgs> = {}>(args?: Subset<T, ChatSession$topicsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TopicPayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5512,16 +4218,13 @@ export namespace Prisma {
   interface ChatSessionFieldRefs {
     readonly id: FieldRef<"ChatSession", 'String'>
     readonly title: FieldRef<"ChatSession", 'String'>
-    readonly model: FieldRef<"ChatSession", 'String'>
-    readonly type: FieldRef<"ChatSession", 'SessionType'>
-    readonly isActive: FieldRef<"ChatSession", 'Boolean'>
-    readonly pinned: FieldRef<"ChatSession", 'Boolean'>
-    readonly group: FieldRef<"ChatSession", 'String'>
+    readonly type: FieldRef<"ChatSession", 'String'>
     readonly createdAt: FieldRef<"ChatSession", 'DateTime'>
     readonly updatedAt: FieldRef<"ChatSession", 'DateTime'>
-    readonly config: FieldRef<"ChatSession", 'Json'>
-    readonly meta: FieldRef<"ChatSession", 'Json'>
+    readonly config: FieldRef<"ChatSession", 'String'>
+    readonly meta: FieldRef<"ChatSession", 'String'>
     readonly userId: FieldRef<"ChatSession", 'String'>
+    readonly sshConnectionId: FieldRef<"ChatSession", 'String'>
   }
     
 
@@ -5727,7 +4430,6 @@ export namespace Prisma {
      * The data used to create many ChatSessions.
      */
     data: ChatSessionCreateManyInput | ChatSessionCreateManyInput[]
-    skipDuplicates?: boolean
   }
 
   /**
@@ -5742,7 +4444,6 @@ export namespace Prisma {
      * The data used to create many ChatSessions.
      */
     data: ChatSessionCreateManyInput | ChatSessionCreateManyInput[]
-    skipDuplicates?: boolean
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -5840,6 +4541,21 @@ export namespace Prisma {
   }
 
   /**
+   * ChatSession.sshConnection
+   */
+  export type ChatSession$sshConnectionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SSHConnection
+     */
+    select?: SSHConnectionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SSHConnectionInclude<ExtArgs> | null
+    where?: SSHConnectionWhereInput
+  }
+
+  /**
    * ChatSession.messages
    */
   export type ChatSession$messagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5860,26 +4576,6 @@ export namespace Prisma {
   }
 
   /**
-   * ChatSession.topics
-   */
-  export type ChatSession$topicsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Topic
-     */
-    select?: TopicSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TopicInclude<ExtArgs> | null
-    where?: TopicWhereInput
-    orderBy?: TopicOrderByWithRelationInput | TopicOrderByWithRelationInput[]
-    cursor?: TopicWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: TopicScalarFieldEnum | TopicScalarFieldEnum[]
-  }
-
-  /**
    * ChatSession without action
    */
   export type ChatSessionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5895,1102 +4591,123 @@ export namespace Prisma {
 
 
   /**
-   * Model Topic
-   */
-
-  export type AggregateTopic = {
-    _count: TopicCountAggregateOutputType | null
-    _min: TopicMinAggregateOutputType | null
-    _max: TopicMaxAggregateOutputType | null
-  }
-
-  export type TopicMinAggregateOutputType = {
-    id: string | null
-    title: string | null
-    createdAt: Date | null
-    updatedAt: Date | null
-    sessionId: string | null
-  }
-
-  export type TopicMaxAggregateOutputType = {
-    id: string | null
-    title: string | null
-    createdAt: Date | null
-    updatedAt: Date | null
-    sessionId: string | null
-  }
-
-  export type TopicCountAggregateOutputType = {
-    id: number
-    title: number
-    createdAt: number
-    updatedAt: number
-    meta: number
-    sessionId: number
-    _all: number
-  }
-
-
-  export type TopicMinAggregateInputType = {
-    id?: true
-    title?: true
-    createdAt?: true
-    updatedAt?: true
-    sessionId?: true
-  }
-
-  export type TopicMaxAggregateInputType = {
-    id?: true
-    title?: true
-    createdAt?: true
-    updatedAt?: true
-    sessionId?: true
-  }
-
-  export type TopicCountAggregateInputType = {
-    id?: true
-    title?: true
-    createdAt?: true
-    updatedAt?: true
-    meta?: true
-    sessionId?: true
-    _all?: true
-  }
-
-  export type TopicAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which Topic to aggregate.
-     */
-    where?: TopicWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Topics to fetch.
-     */
-    orderBy?: TopicOrderByWithRelationInput | TopicOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: TopicWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Topics from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Topics.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned Topics
-    **/
-    _count?: true | TopicCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: TopicMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: TopicMaxAggregateInputType
-  }
-
-  export type GetTopicAggregateType<T extends TopicAggregateArgs> = {
-        [P in keyof T & keyof AggregateTopic]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateTopic[P]>
-      : GetScalarType<T[P], AggregateTopic[P]>
-  }
-
-
-
-
-  export type TopicGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: TopicWhereInput
-    orderBy?: TopicOrderByWithAggregationInput | TopicOrderByWithAggregationInput[]
-    by: TopicScalarFieldEnum[] | TopicScalarFieldEnum
-    having?: TopicScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: TopicCountAggregateInputType | true
-    _min?: TopicMinAggregateInputType
-    _max?: TopicMaxAggregateInputType
-  }
-
-  export type TopicGroupByOutputType = {
-    id: string
-    title: string
-    createdAt: Date
-    updatedAt: Date
-    meta: JsonValue | null
-    sessionId: string
-    _count: TopicCountAggregateOutputType | null
-    _min: TopicMinAggregateOutputType | null
-    _max: TopicMaxAggregateOutputType | null
-  }
-
-  type GetTopicGroupByPayload<T extends TopicGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<TopicGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof TopicGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], TopicGroupByOutputType[P]>
-            : GetScalarType<T[P], TopicGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type TopicSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    title?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    meta?: boolean
-    sessionId?: boolean
-    session?: boolean | ChatSessionDefaultArgs<ExtArgs>
-    messages?: boolean | Topic$messagesArgs<ExtArgs>
-    _count?: boolean | TopicCountOutputTypeDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["topic"]>
-
-  export type TopicSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    title?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    meta?: boolean
-    sessionId?: boolean
-    session?: boolean | ChatSessionDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["topic"]>
-
-  export type TopicSelectScalar = {
-    id?: boolean
-    title?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    meta?: boolean
-    sessionId?: boolean
-  }
-
-  export type TopicInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    session?: boolean | ChatSessionDefaultArgs<ExtArgs>
-    messages?: boolean | Topic$messagesArgs<ExtArgs>
-    _count?: boolean | TopicCountOutputTypeDefaultArgs<ExtArgs>
-  }
-  export type TopicIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    session?: boolean | ChatSessionDefaultArgs<ExtArgs>
-  }
-
-  export type $TopicPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "Topic"
-    objects: {
-      session: Prisma.$ChatSessionPayload<ExtArgs>
-      messages: Prisma.$MessagePayload<ExtArgs>[]
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      title: string
-      createdAt: Date
-      updatedAt: Date
-      meta: Prisma.JsonValue | null
-      sessionId: string
-    }, ExtArgs["result"]["topic"]>
-    composites: {}
-  }
-
-  type TopicGetPayload<S extends boolean | null | undefined | TopicDefaultArgs> = $Result.GetResult<Prisma.$TopicPayload, S>
-
-  type TopicCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<TopicFindManyArgs, 'select' | 'include' | 'distinct'> & {
-      select?: TopicCountAggregateInputType | true
-    }
-
-  export interface TopicDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Topic'], meta: { name: 'Topic' } }
-    /**
-     * Find zero or one Topic that matches the filter.
-     * @param {TopicFindUniqueArgs} args - Arguments to find a Topic
-     * @example
-     * // Get one Topic
-     * const topic = await prisma.topic.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends TopicFindUniqueArgs>(args: SelectSubset<T, TopicFindUniqueArgs<ExtArgs>>): Prisma__TopicClient<$Result.GetResult<Prisma.$TopicPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
-
-    /**
-     * Find one Topic that matches the filter or throw an error with `error.code='P2025'` 
-     * if no matches were found.
-     * @param {TopicFindUniqueOrThrowArgs} args - Arguments to find a Topic
-     * @example
-     * // Get one Topic
-     * const topic = await prisma.topic.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends TopicFindUniqueOrThrowArgs>(args: SelectSubset<T, TopicFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TopicClient<$Result.GetResult<Prisma.$TopicPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
-
-    /**
-     * Find the first Topic that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {TopicFindFirstArgs} args - Arguments to find a Topic
-     * @example
-     * // Get one Topic
-     * const topic = await prisma.topic.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends TopicFindFirstArgs>(args?: SelectSubset<T, TopicFindFirstArgs<ExtArgs>>): Prisma__TopicClient<$Result.GetResult<Prisma.$TopicPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
-
-    /**
-     * Find the first Topic that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {TopicFindFirstOrThrowArgs} args - Arguments to find a Topic
-     * @example
-     * // Get one Topic
-     * const topic = await prisma.topic.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends TopicFindFirstOrThrowArgs>(args?: SelectSubset<T, TopicFindFirstOrThrowArgs<ExtArgs>>): Prisma__TopicClient<$Result.GetResult<Prisma.$TopicPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
-
-    /**
-     * Find zero or more Topics that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {TopicFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all Topics
-     * const topics = await prisma.topic.findMany()
-     * 
-     * // Get first 10 Topics
-     * const topics = await prisma.topic.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const topicWithIdOnly = await prisma.topic.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends TopicFindManyArgs>(args?: SelectSubset<T, TopicFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TopicPayload<ExtArgs>, T, "findMany">>
-
-    /**
-     * Create a Topic.
-     * @param {TopicCreateArgs} args - Arguments to create a Topic.
-     * @example
-     * // Create one Topic
-     * const Topic = await prisma.topic.create({
-     *   data: {
-     *     // ... data to create a Topic
-     *   }
-     * })
-     * 
-     */
-    create<T extends TopicCreateArgs>(args: SelectSubset<T, TopicCreateArgs<ExtArgs>>): Prisma__TopicClient<$Result.GetResult<Prisma.$TopicPayload<ExtArgs>, T, "create">, never, ExtArgs>
-
-    /**
-     * Create many Topics.
-     * @param {TopicCreateManyArgs} args - Arguments to create many Topics.
-     * @example
-     * // Create many Topics
-     * const topic = await prisma.topic.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends TopicCreateManyArgs>(args?: SelectSubset<T, TopicCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many Topics and returns the data saved in the database.
-     * @param {TopicCreateManyAndReturnArgs} args - Arguments to create many Topics.
-     * @example
-     * // Create many Topics
-     * const topic = await prisma.topic.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many Topics and only return the `id`
-     * const topicWithIdOnly = await prisma.topic.createManyAndReturn({ 
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends TopicCreateManyAndReturnArgs>(args?: SelectSubset<T, TopicCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TopicPayload<ExtArgs>, T, "createManyAndReturn">>
-
-    /**
-     * Delete a Topic.
-     * @param {TopicDeleteArgs} args - Arguments to delete one Topic.
-     * @example
-     * // Delete one Topic
-     * const Topic = await prisma.topic.delete({
-     *   where: {
-     *     // ... filter to delete one Topic
-     *   }
-     * })
-     * 
-     */
-    delete<T extends TopicDeleteArgs>(args: SelectSubset<T, TopicDeleteArgs<ExtArgs>>): Prisma__TopicClient<$Result.GetResult<Prisma.$TopicPayload<ExtArgs>, T, "delete">, never, ExtArgs>
-
-    /**
-     * Update one Topic.
-     * @param {TopicUpdateArgs} args - Arguments to update one Topic.
-     * @example
-     * // Update one Topic
-     * const topic = await prisma.topic.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends TopicUpdateArgs>(args: SelectSubset<T, TopicUpdateArgs<ExtArgs>>): Prisma__TopicClient<$Result.GetResult<Prisma.$TopicPayload<ExtArgs>, T, "update">, never, ExtArgs>
-
-    /**
-     * Delete zero or more Topics.
-     * @param {TopicDeleteManyArgs} args - Arguments to filter Topics to delete.
-     * @example
-     * // Delete a few Topics
-     * const { count } = await prisma.topic.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends TopicDeleteManyArgs>(args?: SelectSubset<T, TopicDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Topics.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {TopicUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many Topics
-     * const topic = await prisma.topic.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends TopicUpdateManyArgs>(args: SelectSubset<T, TopicUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create or update one Topic.
-     * @param {TopicUpsertArgs} args - Arguments to update or create a Topic.
-     * @example
-     * // Update or create a Topic
-     * const topic = await prisma.topic.upsert({
-     *   create: {
-     *     // ... data to create a Topic
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the Topic we want to update
-     *   }
-     * })
-     */
-    upsert<T extends TopicUpsertArgs>(args: SelectSubset<T, TopicUpsertArgs<ExtArgs>>): Prisma__TopicClient<$Result.GetResult<Prisma.$TopicPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
-
-
-    /**
-     * Count the number of Topics.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {TopicCountArgs} args - Arguments to filter Topics to count.
-     * @example
-     * // Count the number of Topics
-     * const count = await prisma.topic.count({
-     *   where: {
-     *     // ... the filter for the Topics we want to count
-     *   }
-     * })
-    **/
-    count<T extends TopicCountArgs>(
-      args?: Subset<T, TopicCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], TopicCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a Topic.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {TopicAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends TopicAggregateArgs>(args: Subset<T, TopicAggregateArgs>): Prisma.PrismaPromise<GetTopicAggregateType<T>>
-
-    /**
-     * Group by Topic.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {TopicGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends TopicGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: TopicGroupByArgs['orderBy'] }
-        : { orderBy?: TopicGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, TopicGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTopicGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the Topic model
-   */
-  readonly fields: TopicFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for Topic.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__TopicClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    session<T extends ChatSessionDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ChatSessionDefaultArgs<ExtArgs>>): Prisma__ChatSessionClient<$Result.GetResult<Prisma.$ChatSessionPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
-    messages<T extends Topic$messagesArgs<ExtArgs> = {}>(args?: Subset<T, Topic$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany"> | Null>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the Topic model
-   */ 
-  interface TopicFieldRefs {
-    readonly id: FieldRef<"Topic", 'String'>
-    readonly title: FieldRef<"Topic", 'String'>
-    readonly createdAt: FieldRef<"Topic", 'DateTime'>
-    readonly updatedAt: FieldRef<"Topic", 'DateTime'>
-    readonly meta: FieldRef<"Topic", 'Json'>
-    readonly sessionId: FieldRef<"Topic", 'String'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * Topic findUnique
-   */
-  export type TopicFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Topic
-     */
-    select?: TopicSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TopicInclude<ExtArgs> | null
-    /**
-     * Filter, which Topic to fetch.
-     */
-    where: TopicWhereUniqueInput
-  }
-
-  /**
-   * Topic findUniqueOrThrow
-   */
-  export type TopicFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Topic
-     */
-    select?: TopicSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TopicInclude<ExtArgs> | null
-    /**
-     * Filter, which Topic to fetch.
-     */
-    where: TopicWhereUniqueInput
-  }
-
-  /**
-   * Topic findFirst
-   */
-  export type TopicFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Topic
-     */
-    select?: TopicSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TopicInclude<ExtArgs> | null
-    /**
-     * Filter, which Topic to fetch.
-     */
-    where?: TopicWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Topics to fetch.
-     */
-    orderBy?: TopicOrderByWithRelationInput | TopicOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for Topics.
-     */
-    cursor?: TopicWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Topics from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Topics.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Topics.
-     */
-    distinct?: TopicScalarFieldEnum | TopicScalarFieldEnum[]
-  }
-
-  /**
-   * Topic findFirstOrThrow
-   */
-  export type TopicFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Topic
-     */
-    select?: TopicSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TopicInclude<ExtArgs> | null
-    /**
-     * Filter, which Topic to fetch.
-     */
-    where?: TopicWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Topics to fetch.
-     */
-    orderBy?: TopicOrderByWithRelationInput | TopicOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for Topics.
-     */
-    cursor?: TopicWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Topics from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Topics.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Topics.
-     */
-    distinct?: TopicScalarFieldEnum | TopicScalarFieldEnum[]
-  }
-
-  /**
-   * Topic findMany
-   */
-  export type TopicFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Topic
-     */
-    select?: TopicSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TopicInclude<ExtArgs> | null
-    /**
-     * Filter, which Topics to fetch.
-     */
-    where?: TopicWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Topics to fetch.
-     */
-    orderBy?: TopicOrderByWithRelationInput | TopicOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing Topics.
-     */
-    cursor?: TopicWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Topics from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Topics.
-     */
-    skip?: number
-    distinct?: TopicScalarFieldEnum | TopicScalarFieldEnum[]
-  }
-
-  /**
-   * Topic create
-   */
-  export type TopicCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Topic
-     */
-    select?: TopicSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TopicInclude<ExtArgs> | null
-    /**
-     * The data needed to create a Topic.
-     */
-    data: XOR<TopicCreateInput, TopicUncheckedCreateInput>
-  }
-
-  /**
-   * Topic createMany
-   */
-  export type TopicCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many Topics.
-     */
-    data: TopicCreateManyInput | TopicCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * Topic createManyAndReturn
-   */
-  export type TopicCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Topic
-     */
-    select?: TopicSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * The data used to create many Topics.
-     */
-    data: TopicCreateManyInput | TopicCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TopicIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * Topic update
-   */
-  export type TopicUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Topic
-     */
-    select?: TopicSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TopicInclude<ExtArgs> | null
-    /**
-     * The data needed to update a Topic.
-     */
-    data: XOR<TopicUpdateInput, TopicUncheckedUpdateInput>
-    /**
-     * Choose, which Topic to update.
-     */
-    where: TopicWhereUniqueInput
-  }
-
-  /**
-   * Topic updateMany
-   */
-  export type TopicUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update Topics.
-     */
-    data: XOR<TopicUpdateManyMutationInput, TopicUncheckedUpdateManyInput>
-    /**
-     * Filter which Topics to update
-     */
-    where?: TopicWhereInput
-  }
-
-  /**
-   * Topic upsert
-   */
-  export type TopicUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Topic
-     */
-    select?: TopicSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TopicInclude<ExtArgs> | null
-    /**
-     * The filter to search for the Topic to update in case it exists.
-     */
-    where: TopicWhereUniqueInput
-    /**
-     * In case the Topic found by the `where` argument doesn't exist, create a new Topic with this data.
-     */
-    create: XOR<TopicCreateInput, TopicUncheckedCreateInput>
-    /**
-     * In case the Topic was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<TopicUpdateInput, TopicUncheckedUpdateInput>
-  }
-
-  /**
-   * Topic delete
-   */
-  export type TopicDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Topic
-     */
-    select?: TopicSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TopicInclude<ExtArgs> | null
-    /**
-     * Filter which Topic to delete.
-     */
-    where: TopicWhereUniqueInput
-  }
-
-  /**
-   * Topic deleteMany
-   */
-  export type TopicDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which Topics to delete
-     */
-    where?: TopicWhereInput
-  }
-
-  /**
-   * Topic.messages
-   */
-  export type Topic$messagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Message
-     */
-    select?: MessageSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: MessageInclude<ExtArgs> | null
-    where?: MessageWhereInput
-    orderBy?: MessageOrderByWithRelationInput | MessageOrderByWithRelationInput[]
-    cursor?: MessageWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: MessageScalarFieldEnum | MessageScalarFieldEnum[]
-  }
-
-  /**
-   * Topic without action
-   */
-  export type TopicDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Topic
-     */
-    select?: TopicSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TopicInclude<ExtArgs> | null
-  }
-
-
-  /**
    * Model Message
    */
 
   export type AggregateMessage = {
     _count: MessageCountAggregateOutputType | null
-    _avg: MessageAvgAggregateOutputType | null
-    _sum: MessageSumAggregateOutputType | null
     _min: MessageMinAggregateOutputType | null
     _max: MessageMaxAggregateOutputType | null
   }
 
-  export type MessageAvgAggregateOutputType = {
-    tokens: number | null
-  }
-
-  export type MessageSumAggregateOutputType = {
-    tokens: number | null
-  }
-
   export type MessageMinAggregateOutputType = {
     id: string | null
-    role: $Enums.MessageRole | null
     content: string | null
-    parentId: string | null
+    role: string | null
     createdAt: Date | null
     updatedAt: Date | null
-    tokens: number | null
-    fromModel: string | null
-    fromProvider: string | null
-    userId: string | null
+    meta: string | null
+    extra: string | null
+    isDeleted: boolean | null
+    isEdited: boolean | null
+    plugin: string | null
+    pluginState: string | null
+    translate: string | null
+    tts: string | null
     sessionId: string | null
-    topicId: string | null
+    userId: string | null
   }
 
   export type MessageMaxAggregateOutputType = {
     id: string | null
-    role: $Enums.MessageRole | null
     content: string | null
-    parentId: string | null
+    role: string | null
     createdAt: Date | null
     updatedAt: Date | null
-    tokens: number | null
-    fromModel: string | null
-    fromProvider: string | null
-    userId: string | null
+    meta: string | null
+    extra: string | null
+    isDeleted: boolean | null
+    isEdited: boolean | null
+    plugin: string | null
+    pluginState: string | null
+    translate: string | null
+    tts: string | null
     sessionId: string | null
-    topicId: string | null
+    userId: string | null
   }
 
   export type MessageCountAggregateOutputType = {
     id: number
-    role: number
     content: number
-    parentId: number
+    role: number
     createdAt: number
     updatedAt: number
     meta: number
     extra: number
-    tokens: number
-    fromModel: number
-    fromProvider: number
+    isDeleted: number
+    isEdited: number
     plugin: number
     pluginState: number
     translate: number
     tts: number
-    userId: number
     sessionId: number
-    topicId: number
+    userId: number
     _all: number
   }
 
 
-  export type MessageAvgAggregateInputType = {
-    tokens?: true
-  }
-
-  export type MessageSumAggregateInputType = {
-    tokens?: true
-  }
-
   export type MessageMinAggregateInputType = {
     id?: true
-    role?: true
     content?: true
-    parentId?: true
-    createdAt?: true
-    updatedAt?: true
-    tokens?: true
-    fromModel?: true
-    fromProvider?: true
-    userId?: true
-    sessionId?: true
-    topicId?: true
-  }
-
-  export type MessageMaxAggregateInputType = {
-    id?: true
     role?: true
-    content?: true
-    parentId?: true
-    createdAt?: true
-    updatedAt?: true
-    tokens?: true
-    fromModel?: true
-    fromProvider?: true
-    userId?: true
-    sessionId?: true
-    topicId?: true
-  }
-
-  export type MessageCountAggregateInputType = {
-    id?: true
-    role?: true
-    content?: true
-    parentId?: true
     createdAt?: true
     updatedAt?: true
     meta?: true
     extra?: true
-    tokens?: true
-    fromModel?: true
-    fromProvider?: true
+    isDeleted?: true
+    isEdited?: true
     plugin?: true
     pluginState?: true
     translate?: true
     tts?: true
-    userId?: true
     sessionId?: true
-    topicId?: true
+    userId?: true
+  }
+
+  export type MessageMaxAggregateInputType = {
+    id?: true
+    content?: true
+    role?: true
+    createdAt?: true
+    updatedAt?: true
+    meta?: true
+    extra?: true
+    isDeleted?: true
+    isEdited?: true
+    plugin?: true
+    pluginState?: true
+    translate?: true
+    tts?: true
+    sessionId?: true
+    userId?: true
+  }
+
+  export type MessageCountAggregateInputType = {
+    id?: true
+    content?: true
+    role?: true
+    createdAt?: true
+    updatedAt?: true
+    meta?: true
+    extra?: true
+    isDeleted?: true
+    isEdited?: true
+    plugin?: true
+    pluginState?: true
+    translate?: true
+    tts?: true
+    sessionId?: true
+    userId?: true
     _all?: true
   }
 
@@ -7032,18 +4749,6 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Select which fields to average
-    **/
-    _avg?: MessageAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: MessageSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
      * Select which fields to find the minimum value
     **/
     _min?: MessageMinAggregateInputType
@@ -7074,34 +4779,27 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: MessageCountAggregateInputType | true
-    _avg?: MessageAvgAggregateInputType
-    _sum?: MessageSumAggregateInputType
     _min?: MessageMinAggregateInputType
     _max?: MessageMaxAggregateInputType
   }
 
   export type MessageGroupByOutputType = {
     id: string
-    role: $Enums.MessageRole
     content: string
-    parentId: string | null
+    role: string
     createdAt: Date
     updatedAt: Date
-    meta: JsonValue | null
-    extra: JsonValue | null
-    tokens: number | null
-    fromModel: string | null
-    fromProvider: string | null
-    plugin: JsonValue | null
-    pluginState: JsonValue | null
-    translate: JsonValue | null
-    tts: JsonValue | null
-    userId: string
+    meta: string | null
+    extra: string | null
+    isDeleted: boolean
+    isEdited: boolean
+    plugin: string | null
+    pluginState: string | null
+    translate: string | null
+    tts: string | null
     sessionId: string
-    topicId: string | null
+    userId: string
     _count: MessageCountAggregateOutputType | null
-    _avg: MessageAvgAggregateOutputType | null
-    _sum: MessageSumAggregateOutputType | null
     _min: MessageMinAggregateOutputType | null
     _max: MessageMaxAggregateOutputType | null
   }
@@ -7122,115 +4820,93 @@ export namespace Prisma {
 
   export type MessageSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    role?: boolean
     content?: boolean
-    parentId?: boolean
+    role?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     meta?: boolean
     extra?: boolean
-    tokens?: boolean
-    fromModel?: boolean
-    fromProvider?: boolean
+    isDeleted?: boolean
+    isEdited?: boolean
     plugin?: boolean
     pluginState?: boolean
     translate?: boolean
     tts?: boolean
-    userId?: boolean
     sessionId?: boolean
-    topicId?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    userId?: boolean
     session?: boolean | ChatSessionDefaultArgs<ExtArgs>
-    topic?: boolean | Message$topicArgs<ExtArgs>
-    files?: boolean | Message$filesArgs<ExtArgs>
-    _count?: boolean | MessageCountOutputTypeDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["message"]>
 
   export type MessageSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    role?: boolean
     content?: boolean
-    parentId?: boolean
+    role?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     meta?: boolean
     extra?: boolean
-    tokens?: boolean
-    fromModel?: boolean
-    fromProvider?: boolean
+    isDeleted?: boolean
+    isEdited?: boolean
     plugin?: boolean
     pluginState?: boolean
     translate?: boolean
     tts?: boolean
-    userId?: boolean
     sessionId?: boolean
-    topicId?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    userId?: boolean
     session?: boolean | ChatSessionDefaultArgs<ExtArgs>
-    topic?: boolean | Message$topicArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["message"]>
 
   export type MessageSelectScalar = {
     id?: boolean
-    role?: boolean
     content?: boolean
-    parentId?: boolean
+    role?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     meta?: boolean
     extra?: boolean
-    tokens?: boolean
-    fromModel?: boolean
-    fromProvider?: boolean
+    isDeleted?: boolean
+    isEdited?: boolean
     plugin?: boolean
     pluginState?: boolean
     translate?: boolean
     tts?: boolean
-    userId?: boolean
     sessionId?: boolean
-    topicId?: boolean
+    userId?: boolean
   }
 
   export type MessageInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
     session?: boolean | ChatSessionDefaultArgs<ExtArgs>
-    topic?: boolean | Message$topicArgs<ExtArgs>
-    files?: boolean | Message$filesArgs<ExtArgs>
-    _count?: boolean | MessageCountOutputTypeDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }
   export type MessageIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
     session?: boolean | ChatSessionDefaultArgs<ExtArgs>
-    topic?: boolean | Message$topicArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }
 
   export type $MessagePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Message"
     objects: {
-      user: Prisma.$UserPayload<ExtArgs>
       session: Prisma.$ChatSessionPayload<ExtArgs>
-      topic: Prisma.$TopicPayload<ExtArgs> | null
-      files: Prisma.$MessageFilePayload<ExtArgs>[]
+      user: Prisma.$UserPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      role: $Enums.MessageRole
       content: string
-      parentId: string | null
+      role: string
       createdAt: Date
       updatedAt: Date
-      meta: Prisma.JsonValue | null
-      extra: Prisma.JsonValue | null
-      tokens: number | null
-      fromModel: string | null
-      fromProvider: string | null
-      plugin: Prisma.JsonValue | null
-      pluginState: Prisma.JsonValue | null
-      translate: Prisma.JsonValue | null
-      tts: Prisma.JsonValue | null
-      userId: string
+      meta: string | null
+      extra: string | null
+      isDeleted: boolean
+      isEdited: boolean
+      plugin: string | null
+      pluginState: string | null
+      translate: string | null
+      tts: string | null
       sessionId: string
-      topicId: string | null
+      userId: string
     }, ExtArgs["result"]["message"]>
     composites: {}
   }
@@ -7595,10 +5271,8 @@ export namespace Prisma {
    */
   export interface Prisma__MessageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
     session<T extends ChatSessionDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ChatSessionDefaultArgs<ExtArgs>>): Prisma__ChatSessionClient<$Result.GetResult<Prisma.$ChatSessionPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
-    topic<T extends Message$topicArgs<ExtArgs> = {}>(args?: Subset<T, Message$topicArgs<ExtArgs>>): Prisma__TopicClient<$Result.GetResult<Prisma.$TopicPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
-    files<T extends Message$filesArgs<ExtArgs> = {}>(args?: Subset<T, Message$filesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MessageFilePayload<ExtArgs>, T, "findMany"> | Null>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7629,23 +5303,20 @@ export namespace Prisma {
    */ 
   interface MessageFieldRefs {
     readonly id: FieldRef<"Message", 'String'>
-    readonly role: FieldRef<"Message", 'MessageRole'>
     readonly content: FieldRef<"Message", 'String'>
-    readonly parentId: FieldRef<"Message", 'String'>
+    readonly role: FieldRef<"Message", 'String'>
     readonly createdAt: FieldRef<"Message", 'DateTime'>
     readonly updatedAt: FieldRef<"Message", 'DateTime'>
-    readonly meta: FieldRef<"Message", 'Json'>
-    readonly extra: FieldRef<"Message", 'Json'>
-    readonly tokens: FieldRef<"Message", 'Int'>
-    readonly fromModel: FieldRef<"Message", 'String'>
-    readonly fromProvider: FieldRef<"Message", 'String'>
-    readonly plugin: FieldRef<"Message", 'Json'>
-    readonly pluginState: FieldRef<"Message", 'Json'>
-    readonly translate: FieldRef<"Message", 'Json'>
-    readonly tts: FieldRef<"Message", 'Json'>
-    readonly userId: FieldRef<"Message", 'String'>
+    readonly meta: FieldRef<"Message", 'String'>
+    readonly extra: FieldRef<"Message", 'String'>
+    readonly isDeleted: FieldRef<"Message", 'Boolean'>
+    readonly isEdited: FieldRef<"Message", 'Boolean'>
+    readonly plugin: FieldRef<"Message", 'String'>
+    readonly pluginState: FieldRef<"Message", 'String'>
+    readonly translate: FieldRef<"Message", 'String'>
+    readonly tts: FieldRef<"Message", 'String'>
     readonly sessionId: FieldRef<"Message", 'String'>
-    readonly topicId: FieldRef<"Message", 'String'>
+    readonly userId: FieldRef<"Message", 'String'>
   }
     
 
@@ -7851,7 +5522,6 @@ export namespace Prisma {
      * The data used to create many Messages.
      */
     data: MessageCreateManyInput | MessageCreateManyInput[]
-    skipDuplicates?: boolean
   }
 
   /**
@@ -7866,7 +5536,6 @@ export namespace Prisma {
      * The data used to create many Messages.
      */
     data: MessageCreateManyInput | MessageCreateManyInput[]
-    skipDuplicates?: boolean
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -7964,41 +5633,6 @@ export namespace Prisma {
   }
 
   /**
-   * Message.topic
-   */
-  export type Message$topicArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Topic
-     */
-    select?: TopicSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TopicInclude<ExtArgs> | null
-    where?: TopicWhereInput
-  }
-
-  /**
-   * Message.files
-   */
-  export type Message$filesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the MessageFile
-     */
-    select?: MessageFileSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: MessageFileInclude<ExtArgs> | null
-    where?: MessageFileWhereInput
-    orderBy?: MessageFileOrderByWithRelationInput | MessageFileOrderByWithRelationInput[]
-    cursor?: MessageFileWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: MessageFileScalarFieldEnum | MessageFileScalarFieldEnum[]
-  }
-
-  /**
    * Message without action
    */
   export type MessageDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8010,1994 +5644,6 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: MessageInclude<ExtArgs> | null
-  }
-
-
-  /**
-   * Model MessageFile
-   */
-
-  export type AggregateMessageFile = {
-    _count: MessageFileCountAggregateOutputType | null
-    _min: MessageFileMinAggregateOutputType | null
-    _max: MessageFileMaxAggregateOutputType | null
-  }
-
-  export type MessageFileMinAggregateOutputType = {
-    id: string | null
-    messageId: string | null
-    fileId: string | null
-    createdAt: Date | null
-  }
-
-  export type MessageFileMaxAggregateOutputType = {
-    id: string | null
-    messageId: string | null
-    fileId: string | null
-    createdAt: Date | null
-  }
-
-  export type MessageFileCountAggregateOutputType = {
-    id: number
-    messageId: number
-    fileId: number
-    createdAt: number
-    _all: number
-  }
-
-
-  export type MessageFileMinAggregateInputType = {
-    id?: true
-    messageId?: true
-    fileId?: true
-    createdAt?: true
-  }
-
-  export type MessageFileMaxAggregateInputType = {
-    id?: true
-    messageId?: true
-    fileId?: true
-    createdAt?: true
-  }
-
-  export type MessageFileCountAggregateInputType = {
-    id?: true
-    messageId?: true
-    fileId?: true
-    createdAt?: true
-    _all?: true
-  }
-
-  export type MessageFileAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which MessageFile to aggregate.
-     */
-    where?: MessageFileWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of MessageFiles to fetch.
-     */
-    orderBy?: MessageFileOrderByWithRelationInput | MessageFileOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: MessageFileWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` MessageFiles from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` MessageFiles.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned MessageFiles
-    **/
-    _count?: true | MessageFileCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: MessageFileMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: MessageFileMaxAggregateInputType
-  }
-
-  export type GetMessageFileAggregateType<T extends MessageFileAggregateArgs> = {
-        [P in keyof T & keyof AggregateMessageFile]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateMessageFile[P]>
-      : GetScalarType<T[P], AggregateMessageFile[P]>
-  }
-
-
-
-
-  export type MessageFileGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: MessageFileWhereInput
-    orderBy?: MessageFileOrderByWithAggregationInput | MessageFileOrderByWithAggregationInput[]
-    by: MessageFileScalarFieldEnum[] | MessageFileScalarFieldEnum
-    having?: MessageFileScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: MessageFileCountAggregateInputType | true
-    _min?: MessageFileMinAggregateInputType
-    _max?: MessageFileMaxAggregateInputType
-  }
-
-  export type MessageFileGroupByOutputType = {
-    id: string
-    messageId: string
-    fileId: string
-    createdAt: Date
-    _count: MessageFileCountAggregateOutputType | null
-    _min: MessageFileMinAggregateOutputType | null
-    _max: MessageFileMaxAggregateOutputType | null
-  }
-
-  type GetMessageFileGroupByPayload<T extends MessageFileGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<MessageFileGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof MessageFileGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], MessageFileGroupByOutputType[P]>
-            : GetScalarType<T[P], MessageFileGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type MessageFileSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    messageId?: boolean
-    fileId?: boolean
-    createdAt?: boolean
-    message?: boolean | MessageDefaultArgs<ExtArgs>
-    file?: boolean | FileDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["messageFile"]>
-
-  export type MessageFileSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    messageId?: boolean
-    fileId?: boolean
-    createdAt?: boolean
-    message?: boolean | MessageDefaultArgs<ExtArgs>
-    file?: boolean | FileDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["messageFile"]>
-
-  export type MessageFileSelectScalar = {
-    id?: boolean
-    messageId?: boolean
-    fileId?: boolean
-    createdAt?: boolean
-  }
-
-  export type MessageFileInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    message?: boolean | MessageDefaultArgs<ExtArgs>
-    file?: boolean | FileDefaultArgs<ExtArgs>
-  }
-  export type MessageFileIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    message?: boolean | MessageDefaultArgs<ExtArgs>
-    file?: boolean | FileDefaultArgs<ExtArgs>
-  }
-
-  export type $MessageFilePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "MessageFile"
-    objects: {
-      message: Prisma.$MessagePayload<ExtArgs>
-      file: Prisma.$FilePayload<ExtArgs>
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      messageId: string
-      fileId: string
-      createdAt: Date
-    }, ExtArgs["result"]["messageFile"]>
-    composites: {}
-  }
-
-  type MessageFileGetPayload<S extends boolean | null | undefined | MessageFileDefaultArgs> = $Result.GetResult<Prisma.$MessageFilePayload, S>
-
-  type MessageFileCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<MessageFileFindManyArgs, 'select' | 'include' | 'distinct'> & {
-      select?: MessageFileCountAggregateInputType | true
-    }
-
-  export interface MessageFileDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['MessageFile'], meta: { name: 'MessageFile' } }
-    /**
-     * Find zero or one MessageFile that matches the filter.
-     * @param {MessageFileFindUniqueArgs} args - Arguments to find a MessageFile
-     * @example
-     * // Get one MessageFile
-     * const messageFile = await prisma.messageFile.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends MessageFileFindUniqueArgs>(args: SelectSubset<T, MessageFileFindUniqueArgs<ExtArgs>>): Prisma__MessageFileClient<$Result.GetResult<Prisma.$MessageFilePayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
-
-    /**
-     * Find one MessageFile that matches the filter or throw an error with `error.code='P2025'` 
-     * if no matches were found.
-     * @param {MessageFileFindUniqueOrThrowArgs} args - Arguments to find a MessageFile
-     * @example
-     * // Get one MessageFile
-     * const messageFile = await prisma.messageFile.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends MessageFileFindUniqueOrThrowArgs>(args: SelectSubset<T, MessageFileFindUniqueOrThrowArgs<ExtArgs>>): Prisma__MessageFileClient<$Result.GetResult<Prisma.$MessageFilePayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
-
-    /**
-     * Find the first MessageFile that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {MessageFileFindFirstArgs} args - Arguments to find a MessageFile
-     * @example
-     * // Get one MessageFile
-     * const messageFile = await prisma.messageFile.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends MessageFileFindFirstArgs>(args?: SelectSubset<T, MessageFileFindFirstArgs<ExtArgs>>): Prisma__MessageFileClient<$Result.GetResult<Prisma.$MessageFilePayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
-
-    /**
-     * Find the first MessageFile that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {MessageFileFindFirstOrThrowArgs} args - Arguments to find a MessageFile
-     * @example
-     * // Get one MessageFile
-     * const messageFile = await prisma.messageFile.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends MessageFileFindFirstOrThrowArgs>(args?: SelectSubset<T, MessageFileFindFirstOrThrowArgs<ExtArgs>>): Prisma__MessageFileClient<$Result.GetResult<Prisma.$MessageFilePayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
-
-    /**
-     * Find zero or more MessageFiles that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {MessageFileFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all MessageFiles
-     * const messageFiles = await prisma.messageFile.findMany()
-     * 
-     * // Get first 10 MessageFiles
-     * const messageFiles = await prisma.messageFile.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const messageFileWithIdOnly = await prisma.messageFile.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends MessageFileFindManyArgs>(args?: SelectSubset<T, MessageFileFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MessageFilePayload<ExtArgs>, T, "findMany">>
-
-    /**
-     * Create a MessageFile.
-     * @param {MessageFileCreateArgs} args - Arguments to create a MessageFile.
-     * @example
-     * // Create one MessageFile
-     * const MessageFile = await prisma.messageFile.create({
-     *   data: {
-     *     // ... data to create a MessageFile
-     *   }
-     * })
-     * 
-     */
-    create<T extends MessageFileCreateArgs>(args: SelectSubset<T, MessageFileCreateArgs<ExtArgs>>): Prisma__MessageFileClient<$Result.GetResult<Prisma.$MessageFilePayload<ExtArgs>, T, "create">, never, ExtArgs>
-
-    /**
-     * Create many MessageFiles.
-     * @param {MessageFileCreateManyArgs} args - Arguments to create many MessageFiles.
-     * @example
-     * // Create many MessageFiles
-     * const messageFile = await prisma.messageFile.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends MessageFileCreateManyArgs>(args?: SelectSubset<T, MessageFileCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many MessageFiles and returns the data saved in the database.
-     * @param {MessageFileCreateManyAndReturnArgs} args - Arguments to create many MessageFiles.
-     * @example
-     * // Create many MessageFiles
-     * const messageFile = await prisma.messageFile.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many MessageFiles and only return the `id`
-     * const messageFileWithIdOnly = await prisma.messageFile.createManyAndReturn({ 
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends MessageFileCreateManyAndReturnArgs>(args?: SelectSubset<T, MessageFileCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MessageFilePayload<ExtArgs>, T, "createManyAndReturn">>
-
-    /**
-     * Delete a MessageFile.
-     * @param {MessageFileDeleteArgs} args - Arguments to delete one MessageFile.
-     * @example
-     * // Delete one MessageFile
-     * const MessageFile = await prisma.messageFile.delete({
-     *   where: {
-     *     // ... filter to delete one MessageFile
-     *   }
-     * })
-     * 
-     */
-    delete<T extends MessageFileDeleteArgs>(args: SelectSubset<T, MessageFileDeleteArgs<ExtArgs>>): Prisma__MessageFileClient<$Result.GetResult<Prisma.$MessageFilePayload<ExtArgs>, T, "delete">, never, ExtArgs>
-
-    /**
-     * Update one MessageFile.
-     * @param {MessageFileUpdateArgs} args - Arguments to update one MessageFile.
-     * @example
-     * // Update one MessageFile
-     * const messageFile = await prisma.messageFile.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends MessageFileUpdateArgs>(args: SelectSubset<T, MessageFileUpdateArgs<ExtArgs>>): Prisma__MessageFileClient<$Result.GetResult<Prisma.$MessageFilePayload<ExtArgs>, T, "update">, never, ExtArgs>
-
-    /**
-     * Delete zero or more MessageFiles.
-     * @param {MessageFileDeleteManyArgs} args - Arguments to filter MessageFiles to delete.
-     * @example
-     * // Delete a few MessageFiles
-     * const { count } = await prisma.messageFile.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends MessageFileDeleteManyArgs>(args?: SelectSubset<T, MessageFileDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more MessageFiles.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {MessageFileUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many MessageFiles
-     * const messageFile = await prisma.messageFile.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends MessageFileUpdateManyArgs>(args: SelectSubset<T, MessageFileUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create or update one MessageFile.
-     * @param {MessageFileUpsertArgs} args - Arguments to update or create a MessageFile.
-     * @example
-     * // Update or create a MessageFile
-     * const messageFile = await prisma.messageFile.upsert({
-     *   create: {
-     *     // ... data to create a MessageFile
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the MessageFile we want to update
-     *   }
-     * })
-     */
-    upsert<T extends MessageFileUpsertArgs>(args: SelectSubset<T, MessageFileUpsertArgs<ExtArgs>>): Prisma__MessageFileClient<$Result.GetResult<Prisma.$MessageFilePayload<ExtArgs>, T, "upsert">, never, ExtArgs>
-
-
-    /**
-     * Count the number of MessageFiles.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {MessageFileCountArgs} args - Arguments to filter MessageFiles to count.
-     * @example
-     * // Count the number of MessageFiles
-     * const count = await prisma.messageFile.count({
-     *   where: {
-     *     // ... the filter for the MessageFiles we want to count
-     *   }
-     * })
-    **/
-    count<T extends MessageFileCountArgs>(
-      args?: Subset<T, MessageFileCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], MessageFileCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a MessageFile.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {MessageFileAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends MessageFileAggregateArgs>(args: Subset<T, MessageFileAggregateArgs>): Prisma.PrismaPromise<GetMessageFileAggregateType<T>>
-
-    /**
-     * Group by MessageFile.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {MessageFileGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends MessageFileGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: MessageFileGroupByArgs['orderBy'] }
-        : { orderBy?: MessageFileGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, MessageFileGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetMessageFileGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the MessageFile model
-   */
-  readonly fields: MessageFileFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for MessageFile.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__MessageFileClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    message<T extends MessageDefaultArgs<ExtArgs> = {}>(args?: Subset<T, MessageDefaultArgs<ExtArgs>>): Prisma__MessageClient<$Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
-    file<T extends FileDefaultArgs<ExtArgs> = {}>(args?: Subset<T, FileDefaultArgs<ExtArgs>>): Prisma__FileClient<$Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the MessageFile model
-   */ 
-  interface MessageFileFieldRefs {
-    readonly id: FieldRef<"MessageFile", 'String'>
-    readonly messageId: FieldRef<"MessageFile", 'String'>
-    readonly fileId: FieldRef<"MessageFile", 'String'>
-    readonly createdAt: FieldRef<"MessageFile", 'DateTime'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * MessageFile findUnique
-   */
-  export type MessageFileFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the MessageFile
-     */
-    select?: MessageFileSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: MessageFileInclude<ExtArgs> | null
-    /**
-     * Filter, which MessageFile to fetch.
-     */
-    where: MessageFileWhereUniqueInput
-  }
-
-  /**
-   * MessageFile findUniqueOrThrow
-   */
-  export type MessageFileFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the MessageFile
-     */
-    select?: MessageFileSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: MessageFileInclude<ExtArgs> | null
-    /**
-     * Filter, which MessageFile to fetch.
-     */
-    where: MessageFileWhereUniqueInput
-  }
-
-  /**
-   * MessageFile findFirst
-   */
-  export type MessageFileFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the MessageFile
-     */
-    select?: MessageFileSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: MessageFileInclude<ExtArgs> | null
-    /**
-     * Filter, which MessageFile to fetch.
-     */
-    where?: MessageFileWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of MessageFiles to fetch.
-     */
-    orderBy?: MessageFileOrderByWithRelationInput | MessageFileOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for MessageFiles.
-     */
-    cursor?: MessageFileWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` MessageFiles from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` MessageFiles.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of MessageFiles.
-     */
-    distinct?: MessageFileScalarFieldEnum | MessageFileScalarFieldEnum[]
-  }
-
-  /**
-   * MessageFile findFirstOrThrow
-   */
-  export type MessageFileFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the MessageFile
-     */
-    select?: MessageFileSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: MessageFileInclude<ExtArgs> | null
-    /**
-     * Filter, which MessageFile to fetch.
-     */
-    where?: MessageFileWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of MessageFiles to fetch.
-     */
-    orderBy?: MessageFileOrderByWithRelationInput | MessageFileOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for MessageFiles.
-     */
-    cursor?: MessageFileWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` MessageFiles from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` MessageFiles.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of MessageFiles.
-     */
-    distinct?: MessageFileScalarFieldEnum | MessageFileScalarFieldEnum[]
-  }
-
-  /**
-   * MessageFile findMany
-   */
-  export type MessageFileFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the MessageFile
-     */
-    select?: MessageFileSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: MessageFileInclude<ExtArgs> | null
-    /**
-     * Filter, which MessageFiles to fetch.
-     */
-    where?: MessageFileWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of MessageFiles to fetch.
-     */
-    orderBy?: MessageFileOrderByWithRelationInput | MessageFileOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing MessageFiles.
-     */
-    cursor?: MessageFileWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` MessageFiles from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` MessageFiles.
-     */
-    skip?: number
-    distinct?: MessageFileScalarFieldEnum | MessageFileScalarFieldEnum[]
-  }
-
-  /**
-   * MessageFile create
-   */
-  export type MessageFileCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the MessageFile
-     */
-    select?: MessageFileSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: MessageFileInclude<ExtArgs> | null
-    /**
-     * The data needed to create a MessageFile.
-     */
-    data: XOR<MessageFileCreateInput, MessageFileUncheckedCreateInput>
-  }
-
-  /**
-   * MessageFile createMany
-   */
-  export type MessageFileCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many MessageFiles.
-     */
-    data: MessageFileCreateManyInput | MessageFileCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * MessageFile createManyAndReturn
-   */
-  export type MessageFileCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the MessageFile
-     */
-    select?: MessageFileSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * The data used to create many MessageFiles.
-     */
-    data: MessageFileCreateManyInput | MessageFileCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: MessageFileIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * MessageFile update
-   */
-  export type MessageFileUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the MessageFile
-     */
-    select?: MessageFileSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: MessageFileInclude<ExtArgs> | null
-    /**
-     * The data needed to update a MessageFile.
-     */
-    data: XOR<MessageFileUpdateInput, MessageFileUncheckedUpdateInput>
-    /**
-     * Choose, which MessageFile to update.
-     */
-    where: MessageFileWhereUniqueInput
-  }
-
-  /**
-   * MessageFile updateMany
-   */
-  export type MessageFileUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update MessageFiles.
-     */
-    data: XOR<MessageFileUpdateManyMutationInput, MessageFileUncheckedUpdateManyInput>
-    /**
-     * Filter which MessageFiles to update
-     */
-    where?: MessageFileWhereInput
-  }
-
-  /**
-   * MessageFile upsert
-   */
-  export type MessageFileUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the MessageFile
-     */
-    select?: MessageFileSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: MessageFileInclude<ExtArgs> | null
-    /**
-     * The filter to search for the MessageFile to update in case it exists.
-     */
-    where: MessageFileWhereUniqueInput
-    /**
-     * In case the MessageFile found by the `where` argument doesn't exist, create a new MessageFile with this data.
-     */
-    create: XOR<MessageFileCreateInput, MessageFileUncheckedCreateInput>
-    /**
-     * In case the MessageFile was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<MessageFileUpdateInput, MessageFileUncheckedUpdateInput>
-  }
-
-  /**
-   * MessageFile delete
-   */
-  export type MessageFileDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the MessageFile
-     */
-    select?: MessageFileSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: MessageFileInclude<ExtArgs> | null
-    /**
-     * Filter which MessageFile to delete.
-     */
-    where: MessageFileWhereUniqueInput
-  }
-
-  /**
-   * MessageFile deleteMany
-   */
-  export type MessageFileDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which MessageFiles to delete
-     */
-    where?: MessageFileWhereInput
-  }
-
-  /**
-   * MessageFile without action
-   */
-  export type MessageFileDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the MessageFile
-     */
-    select?: MessageFileSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: MessageFileInclude<ExtArgs> | null
-  }
-
-
-  /**
-   * Model File
-   */
-
-  export type AggregateFile = {
-    _count: FileCountAggregateOutputType | null
-    _avg: FileAvgAggregateOutputType | null
-    _sum: FileSumAggregateOutputType | null
-    _min: FileMinAggregateOutputType | null
-    _max: FileMaxAggregateOutputType | null
-  }
-
-  export type FileAvgAggregateOutputType = {
-    size: number | null
-  }
-
-  export type FileSumAggregateOutputType = {
-    size: bigint | null
-  }
-
-  export type FileMinAggregateOutputType = {
-    id: string | null
-    name: string | null
-    type: string | null
-    size: bigint | null
-    url: string | null
-    path: string | null
-    hash: string | null
-    createdAt: Date | null
-    updatedAt: Date | null
-    userId: string | null
-  }
-
-  export type FileMaxAggregateOutputType = {
-    id: string | null
-    name: string | null
-    type: string | null
-    size: bigint | null
-    url: string | null
-    path: string | null
-    hash: string | null
-    createdAt: Date | null
-    updatedAt: Date | null
-    userId: string | null
-  }
-
-  export type FileCountAggregateOutputType = {
-    id: number
-    name: number
-    type: number
-    size: number
-    url: number
-    path: number
-    hash: number
-    createdAt: number
-    updatedAt: number
-    metadata: number
-    userId: number
-    _all: number
-  }
-
-
-  export type FileAvgAggregateInputType = {
-    size?: true
-  }
-
-  export type FileSumAggregateInputType = {
-    size?: true
-  }
-
-  export type FileMinAggregateInputType = {
-    id?: true
-    name?: true
-    type?: true
-    size?: true
-    url?: true
-    path?: true
-    hash?: true
-    createdAt?: true
-    updatedAt?: true
-    userId?: true
-  }
-
-  export type FileMaxAggregateInputType = {
-    id?: true
-    name?: true
-    type?: true
-    size?: true
-    url?: true
-    path?: true
-    hash?: true
-    createdAt?: true
-    updatedAt?: true
-    userId?: true
-  }
-
-  export type FileCountAggregateInputType = {
-    id?: true
-    name?: true
-    type?: true
-    size?: true
-    url?: true
-    path?: true
-    hash?: true
-    createdAt?: true
-    updatedAt?: true
-    metadata?: true
-    userId?: true
-    _all?: true
-  }
-
-  export type FileAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which File to aggregate.
-     */
-    where?: FileWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Files to fetch.
-     */
-    orderBy?: FileOrderByWithRelationInput | FileOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: FileWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Files from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Files.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned Files
-    **/
-    _count?: true | FileCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to average
-    **/
-    _avg?: FileAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: FileSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: FileMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: FileMaxAggregateInputType
-  }
-
-  export type GetFileAggregateType<T extends FileAggregateArgs> = {
-        [P in keyof T & keyof AggregateFile]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateFile[P]>
-      : GetScalarType<T[P], AggregateFile[P]>
-  }
-
-
-
-
-  export type FileGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: FileWhereInput
-    orderBy?: FileOrderByWithAggregationInput | FileOrderByWithAggregationInput[]
-    by: FileScalarFieldEnum[] | FileScalarFieldEnum
-    having?: FileScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: FileCountAggregateInputType | true
-    _avg?: FileAvgAggregateInputType
-    _sum?: FileSumAggregateInputType
-    _min?: FileMinAggregateInputType
-    _max?: FileMaxAggregateInputType
-  }
-
-  export type FileGroupByOutputType = {
-    id: string
-    name: string
-    type: string
-    size: bigint
-    url: string | null
-    path: string | null
-    hash: string | null
-    createdAt: Date
-    updatedAt: Date
-    metadata: JsonValue | null
-    userId: string
-    _count: FileCountAggregateOutputType | null
-    _avg: FileAvgAggregateOutputType | null
-    _sum: FileSumAggregateOutputType | null
-    _min: FileMinAggregateOutputType | null
-    _max: FileMaxAggregateOutputType | null
-  }
-
-  type GetFileGroupByPayload<T extends FileGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<FileGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof FileGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], FileGroupByOutputType[P]>
-            : GetScalarType<T[P], FileGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type FileSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    name?: boolean
-    type?: boolean
-    size?: boolean
-    url?: boolean
-    path?: boolean
-    hash?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    metadata?: boolean
-    userId?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
-    messages?: boolean | File$messagesArgs<ExtArgs>
-    _count?: boolean | FileCountOutputTypeDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["file"]>
-
-  export type FileSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    name?: boolean
-    type?: boolean
-    size?: boolean
-    url?: boolean
-    path?: boolean
-    hash?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    metadata?: boolean
-    userId?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["file"]>
-
-  export type FileSelectScalar = {
-    id?: boolean
-    name?: boolean
-    type?: boolean
-    size?: boolean
-    url?: boolean
-    path?: boolean
-    hash?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    metadata?: boolean
-    userId?: boolean
-  }
-
-  export type FileInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-    messages?: boolean | File$messagesArgs<ExtArgs>
-    _count?: boolean | FileCountOutputTypeDefaultArgs<ExtArgs>
-  }
-  export type FileIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }
-
-  export type $FilePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "File"
-    objects: {
-      user: Prisma.$UserPayload<ExtArgs>
-      messages: Prisma.$MessageFilePayload<ExtArgs>[]
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      name: string
-      type: string
-      size: bigint
-      url: string | null
-      path: string | null
-      hash: string | null
-      createdAt: Date
-      updatedAt: Date
-      metadata: Prisma.JsonValue | null
-      userId: string
-    }, ExtArgs["result"]["file"]>
-    composites: {}
-  }
-
-  type FileGetPayload<S extends boolean | null | undefined | FileDefaultArgs> = $Result.GetResult<Prisma.$FilePayload, S>
-
-  type FileCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<FileFindManyArgs, 'select' | 'include' | 'distinct'> & {
-      select?: FileCountAggregateInputType | true
-    }
-
-  export interface FileDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['File'], meta: { name: 'File' } }
-    /**
-     * Find zero or one File that matches the filter.
-     * @param {FileFindUniqueArgs} args - Arguments to find a File
-     * @example
-     * // Get one File
-     * const file = await prisma.file.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends FileFindUniqueArgs>(args: SelectSubset<T, FileFindUniqueArgs<ExtArgs>>): Prisma__FileClient<$Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
-
-    /**
-     * Find one File that matches the filter or throw an error with `error.code='P2025'` 
-     * if no matches were found.
-     * @param {FileFindUniqueOrThrowArgs} args - Arguments to find a File
-     * @example
-     * // Get one File
-     * const file = await prisma.file.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends FileFindUniqueOrThrowArgs>(args: SelectSubset<T, FileFindUniqueOrThrowArgs<ExtArgs>>): Prisma__FileClient<$Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
-
-    /**
-     * Find the first File that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {FileFindFirstArgs} args - Arguments to find a File
-     * @example
-     * // Get one File
-     * const file = await prisma.file.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends FileFindFirstArgs>(args?: SelectSubset<T, FileFindFirstArgs<ExtArgs>>): Prisma__FileClient<$Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
-
-    /**
-     * Find the first File that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {FileFindFirstOrThrowArgs} args - Arguments to find a File
-     * @example
-     * // Get one File
-     * const file = await prisma.file.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends FileFindFirstOrThrowArgs>(args?: SelectSubset<T, FileFindFirstOrThrowArgs<ExtArgs>>): Prisma__FileClient<$Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
-
-    /**
-     * Find zero or more Files that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {FileFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all Files
-     * const files = await prisma.file.findMany()
-     * 
-     * // Get first 10 Files
-     * const files = await prisma.file.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const fileWithIdOnly = await prisma.file.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends FileFindManyArgs>(args?: SelectSubset<T, FileFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "findMany">>
-
-    /**
-     * Create a File.
-     * @param {FileCreateArgs} args - Arguments to create a File.
-     * @example
-     * // Create one File
-     * const File = await prisma.file.create({
-     *   data: {
-     *     // ... data to create a File
-     *   }
-     * })
-     * 
-     */
-    create<T extends FileCreateArgs>(args: SelectSubset<T, FileCreateArgs<ExtArgs>>): Prisma__FileClient<$Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "create">, never, ExtArgs>
-
-    /**
-     * Create many Files.
-     * @param {FileCreateManyArgs} args - Arguments to create many Files.
-     * @example
-     * // Create many Files
-     * const file = await prisma.file.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends FileCreateManyArgs>(args?: SelectSubset<T, FileCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many Files and returns the data saved in the database.
-     * @param {FileCreateManyAndReturnArgs} args - Arguments to create many Files.
-     * @example
-     * // Create many Files
-     * const file = await prisma.file.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many Files and only return the `id`
-     * const fileWithIdOnly = await prisma.file.createManyAndReturn({ 
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends FileCreateManyAndReturnArgs>(args?: SelectSubset<T, FileCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "createManyAndReturn">>
-
-    /**
-     * Delete a File.
-     * @param {FileDeleteArgs} args - Arguments to delete one File.
-     * @example
-     * // Delete one File
-     * const File = await prisma.file.delete({
-     *   where: {
-     *     // ... filter to delete one File
-     *   }
-     * })
-     * 
-     */
-    delete<T extends FileDeleteArgs>(args: SelectSubset<T, FileDeleteArgs<ExtArgs>>): Prisma__FileClient<$Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "delete">, never, ExtArgs>
-
-    /**
-     * Update one File.
-     * @param {FileUpdateArgs} args - Arguments to update one File.
-     * @example
-     * // Update one File
-     * const file = await prisma.file.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends FileUpdateArgs>(args: SelectSubset<T, FileUpdateArgs<ExtArgs>>): Prisma__FileClient<$Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "update">, never, ExtArgs>
-
-    /**
-     * Delete zero or more Files.
-     * @param {FileDeleteManyArgs} args - Arguments to filter Files to delete.
-     * @example
-     * // Delete a few Files
-     * const { count } = await prisma.file.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends FileDeleteManyArgs>(args?: SelectSubset<T, FileDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Files.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {FileUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many Files
-     * const file = await prisma.file.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends FileUpdateManyArgs>(args: SelectSubset<T, FileUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create or update one File.
-     * @param {FileUpsertArgs} args - Arguments to update or create a File.
-     * @example
-     * // Update or create a File
-     * const file = await prisma.file.upsert({
-     *   create: {
-     *     // ... data to create a File
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the File we want to update
-     *   }
-     * })
-     */
-    upsert<T extends FileUpsertArgs>(args: SelectSubset<T, FileUpsertArgs<ExtArgs>>): Prisma__FileClient<$Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "upsert">, never, ExtArgs>
-
-
-    /**
-     * Count the number of Files.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {FileCountArgs} args - Arguments to filter Files to count.
-     * @example
-     * // Count the number of Files
-     * const count = await prisma.file.count({
-     *   where: {
-     *     // ... the filter for the Files we want to count
-     *   }
-     * })
-    **/
-    count<T extends FileCountArgs>(
-      args?: Subset<T, FileCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], FileCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a File.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {FileAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends FileAggregateArgs>(args: Subset<T, FileAggregateArgs>): Prisma.PrismaPromise<GetFileAggregateType<T>>
-
-    /**
-     * Group by File.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {FileGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends FileGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: FileGroupByArgs['orderBy'] }
-        : { orderBy?: FileGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, FileGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetFileGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the File model
-   */
-  readonly fields: FileFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for File.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__FileClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
-    messages<T extends File$messagesArgs<ExtArgs> = {}>(args?: Subset<T, File$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MessageFilePayload<ExtArgs>, T, "findMany"> | Null>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the File model
-   */ 
-  interface FileFieldRefs {
-    readonly id: FieldRef<"File", 'String'>
-    readonly name: FieldRef<"File", 'String'>
-    readonly type: FieldRef<"File", 'String'>
-    readonly size: FieldRef<"File", 'BigInt'>
-    readonly url: FieldRef<"File", 'String'>
-    readonly path: FieldRef<"File", 'String'>
-    readonly hash: FieldRef<"File", 'String'>
-    readonly createdAt: FieldRef<"File", 'DateTime'>
-    readonly updatedAt: FieldRef<"File", 'DateTime'>
-    readonly metadata: FieldRef<"File", 'Json'>
-    readonly userId: FieldRef<"File", 'String'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * File findUnique
-   */
-  export type FileFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the File
-     */
-    select?: FileSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FileInclude<ExtArgs> | null
-    /**
-     * Filter, which File to fetch.
-     */
-    where: FileWhereUniqueInput
-  }
-
-  /**
-   * File findUniqueOrThrow
-   */
-  export type FileFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the File
-     */
-    select?: FileSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FileInclude<ExtArgs> | null
-    /**
-     * Filter, which File to fetch.
-     */
-    where: FileWhereUniqueInput
-  }
-
-  /**
-   * File findFirst
-   */
-  export type FileFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the File
-     */
-    select?: FileSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FileInclude<ExtArgs> | null
-    /**
-     * Filter, which File to fetch.
-     */
-    where?: FileWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Files to fetch.
-     */
-    orderBy?: FileOrderByWithRelationInput | FileOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for Files.
-     */
-    cursor?: FileWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Files from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Files.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Files.
-     */
-    distinct?: FileScalarFieldEnum | FileScalarFieldEnum[]
-  }
-
-  /**
-   * File findFirstOrThrow
-   */
-  export type FileFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the File
-     */
-    select?: FileSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FileInclude<ExtArgs> | null
-    /**
-     * Filter, which File to fetch.
-     */
-    where?: FileWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Files to fetch.
-     */
-    orderBy?: FileOrderByWithRelationInput | FileOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for Files.
-     */
-    cursor?: FileWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Files from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Files.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Files.
-     */
-    distinct?: FileScalarFieldEnum | FileScalarFieldEnum[]
-  }
-
-  /**
-   * File findMany
-   */
-  export type FileFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the File
-     */
-    select?: FileSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FileInclude<ExtArgs> | null
-    /**
-     * Filter, which Files to fetch.
-     */
-    where?: FileWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Files to fetch.
-     */
-    orderBy?: FileOrderByWithRelationInput | FileOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing Files.
-     */
-    cursor?: FileWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Files from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Files.
-     */
-    skip?: number
-    distinct?: FileScalarFieldEnum | FileScalarFieldEnum[]
-  }
-
-  /**
-   * File create
-   */
-  export type FileCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the File
-     */
-    select?: FileSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FileInclude<ExtArgs> | null
-    /**
-     * The data needed to create a File.
-     */
-    data: XOR<FileCreateInput, FileUncheckedCreateInput>
-  }
-
-  /**
-   * File createMany
-   */
-  export type FileCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many Files.
-     */
-    data: FileCreateManyInput | FileCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * File createManyAndReturn
-   */
-  export type FileCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the File
-     */
-    select?: FileSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * The data used to create many Files.
-     */
-    data: FileCreateManyInput | FileCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FileIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * File update
-   */
-  export type FileUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the File
-     */
-    select?: FileSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FileInclude<ExtArgs> | null
-    /**
-     * The data needed to update a File.
-     */
-    data: XOR<FileUpdateInput, FileUncheckedUpdateInput>
-    /**
-     * Choose, which File to update.
-     */
-    where: FileWhereUniqueInput
-  }
-
-  /**
-   * File updateMany
-   */
-  export type FileUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update Files.
-     */
-    data: XOR<FileUpdateManyMutationInput, FileUncheckedUpdateManyInput>
-    /**
-     * Filter which Files to update
-     */
-    where?: FileWhereInput
-  }
-
-  /**
-   * File upsert
-   */
-  export type FileUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the File
-     */
-    select?: FileSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FileInclude<ExtArgs> | null
-    /**
-     * The filter to search for the File to update in case it exists.
-     */
-    where: FileWhereUniqueInput
-    /**
-     * In case the File found by the `where` argument doesn't exist, create a new File with this data.
-     */
-    create: XOR<FileCreateInput, FileUncheckedCreateInput>
-    /**
-     * In case the File was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<FileUpdateInput, FileUncheckedUpdateInput>
-  }
-
-  /**
-   * File delete
-   */
-  export type FileDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the File
-     */
-    select?: FileSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FileInclude<ExtArgs> | null
-    /**
-     * Filter which File to delete.
-     */
-    where: FileWhereUniqueInput
-  }
-
-  /**
-   * File deleteMany
-   */
-  export type FileDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which Files to delete
-     */
-    where?: FileWhereInput
-  }
-
-  /**
-   * File.messages
-   */
-  export type File$messagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the MessageFile
-     */
-    select?: MessageFileSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: MessageFileInclude<ExtArgs> | null
-    where?: MessageFileWhereInput
-    orderBy?: MessageFileOrderByWithRelationInput | MessageFileOrderByWithRelationInput[]
-    cursor?: MessageFileWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: MessageFileScalarFieldEnum | MessageFileScalarFieldEnum[]
-  }
-
-  /**
-   * File without action
-   */
-  export type FileDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the File
-     */
-    select?: FileSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: FileInclude<ExtArgs> | null
   }
 
 
@@ -10027,43 +5673,39 @@ export namespace Prisma {
     id: string | null
     command: string | null
     output: string | null
-    error: string | null
     exitCode: number | null
     duration: number | null
-    isSuccess: boolean | null
-    safetyLevel: $Enums.SafetyLevel | null
-    executedAt: Date | null
+    createdAt: Date | null
+    safetyLevel: string | null
+    metadata: string | null
     userId: string | null
-    connectionId: string | null
+    sshConnectionId: string | null
   }
 
   export type CommandLogMaxAggregateOutputType = {
     id: string | null
     command: string | null
     output: string | null
-    error: string | null
     exitCode: number | null
     duration: number | null
-    isSuccess: boolean | null
-    safetyLevel: $Enums.SafetyLevel | null
-    executedAt: Date | null
+    createdAt: Date | null
+    safetyLevel: string | null
+    metadata: string | null
     userId: string | null
-    connectionId: string | null
+    sshConnectionId: string | null
   }
 
   export type CommandLogCountAggregateOutputType = {
     id: number
     command: number
     output: number
-    error: number
     exitCode: number
     duration: number
-    isSuccess: number
+    createdAt: number
     safetyLevel: number
-    executedAt: number
     metadata: number
     userId: number
-    connectionId: number
+    sshConnectionId: number
     _all: number
   }
 
@@ -10082,43 +5724,39 @@ export namespace Prisma {
     id?: true
     command?: true
     output?: true
-    error?: true
     exitCode?: true
     duration?: true
-    isSuccess?: true
+    createdAt?: true
     safetyLevel?: true
-    executedAt?: true
+    metadata?: true
     userId?: true
-    connectionId?: true
+    sshConnectionId?: true
   }
 
   export type CommandLogMaxAggregateInputType = {
     id?: true
     command?: true
     output?: true
-    error?: true
     exitCode?: true
     duration?: true
-    isSuccess?: true
+    createdAt?: true
     safetyLevel?: true
-    executedAt?: true
+    metadata?: true
     userId?: true
-    connectionId?: true
+    sshConnectionId?: true
   }
 
   export type CommandLogCountAggregateInputType = {
     id?: true
     command?: true
     output?: true
-    error?: true
     exitCode?: true
     duration?: true
-    isSuccess?: true
+    createdAt?: true
     safetyLevel?: true
-    executedAt?: true
     metadata?: true
     userId?: true
-    connectionId?: true
+    sshConnectionId?: true
     _all?: true
   }
 
@@ -10212,15 +5850,13 @@ export namespace Prisma {
     id: string
     command: string
     output: string | null
-    error: string | null
     exitCode: number | null
-    duration: number
-    isSuccess: boolean
-    safetyLevel: $Enums.SafetyLevel
-    executedAt: Date
-    metadata: JsonValue | null
+    duration: number | null
+    createdAt: Date
+    safetyLevel: string
+    metadata: string | null
     userId: string
-    connectionId: string
+    sshConnectionId: string | null
     _count: CommandLogCountAggregateOutputType | null
     _avg: CommandLogAvgAggregateOutputType | null
     _sum: CommandLogSumAggregateOutputType | null
@@ -10246,79 +5882,71 @@ export namespace Prisma {
     id?: boolean
     command?: boolean
     output?: boolean
-    error?: boolean
     exitCode?: boolean
     duration?: boolean
-    isSuccess?: boolean
+    createdAt?: boolean
     safetyLevel?: boolean
-    executedAt?: boolean
     metadata?: boolean
     userId?: boolean
-    connectionId?: boolean
+    sshConnectionId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
-    connection?: boolean | SSHConnectionDefaultArgs<ExtArgs>
+    sshConnection?: boolean | CommandLog$sshConnectionArgs<ExtArgs>
   }, ExtArgs["result"]["commandLog"]>
 
   export type CommandLogSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     command?: boolean
     output?: boolean
-    error?: boolean
     exitCode?: boolean
     duration?: boolean
-    isSuccess?: boolean
+    createdAt?: boolean
     safetyLevel?: boolean
-    executedAt?: boolean
     metadata?: boolean
     userId?: boolean
-    connectionId?: boolean
+    sshConnectionId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
-    connection?: boolean | SSHConnectionDefaultArgs<ExtArgs>
+    sshConnection?: boolean | CommandLog$sshConnectionArgs<ExtArgs>
   }, ExtArgs["result"]["commandLog"]>
 
   export type CommandLogSelectScalar = {
     id?: boolean
     command?: boolean
     output?: boolean
-    error?: boolean
     exitCode?: boolean
     duration?: boolean
-    isSuccess?: boolean
+    createdAt?: boolean
     safetyLevel?: boolean
-    executedAt?: boolean
     metadata?: boolean
     userId?: boolean
-    connectionId?: boolean
+    sshConnectionId?: boolean
   }
 
   export type CommandLogInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
-    connection?: boolean | SSHConnectionDefaultArgs<ExtArgs>
+    sshConnection?: boolean | CommandLog$sshConnectionArgs<ExtArgs>
   }
   export type CommandLogIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
-    connection?: boolean | SSHConnectionDefaultArgs<ExtArgs>
+    sshConnection?: boolean | CommandLog$sshConnectionArgs<ExtArgs>
   }
 
   export type $CommandLogPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "CommandLog"
     objects: {
       user: Prisma.$UserPayload<ExtArgs>
-      connection: Prisma.$SSHConnectionPayload<ExtArgs>
+      sshConnection: Prisma.$SSHConnectionPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       command: string
       output: string | null
-      error: string | null
       exitCode: number | null
-      duration: number
-      isSuccess: boolean
-      safetyLevel: $Enums.SafetyLevel
-      executedAt: Date
-      metadata: Prisma.JsonValue | null
+      duration: number | null
+      createdAt: Date
+      safetyLevel: string
+      metadata: string | null
       userId: string
-      connectionId: string
+      sshConnectionId: string | null
     }, ExtArgs["result"]["commandLog"]>
     composites: {}
   }
@@ -10684,7 +6312,7 @@ export namespace Prisma {
   export interface Prisma__CommandLogClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
-    connection<T extends SSHConnectionDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SSHConnectionDefaultArgs<ExtArgs>>): Prisma__SSHConnectionClient<$Result.GetResult<Prisma.$SSHConnectionPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    sshConnection<T extends CommandLog$sshConnectionArgs<ExtArgs> = {}>(args?: Subset<T, CommandLog$sshConnectionArgs<ExtArgs>>): Prisma__SSHConnectionClient<$Result.GetResult<Prisma.$SSHConnectionPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -10717,15 +6345,13 @@ export namespace Prisma {
     readonly id: FieldRef<"CommandLog", 'String'>
     readonly command: FieldRef<"CommandLog", 'String'>
     readonly output: FieldRef<"CommandLog", 'String'>
-    readonly error: FieldRef<"CommandLog", 'String'>
     readonly exitCode: FieldRef<"CommandLog", 'Int'>
     readonly duration: FieldRef<"CommandLog", 'Int'>
-    readonly isSuccess: FieldRef<"CommandLog", 'Boolean'>
-    readonly safetyLevel: FieldRef<"CommandLog", 'SafetyLevel'>
-    readonly executedAt: FieldRef<"CommandLog", 'DateTime'>
-    readonly metadata: FieldRef<"CommandLog", 'Json'>
+    readonly createdAt: FieldRef<"CommandLog", 'DateTime'>
+    readonly safetyLevel: FieldRef<"CommandLog", 'String'>
+    readonly metadata: FieldRef<"CommandLog", 'String'>
     readonly userId: FieldRef<"CommandLog", 'String'>
-    readonly connectionId: FieldRef<"CommandLog", 'String'>
+    readonly sshConnectionId: FieldRef<"CommandLog", 'String'>
   }
     
 
@@ -10931,7 +6557,6 @@ export namespace Prisma {
      * The data used to create many CommandLogs.
      */
     data: CommandLogCreateManyInput | CommandLogCreateManyInput[]
-    skipDuplicates?: boolean
   }
 
   /**
@@ -10946,7 +6571,6 @@ export namespace Prisma {
      * The data used to create many CommandLogs.
      */
     data: CommandLogCreateManyInput | CommandLogCreateManyInput[]
-    skipDuplicates?: boolean
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -11044,6 +6668,21 @@ export namespace Prisma {
   }
 
   /**
+   * CommandLog.sshConnection
+   */
+  export type CommandLog$sshConnectionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SSHConnection
+     */
+    select?: SSHConnectionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SSHConnectionInclude<ExtArgs> | null
+    where?: SSHConnectionWhereInput
+  }
+
+  /**
    * CommandLog without action
    */
   export type CommandLogDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -11059,6919 +6698,10 @@ export namespace Prisma {
 
 
   /**
-   * Model UsageStats
-   */
-
-  export type AggregateUsageStats = {
-    _count: UsageStatsCountAggregateOutputType | null
-    _avg: UsageStatsAvgAggregateOutputType | null
-    _sum: UsageStatsSumAggregateOutputType | null
-    _min: UsageStatsMinAggregateOutputType | null
-    _max: UsageStatsMaxAggregateOutputType | null
-  }
-
-  export type UsageStatsAvgAggregateOutputType = {
-    commandsCount: number | null
-    aiRequestsCount: number | null
-    tokensUsed: number | null
-    connectionsUsed: number | null
-  }
-
-  export type UsageStatsSumAggregateOutputType = {
-    commandsCount: number | null
-    aiRequestsCount: number | null
-    tokensUsed: number | null
-    connectionsUsed: number | null
-  }
-
-  export type UsageStatsMinAggregateOutputType = {
-    id: string | null
-    date: Date | null
-    commandsCount: number | null
-    aiRequestsCount: number | null
-    tokensUsed: number | null
-    connectionsUsed: number | null
-    createdAt: Date | null
-    userId: string | null
-  }
-
-  export type UsageStatsMaxAggregateOutputType = {
-    id: string | null
-    date: Date | null
-    commandsCount: number | null
-    aiRequestsCount: number | null
-    tokensUsed: number | null
-    connectionsUsed: number | null
-    createdAt: Date | null
-    userId: string | null
-  }
-
-  export type UsageStatsCountAggregateOutputType = {
-    id: number
-    date: number
-    commandsCount: number
-    aiRequestsCount: number
-    tokensUsed: number
-    connectionsUsed: number
-    createdAt: number
-    userId: number
-    _all: number
-  }
-
-
-  export type UsageStatsAvgAggregateInputType = {
-    commandsCount?: true
-    aiRequestsCount?: true
-    tokensUsed?: true
-    connectionsUsed?: true
-  }
-
-  export type UsageStatsSumAggregateInputType = {
-    commandsCount?: true
-    aiRequestsCount?: true
-    tokensUsed?: true
-    connectionsUsed?: true
-  }
-
-  export type UsageStatsMinAggregateInputType = {
-    id?: true
-    date?: true
-    commandsCount?: true
-    aiRequestsCount?: true
-    tokensUsed?: true
-    connectionsUsed?: true
-    createdAt?: true
-    userId?: true
-  }
-
-  export type UsageStatsMaxAggregateInputType = {
-    id?: true
-    date?: true
-    commandsCount?: true
-    aiRequestsCount?: true
-    tokensUsed?: true
-    connectionsUsed?: true
-    createdAt?: true
-    userId?: true
-  }
-
-  export type UsageStatsCountAggregateInputType = {
-    id?: true
-    date?: true
-    commandsCount?: true
-    aiRequestsCount?: true
-    tokensUsed?: true
-    connectionsUsed?: true
-    createdAt?: true
-    userId?: true
-    _all?: true
-  }
-
-  export type UsageStatsAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which UsageStats to aggregate.
-     */
-    where?: UsageStatsWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of UsageStats to fetch.
-     */
-    orderBy?: UsageStatsOrderByWithRelationInput | UsageStatsOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: UsageStatsWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` UsageStats from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` UsageStats.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned UsageStats
-    **/
-    _count?: true | UsageStatsCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to average
-    **/
-    _avg?: UsageStatsAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: UsageStatsSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: UsageStatsMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: UsageStatsMaxAggregateInputType
-  }
-
-  export type GetUsageStatsAggregateType<T extends UsageStatsAggregateArgs> = {
-        [P in keyof T & keyof AggregateUsageStats]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateUsageStats[P]>
-      : GetScalarType<T[P], AggregateUsageStats[P]>
-  }
-
-
-
-
-  export type UsageStatsGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: UsageStatsWhereInput
-    orderBy?: UsageStatsOrderByWithAggregationInput | UsageStatsOrderByWithAggregationInput[]
-    by: UsageStatsScalarFieldEnum[] | UsageStatsScalarFieldEnum
-    having?: UsageStatsScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: UsageStatsCountAggregateInputType | true
-    _avg?: UsageStatsAvgAggregateInputType
-    _sum?: UsageStatsSumAggregateInputType
-    _min?: UsageStatsMinAggregateInputType
-    _max?: UsageStatsMaxAggregateInputType
-  }
-
-  export type UsageStatsGroupByOutputType = {
-    id: string
-    date: Date
-    commandsCount: number
-    aiRequestsCount: number
-    tokensUsed: number
-    connectionsUsed: number
-    createdAt: Date
-    userId: string
-    _count: UsageStatsCountAggregateOutputType | null
-    _avg: UsageStatsAvgAggregateOutputType | null
-    _sum: UsageStatsSumAggregateOutputType | null
-    _min: UsageStatsMinAggregateOutputType | null
-    _max: UsageStatsMaxAggregateOutputType | null
-  }
-
-  type GetUsageStatsGroupByPayload<T extends UsageStatsGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<UsageStatsGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof UsageStatsGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], UsageStatsGroupByOutputType[P]>
-            : GetScalarType<T[P], UsageStatsGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type UsageStatsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    date?: boolean
-    commandsCount?: boolean
-    aiRequestsCount?: boolean
-    tokensUsed?: boolean
-    connectionsUsed?: boolean
-    createdAt?: boolean
-    userId?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["usageStats"]>
-
-  export type UsageStatsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    date?: boolean
-    commandsCount?: boolean
-    aiRequestsCount?: boolean
-    tokensUsed?: boolean
-    connectionsUsed?: boolean
-    createdAt?: boolean
-    userId?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["usageStats"]>
-
-  export type UsageStatsSelectScalar = {
-    id?: boolean
-    date?: boolean
-    commandsCount?: boolean
-    aiRequestsCount?: boolean
-    tokensUsed?: boolean
-    connectionsUsed?: boolean
-    createdAt?: boolean
-    userId?: boolean
-  }
-
-  export type UsageStatsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }
-  export type UsageStatsIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }
-
-  export type $UsageStatsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "UsageStats"
-    objects: {
-      user: Prisma.$UserPayload<ExtArgs>
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      date: Date
-      commandsCount: number
-      aiRequestsCount: number
-      tokensUsed: number
-      connectionsUsed: number
-      createdAt: Date
-      userId: string
-    }, ExtArgs["result"]["usageStats"]>
-    composites: {}
-  }
-
-  type UsageStatsGetPayload<S extends boolean | null | undefined | UsageStatsDefaultArgs> = $Result.GetResult<Prisma.$UsageStatsPayload, S>
-
-  type UsageStatsCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<UsageStatsFindManyArgs, 'select' | 'include' | 'distinct'> & {
-      select?: UsageStatsCountAggregateInputType | true
-    }
-
-  export interface UsageStatsDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['UsageStats'], meta: { name: 'UsageStats' } }
-    /**
-     * Find zero or one UsageStats that matches the filter.
-     * @param {UsageStatsFindUniqueArgs} args - Arguments to find a UsageStats
-     * @example
-     * // Get one UsageStats
-     * const usageStats = await prisma.usageStats.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends UsageStatsFindUniqueArgs>(args: SelectSubset<T, UsageStatsFindUniqueArgs<ExtArgs>>): Prisma__UsageStatsClient<$Result.GetResult<Prisma.$UsageStatsPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
-
-    /**
-     * Find one UsageStats that matches the filter or throw an error with `error.code='P2025'` 
-     * if no matches were found.
-     * @param {UsageStatsFindUniqueOrThrowArgs} args - Arguments to find a UsageStats
-     * @example
-     * // Get one UsageStats
-     * const usageStats = await prisma.usageStats.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends UsageStatsFindUniqueOrThrowArgs>(args: SelectSubset<T, UsageStatsFindUniqueOrThrowArgs<ExtArgs>>): Prisma__UsageStatsClient<$Result.GetResult<Prisma.$UsageStatsPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
-
-    /**
-     * Find the first UsageStats that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {UsageStatsFindFirstArgs} args - Arguments to find a UsageStats
-     * @example
-     * // Get one UsageStats
-     * const usageStats = await prisma.usageStats.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends UsageStatsFindFirstArgs>(args?: SelectSubset<T, UsageStatsFindFirstArgs<ExtArgs>>): Prisma__UsageStatsClient<$Result.GetResult<Prisma.$UsageStatsPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
-
-    /**
-     * Find the first UsageStats that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {UsageStatsFindFirstOrThrowArgs} args - Arguments to find a UsageStats
-     * @example
-     * // Get one UsageStats
-     * const usageStats = await prisma.usageStats.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends UsageStatsFindFirstOrThrowArgs>(args?: SelectSubset<T, UsageStatsFindFirstOrThrowArgs<ExtArgs>>): Prisma__UsageStatsClient<$Result.GetResult<Prisma.$UsageStatsPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
-
-    /**
-     * Find zero or more UsageStats that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {UsageStatsFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all UsageStats
-     * const usageStats = await prisma.usageStats.findMany()
-     * 
-     * // Get first 10 UsageStats
-     * const usageStats = await prisma.usageStats.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const usageStatsWithIdOnly = await prisma.usageStats.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends UsageStatsFindManyArgs>(args?: SelectSubset<T, UsageStatsFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UsageStatsPayload<ExtArgs>, T, "findMany">>
-
-    /**
-     * Create a UsageStats.
-     * @param {UsageStatsCreateArgs} args - Arguments to create a UsageStats.
-     * @example
-     * // Create one UsageStats
-     * const UsageStats = await prisma.usageStats.create({
-     *   data: {
-     *     // ... data to create a UsageStats
-     *   }
-     * })
-     * 
-     */
-    create<T extends UsageStatsCreateArgs>(args: SelectSubset<T, UsageStatsCreateArgs<ExtArgs>>): Prisma__UsageStatsClient<$Result.GetResult<Prisma.$UsageStatsPayload<ExtArgs>, T, "create">, never, ExtArgs>
-
-    /**
-     * Create many UsageStats.
-     * @param {UsageStatsCreateManyArgs} args - Arguments to create many UsageStats.
-     * @example
-     * // Create many UsageStats
-     * const usageStats = await prisma.usageStats.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends UsageStatsCreateManyArgs>(args?: SelectSubset<T, UsageStatsCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many UsageStats and returns the data saved in the database.
-     * @param {UsageStatsCreateManyAndReturnArgs} args - Arguments to create many UsageStats.
-     * @example
-     * // Create many UsageStats
-     * const usageStats = await prisma.usageStats.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many UsageStats and only return the `id`
-     * const usageStatsWithIdOnly = await prisma.usageStats.createManyAndReturn({ 
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends UsageStatsCreateManyAndReturnArgs>(args?: SelectSubset<T, UsageStatsCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UsageStatsPayload<ExtArgs>, T, "createManyAndReturn">>
-
-    /**
-     * Delete a UsageStats.
-     * @param {UsageStatsDeleteArgs} args - Arguments to delete one UsageStats.
-     * @example
-     * // Delete one UsageStats
-     * const UsageStats = await prisma.usageStats.delete({
-     *   where: {
-     *     // ... filter to delete one UsageStats
-     *   }
-     * })
-     * 
-     */
-    delete<T extends UsageStatsDeleteArgs>(args: SelectSubset<T, UsageStatsDeleteArgs<ExtArgs>>): Prisma__UsageStatsClient<$Result.GetResult<Prisma.$UsageStatsPayload<ExtArgs>, T, "delete">, never, ExtArgs>
-
-    /**
-     * Update one UsageStats.
-     * @param {UsageStatsUpdateArgs} args - Arguments to update one UsageStats.
-     * @example
-     * // Update one UsageStats
-     * const usageStats = await prisma.usageStats.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends UsageStatsUpdateArgs>(args: SelectSubset<T, UsageStatsUpdateArgs<ExtArgs>>): Prisma__UsageStatsClient<$Result.GetResult<Prisma.$UsageStatsPayload<ExtArgs>, T, "update">, never, ExtArgs>
-
-    /**
-     * Delete zero or more UsageStats.
-     * @param {UsageStatsDeleteManyArgs} args - Arguments to filter UsageStats to delete.
-     * @example
-     * // Delete a few UsageStats
-     * const { count } = await prisma.usageStats.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends UsageStatsDeleteManyArgs>(args?: SelectSubset<T, UsageStatsDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more UsageStats.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {UsageStatsUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many UsageStats
-     * const usageStats = await prisma.usageStats.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends UsageStatsUpdateManyArgs>(args: SelectSubset<T, UsageStatsUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create or update one UsageStats.
-     * @param {UsageStatsUpsertArgs} args - Arguments to update or create a UsageStats.
-     * @example
-     * // Update or create a UsageStats
-     * const usageStats = await prisma.usageStats.upsert({
-     *   create: {
-     *     // ... data to create a UsageStats
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the UsageStats we want to update
-     *   }
-     * })
-     */
-    upsert<T extends UsageStatsUpsertArgs>(args: SelectSubset<T, UsageStatsUpsertArgs<ExtArgs>>): Prisma__UsageStatsClient<$Result.GetResult<Prisma.$UsageStatsPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
-
-
-    /**
-     * Count the number of UsageStats.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {UsageStatsCountArgs} args - Arguments to filter UsageStats to count.
-     * @example
-     * // Count the number of UsageStats
-     * const count = await prisma.usageStats.count({
-     *   where: {
-     *     // ... the filter for the UsageStats we want to count
-     *   }
-     * })
-    **/
-    count<T extends UsageStatsCountArgs>(
-      args?: Subset<T, UsageStatsCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], UsageStatsCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a UsageStats.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {UsageStatsAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends UsageStatsAggregateArgs>(args: Subset<T, UsageStatsAggregateArgs>): Prisma.PrismaPromise<GetUsageStatsAggregateType<T>>
-
-    /**
-     * Group by UsageStats.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {UsageStatsGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends UsageStatsGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: UsageStatsGroupByArgs['orderBy'] }
-        : { orderBy?: UsageStatsGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, UsageStatsGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetUsageStatsGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the UsageStats model
-   */
-  readonly fields: UsageStatsFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for UsageStats.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__UsageStatsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the UsageStats model
-   */ 
-  interface UsageStatsFieldRefs {
-    readonly id: FieldRef<"UsageStats", 'String'>
-    readonly date: FieldRef<"UsageStats", 'DateTime'>
-    readonly commandsCount: FieldRef<"UsageStats", 'Int'>
-    readonly aiRequestsCount: FieldRef<"UsageStats", 'Int'>
-    readonly tokensUsed: FieldRef<"UsageStats", 'Int'>
-    readonly connectionsUsed: FieldRef<"UsageStats", 'Int'>
-    readonly createdAt: FieldRef<"UsageStats", 'DateTime'>
-    readonly userId: FieldRef<"UsageStats", 'String'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * UsageStats findUnique
-   */
-  export type UsageStatsFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the UsageStats
-     */
-    select?: UsageStatsSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: UsageStatsInclude<ExtArgs> | null
-    /**
-     * Filter, which UsageStats to fetch.
-     */
-    where: UsageStatsWhereUniqueInput
-  }
-
-  /**
-   * UsageStats findUniqueOrThrow
-   */
-  export type UsageStatsFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the UsageStats
-     */
-    select?: UsageStatsSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: UsageStatsInclude<ExtArgs> | null
-    /**
-     * Filter, which UsageStats to fetch.
-     */
-    where: UsageStatsWhereUniqueInput
-  }
-
-  /**
-   * UsageStats findFirst
-   */
-  export type UsageStatsFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the UsageStats
-     */
-    select?: UsageStatsSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: UsageStatsInclude<ExtArgs> | null
-    /**
-     * Filter, which UsageStats to fetch.
-     */
-    where?: UsageStatsWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of UsageStats to fetch.
-     */
-    orderBy?: UsageStatsOrderByWithRelationInput | UsageStatsOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for UsageStats.
-     */
-    cursor?: UsageStatsWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` UsageStats from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` UsageStats.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of UsageStats.
-     */
-    distinct?: UsageStatsScalarFieldEnum | UsageStatsScalarFieldEnum[]
-  }
-
-  /**
-   * UsageStats findFirstOrThrow
-   */
-  export type UsageStatsFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the UsageStats
-     */
-    select?: UsageStatsSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: UsageStatsInclude<ExtArgs> | null
-    /**
-     * Filter, which UsageStats to fetch.
-     */
-    where?: UsageStatsWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of UsageStats to fetch.
-     */
-    orderBy?: UsageStatsOrderByWithRelationInput | UsageStatsOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for UsageStats.
-     */
-    cursor?: UsageStatsWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` UsageStats from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` UsageStats.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of UsageStats.
-     */
-    distinct?: UsageStatsScalarFieldEnum | UsageStatsScalarFieldEnum[]
-  }
-
-  /**
-   * UsageStats findMany
-   */
-  export type UsageStatsFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the UsageStats
-     */
-    select?: UsageStatsSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: UsageStatsInclude<ExtArgs> | null
-    /**
-     * Filter, which UsageStats to fetch.
-     */
-    where?: UsageStatsWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of UsageStats to fetch.
-     */
-    orderBy?: UsageStatsOrderByWithRelationInput | UsageStatsOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing UsageStats.
-     */
-    cursor?: UsageStatsWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` UsageStats from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` UsageStats.
-     */
-    skip?: number
-    distinct?: UsageStatsScalarFieldEnum | UsageStatsScalarFieldEnum[]
-  }
-
-  /**
-   * UsageStats create
-   */
-  export type UsageStatsCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the UsageStats
-     */
-    select?: UsageStatsSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: UsageStatsInclude<ExtArgs> | null
-    /**
-     * The data needed to create a UsageStats.
-     */
-    data: XOR<UsageStatsCreateInput, UsageStatsUncheckedCreateInput>
-  }
-
-  /**
-   * UsageStats createMany
-   */
-  export type UsageStatsCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many UsageStats.
-     */
-    data: UsageStatsCreateManyInput | UsageStatsCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * UsageStats createManyAndReturn
-   */
-  export type UsageStatsCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the UsageStats
-     */
-    select?: UsageStatsSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * The data used to create many UsageStats.
-     */
-    data: UsageStatsCreateManyInput | UsageStatsCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: UsageStatsIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * UsageStats update
-   */
-  export type UsageStatsUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the UsageStats
-     */
-    select?: UsageStatsSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: UsageStatsInclude<ExtArgs> | null
-    /**
-     * The data needed to update a UsageStats.
-     */
-    data: XOR<UsageStatsUpdateInput, UsageStatsUncheckedUpdateInput>
-    /**
-     * Choose, which UsageStats to update.
-     */
-    where: UsageStatsWhereUniqueInput
-  }
-
-  /**
-   * UsageStats updateMany
-   */
-  export type UsageStatsUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update UsageStats.
-     */
-    data: XOR<UsageStatsUpdateManyMutationInput, UsageStatsUncheckedUpdateManyInput>
-    /**
-     * Filter which UsageStats to update
-     */
-    where?: UsageStatsWhereInput
-  }
-
-  /**
-   * UsageStats upsert
-   */
-  export type UsageStatsUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the UsageStats
-     */
-    select?: UsageStatsSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: UsageStatsInclude<ExtArgs> | null
-    /**
-     * The filter to search for the UsageStats to update in case it exists.
-     */
-    where: UsageStatsWhereUniqueInput
-    /**
-     * In case the UsageStats found by the `where` argument doesn't exist, create a new UsageStats with this data.
-     */
-    create: XOR<UsageStatsCreateInput, UsageStatsUncheckedCreateInput>
-    /**
-     * In case the UsageStats was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<UsageStatsUpdateInput, UsageStatsUncheckedUpdateInput>
-  }
-
-  /**
-   * UsageStats delete
-   */
-  export type UsageStatsDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the UsageStats
-     */
-    select?: UsageStatsSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: UsageStatsInclude<ExtArgs> | null
-    /**
-     * Filter which UsageStats to delete.
-     */
-    where: UsageStatsWhereUniqueInput
-  }
-
-  /**
-   * UsageStats deleteMany
-   */
-  export type UsageStatsDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which UsageStats to delete
-     */
-    where?: UsageStatsWhereInput
-  }
-
-  /**
-   * UsageStats without action
-   */
-  export type UsageStatsDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the UsageStats
-     */
-    select?: UsageStatsSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: UsageStatsInclude<ExtArgs> | null
-  }
-
-
-  /**
-   * Model ApiKey
-   */
-
-  export type AggregateApiKey = {
-    _count: ApiKeyCountAggregateOutputType | null
-    _min: ApiKeyMinAggregateOutputType | null
-    _max: ApiKeyMaxAggregateOutputType | null
-  }
-
-  export type ApiKeyMinAggregateOutputType = {
-    id: string | null
-    name: string | null
-    key: string | null
-    type: $Enums.ApiKeyType | null
-    isActive: boolean | null
-    expiresAt: Date | null
-    lastUsed: Date | null
-    createdAt: Date | null
-    userId: string | null
-  }
-
-  export type ApiKeyMaxAggregateOutputType = {
-    id: string | null
-    name: string | null
-    key: string | null
-    type: $Enums.ApiKeyType | null
-    isActive: boolean | null
-    expiresAt: Date | null
-    lastUsed: Date | null
-    createdAt: Date | null
-    userId: string | null
-  }
-
-  export type ApiKeyCountAggregateOutputType = {
-    id: number
-    name: number
-    key: number
-    type: number
-    isActive: number
-    expiresAt: number
-    lastUsed: number
-    createdAt: number
-    scopes: number
-    userId: number
-    _all: number
-  }
-
-
-  export type ApiKeyMinAggregateInputType = {
-    id?: true
-    name?: true
-    key?: true
-    type?: true
-    isActive?: true
-    expiresAt?: true
-    lastUsed?: true
-    createdAt?: true
-    userId?: true
-  }
-
-  export type ApiKeyMaxAggregateInputType = {
-    id?: true
-    name?: true
-    key?: true
-    type?: true
-    isActive?: true
-    expiresAt?: true
-    lastUsed?: true
-    createdAt?: true
-    userId?: true
-  }
-
-  export type ApiKeyCountAggregateInputType = {
-    id?: true
-    name?: true
-    key?: true
-    type?: true
-    isActive?: true
-    expiresAt?: true
-    lastUsed?: true
-    createdAt?: true
-    scopes?: true
-    userId?: true
-    _all?: true
-  }
-
-  export type ApiKeyAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which ApiKey to aggregate.
-     */
-    where?: ApiKeyWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of ApiKeys to fetch.
-     */
-    orderBy?: ApiKeyOrderByWithRelationInput | ApiKeyOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: ApiKeyWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` ApiKeys from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` ApiKeys.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned ApiKeys
-    **/
-    _count?: true | ApiKeyCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: ApiKeyMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: ApiKeyMaxAggregateInputType
-  }
-
-  export type GetApiKeyAggregateType<T extends ApiKeyAggregateArgs> = {
-        [P in keyof T & keyof AggregateApiKey]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateApiKey[P]>
-      : GetScalarType<T[P], AggregateApiKey[P]>
-  }
-
-
-
-
-  export type ApiKeyGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: ApiKeyWhereInput
-    orderBy?: ApiKeyOrderByWithAggregationInput | ApiKeyOrderByWithAggregationInput[]
-    by: ApiKeyScalarFieldEnum[] | ApiKeyScalarFieldEnum
-    having?: ApiKeyScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: ApiKeyCountAggregateInputType | true
-    _min?: ApiKeyMinAggregateInputType
-    _max?: ApiKeyMaxAggregateInputType
-  }
-
-  export type ApiKeyGroupByOutputType = {
-    id: string
-    name: string
-    key: string
-    type: $Enums.ApiKeyType
-    isActive: boolean
-    expiresAt: Date | null
-    lastUsed: Date | null
-    createdAt: Date
-    scopes: string[]
-    userId: string
-    _count: ApiKeyCountAggregateOutputType | null
-    _min: ApiKeyMinAggregateOutputType | null
-    _max: ApiKeyMaxAggregateOutputType | null
-  }
-
-  type GetApiKeyGroupByPayload<T extends ApiKeyGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<ApiKeyGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof ApiKeyGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], ApiKeyGroupByOutputType[P]>
-            : GetScalarType<T[P], ApiKeyGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type ApiKeySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    name?: boolean
-    key?: boolean
-    type?: boolean
-    isActive?: boolean
-    expiresAt?: boolean
-    lastUsed?: boolean
-    createdAt?: boolean
-    scopes?: boolean
-    userId?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["apiKey"]>
-
-  export type ApiKeySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    name?: boolean
-    key?: boolean
-    type?: boolean
-    isActive?: boolean
-    expiresAt?: boolean
-    lastUsed?: boolean
-    createdAt?: boolean
-    scopes?: boolean
-    userId?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["apiKey"]>
-
-  export type ApiKeySelectScalar = {
-    id?: boolean
-    name?: boolean
-    key?: boolean
-    type?: boolean
-    isActive?: boolean
-    expiresAt?: boolean
-    lastUsed?: boolean
-    createdAt?: boolean
-    scopes?: boolean
-    userId?: boolean
-  }
-
-  export type ApiKeyInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }
-  export type ApiKeyIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }
-
-  export type $ApiKeyPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "ApiKey"
-    objects: {
-      user: Prisma.$UserPayload<ExtArgs>
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      name: string
-      key: string
-      type: $Enums.ApiKeyType
-      isActive: boolean
-      expiresAt: Date | null
-      lastUsed: Date | null
-      createdAt: Date
-      scopes: string[]
-      userId: string
-    }, ExtArgs["result"]["apiKey"]>
-    composites: {}
-  }
-
-  type ApiKeyGetPayload<S extends boolean | null | undefined | ApiKeyDefaultArgs> = $Result.GetResult<Prisma.$ApiKeyPayload, S>
-
-  type ApiKeyCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<ApiKeyFindManyArgs, 'select' | 'include' | 'distinct'> & {
-      select?: ApiKeyCountAggregateInputType | true
-    }
-
-  export interface ApiKeyDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ApiKey'], meta: { name: 'ApiKey' } }
-    /**
-     * Find zero or one ApiKey that matches the filter.
-     * @param {ApiKeyFindUniqueArgs} args - Arguments to find a ApiKey
-     * @example
-     * // Get one ApiKey
-     * const apiKey = await prisma.apiKey.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends ApiKeyFindUniqueArgs>(args: SelectSubset<T, ApiKeyFindUniqueArgs<ExtArgs>>): Prisma__ApiKeyClient<$Result.GetResult<Prisma.$ApiKeyPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
-
-    /**
-     * Find one ApiKey that matches the filter or throw an error with `error.code='P2025'` 
-     * if no matches were found.
-     * @param {ApiKeyFindUniqueOrThrowArgs} args - Arguments to find a ApiKey
-     * @example
-     * // Get one ApiKey
-     * const apiKey = await prisma.apiKey.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends ApiKeyFindUniqueOrThrowArgs>(args: SelectSubset<T, ApiKeyFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ApiKeyClient<$Result.GetResult<Prisma.$ApiKeyPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
-
-    /**
-     * Find the first ApiKey that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {ApiKeyFindFirstArgs} args - Arguments to find a ApiKey
-     * @example
-     * // Get one ApiKey
-     * const apiKey = await prisma.apiKey.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends ApiKeyFindFirstArgs>(args?: SelectSubset<T, ApiKeyFindFirstArgs<ExtArgs>>): Prisma__ApiKeyClient<$Result.GetResult<Prisma.$ApiKeyPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
-
-    /**
-     * Find the first ApiKey that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {ApiKeyFindFirstOrThrowArgs} args - Arguments to find a ApiKey
-     * @example
-     * // Get one ApiKey
-     * const apiKey = await prisma.apiKey.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends ApiKeyFindFirstOrThrowArgs>(args?: SelectSubset<T, ApiKeyFindFirstOrThrowArgs<ExtArgs>>): Prisma__ApiKeyClient<$Result.GetResult<Prisma.$ApiKeyPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
-
-    /**
-     * Find zero or more ApiKeys that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {ApiKeyFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all ApiKeys
-     * const apiKeys = await prisma.apiKey.findMany()
-     * 
-     * // Get first 10 ApiKeys
-     * const apiKeys = await prisma.apiKey.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const apiKeyWithIdOnly = await prisma.apiKey.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends ApiKeyFindManyArgs>(args?: SelectSubset<T, ApiKeyFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApiKeyPayload<ExtArgs>, T, "findMany">>
-
-    /**
-     * Create a ApiKey.
-     * @param {ApiKeyCreateArgs} args - Arguments to create a ApiKey.
-     * @example
-     * // Create one ApiKey
-     * const ApiKey = await prisma.apiKey.create({
-     *   data: {
-     *     // ... data to create a ApiKey
-     *   }
-     * })
-     * 
-     */
-    create<T extends ApiKeyCreateArgs>(args: SelectSubset<T, ApiKeyCreateArgs<ExtArgs>>): Prisma__ApiKeyClient<$Result.GetResult<Prisma.$ApiKeyPayload<ExtArgs>, T, "create">, never, ExtArgs>
-
-    /**
-     * Create many ApiKeys.
-     * @param {ApiKeyCreateManyArgs} args - Arguments to create many ApiKeys.
-     * @example
-     * // Create many ApiKeys
-     * const apiKey = await prisma.apiKey.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends ApiKeyCreateManyArgs>(args?: SelectSubset<T, ApiKeyCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many ApiKeys and returns the data saved in the database.
-     * @param {ApiKeyCreateManyAndReturnArgs} args - Arguments to create many ApiKeys.
-     * @example
-     * // Create many ApiKeys
-     * const apiKey = await prisma.apiKey.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many ApiKeys and only return the `id`
-     * const apiKeyWithIdOnly = await prisma.apiKey.createManyAndReturn({ 
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends ApiKeyCreateManyAndReturnArgs>(args?: SelectSubset<T, ApiKeyCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApiKeyPayload<ExtArgs>, T, "createManyAndReturn">>
-
-    /**
-     * Delete a ApiKey.
-     * @param {ApiKeyDeleteArgs} args - Arguments to delete one ApiKey.
-     * @example
-     * // Delete one ApiKey
-     * const ApiKey = await prisma.apiKey.delete({
-     *   where: {
-     *     // ... filter to delete one ApiKey
-     *   }
-     * })
-     * 
-     */
-    delete<T extends ApiKeyDeleteArgs>(args: SelectSubset<T, ApiKeyDeleteArgs<ExtArgs>>): Prisma__ApiKeyClient<$Result.GetResult<Prisma.$ApiKeyPayload<ExtArgs>, T, "delete">, never, ExtArgs>
-
-    /**
-     * Update one ApiKey.
-     * @param {ApiKeyUpdateArgs} args - Arguments to update one ApiKey.
-     * @example
-     * // Update one ApiKey
-     * const apiKey = await prisma.apiKey.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends ApiKeyUpdateArgs>(args: SelectSubset<T, ApiKeyUpdateArgs<ExtArgs>>): Prisma__ApiKeyClient<$Result.GetResult<Prisma.$ApiKeyPayload<ExtArgs>, T, "update">, never, ExtArgs>
-
-    /**
-     * Delete zero or more ApiKeys.
-     * @param {ApiKeyDeleteManyArgs} args - Arguments to filter ApiKeys to delete.
-     * @example
-     * // Delete a few ApiKeys
-     * const { count } = await prisma.apiKey.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends ApiKeyDeleteManyArgs>(args?: SelectSubset<T, ApiKeyDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more ApiKeys.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {ApiKeyUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many ApiKeys
-     * const apiKey = await prisma.apiKey.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends ApiKeyUpdateManyArgs>(args: SelectSubset<T, ApiKeyUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create or update one ApiKey.
-     * @param {ApiKeyUpsertArgs} args - Arguments to update or create a ApiKey.
-     * @example
-     * // Update or create a ApiKey
-     * const apiKey = await prisma.apiKey.upsert({
-     *   create: {
-     *     // ... data to create a ApiKey
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the ApiKey we want to update
-     *   }
-     * })
-     */
-    upsert<T extends ApiKeyUpsertArgs>(args: SelectSubset<T, ApiKeyUpsertArgs<ExtArgs>>): Prisma__ApiKeyClient<$Result.GetResult<Prisma.$ApiKeyPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
-
-
-    /**
-     * Count the number of ApiKeys.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {ApiKeyCountArgs} args - Arguments to filter ApiKeys to count.
-     * @example
-     * // Count the number of ApiKeys
-     * const count = await prisma.apiKey.count({
-     *   where: {
-     *     // ... the filter for the ApiKeys we want to count
-     *   }
-     * })
-    **/
-    count<T extends ApiKeyCountArgs>(
-      args?: Subset<T, ApiKeyCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], ApiKeyCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a ApiKey.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {ApiKeyAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends ApiKeyAggregateArgs>(args: Subset<T, ApiKeyAggregateArgs>): Prisma.PrismaPromise<GetApiKeyAggregateType<T>>
-
-    /**
-     * Group by ApiKey.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {ApiKeyGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends ApiKeyGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: ApiKeyGroupByArgs['orderBy'] }
-        : { orderBy?: ApiKeyGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, ApiKeyGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetApiKeyGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the ApiKey model
-   */
-  readonly fields: ApiKeyFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for ApiKey.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__ApiKeyClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the ApiKey model
-   */ 
-  interface ApiKeyFieldRefs {
-    readonly id: FieldRef<"ApiKey", 'String'>
-    readonly name: FieldRef<"ApiKey", 'String'>
-    readonly key: FieldRef<"ApiKey", 'String'>
-    readonly type: FieldRef<"ApiKey", 'ApiKeyType'>
-    readonly isActive: FieldRef<"ApiKey", 'Boolean'>
-    readonly expiresAt: FieldRef<"ApiKey", 'DateTime'>
-    readonly lastUsed: FieldRef<"ApiKey", 'DateTime'>
-    readonly createdAt: FieldRef<"ApiKey", 'DateTime'>
-    readonly scopes: FieldRef<"ApiKey", 'String[]'>
-    readonly userId: FieldRef<"ApiKey", 'String'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * ApiKey findUnique
-   */
-  export type ApiKeyFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the ApiKey
-     */
-    select?: ApiKeySelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ApiKeyInclude<ExtArgs> | null
-    /**
-     * Filter, which ApiKey to fetch.
-     */
-    where: ApiKeyWhereUniqueInput
-  }
-
-  /**
-   * ApiKey findUniqueOrThrow
-   */
-  export type ApiKeyFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the ApiKey
-     */
-    select?: ApiKeySelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ApiKeyInclude<ExtArgs> | null
-    /**
-     * Filter, which ApiKey to fetch.
-     */
-    where: ApiKeyWhereUniqueInput
-  }
-
-  /**
-   * ApiKey findFirst
-   */
-  export type ApiKeyFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the ApiKey
-     */
-    select?: ApiKeySelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ApiKeyInclude<ExtArgs> | null
-    /**
-     * Filter, which ApiKey to fetch.
-     */
-    where?: ApiKeyWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of ApiKeys to fetch.
-     */
-    orderBy?: ApiKeyOrderByWithRelationInput | ApiKeyOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for ApiKeys.
-     */
-    cursor?: ApiKeyWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` ApiKeys from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` ApiKeys.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of ApiKeys.
-     */
-    distinct?: ApiKeyScalarFieldEnum | ApiKeyScalarFieldEnum[]
-  }
-
-  /**
-   * ApiKey findFirstOrThrow
-   */
-  export type ApiKeyFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the ApiKey
-     */
-    select?: ApiKeySelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ApiKeyInclude<ExtArgs> | null
-    /**
-     * Filter, which ApiKey to fetch.
-     */
-    where?: ApiKeyWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of ApiKeys to fetch.
-     */
-    orderBy?: ApiKeyOrderByWithRelationInput | ApiKeyOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for ApiKeys.
-     */
-    cursor?: ApiKeyWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` ApiKeys from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` ApiKeys.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of ApiKeys.
-     */
-    distinct?: ApiKeyScalarFieldEnum | ApiKeyScalarFieldEnum[]
-  }
-
-  /**
-   * ApiKey findMany
-   */
-  export type ApiKeyFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the ApiKey
-     */
-    select?: ApiKeySelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ApiKeyInclude<ExtArgs> | null
-    /**
-     * Filter, which ApiKeys to fetch.
-     */
-    where?: ApiKeyWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of ApiKeys to fetch.
-     */
-    orderBy?: ApiKeyOrderByWithRelationInput | ApiKeyOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing ApiKeys.
-     */
-    cursor?: ApiKeyWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` ApiKeys from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` ApiKeys.
-     */
-    skip?: number
-    distinct?: ApiKeyScalarFieldEnum | ApiKeyScalarFieldEnum[]
-  }
-
-  /**
-   * ApiKey create
-   */
-  export type ApiKeyCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the ApiKey
-     */
-    select?: ApiKeySelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ApiKeyInclude<ExtArgs> | null
-    /**
-     * The data needed to create a ApiKey.
-     */
-    data: XOR<ApiKeyCreateInput, ApiKeyUncheckedCreateInput>
-  }
-
-  /**
-   * ApiKey createMany
-   */
-  export type ApiKeyCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many ApiKeys.
-     */
-    data: ApiKeyCreateManyInput | ApiKeyCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * ApiKey createManyAndReturn
-   */
-  export type ApiKeyCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the ApiKey
-     */
-    select?: ApiKeySelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * The data used to create many ApiKeys.
-     */
-    data: ApiKeyCreateManyInput | ApiKeyCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ApiKeyIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * ApiKey update
-   */
-  export type ApiKeyUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the ApiKey
-     */
-    select?: ApiKeySelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ApiKeyInclude<ExtArgs> | null
-    /**
-     * The data needed to update a ApiKey.
-     */
-    data: XOR<ApiKeyUpdateInput, ApiKeyUncheckedUpdateInput>
-    /**
-     * Choose, which ApiKey to update.
-     */
-    where: ApiKeyWhereUniqueInput
-  }
-
-  /**
-   * ApiKey updateMany
-   */
-  export type ApiKeyUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update ApiKeys.
-     */
-    data: XOR<ApiKeyUpdateManyMutationInput, ApiKeyUncheckedUpdateManyInput>
-    /**
-     * Filter which ApiKeys to update
-     */
-    where?: ApiKeyWhereInput
-  }
-
-  /**
-   * ApiKey upsert
-   */
-  export type ApiKeyUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the ApiKey
-     */
-    select?: ApiKeySelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ApiKeyInclude<ExtArgs> | null
-    /**
-     * The filter to search for the ApiKey to update in case it exists.
-     */
-    where: ApiKeyWhereUniqueInput
-    /**
-     * In case the ApiKey found by the `where` argument doesn't exist, create a new ApiKey with this data.
-     */
-    create: XOR<ApiKeyCreateInput, ApiKeyUncheckedCreateInput>
-    /**
-     * In case the ApiKey was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<ApiKeyUpdateInput, ApiKeyUncheckedUpdateInput>
-  }
-
-  /**
-   * ApiKey delete
-   */
-  export type ApiKeyDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the ApiKey
-     */
-    select?: ApiKeySelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ApiKeyInclude<ExtArgs> | null
-    /**
-     * Filter which ApiKey to delete.
-     */
-    where: ApiKeyWhereUniqueInput
-  }
-
-  /**
-   * ApiKey deleteMany
-   */
-  export type ApiKeyDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which ApiKeys to delete
-     */
-    where?: ApiKeyWhereInput
-  }
-
-  /**
-   * ApiKey without action
-   */
-  export type ApiKeyDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the ApiKey
-     */
-    select?: ApiKeySelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ApiKeyInclude<ExtArgs> | null
-  }
-
-
-  /**
-   * Model SystemConfig
-   */
-
-  export type AggregateSystemConfig = {
-    _count: SystemConfigCountAggregateOutputType | null
-    _min: SystemConfigMinAggregateOutputType | null
-    _max: SystemConfigMaxAggregateOutputType | null
-  }
-
-  export type SystemConfigMinAggregateOutputType = {
-    id: string | null
-    key: string | null
-    value: string | null
-    type: $Enums.ConfigType | null
-    description: string | null
-    category: string | null
-    isPublic: boolean | null
-    updatedAt: Date | null
-    createdAt: Date | null
-  }
-
-  export type SystemConfigMaxAggregateOutputType = {
-    id: string | null
-    key: string | null
-    value: string | null
-    type: $Enums.ConfigType | null
-    description: string | null
-    category: string | null
-    isPublic: boolean | null
-    updatedAt: Date | null
-    createdAt: Date | null
-  }
-
-  export type SystemConfigCountAggregateOutputType = {
-    id: number
-    key: number
-    value: number
-    type: number
-    description: number
-    category: number
-    isPublic: number
-    updatedAt: number
-    createdAt: number
-    _all: number
-  }
-
-
-  export type SystemConfigMinAggregateInputType = {
-    id?: true
-    key?: true
-    value?: true
-    type?: true
-    description?: true
-    category?: true
-    isPublic?: true
-    updatedAt?: true
-    createdAt?: true
-  }
-
-  export type SystemConfigMaxAggregateInputType = {
-    id?: true
-    key?: true
-    value?: true
-    type?: true
-    description?: true
-    category?: true
-    isPublic?: true
-    updatedAt?: true
-    createdAt?: true
-  }
-
-  export type SystemConfigCountAggregateInputType = {
-    id?: true
-    key?: true
-    value?: true
-    type?: true
-    description?: true
-    category?: true
-    isPublic?: true
-    updatedAt?: true
-    createdAt?: true
-    _all?: true
-  }
-
-  export type SystemConfigAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which SystemConfig to aggregate.
-     */
-    where?: SystemConfigWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of SystemConfigs to fetch.
-     */
-    orderBy?: SystemConfigOrderByWithRelationInput | SystemConfigOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: SystemConfigWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` SystemConfigs from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` SystemConfigs.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned SystemConfigs
-    **/
-    _count?: true | SystemConfigCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: SystemConfigMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: SystemConfigMaxAggregateInputType
-  }
-
-  export type GetSystemConfigAggregateType<T extends SystemConfigAggregateArgs> = {
-        [P in keyof T & keyof AggregateSystemConfig]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateSystemConfig[P]>
-      : GetScalarType<T[P], AggregateSystemConfig[P]>
-  }
-
-
-
-
-  export type SystemConfigGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: SystemConfigWhereInput
-    orderBy?: SystemConfigOrderByWithAggregationInput | SystemConfigOrderByWithAggregationInput[]
-    by: SystemConfigScalarFieldEnum[] | SystemConfigScalarFieldEnum
-    having?: SystemConfigScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: SystemConfigCountAggregateInputType | true
-    _min?: SystemConfigMinAggregateInputType
-    _max?: SystemConfigMaxAggregateInputType
-  }
-
-  export type SystemConfigGroupByOutputType = {
-    id: string
-    key: string
-    value: string
-    type: $Enums.ConfigType
-    description: string | null
-    category: string | null
-    isPublic: boolean
-    updatedAt: Date
-    createdAt: Date
-    _count: SystemConfigCountAggregateOutputType | null
-    _min: SystemConfigMinAggregateOutputType | null
-    _max: SystemConfigMaxAggregateOutputType | null
-  }
-
-  type GetSystemConfigGroupByPayload<T extends SystemConfigGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<SystemConfigGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof SystemConfigGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], SystemConfigGroupByOutputType[P]>
-            : GetScalarType<T[P], SystemConfigGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type SystemConfigSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    key?: boolean
-    value?: boolean
-    type?: boolean
-    description?: boolean
-    category?: boolean
-    isPublic?: boolean
-    updatedAt?: boolean
-    createdAt?: boolean
-  }, ExtArgs["result"]["systemConfig"]>
-
-  export type SystemConfigSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    key?: boolean
-    value?: boolean
-    type?: boolean
-    description?: boolean
-    category?: boolean
-    isPublic?: boolean
-    updatedAt?: boolean
-    createdAt?: boolean
-  }, ExtArgs["result"]["systemConfig"]>
-
-  export type SystemConfigSelectScalar = {
-    id?: boolean
-    key?: boolean
-    value?: boolean
-    type?: boolean
-    description?: boolean
-    category?: boolean
-    isPublic?: boolean
-    updatedAt?: boolean
-    createdAt?: boolean
-  }
-
-
-  export type $SystemConfigPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "SystemConfig"
-    objects: {}
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      key: string
-      value: string
-      type: $Enums.ConfigType
-      description: string | null
-      category: string | null
-      isPublic: boolean
-      updatedAt: Date
-      createdAt: Date
-    }, ExtArgs["result"]["systemConfig"]>
-    composites: {}
-  }
-
-  type SystemConfigGetPayload<S extends boolean | null | undefined | SystemConfigDefaultArgs> = $Result.GetResult<Prisma.$SystemConfigPayload, S>
-
-  type SystemConfigCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<SystemConfigFindManyArgs, 'select' | 'include' | 'distinct'> & {
-      select?: SystemConfigCountAggregateInputType | true
-    }
-
-  export interface SystemConfigDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['SystemConfig'], meta: { name: 'SystemConfig' } }
-    /**
-     * Find zero or one SystemConfig that matches the filter.
-     * @param {SystemConfigFindUniqueArgs} args - Arguments to find a SystemConfig
-     * @example
-     * // Get one SystemConfig
-     * const systemConfig = await prisma.systemConfig.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends SystemConfigFindUniqueArgs>(args: SelectSubset<T, SystemConfigFindUniqueArgs<ExtArgs>>): Prisma__SystemConfigClient<$Result.GetResult<Prisma.$SystemConfigPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
-
-    /**
-     * Find one SystemConfig that matches the filter or throw an error with `error.code='P2025'` 
-     * if no matches were found.
-     * @param {SystemConfigFindUniqueOrThrowArgs} args - Arguments to find a SystemConfig
-     * @example
-     * // Get one SystemConfig
-     * const systemConfig = await prisma.systemConfig.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends SystemConfigFindUniqueOrThrowArgs>(args: SelectSubset<T, SystemConfigFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SystemConfigClient<$Result.GetResult<Prisma.$SystemConfigPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
-
-    /**
-     * Find the first SystemConfig that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {SystemConfigFindFirstArgs} args - Arguments to find a SystemConfig
-     * @example
-     * // Get one SystemConfig
-     * const systemConfig = await prisma.systemConfig.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends SystemConfigFindFirstArgs>(args?: SelectSubset<T, SystemConfigFindFirstArgs<ExtArgs>>): Prisma__SystemConfigClient<$Result.GetResult<Prisma.$SystemConfigPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
-
-    /**
-     * Find the first SystemConfig that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {SystemConfigFindFirstOrThrowArgs} args - Arguments to find a SystemConfig
-     * @example
-     * // Get one SystemConfig
-     * const systemConfig = await prisma.systemConfig.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends SystemConfigFindFirstOrThrowArgs>(args?: SelectSubset<T, SystemConfigFindFirstOrThrowArgs<ExtArgs>>): Prisma__SystemConfigClient<$Result.GetResult<Prisma.$SystemConfigPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
-
-    /**
-     * Find zero or more SystemConfigs that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {SystemConfigFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all SystemConfigs
-     * const systemConfigs = await prisma.systemConfig.findMany()
-     * 
-     * // Get first 10 SystemConfigs
-     * const systemConfigs = await prisma.systemConfig.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const systemConfigWithIdOnly = await prisma.systemConfig.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends SystemConfigFindManyArgs>(args?: SelectSubset<T, SystemConfigFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SystemConfigPayload<ExtArgs>, T, "findMany">>
-
-    /**
-     * Create a SystemConfig.
-     * @param {SystemConfigCreateArgs} args - Arguments to create a SystemConfig.
-     * @example
-     * // Create one SystemConfig
-     * const SystemConfig = await prisma.systemConfig.create({
-     *   data: {
-     *     // ... data to create a SystemConfig
-     *   }
-     * })
-     * 
-     */
-    create<T extends SystemConfigCreateArgs>(args: SelectSubset<T, SystemConfigCreateArgs<ExtArgs>>): Prisma__SystemConfigClient<$Result.GetResult<Prisma.$SystemConfigPayload<ExtArgs>, T, "create">, never, ExtArgs>
-
-    /**
-     * Create many SystemConfigs.
-     * @param {SystemConfigCreateManyArgs} args - Arguments to create many SystemConfigs.
-     * @example
-     * // Create many SystemConfigs
-     * const systemConfig = await prisma.systemConfig.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends SystemConfigCreateManyArgs>(args?: SelectSubset<T, SystemConfigCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many SystemConfigs and returns the data saved in the database.
-     * @param {SystemConfigCreateManyAndReturnArgs} args - Arguments to create many SystemConfigs.
-     * @example
-     * // Create many SystemConfigs
-     * const systemConfig = await prisma.systemConfig.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many SystemConfigs and only return the `id`
-     * const systemConfigWithIdOnly = await prisma.systemConfig.createManyAndReturn({ 
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends SystemConfigCreateManyAndReturnArgs>(args?: SelectSubset<T, SystemConfigCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SystemConfigPayload<ExtArgs>, T, "createManyAndReturn">>
-
-    /**
-     * Delete a SystemConfig.
-     * @param {SystemConfigDeleteArgs} args - Arguments to delete one SystemConfig.
-     * @example
-     * // Delete one SystemConfig
-     * const SystemConfig = await prisma.systemConfig.delete({
-     *   where: {
-     *     // ... filter to delete one SystemConfig
-     *   }
-     * })
-     * 
-     */
-    delete<T extends SystemConfigDeleteArgs>(args: SelectSubset<T, SystemConfigDeleteArgs<ExtArgs>>): Prisma__SystemConfigClient<$Result.GetResult<Prisma.$SystemConfigPayload<ExtArgs>, T, "delete">, never, ExtArgs>
-
-    /**
-     * Update one SystemConfig.
-     * @param {SystemConfigUpdateArgs} args - Arguments to update one SystemConfig.
-     * @example
-     * // Update one SystemConfig
-     * const systemConfig = await prisma.systemConfig.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends SystemConfigUpdateArgs>(args: SelectSubset<T, SystemConfigUpdateArgs<ExtArgs>>): Prisma__SystemConfigClient<$Result.GetResult<Prisma.$SystemConfigPayload<ExtArgs>, T, "update">, never, ExtArgs>
-
-    /**
-     * Delete zero or more SystemConfigs.
-     * @param {SystemConfigDeleteManyArgs} args - Arguments to filter SystemConfigs to delete.
-     * @example
-     * // Delete a few SystemConfigs
-     * const { count } = await prisma.systemConfig.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends SystemConfigDeleteManyArgs>(args?: SelectSubset<T, SystemConfigDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more SystemConfigs.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {SystemConfigUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many SystemConfigs
-     * const systemConfig = await prisma.systemConfig.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends SystemConfigUpdateManyArgs>(args: SelectSubset<T, SystemConfigUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create or update one SystemConfig.
-     * @param {SystemConfigUpsertArgs} args - Arguments to update or create a SystemConfig.
-     * @example
-     * // Update or create a SystemConfig
-     * const systemConfig = await prisma.systemConfig.upsert({
-     *   create: {
-     *     // ... data to create a SystemConfig
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the SystemConfig we want to update
-     *   }
-     * })
-     */
-    upsert<T extends SystemConfigUpsertArgs>(args: SelectSubset<T, SystemConfigUpsertArgs<ExtArgs>>): Prisma__SystemConfigClient<$Result.GetResult<Prisma.$SystemConfigPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
-
-
-    /**
-     * Count the number of SystemConfigs.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {SystemConfigCountArgs} args - Arguments to filter SystemConfigs to count.
-     * @example
-     * // Count the number of SystemConfigs
-     * const count = await prisma.systemConfig.count({
-     *   where: {
-     *     // ... the filter for the SystemConfigs we want to count
-     *   }
-     * })
-    **/
-    count<T extends SystemConfigCountArgs>(
-      args?: Subset<T, SystemConfigCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], SystemConfigCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a SystemConfig.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {SystemConfigAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends SystemConfigAggregateArgs>(args: Subset<T, SystemConfigAggregateArgs>): Prisma.PrismaPromise<GetSystemConfigAggregateType<T>>
-
-    /**
-     * Group by SystemConfig.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {SystemConfigGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends SystemConfigGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: SystemConfigGroupByArgs['orderBy'] }
-        : { orderBy?: SystemConfigGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, SystemConfigGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSystemConfigGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the SystemConfig model
-   */
-  readonly fields: SystemConfigFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for SystemConfig.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__SystemConfigClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the SystemConfig model
-   */ 
-  interface SystemConfigFieldRefs {
-    readonly id: FieldRef<"SystemConfig", 'String'>
-    readonly key: FieldRef<"SystemConfig", 'String'>
-    readonly value: FieldRef<"SystemConfig", 'String'>
-    readonly type: FieldRef<"SystemConfig", 'ConfigType'>
-    readonly description: FieldRef<"SystemConfig", 'String'>
-    readonly category: FieldRef<"SystemConfig", 'String'>
-    readonly isPublic: FieldRef<"SystemConfig", 'Boolean'>
-    readonly updatedAt: FieldRef<"SystemConfig", 'DateTime'>
-    readonly createdAt: FieldRef<"SystemConfig", 'DateTime'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * SystemConfig findUnique
-   */
-  export type SystemConfigFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SystemConfig
-     */
-    select?: SystemConfigSelect<ExtArgs> | null
-    /**
-     * Filter, which SystemConfig to fetch.
-     */
-    where: SystemConfigWhereUniqueInput
-  }
-
-  /**
-   * SystemConfig findUniqueOrThrow
-   */
-  export type SystemConfigFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SystemConfig
-     */
-    select?: SystemConfigSelect<ExtArgs> | null
-    /**
-     * Filter, which SystemConfig to fetch.
-     */
-    where: SystemConfigWhereUniqueInput
-  }
-
-  /**
-   * SystemConfig findFirst
-   */
-  export type SystemConfigFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SystemConfig
-     */
-    select?: SystemConfigSelect<ExtArgs> | null
-    /**
-     * Filter, which SystemConfig to fetch.
-     */
-    where?: SystemConfigWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of SystemConfigs to fetch.
-     */
-    orderBy?: SystemConfigOrderByWithRelationInput | SystemConfigOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for SystemConfigs.
-     */
-    cursor?: SystemConfigWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` SystemConfigs from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` SystemConfigs.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of SystemConfigs.
-     */
-    distinct?: SystemConfigScalarFieldEnum | SystemConfigScalarFieldEnum[]
-  }
-
-  /**
-   * SystemConfig findFirstOrThrow
-   */
-  export type SystemConfigFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SystemConfig
-     */
-    select?: SystemConfigSelect<ExtArgs> | null
-    /**
-     * Filter, which SystemConfig to fetch.
-     */
-    where?: SystemConfigWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of SystemConfigs to fetch.
-     */
-    orderBy?: SystemConfigOrderByWithRelationInput | SystemConfigOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for SystemConfigs.
-     */
-    cursor?: SystemConfigWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` SystemConfigs from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` SystemConfigs.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of SystemConfigs.
-     */
-    distinct?: SystemConfigScalarFieldEnum | SystemConfigScalarFieldEnum[]
-  }
-
-  /**
-   * SystemConfig findMany
-   */
-  export type SystemConfigFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SystemConfig
-     */
-    select?: SystemConfigSelect<ExtArgs> | null
-    /**
-     * Filter, which SystemConfigs to fetch.
-     */
-    where?: SystemConfigWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of SystemConfigs to fetch.
-     */
-    orderBy?: SystemConfigOrderByWithRelationInput | SystemConfigOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing SystemConfigs.
-     */
-    cursor?: SystemConfigWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` SystemConfigs from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` SystemConfigs.
-     */
-    skip?: number
-    distinct?: SystemConfigScalarFieldEnum | SystemConfigScalarFieldEnum[]
-  }
-
-  /**
-   * SystemConfig create
-   */
-  export type SystemConfigCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SystemConfig
-     */
-    select?: SystemConfigSelect<ExtArgs> | null
-    /**
-     * The data needed to create a SystemConfig.
-     */
-    data: XOR<SystemConfigCreateInput, SystemConfigUncheckedCreateInput>
-  }
-
-  /**
-   * SystemConfig createMany
-   */
-  export type SystemConfigCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many SystemConfigs.
-     */
-    data: SystemConfigCreateManyInput | SystemConfigCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * SystemConfig createManyAndReturn
-   */
-  export type SystemConfigCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SystemConfig
-     */
-    select?: SystemConfigSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * The data used to create many SystemConfigs.
-     */
-    data: SystemConfigCreateManyInput | SystemConfigCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * SystemConfig update
-   */
-  export type SystemConfigUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SystemConfig
-     */
-    select?: SystemConfigSelect<ExtArgs> | null
-    /**
-     * The data needed to update a SystemConfig.
-     */
-    data: XOR<SystemConfigUpdateInput, SystemConfigUncheckedUpdateInput>
-    /**
-     * Choose, which SystemConfig to update.
-     */
-    where: SystemConfigWhereUniqueInput
-  }
-
-  /**
-   * SystemConfig updateMany
-   */
-  export type SystemConfigUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update SystemConfigs.
-     */
-    data: XOR<SystemConfigUpdateManyMutationInput, SystemConfigUncheckedUpdateManyInput>
-    /**
-     * Filter which SystemConfigs to update
-     */
-    where?: SystemConfigWhereInput
-  }
-
-  /**
-   * SystemConfig upsert
-   */
-  export type SystemConfigUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SystemConfig
-     */
-    select?: SystemConfigSelect<ExtArgs> | null
-    /**
-     * The filter to search for the SystemConfig to update in case it exists.
-     */
-    where: SystemConfigWhereUniqueInput
-    /**
-     * In case the SystemConfig found by the `where` argument doesn't exist, create a new SystemConfig with this data.
-     */
-    create: XOR<SystemConfigCreateInput, SystemConfigUncheckedCreateInput>
-    /**
-     * In case the SystemConfig was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<SystemConfigUpdateInput, SystemConfigUncheckedUpdateInput>
-  }
-
-  /**
-   * SystemConfig delete
-   */
-  export type SystemConfigDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SystemConfig
-     */
-    select?: SystemConfigSelect<ExtArgs> | null
-    /**
-     * Filter which SystemConfig to delete.
-     */
-    where: SystemConfigWhereUniqueInput
-  }
-
-  /**
-   * SystemConfig deleteMany
-   */
-  export type SystemConfigDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which SystemConfigs to delete
-     */
-    where?: SystemConfigWhereInput
-  }
-
-  /**
-   * SystemConfig without action
-   */
-  export type SystemConfigDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SystemConfig
-     */
-    select?: SystemConfigSelect<ExtArgs> | null
-  }
-
-
-  /**
-   * Model SessionGroup
-   */
-
-  export type AggregateSessionGroup = {
-    _count: SessionGroupCountAggregateOutputType | null
-    _avg: SessionGroupAvgAggregateOutputType | null
-    _sum: SessionGroupSumAggregateOutputType | null
-    _min: SessionGroupMinAggregateOutputType | null
-    _max: SessionGroupMaxAggregateOutputType | null
-  }
-
-  export type SessionGroupAvgAggregateOutputType = {
-    sort: number | null
-  }
-
-  export type SessionGroupSumAggregateOutputType = {
-    sort: number | null
-  }
-
-  export type SessionGroupMinAggregateOutputType = {
-    id: string | null
-    name: string | null
-    sort: number | null
-    createdAt: Date | null
-    updatedAt: Date | null
-    userId: string | null
-  }
-
-  export type SessionGroupMaxAggregateOutputType = {
-    id: string | null
-    name: string | null
-    sort: number | null
-    createdAt: Date | null
-    updatedAt: Date | null
-    userId: string | null
-  }
-
-  export type SessionGroupCountAggregateOutputType = {
-    id: number
-    name: number
-    sort: number
-    createdAt: number
-    updatedAt: number
-    meta: number
-    userId: number
-    _all: number
-  }
-
-
-  export type SessionGroupAvgAggregateInputType = {
-    sort?: true
-  }
-
-  export type SessionGroupSumAggregateInputType = {
-    sort?: true
-  }
-
-  export type SessionGroupMinAggregateInputType = {
-    id?: true
-    name?: true
-    sort?: true
-    createdAt?: true
-    updatedAt?: true
-    userId?: true
-  }
-
-  export type SessionGroupMaxAggregateInputType = {
-    id?: true
-    name?: true
-    sort?: true
-    createdAt?: true
-    updatedAt?: true
-    userId?: true
-  }
-
-  export type SessionGroupCountAggregateInputType = {
-    id?: true
-    name?: true
-    sort?: true
-    createdAt?: true
-    updatedAt?: true
-    meta?: true
-    userId?: true
-    _all?: true
-  }
-
-  export type SessionGroupAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which SessionGroup to aggregate.
-     */
-    where?: SessionGroupWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of SessionGroups to fetch.
-     */
-    orderBy?: SessionGroupOrderByWithRelationInput | SessionGroupOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: SessionGroupWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` SessionGroups from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` SessionGroups.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned SessionGroups
-    **/
-    _count?: true | SessionGroupCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to average
-    **/
-    _avg?: SessionGroupAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: SessionGroupSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: SessionGroupMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: SessionGroupMaxAggregateInputType
-  }
-
-  export type GetSessionGroupAggregateType<T extends SessionGroupAggregateArgs> = {
-        [P in keyof T & keyof AggregateSessionGroup]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateSessionGroup[P]>
-      : GetScalarType<T[P], AggregateSessionGroup[P]>
-  }
-
-
-
-
-  export type SessionGroupGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: SessionGroupWhereInput
-    orderBy?: SessionGroupOrderByWithAggregationInput | SessionGroupOrderByWithAggregationInput[]
-    by: SessionGroupScalarFieldEnum[] | SessionGroupScalarFieldEnum
-    having?: SessionGroupScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: SessionGroupCountAggregateInputType | true
-    _avg?: SessionGroupAvgAggregateInputType
-    _sum?: SessionGroupSumAggregateInputType
-    _min?: SessionGroupMinAggregateInputType
-    _max?: SessionGroupMaxAggregateInputType
-  }
-
-  export type SessionGroupGroupByOutputType = {
-    id: string
-    name: string
-    sort: number
-    createdAt: Date
-    updatedAt: Date
-    meta: JsonValue | null
-    userId: string
-    _count: SessionGroupCountAggregateOutputType | null
-    _avg: SessionGroupAvgAggregateOutputType | null
-    _sum: SessionGroupSumAggregateOutputType | null
-    _min: SessionGroupMinAggregateOutputType | null
-    _max: SessionGroupMaxAggregateOutputType | null
-  }
-
-  type GetSessionGroupGroupByPayload<T extends SessionGroupGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<SessionGroupGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof SessionGroupGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], SessionGroupGroupByOutputType[P]>
-            : GetScalarType<T[P], SessionGroupGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type SessionGroupSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    name?: boolean
-    sort?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    meta?: boolean
-    userId?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["sessionGroup"]>
-
-  export type SessionGroupSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    name?: boolean
-    sort?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    meta?: boolean
-    userId?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["sessionGroup"]>
-
-  export type SessionGroupSelectScalar = {
-    id?: boolean
-    name?: boolean
-    sort?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    meta?: boolean
-    userId?: boolean
-  }
-
-  export type SessionGroupInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }
-  export type SessionGroupIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }
-
-  export type $SessionGroupPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "SessionGroup"
-    objects: {
-      user: Prisma.$UserPayload<ExtArgs>
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      name: string
-      sort: number
-      createdAt: Date
-      updatedAt: Date
-      meta: Prisma.JsonValue | null
-      userId: string
-    }, ExtArgs["result"]["sessionGroup"]>
-    composites: {}
-  }
-
-  type SessionGroupGetPayload<S extends boolean | null | undefined | SessionGroupDefaultArgs> = $Result.GetResult<Prisma.$SessionGroupPayload, S>
-
-  type SessionGroupCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<SessionGroupFindManyArgs, 'select' | 'include' | 'distinct'> & {
-      select?: SessionGroupCountAggregateInputType | true
-    }
-
-  export interface SessionGroupDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['SessionGroup'], meta: { name: 'SessionGroup' } }
-    /**
-     * Find zero or one SessionGroup that matches the filter.
-     * @param {SessionGroupFindUniqueArgs} args - Arguments to find a SessionGroup
-     * @example
-     * // Get one SessionGroup
-     * const sessionGroup = await prisma.sessionGroup.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends SessionGroupFindUniqueArgs>(args: SelectSubset<T, SessionGroupFindUniqueArgs<ExtArgs>>): Prisma__SessionGroupClient<$Result.GetResult<Prisma.$SessionGroupPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
-
-    /**
-     * Find one SessionGroup that matches the filter or throw an error with `error.code='P2025'` 
-     * if no matches were found.
-     * @param {SessionGroupFindUniqueOrThrowArgs} args - Arguments to find a SessionGroup
-     * @example
-     * // Get one SessionGroup
-     * const sessionGroup = await prisma.sessionGroup.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends SessionGroupFindUniqueOrThrowArgs>(args: SelectSubset<T, SessionGroupFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SessionGroupClient<$Result.GetResult<Prisma.$SessionGroupPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
-
-    /**
-     * Find the first SessionGroup that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {SessionGroupFindFirstArgs} args - Arguments to find a SessionGroup
-     * @example
-     * // Get one SessionGroup
-     * const sessionGroup = await prisma.sessionGroup.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends SessionGroupFindFirstArgs>(args?: SelectSubset<T, SessionGroupFindFirstArgs<ExtArgs>>): Prisma__SessionGroupClient<$Result.GetResult<Prisma.$SessionGroupPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
-
-    /**
-     * Find the first SessionGroup that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {SessionGroupFindFirstOrThrowArgs} args - Arguments to find a SessionGroup
-     * @example
-     * // Get one SessionGroup
-     * const sessionGroup = await prisma.sessionGroup.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends SessionGroupFindFirstOrThrowArgs>(args?: SelectSubset<T, SessionGroupFindFirstOrThrowArgs<ExtArgs>>): Prisma__SessionGroupClient<$Result.GetResult<Prisma.$SessionGroupPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
-
-    /**
-     * Find zero or more SessionGroups that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {SessionGroupFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all SessionGroups
-     * const sessionGroups = await prisma.sessionGroup.findMany()
-     * 
-     * // Get first 10 SessionGroups
-     * const sessionGroups = await prisma.sessionGroup.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const sessionGroupWithIdOnly = await prisma.sessionGroup.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends SessionGroupFindManyArgs>(args?: SelectSubset<T, SessionGroupFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionGroupPayload<ExtArgs>, T, "findMany">>
-
-    /**
-     * Create a SessionGroup.
-     * @param {SessionGroupCreateArgs} args - Arguments to create a SessionGroup.
-     * @example
-     * // Create one SessionGroup
-     * const SessionGroup = await prisma.sessionGroup.create({
-     *   data: {
-     *     // ... data to create a SessionGroup
-     *   }
-     * })
-     * 
-     */
-    create<T extends SessionGroupCreateArgs>(args: SelectSubset<T, SessionGroupCreateArgs<ExtArgs>>): Prisma__SessionGroupClient<$Result.GetResult<Prisma.$SessionGroupPayload<ExtArgs>, T, "create">, never, ExtArgs>
-
-    /**
-     * Create many SessionGroups.
-     * @param {SessionGroupCreateManyArgs} args - Arguments to create many SessionGroups.
-     * @example
-     * // Create many SessionGroups
-     * const sessionGroup = await prisma.sessionGroup.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends SessionGroupCreateManyArgs>(args?: SelectSubset<T, SessionGroupCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many SessionGroups and returns the data saved in the database.
-     * @param {SessionGroupCreateManyAndReturnArgs} args - Arguments to create many SessionGroups.
-     * @example
-     * // Create many SessionGroups
-     * const sessionGroup = await prisma.sessionGroup.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many SessionGroups and only return the `id`
-     * const sessionGroupWithIdOnly = await prisma.sessionGroup.createManyAndReturn({ 
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends SessionGroupCreateManyAndReturnArgs>(args?: SelectSubset<T, SessionGroupCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionGroupPayload<ExtArgs>, T, "createManyAndReturn">>
-
-    /**
-     * Delete a SessionGroup.
-     * @param {SessionGroupDeleteArgs} args - Arguments to delete one SessionGroup.
-     * @example
-     * // Delete one SessionGroup
-     * const SessionGroup = await prisma.sessionGroup.delete({
-     *   where: {
-     *     // ... filter to delete one SessionGroup
-     *   }
-     * })
-     * 
-     */
-    delete<T extends SessionGroupDeleteArgs>(args: SelectSubset<T, SessionGroupDeleteArgs<ExtArgs>>): Prisma__SessionGroupClient<$Result.GetResult<Prisma.$SessionGroupPayload<ExtArgs>, T, "delete">, never, ExtArgs>
-
-    /**
-     * Update one SessionGroup.
-     * @param {SessionGroupUpdateArgs} args - Arguments to update one SessionGroup.
-     * @example
-     * // Update one SessionGroup
-     * const sessionGroup = await prisma.sessionGroup.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends SessionGroupUpdateArgs>(args: SelectSubset<T, SessionGroupUpdateArgs<ExtArgs>>): Prisma__SessionGroupClient<$Result.GetResult<Prisma.$SessionGroupPayload<ExtArgs>, T, "update">, never, ExtArgs>
-
-    /**
-     * Delete zero or more SessionGroups.
-     * @param {SessionGroupDeleteManyArgs} args - Arguments to filter SessionGroups to delete.
-     * @example
-     * // Delete a few SessionGroups
-     * const { count } = await prisma.sessionGroup.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends SessionGroupDeleteManyArgs>(args?: SelectSubset<T, SessionGroupDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more SessionGroups.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {SessionGroupUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many SessionGroups
-     * const sessionGroup = await prisma.sessionGroup.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends SessionGroupUpdateManyArgs>(args: SelectSubset<T, SessionGroupUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create or update one SessionGroup.
-     * @param {SessionGroupUpsertArgs} args - Arguments to update or create a SessionGroup.
-     * @example
-     * // Update or create a SessionGroup
-     * const sessionGroup = await prisma.sessionGroup.upsert({
-     *   create: {
-     *     // ... data to create a SessionGroup
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the SessionGroup we want to update
-     *   }
-     * })
-     */
-    upsert<T extends SessionGroupUpsertArgs>(args: SelectSubset<T, SessionGroupUpsertArgs<ExtArgs>>): Prisma__SessionGroupClient<$Result.GetResult<Prisma.$SessionGroupPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
-
-
-    /**
-     * Count the number of SessionGroups.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {SessionGroupCountArgs} args - Arguments to filter SessionGroups to count.
-     * @example
-     * // Count the number of SessionGroups
-     * const count = await prisma.sessionGroup.count({
-     *   where: {
-     *     // ... the filter for the SessionGroups we want to count
-     *   }
-     * })
-    **/
-    count<T extends SessionGroupCountArgs>(
-      args?: Subset<T, SessionGroupCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], SessionGroupCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a SessionGroup.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {SessionGroupAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends SessionGroupAggregateArgs>(args: Subset<T, SessionGroupAggregateArgs>): Prisma.PrismaPromise<GetSessionGroupAggregateType<T>>
-
-    /**
-     * Group by SessionGroup.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {SessionGroupGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends SessionGroupGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: SessionGroupGroupByArgs['orderBy'] }
-        : { orderBy?: SessionGroupGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, SessionGroupGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSessionGroupGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the SessionGroup model
-   */
-  readonly fields: SessionGroupFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for SessionGroup.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__SessionGroupClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the SessionGroup model
-   */ 
-  interface SessionGroupFieldRefs {
-    readonly id: FieldRef<"SessionGroup", 'String'>
-    readonly name: FieldRef<"SessionGroup", 'String'>
-    readonly sort: FieldRef<"SessionGroup", 'Int'>
-    readonly createdAt: FieldRef<"SessionGroup", 'DateTime'>
-    readonly updatedAt: FieldRef<"SessionGroup", 'DateTime'>
-    readonly meta: FieldRef<"SessionGroup", 'Json'>
-    readonly userId: FieldRef<"SessionGroup", 'String'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * SessionGroup findUnique
-   */
-  export type SessionGroupFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SessionGroup
-     */
-    select?: SessionGroupSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SessionGroupInclude<ExtArgs> | null
-    /**
-     * Filter, which SessionGroup to fetch.
-     */
-    where: SessionGroupWhereUniqueInput
-  }
-
-  /**
-   * SessionGroup findUniqueOrThrow
-   */
-  export type SessionGroupFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SessionGroup
-     */
-    select?: SessionGroupSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SessionGroupInclude<ExtArgs> | null
-    /**
-     * Filter, which SessionGroup to fetch.
-     */
-    where: SessionGroupWhereUniqueInput
-  }
-
-  /**
-   * SessionGroup findFirst
-   */
-  export type SessionGroupFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SessionGroup
-     */
-    select?: SessionGroupSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SessionGroupInclude<ExtArgs> | null
-    /**
-     * Filter, which SessionGroup to fetch.
-     */
-    where?: SessionGroupWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of SessionGroups to fetch.
-     */
-    orderBy?: SessionGroupOrderByWithRelationInput | SessionGroupOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for SessionGroups.
-     */
-    cursor?: SessionGroupWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` SessionGroups from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` SessionGroups.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of SessionGroups.
-     */
-    distinct?: SessionGroupScalarFieldEnum | SessionGroupScalarFieldEnum[]
-  }
-
-  /**
-   * SessionGroup findFirstOrThrow
-   */
-  export type SessionGroupFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SessionGroup
-     */
-    select?: SessionGroupSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SessionGroupInclude<ExtArgs> | null
-    /**
-     * Filter, which SessionGroup to fetch.
-     */
-    where?: SessionGroupWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of SessionGroups to fetch.
-     */
-    orderBy?: SessionGroupOrderByWithRelationInput | SessionGroupOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for SessionGroups.
-     */
-    cursor?: SessionGroupWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` SessionGroups from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` SessionGroups.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of SessionGroups.
-     */
-    distinct?: SessionGroupScalarFieldEnum | SessionGroupScalarFieldEnum[]
-  }
-
-  /**
-   * SessionGroup findMany
-   */
-  export type SessionGroupFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SessionGroup
-     */
-    select?: SessionGroupSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SessionGroupInclude<ExtArgs> | null
-    /**
-     * Filter, which SessionGroups to fetch.
-     */
-    where?: SessionGroupWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of SessionGroups to fetch.
-     */
-    orderBy?: SessionGroupOrderByWithRelationInput | SessionGroupOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing SessionGroups.
-     */
-    cursor?: SessionGroupWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` SessionGroups from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` SessionGroups.
-     */
-    skip?: number
-    distinct?: SessionGroupScalarFieldEnum | SessionGroupScalarFieldEnum[]
-  }
-
-  /**
-   * SessionGroup create
-   */
-  export type SessionGroupCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SessionGroup
-     */
-    select?: SessionGroupSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SessionGroupInclude<ExtArgs> | null
-    /**
-     * The data needed to create a SessionGroup.
-     */
-    data: XOR<SessionGroupCreateInput, SessionGroupUncheckedCreateInput>
-  }
-
-  /**
-   * SessionGroup createMany
-   */
-  export type SessionGroupCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many SessionGroups.
-     */
-    data: SessionGroupCreateManyInput | SessionGroupCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * SessionGroup createManyAndReturn
-   */
-  export type SessionGroupCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SessionGroup
-     */
-    select?: SessionGroupSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * The data used to create many SessionGroups.
-     */
-    data: SessionGroupCreateManyInput | SessionGroupCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SessionGroupIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * SessionGroup update
-   */
-  export type SessionGroupUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SessionGroup
-     */
-    select?: SessionGroupSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SessionGroupInclude<ExtArgs> | null
-    /**
-     * The data needed to update a SessionGroup.
-     */
-    data: XOR<SessionGroupUpdateInput, SessionGroupUncheckedUpdateInput>
-    /**
-     * Choose, which SessionGroup to update.
-     */
-    where: SessionGroupWhereUniqueInput
-  }
-
-  /**
-   * SessionGroup updateMany
-   */
-  export type SessionGroupUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update SessionGroups.
-     */
-    data: XOR<SessionGroupUpdateManyMutationInput, SessionGroupUncheckedUpdateManyInput>
-    /**
-     * Filter which SessionGroups to update
-     */
-    where?: SessionGroupWhereInput
-  }
-
-  /**
-   * SessionGroup upsert
-   */
-  export type SessionGroupUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SessionGroup
-     */
-    select?: SessionGroupSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SessionGroupInclude<ExtArgs> | null
-    /**
-     * The filter to search for the SessionGroup to update in case it exists.
-     */
-    where: SessionGroupWhereUniqueInput
-    /**
-     * In case the SessionGroup found by the `where` argument doesn't exist, create a new SessionGroup with this data.
-     */
-    create: XOR<SessionGroupCreateInput, SessionGroupUncheckedCreateInput>
-    /**
-     * In case the SessionGroup was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<SessionGroupUpdateInput, SessionGroupUncheckedUpdateInput>
-  }
-
-  /**
-   * SessionGroup delete
-   */
-  export type SessionGroupDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SessionGroup
-     */
-    select?: SessionGroupSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SessionGroupInclude<ExtArgs> | null
-    /**
-     * Filter which SessionGroup to delete.
-     */
-    where: SessionGroupWhereUniqueInput
-  }
-
-  /**
-   * SessionGroup deleteMany
-   */
-  export type SessionGroupDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which SessionGroups to delete
-     */
-    where?: SessionGroupWhereInput
-  }
-
-  /**
-   * SessionGroup without action
-   */
-  export type SessionGroupDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the SessionGroup
-     */
-    select?: SessionGroupSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SessionGroupInclude<ExtArgs> | null
-  }
-
-
-  /**
-   * Model Plugin
-   */
-
-  export type AggregatePlugin = {
-    _count: PluginCountAggregateOutputType | null
-    _min: PluginMinAggregateOutputType | null
-    _max: PluginMaxAggregateOutputType | null
-  }
-
-  export type PluginMinAggregateOutputType = {
-    id: string | null
-    identifier: string | null
-    name: string | null
-    version: string | null
-    enabled: boolean | null
-    createdAt: Date | null
-    updatedAt: Date | null
-    userId: string | null
-  }
-
-  export type PluginMaxAggregateOutputType = {
-    id: string | null
-    identifier: string | null
-    name: string | null
-    version: string | null
-    enabled: boolean | null
-    createdAt: Date | null
-    updatedAt: Date | null
-    userId: string | null
-  }
-
-  export type PluginCountAggregateOutputType = {
-    id: number
-    identifier: number
-    name: number
-    version: number
-    enabled: number
-    createdAt: number
-    updatedAt: number
-    config: number
-    meta: number
-    settings: number
-    userId: number
-    _all: number
-  }
-
-
-  export type PluginMinAggregateInputType = {
-    id?: true
-    identifier?: true
-    name?: true
-    version?: true
-    enabled?: true
-    createdAt?: true
-    updatedAt?: true
-    userId?: true
-  }
-
-  export type PluginMaxAggregateInputType = {
-    id?: true
-    identifier?: true
-    name?: true
-    version?: true
-    enabled?: true
-    createdAt?: true
-    updatedAt?: true
-    userId?: true
-  }
-
-  export type PluginCountAggregateInputType = {
-    id?: true
-    identifier?: true
-    name?: true
-    version?: true
-    enabled?: true
-    createdAt?: true
-    updatedAt?: true
-    config?: true
-    meta?: true
-    settings?: true
-    userId?: true
-    _all?: true
-  }
-
-  export type PluginAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which Plugin to aggregate.
-     */
-    where?: PluginWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Plugins to fetch.
-     */
-    orderBy?: PluginOrderByWithRelationInput | PluginOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: PluginWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Plugins from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Plugins.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned Plugins
-    **/
-    _count?: true | PluginCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: PluginMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: PluginMaxAggregateInputType
-  }
-
-  export type GetPluginAggregateType<T extends PluginAggregateArgs> = {
-        [P in keyof T & keyof AggregatePlugin]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregatePlugin[P]>
-      : GetScalarType<T[P], AggregatePlugin[P]>
-  }
-
-
-
-
-  export type PluginGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: PluginWhereInput
-    orderBy?: PluginOrderByWithAggregationInput | PluginOrderByWithAggregationInput[]
-    by: PluginScalarFieldEnum[] | PluginScalarFieldEnum
-    having?: PluginScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: PluginCountAggregateInputType | true
-    _min?: PluginMinAggregateInputType
-    _max?: PluginMaxAggregateInputType
-  }
-
-  export type PluginGroupByOutputType = {
-    id: string
-    identifier: string
-    name: string
-    version: string
-    enabled: boolean
-    createdAt: Date
-    updatedAt: Date
-    config: JsonValue | null
-    meta: JsonValue | null
-    settings: JsonValue | null
-    userId: string
-    _count: PluginCountAggregateOutputType | null
-    _min: PluginMinAggregateOutputType | null
-    _max: PluginMaxAggregateOutputType | null
-  }
-
-  type GetPluginGroupByPayload<T extends PluginGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<PluginGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof PluginGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], PluginGroupByOutputType[P]>
-            : GetScalarType<T[P], PluginGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type PluginSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    identifier?: boolean
-    name?: boolean
-    version?: boolean
-    enabled?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    config?: boolean
-    meta?: boolean
-    settings?: boolean
-    userId?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["plugin"]>
-
-  export type PluginSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    identifier?: boolean
-    name?: boolean
-    version?: boolean
-    enabled?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    config?: boolean
-    meta?: boolean
-    settings?: boolean
-    userId?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["plugin"]>
-
-  export type PluginSelectScalar = {
-    id?: boolean
-    identifier?: boolean
-    name?: boolean
-    version?: boolean
-    enabled?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    config?: boolean
-    meta?: boolean
-    settings?: boolean
-    userId?: boolean
-  }
-
-  export type PluginInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }
-  export type PluginIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }
-
-  export type $PluginPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "Plugin"
-    objects: {
-      user: Prisma.$UserPayload<ExtArgs>
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      identifier: string
-      name: string
-      version: string
-      enabled: boolean
-      createdAt: Date
-      updatedAt: Date
-      config: Prisma.JsonValue | null
-      meta: Prisma.JsonValue | null
-      settings: Prisma.JsonValue | null
-      userId: string
-    }, ExtArgs["result"]["plugin"]>
-    composites: {}
-  }
-
-  type PluginGetPayload<S extends boolean | null | undefined | PluginDefaultArgs> = $Result.GetResult<Prisma.$PluginPayload, S>
-
-  type PluginCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<PluginFindManyArgs, 'select' | 'include' | 'distinct'> & {
-      select?: PluginCountAggregateInputType | true
-    }
-
-  export interface PluginDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Plugin'], meta: { name: 'Plugin' } }
-    /**
-     * Find zero or one Plugin that matches the filter.
-     * @param {PluginFindUniqueArgs} args - Arguments to find a Plugin
-     * @example
-     * // Get one Plugin
-     * const plugin = await prisma.plugin.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends PluginFindUniqueArgs>(args: SelectSubset<T, PluginFindUniqueArgs<ExtArgs>>): Prisma__PluginClient<$Result.GetResult<Prisma.$PluginPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
-
-    /**
-     * Find one Plugin that matches the filter or throw an error with `error.code='P2025'` 
-     * if no matches were found.
-     * @param {PluginFindUniqueOrThrowArgs} args - Arguments to find a Plugin
-     * @example
-     * // Get one Plugin
-     * const plugin = await prisma.plugin.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends PluginFindUniqueOrThrowArgs>(args: SelectSubset<T, PluginFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PluginClient<$Result.GetResult<Prisma.$PluginPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
-
-    /**
-     * Find the first Plugin that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PluginFindFirstArgs} args - Arguments to find a Plugin
-     * @example
-     * // Get one Plugin
-     * const plugin = await prisma.plugin.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends PluginFindFirstArgs>(args?: SelectSubset<T, PluginFindFirstArgs<ExtArgs>>): Prisma__PluginClient<$Result.GetResult<Prisma.$PluginPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
-
-    /**
-     * Find the first Plugin that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PluginFindFirstOrThrowArgs} args - Arguments to find a Plugin
-     * @example
-     * // Get one Plugin
-     * const plugin = await prisma.plugin.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends PluginFindFirstOrThrowArgs>(args?: SelectSubset<T, PluginFindFirstOrThrowArgs<ExtArgs>>): Prisma__PluginClient<$Result.GetResult<Prisma.$PluginPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
-
-    /**
-     * Find zero or more Plugins that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PluginFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all Plugins
-     * const plugins = await prisma.plugin.findMany()
-     * 
-     * // Get first 10 Plugins
-     * const plugins = await prisma.plugin.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const pluginWithIdOnly = await prisma.plugin.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends PluginFindManyArgs>(args?: SelectSubset<T, PluginFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PluginPayload<ExtArgs>, T, "findMany">>
-
-    /**
-     * Create a Plugin.
-     * @param {PluginCreateArgs} args - Arguments to create a Plugin.
-     * @example
-     * // Create one Plugin
-     * const Plugin = await prisma.plugin.create({
-     *   data: {
-     *     // ... data to create a Plugin
-     *   }
-     * })
-     * 
-     */
-    create<T extends PluginCreateArgs>(args: SelectSubset<T, PluginCreateArgs<ExtArgs>>): Prisma__PluginClient<$Result.GetResult<Prisma.$PluginPayload<ExtArgs>, T, "create">, never, ExtArgs>
-
-    /**
-     * Create many Plugins.
-     * @param {PluginCreateManyArgs} args - Arguments to create many Plugins.
-     * @example
-     * // Create many Plugins
-     * const plugin = await prisma.plugin.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends PluginCreateManyArgs>(args?: SelectSubset<T, PluginCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many Plugins and returns the data saved in the database.
-     * @param {PluginCreateManyAndReturnArgs} args - Arguments to create many Plugins.
-     * @example
-     * // Create many Plugins
-     * const plugin = await prisma.plugin.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many Plugins and only return the `id`
-     * const pluginWithIdOnly = await prisma.plugin.createManyAndReturn({ 
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends PluginCreateManyAndReturnArgs>(args?: SelectSubset<T, PluginCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PluginPayload<ExtArgs>, T, "createManyAndReturn">>
-
-    /**
-     * Delete a Plugin.
-     * @param {PluginDeleteArgs} args - Arguments to delete one Plugin.
-     * @example
-     * // Delete one Plugin
-     * const Plugin = await prisma.plugin.delete({
-     *   where: {
-     *     // ... filter to delete one Plugin
-     *   }
-     * })
-     * 
-     */
-    delete<T extends PluginDeleteArgs>(args: SelectSubset<T, PluginDeleteArgs<ExtArgs>>): Prisma__PluginClient<$Result.GetResult<Prisma.$PluginPayload<ExtArgs>, T, "delete">, never, ExtArgs>
-
-    /**
-     * Update one Plugin.
-     * @param {PluginUpdateArgs} args - Arguments to update one Plugin.
-     * @example
-     * // Update one Plugin
-     * const plugin = await prisma.plugin.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends PluginUpdateArgs>(args: SelectSubset<T, PluginUpdateArgs<ExtArgs>>): Prisma__PluginClient<$Result.GetResult<Prisma.$PluginPayload<ExtArgs>, T, "update">, never, ExtArgs>
-
-    /**
-     * Delete zero or more Plugins.
-     * @param {PluginDeleteManyArgs} args - Arguments to filter Plugins to delete.
-     * @example
-     * // Delete a few Plugins
-     * const { count } = await prisma.plugin.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends PluginDeleteManyArgs>(args?: SelectSubset<T, PluginDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Plugins.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PluginUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many Plugins
-     * const plugin = await prisma.plugin.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends PluginUpdateManyArgs>(args: SelectSubset<T, PluginUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create or update one Plugin.
-     * @param {PluginUpsertArgs} args - Arguments to update or create a Plugin.
-     * @example
-     * // Update or create a Plugin
-     * const plugin = await prisma.plugin.upsert({
-     *   create: {
-     *     // ... data to create a Plugin
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the Plugin we want to update
-     *   }
-     * })
-     */
-    upsert<T extends PluginUpsertArgs>(args: SelectSubset<T, PluginUpsertArgs<ExtArgs>>): Prisma__PluginClient<$Result.GetResult<Prisma.$PluginPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
-
-
-    /**
-     * Count the number of Plugins.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PluginCountArgs} args - Arguments to filter Plugins to count.
-     * @example
-     * // Count the number of Plugins
-     * const count = await prisma.plugin.count({
-     *   where: {
-     *     // ... the filter for the Plugins we want to count
-     *   }
-     * })
-    **/
-    count<T extends PluginCountArgs>(
-      args?: Subset<T, PluginCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], PluginCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a Plugin.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PluginAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends PluginAggregateArgs>(args: Subset<T, PluginAggregateArgs>): Prisma.PrismaPromise<GetPluginAggregateType<T>>
-
-    /**
-     * Group by Plugin.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PluginGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends PluginGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: PluginGroupByArgs['orderBy'] }
-        : { orderBy?: PluginGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, PluginGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPluginGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the Plugin model
-   */
-  readonly fields: PluginFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for Plugin.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__PluginClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the Plugin model
-   */ 
-  interface PluginFieldRefs {
-    readonly id: FieldRef<"Plugin", 'String'>
-    readonly identifier: FieldRef<"Plugin", 'String'>
-    readonly name: FieldRef<"Plugin", 'String'>
-    readonly version: FieldRef<"Plugin", 'String'>
-    readonly enabled: FieldRef<"Plugin", 'Boolean'>
-    readonly createdAt: FieldRef<"Plugin", 'DateTime'>
-    readonly updatedAt: FieldRef<"Plugin", 'DateTime'>
-    readonly config: FieldRef<"Plugin", 'Json'>
-    readonly meta: FieldRef<"Plugin", 'Json'>
-    readonly settings: FieldRef<"Plugin", 'Json'>
-    readonly userId: FieldRef<"Plugin", 'String'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * Plugin findUnique
-   */
-  export type PluginFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Plugin
-     */
-    select?: PluginSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PluginInclude<ExtArgs> | null
-    /**
-     * Filter, which Plugin to fetch.
-     */
-    where: PluginWhereUniqueInput
-  }
-
-  /**
-   * Plugin findUniqueOrThrow
-   */
-  export type PluginFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Plugin
-     */
-    select?: PluginSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PluginInclude<ExtArgs> | null
-    /**
-     * Filter, which Plugin to fetch.
-     */
-    where: PluginWhereUniqueInput
-  }
-
-  /**
-   * Plugin findFirst
-   */
-  export type PluginFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Plugin
-     */
-    select?: PluginSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PluginInclude<ExtArgs> | null
-    /**
-     * Filter, which Plugin to fetch.
-     */
-    where?: PluginWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Plugins to fetch.
-     */
-    orderBy?: PluginOrderByWithRelationInput | PluginOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for Plugins.
-     */
-    cursor?: PluginWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Plugins from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Plugins.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Plugins.
-     */
-    distinct?: PluginScalarFieldEnum | PluginScalarFieldEnum[]
-  }
-
-  /**
-   * Plugin findFirstOrThrow
-   */
-  export type PluginFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Plugin
-     */
-    select?: PluginSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PluginInclude<ExtArgs> | null
-    /**
-     * Filter, which Plugin to fetch.
-     */
-    where?: PluginWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Plugins to fetch.
-     */
-    orderBy?: PluginOrderByWithRelationInput | PluginOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for Plugins.
-     */
-    cursor?: PluginWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Plugins from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Plugins.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Plugins.
-     */
-    distinct?: PluginScalarFieldEnum | PluginScalarFieldEnum[]
-  }
-
-  /**
-   * Plugin findMany
-   */
-  export type PluginFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Plugin
-     */
-    select?: PluginSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PluginInclude<ExtArgs> | null
-    /**
-     * Filter, which Plugins to fetch.
-     */
-    where?: PluginWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Plugins to fetch.
-     */
-    orderBy?: PluginOrderByWithRelationInput | PluginOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing Plugins.
-     */
-    cursor?: PluginWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Plugins from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Plugins.
-     */
-    skip?: number
-    distinct?: PluginScalarFieldEnum | PluginScalarFieldEnum[]
-  }
-
-  /**
-   * Plugin create
-   */
-  export type PluginCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Plugin
-     */
-    select?: PluginSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PluginInclude<ExtArgs> | null
-    /**
-     * The data needed to create a Plugin.
-     */
-    data: XOR<PluginCreateInput, PluginUncheckedCreateInput>
-  }
-
-  /**
-   * Plugin createMany
-   */
-  export type PluginCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many Plugins.
-     */
-    data: PluginCreateManyInput | PluginCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * Plugin createManyAndReturn
-   */
-  export type PluginCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Plugin
-     */
-    select?: PluginSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * The data used to create many Plugins.
-     */
-    data: PluginCreateManyInput | PluginCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PluginIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * Plugin update
-   */
-  export type PluginUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Plugin
-     */
-    select?: PluginSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PluginInclude<ExtArgs> | null
-    /**
-     * The data needed to update a Plugin.
-     */
-    data: XOR<PluginUpdateInput, PluginUncheckedUpdateInput>
-    /**
-     * Choose, which Plugin to update.
-     */
-    where: PluginWhereUniqueInput
-  }
-
-  /**
-   * Plugin updateMany
-   */
-  export type PluginUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update Plugins.
-     */
-    data: XOR<PluginUpdateManyMutationInput, PluginUncheckedUpdateManyInput>
-    /**
-     * Filter which Plugins to update
-     */
-    where?: PluginWhereInput
-  }
-
-  /**
-   * Plugin upsert
-   */
-  export type PluginUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Plugin
-     */
-    select?: PluginSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PluginInclude<ExtArgs> | null
-    /**
-     * The filter to search for the Plugin to update in case it exists.
-     */
-    where: PluginWhereUniqueInput
-    /**
-     * In case the Plugin found by the `where` argument doesn't exist, create a new Plugin with this data.
-     */
-    create: XOR<PluginCreateInput, PluginUncheckedCreateInput>
-    /**
-     * In case the Plugin was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<PluginUpdateInput, PluginUncheckedUpdateInput>
-  }
-
-  /**
-   * Plugin delete
-   */
-  export type PluginDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Plugin
-     */
-    select?: PluginSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PluginInclude<ExtArgs> | null
-    /**
-     * Filter which Plugin to delete.
-     */
-    where: PluginWhereUniqueInput
-  }
-
-  /**
-   * Plugin deleteMany
-   */
-  export type PluginDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which Plugins to delete
-     */
-    where?: PluginWhereInput
-  }
-
-  /**
-   * Plugin without action
-   */
-  export type PluginDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Plugin
-     */
-    select?: PluginSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PluginInclude<ExtArgs> | null
-  }
-
-
-  /**
-   * Model KnowledgeBase
-   */
-
-  export type AggregateKnowledgeBase = {
-    _count: KnowledgeBaseCountAggregateOutputType | null
-    _min: KnowledgeBaseMinAggregateOutputType | null
-    _max: KnowledgeBaseMaxAggregateOutputType | null
-  }
-
-  export type KnowledgeBaseMinAggregateOutputType = {
-    id: string | null
-    name: string | null
-    description: string | null
-    type: $Enums.KnowledgeType | null
-    isActive: boolean | null
-    createdAt: Date | null
-    updatedAt: Date | null
-    userId: string | null
-  }
-
-  export type KnowledgeBaseMaxAggregateOutputType = {
-    id: string | null
-    name: string | null
-    description: string | null
-    type: $Enums.KnowledgeType | null
-    isActive: boolean | null
-    createdAt: Date | null
-    updatedAt: Date | null
-    userId: string | null
-  }
-
-  export type KnowledgeBaseCountAggregateOutputType = {
-    id: number
-    name: number
-    description: number
-    type: number
-    isActive: number
-    createdAt: number
-    updatedAt: number
-    config: number
-    meta: number
-    userId: number
-    _all: number
-  }
-
-
-  export type KnowledgeBaseMinAggregateInputType = {
-    id?: true
-    name?: true
-    description?: true
-    type?: true
-    isActive?: true
-    createdAt?: true
-    updatedAt?: true
-    userId?: true
-  }
-
-  export type KnowledgeBaseMaxAggregateInputType = {
-    id?: true
-    name?: true
-    description?: true
-    type?: true
-    isActive?: true
-    createdAt?: true
-    updatedAt?: true
-    userId?: true
-  }
-
-  export type KnowledgeBaseCountAggregateInputType = {
-    id?: true
-    name?: true
-    description?: true
-    type?: true
-    isActive?: true
-    createdAt?: true
-    updatedAt?: true
-    config?: true
-    meta?: true
-    userId?: true
-    _all?: true
-  }
-
-  export type KnowledgeBaseAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which KnowledgeBase to aggregate.
-     */
-    where?: KnowledgeBaseWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of KnowledgeBases to fetch.
-     */
-    orderBy?: KnowledgeBaseOrderByWithRelationInput | KnowledgeBaseOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: KnowledgeBaseWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` KnowledgeBases from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` KnowledgeBases.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned KnowledgeBases
-    **/
-    _count?: true | KnowledgeBaseCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: KnowledgeBaseMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: KnowledgeBaseMaxAggregateInputType
-  }
-
-  export type GetKnowledgeBaseAggregateType<T extends KnowledgeBaseAggregateArgs> = {
-        [P in keyof T & keyof AggregateKnowledgeBase]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateKnowledgeBase[P]>
-      : GetScalarType<T[P], AggregateKnowledgeBase[P]>
-  }
-
-
-
-
-  export type KnowledgeBaseGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: KnowledgeBaseWhereInput
-    orderBy?: KnowledgeBaseOrderByWithAggregationInput | KnowledgeBaseOrderByWithAggregationInput[]
-    by: KnowledgeBaseScalarFieldEnum[] | KnowledgeBaseScalarFieldEnum
-    having?: KnowledgeBaseScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: KnowledgeBaseCountAggregateInputType | true
-    _min?: KnowledgeBaseMinAggregateInputType
-    _max?: KnowledgeBaseMaxAggregateInputType
-  }
-
-  export type KnowledgeBaseGroupByOutputType = {
-    id: string
-    name: string
-    description: string | null
-    type: $Enums.KnowledgeType
-    isActive: boolean
-    createdAt: Date
-    updatedAt: Date
-    config: JsonValue | null
-    meta: JsonValue | null
-    userId: string
-    _count: KnowledgeBaseCountAggregateOutputType | null
-    _min: KnowledgeBaseMinAggregateOutputType | null
-    _max: KnowledgeBaseMaxAggregateOutputType | null
-  }
-
-  type GetKnowledgeBaseGroupByPayload<T extends KnowledgeBaseGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<KnowledgeBaseGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof KnowledgeBaseGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], KnowledgeBaseGroupByOutputType[P]>
-            : GetScalarType<T[P], KnowledgeBaseGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type KnowledgeBaseSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    name?: boolean
-    description?: boolean
-    type?: boolean
-    isActive?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    config?: boolean
-    meta?: boolean
-    userId?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
-    documents?: boolean | KnowledgeBase$documentsArgs<ExtArgs>
-    _count?: boolean | KnowledgeBaseCountOutputTypeDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["knowledgeBase"]>
-
-  export type KnowledgeBaseSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    name?: boolean
-    description?: boolean
-    type?: boolean
-    isActive?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    config?: boolean
-    meta?: boolean
-    userId?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["knowledgeBase"]>
-
-  export type KnowledgeBaseSelectScalar = {
-    id?: boolean
-    name?: boolean
-    description?: boolean
-    type?: boolean
-    isActive?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    config?: boolean
-    meta?: boolean
-    userId?: boolean
-  }
-
-  export type KnowledgeBaseInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-    documents?: boolean | KnowledgeBase$documentsArgs<ExtArgs>
-    _count?: boolean | KnowledgeBaseCountOutputTypeDefaultArgs<ExtArgs>
-  }
-  export type KnowledgeBaseIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }
-
-  export type $KnowledgeBasePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "KnowledgeBase"
-    objects: {
-      user: Prisma.$UserPayload<ExtArgs>
-      documents: Prisma.$KnowledgeDocumentPayload<ExtArgs>[]
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      name: string
-      description: string | null
-      type: $Enums.KnowledgeType
-      isActive: boolean
-      createdAt: Date
-      updatedAt: Date
-      config: Prisma.JsonValue | null
-      meta: Prisma.JsonValue | null
-      userId: string
-    }, ExtArgs["result"]["knowledgeBase"]>
-    composites: {}
-  }
-
-  type KnowledgeBaseGetPayload<S extends boolean | null | undefined | KnowledgeBaseDefaultArgs> = $Result.GetResult<Prisma.$KnowledgeBasePayload, S>
-
-  type KnowledgeBaseCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<KnowledgeBaseFindManyArgs, 'select' | 'include' | 'distinct'> & {
-      select?: KnowledgeBaseCountAggregateInputType | true
-    }
-
-  export interface KnowledgeBaseDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['KnowledgeBase'], meta: { name: 'KnowledgeBase' } }
-    /**
-     * Find zero or one KnowledgeBase that matches the filter.
-     * @param {KnowledgeBaseFindUniqueArgs} args - Arguments to find a KnowledgeBase
-     * @example
-     * // Get one KnowledgeBase
-     * const knowledgeBase = await prisma.knowledgeBase.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends KnowledgeBaseFindUniqueArgs>(args: SelectSubset<T, KnowledgeBaseFindUniqueArgs<ExtArgs>>): Prisma__KnowledgeBaseClient<$Result.GetResult<Prisma.$KnowledgeBasePayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
-
-    /**
-     * Find one KnowledgeBase that matches the filter or throw an error with `error.code='P2025'` 
-     * if no matches were found.
-     * @param {KnowledgeBaseFindUniqueOrThrowArgs} args - Arguments to find a KnowledgeBase
-     * @example
-     * // Get one KnowledgeBase
-     * const knowledgeBase = await prisma.knowledgeBase.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends KnowledgeBaseFindUniqueOrThrowArgs>(args: SelectSubset<T, KnowledgeBaseFindUniqueOrThrowArgs<ExtArgs>>): Prisma__KnowledgeBaseClient<$Result.GetResult<Prisma.$KnowledgeBasePayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
-
-    /**
-     * Find the first KnowledgeBase that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {KnowledgeBaseFindFirstArgs} args - Arguments to find a KnowledgeBase
-     * @example
-     * // Get one KnowledgeBase
-     * const knowledgeBase = await prisma.knowledgeBase.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends KnowledgeBaseFindFirstArgs>(args?: SelectSubset<T, KnowledgeBaseFindFirstArgs<ExtArgs>>): Prisma__KnowledgeBaseClient<$Result.GetResult<Prisma.$KnowledgeBasePayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
-
-    /**
-     * Find the first KnowledgeBase that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {KnowledgeBaseFindFirstOrThrowArgs} args - Arguments to find a KnowledgeBase
-     * @example
-     * // Get one KnowledgeBase
-     * const knowledgeBase = await prisma.knowledgeBase.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends KnowledgeBaseFindFirstOrThrowArgs>(args?: SelectSubset<T, KnowledgeBaseFindFirstOrThrowArgs<ExtArgs>>): Prisma__KnowledgeBaseClient<$Result.GetResult<Prisma.$KnowledgeBasePayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
-
-    /**
-     * Find zero or more KnowledgeBases that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {KnowledgeBaseFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all KnowledgeBases
-     * const knowledgeBases = await prisma.knowledgeBase.findMany()
-     * 
-     * // Get first 10 KnowledgeBases
-     * const knowledgeBases = await prisma.knowledgeBase.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const knowledgeBaseWithIdOnly = await prisma.knowledgeBase.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends KnowledgeBaseFindManyArgs>(args?: SelectSubset<T, KnowledgeBaseFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$KnowledgeBasePayload<ExtArgs>, T, "findMany">>
-
-    /**
-     * Create a KnowledgeBase.
-     * @param {KnowledgeBaseCreateArgs} args - Arguments to create a KnowledgeBase.
-     * @example
-     * // Create one KnowledgeBase
-     * const KnowledgeBase = await prisma.knowledgeBase.create({
-     *   data: {
-     *     // ... data to create a KnowledgeBase
-     *   }
-     * })
-     * 
-     */
-    create<T extends KnowledgeBaseCreateArgs>(args: SelectSubset<T, KnowledgeBaseCreateArgs<ExtArgs>>): Prisma__KnowledgeBaseClient<$Result.GetResult<Prisma.$KnowledgeBasePayload<ExtArgs>, T, "create">, never, ExtArgs>
-
-    /**
-     * Create many KnowledgeBases.
-     * @param {KnowledgeBaseCreateManyArgs} args - Arguments to create many KnowledgeBases.
-     * @example
-     * // Create many KnowledgeBases
-     * const knowledgeBase = await prisma.knowledgeBase.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends KnowledgeBaseCreateManyArgs>(args?: SelectSubset<T, KnowledgeBaseCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many KnowledgeBases and returns the data saved in the database.
-     * @param {KnowledgeBaseCreateManyAndReturnArgs} args - Arguments to create many KnowledgeBases.
-     * @example
-     * // Create many KnowledgeBases
-     * const knowledgeBase = await prisma.knowledgeBase.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many KnowledgeBases and only return the `id`
-     * const knowledgeBaseWithIdOnly = await prisma.knowledgeBase.createManyAndReturn({ 
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends KnowledgeBaseCreateManyAndReturnArgs>(args?: SelectSubset<T, KnowledgeBaseCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$KnowledgeBasePayload<ExtArgs>, T, "createManyAndReturn">>
-
-    /**
-     * Delete a KnowledgeBase.
-     * @param {KnowledgeBaseDeleteArgs} args - Arguments to delete one KnowledgeBase.
-     * @example
-     * // Delete one KnowledgeBase
-     * const KnowledgeBase = await prisma.knowledgeBase.delete({
-     *   where: {
-     *     // ... filter to delete one KnowledgeBase
-     *   }
-     * })
-     * 
-     */
-    delete<T extends KnowledgeBaseDeleteArgs>(args: SelectSubset<T, KnowledgeBaseDeleteArgs<ExtArgs>>): Prisma__KnowledgeBaseClient<$Result.GetResult<Prisma.$KnowledgeBasePayload<ExtArgs>, T, "delete">, never, ExtArgs>
-
-    /**
-     * Update one KnowledgeBase.
-     * @param {KnowledgeBaseUpdateArgs} args - Arguments to update one KnowledgeBase.
-     * @example
-     * // Update one KnowledgeBase
-     * const knowledgeBase = await prisma.knowledgeBase.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends KnowledgeBaseUpdateArgs>(args: SelectSubset<T, KnowledgeBaseUpdateArgs<ExtArgs>>): Prisma__KnowledgeBaseClient<$Result.GetResult<Prisma.$KnowledgeBasePayload<ExtArgs>, T, "update">, never, ExtArgs>
-
-    /**
-     * Delete zero or more KnowledgeBases.
-     * @param {KnowledgeBaseDeleteManyArgs} args - Arguments to filter KnowledgeBases to delete.
-     * @example
-     * // Delete a few KnowledgeBases
-     * const { count } = await prisma.knowledgeBase.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends KnowledgeBaseDeleteManyArgs>(args?: SelectSubset<T, KnowledgeBaseDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more KnowledgeBases.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {KnowledgeBaseUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many KnowledgeBases
-     * const knowledgeBase = await prisma.knowledgeBase.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends KnowledgeBaseUpdateManyArgs>(args: SelectSubset<T, KnowledgeBaseUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create or update one KnowledgeBase.
-     * @param {KnowledgeBaseUpsertArgs} args - Arguments to update or create a KnowledgeBase.
-     * @example
-     * // Update or create a KnowledgeBase
-     * const knowledgeBase = await prisma.knowledgeBase.upsert({
-     *   create: {
-     *     // ... data to create a KnowledgeBase
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the KnowledgeBase we want to update
-     *   }
-     * })
-     */
-    upsert<T extends KnowledgeBaseUpsertArgs>(args: SelectSubset<T, KnowledgeBaseUpsertArgs<ExtArgs>>): Prisma__KnowledgeBaseClient<$Result.GetResult<Prisma.$KnowledgeBasePayload<ExtArgs>, T, "upsert">, never, ExtArgs>
-
-
-    /**
-     * Count the number of KnowledgeBases.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {KnowledgeBaseCountArgs} args - Arguments to filter KnowledgeBases to count.
-     * @example
-     * // Count the number of KnowledgeBases
-     * const count = await prisma.knowledgeBase.count({
-     *   where: {
-     *     // ... the filter for the KnowledgeBases we want to count
-     *   }
-     * })
-    **/
-    count<T extends KnowledgeBaseCountArgs>(
-      args?: Subset<T, KnowledgeBaseCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], KnowledgeBaseCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a KnowledgeBase.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {KnowledgeBaseAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends KnowledgeBaseAggregateArgs>(args: Subset<T, KnowledgeBaseAggregateArgs>): Prisma.PrismaPromise<GetKnowledgeBaseAggregateType<T>>
-
-    /**
-     * Group by KnowledgeBase.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {KnowledgeBaseGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends KnowledgeBaseGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: KnowledgeBaseGroupByArgs['orderBy'] }
-        : { orderBy?: KnowledgeBaseGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, KnowledgeBaseGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetKnowledgeBaseGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the KnowledgeBase model
-   */
-  readonly fields: KnowledgeBaseFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for KnowledgeBase.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__KnowledgeBaseClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
-    documents<T extends KnowledgeBase$documentsArgs<ExtArgs> = {}>(args?: Subset<T, KnowledgeBase$documentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$KnowledgeDocumentPayload<ExtArgs>, T, "findMany"> | Null>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the KnowledgeBase model
-   */ 
-  interface KnowledgeBaseFieldRefs {
-    readonly id: FieldRef<"KnowledgeBase", 'String'>
-    readonly name: FieldRef<"KnowledgeBase", 'String'>
-    readonly description: FieldRef<"KnowledgeBase", 'String'>
-    readonly type: FieldRef<"KnowledgeBase", 'KnowledgeType'>
-    readonly isActive: FieldRef<"KnowledgeBase", 'Boolean'>
-    readonly createdAt: FieldRef<"KnowledgeBase", 'DateTime'>
-    readonly updatedAt: FieldRef<"KnowledgeBase", 'DateTime'>
-    readonly config: FieldRef<"KnowledgeBase", 'Json'>
-    readonly meta: FieldRef<"KnowledgeBase", 'Json'>
-    readonly userId: FieldRef<"KnowledgeBase", 'String'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * KnowledgeBase findUnique
-   */
-  export type KnowledgeBaseFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the KnowledgeBase
-     */
-    select?: KnowledgeBaseSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: KnowledgeBaseInclude<ExtArgs> | null
-    /**
-     * Filter, which KnowledgeBase to fetch.
-     */
-    where: KnowledgeBaseWhereUniqueInput
-  }
-
-  /**
-   * KnowledgeBase findUniqueOrThrow
-   */
-  export type KnowledgeBaseFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the KnowledgeBase
-     */
-    select?: KnowledgeBaseSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: KnowledgeBaseInclude<ExtArgs> | null
-    /**
-     * Filter, which KnowledgeBase to fetch.
-     */
-    where: KnowledgeBaseWhereUniqueInput
-  }
-
-  /**
-   * KnowledgeBase findFirst
-   */
-  export type KnowledgeBaseFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the KnowledgeBase
-     */
-    select?: KnowledgeBaseSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: KnowledgeBaseInclude<ExtArgs> | null
-    /**
-     * Filter, which KnowledgeBase to fetch.
-     */
-    where?: KnowledgeBaseWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of KnowledgeBases to fetch.
-     */
-    orderBy?: KnowledgeBaseOrderByWithRelationInput | KnowledgeBaseOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for KnowledgeBases.
-     */
-    cursor?: KnowledgeBaseWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` KnowledgeBases from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` KnowledgeBases.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of KnowledgeBases.
-     */
-    distinct?: KnowledgeBaseScalarFieldEnum | KnowledgeBaseScalarFieldEnum[]
-  }
-
-  /**
-   * KnowledgeBase findFirstOrThrow
-   */
-  export type KnowledgeBaseFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the KnowledgeBase
-     */
-    select?: KnowledgeBaseSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: KnowledgeBaseInclude<ExtArgs> | null
-    /**
-     * Filter, which KnowledgeBase to fetch.
-     */
-    where?: KnowledgeBaseWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of KnowledgeBases to fetch.
-     */
-    orderBy?: KnowledgeBaseOrderByWithRelationInput | KnowledgeBaseOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for KnowledgeBases.
-     */
-    cursor?: KnowledgeBaseWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` KnowledgeBases from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` KnowledgeBases.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of KnowledgeBases.
-     */
-    distinct?: KnowledgeBaseScalarFieldEnum | KnowledgeBaseScalarFieldEnum[]
-  }
-
-  /**
-   * KnowledgeBase findMany
-   */
-  export type KnowledgeBaseFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the KnowledgeBase
-     */
-    select?: KnowledgeBaseSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: KnowledgeBaseInclude<ExtArgs> | null
-    /**
-     * Filter, which KnowledgeBases to fetch.
-     */
-    where?: KnowledgeBaseWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of KnowledgeBases to fetch.
-     */
-    orderBy?: KnowledgeBaseOrderByWithRelationInput | KnowledgeBaseOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing KnowledgeBases.
-     */
-    cursor?: KnowledgeBaseWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` KnowledgeBases from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` KnowledgeBases.
-     */
-    skip?: number
-    distinct?: KnowledgeBaseScalarFieldEnum | KnowledgeBaseScalarFieldEnum[]
-  }
-
-  /**
-   * KnowledgeBase create
-   */
-  export type KnowledgeBaseCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the KnowledgeBase
-     */
-    select?: KnowledgeBaseSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: KnowledgeBaseInclude<ExtArgs> | null
-    /**
-     * The data needed to create a KnowledgeBase.
-     */
-    data: XOR<KnowledgeBaseCreateInput, KnowledgeBaseUncheckedCreateInput>
-  }
-
-  /**
-   * KnowledgeBase createMany
-   */
-  export type KnowledgeBaseCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many KnowledgeBases.
-     */
-    data: KnowledgeBaseCreateManyInput | KnowledgeBaseCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * KnowledgeBase createManyAndReturn
-   */
-  export type KnowledgeBaseCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the KnowledgeBase
-     */
-    select?: KnowledgeBaseSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * The data used to create many KnowledgeBases.
-     */
-    data: KnowledgeBaseCreateManyInput | KnowledgeBaseCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: KnowledgeBaseIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * KnowledgeBase update
-   */
-  export type KnowledgeBaseUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the KnowledgeBase
-     */
-    select?: KnowledgeBaseSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: KnowledgeBaseInclude<ExtArgs> | null
-    /**
-     * The data needed to update a KnowledgeBase.
-     */
-    data: XOR<KnowledgeBaseUpdateInput, KnowledgeBaseUncheckedUpdateInput>
-    /**
-     * Choose, which KnowledgeBase to update.
-     */
-    where: KnowledgeBaseWhereUniqueInput
-  }
-
-  /**
-   * KnowledgeBase updateMany
-   */
-  export type KnowledgeBaseUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update KnowledgeBases.
-     */
-    data: XOR<KnowledgeBaseUpdateManyMutationInput, KnowledgeBaseUncheckedUpdateManyInput>
-    /**
-     * Filter which KnowledgeBases to update
-     */
-    where?: KnowledgeBaseWhereInput
-  }
-
-  /**
-   * KnowledgeBase upsert
-   */
-  export type KnowledgeBaseUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the KnowledgeBase
-     */
-    select?: KnowledgeBaseSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: KnowledgeBaseInclude<ExtArgs> | null
-    /**
-     * The filter to search for the KnowledgeBase to update in case it exists.
-     */
-    where: KnowledgeBaseWhereUniqueInput
-    /**
-     * In case the KnowledgeBase found by the `where` argument doesn't exist, create a new KnowledgeBase with this data.
-     */
-    create: XOR<KnowledgeBaseCreateInput, KnowledgeBaseUncheckedCreateInput>
-    /**
-     * In case the KnowledgeBase was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<KnowledgeBaseUpdateInput, KnowledgeBaseUncheckedUpdateInput>
-  }
-
-  /**
-   * KnowledgeBase delete
-   */
-  export type KnowledgeBaseDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the KnowledgeBase
-     */
-    select?: KnowledgeBaseSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: KnowledgeBaseInclude<ExtArgs> | null
-    /**
-     * Filter which KnowledgeBase to delete.
-     */
-    where: KnowledgeBaseWhereUniqueInput
-  }
-
-  /**
-   * KnowledgeBase deleteMany
-   */
-  export type KnowledgeBaseDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which KnowledgeBases to delete
-     */
-    where?: KnowledgeBaseWhereInput
-  }
-
-  /**
-   * KnowledgeBase.documents
-   */
-  export type KnowledgeBase$documentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the KnowledgeDocument
-     */
-    select?: KnowledgeDocumentSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: KnowledgeDocumentInclude<ExtArgs> | null
-    where?: KnowledgeDocumentWhereInput
-    orderBy?: KnowledgeDocumentOrderByWithRelationInput | KnowledgeDocumentOrderByWithRelationInput[]
-    cursor?: KnowledgeDocumentWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: KnowledgeDocumentScalarFieldEnum | KnowledgeDocumentScalarFieldEnum[]
-  }
-
-  /**
-   * KnowledgeBase without action
-   */
-  export type KnowledgeBaseDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the KnowledgeBase
-     */
-    select?: KnowledgeBaseSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: KnowledgeBaseInclude<ExtArgs> | null
-  }
-
-
-  /**
-   * Model KnowledgeDocument
-   */
-
-  export type AggregateKnowledgeDocument = {
-    _count: KnowledgeDocumentCountAggregateOutputType | null
-    _min: KnowledgeDocumentMinAggregateOutputType | null
-    _max: KnowledgeDocumentMaxAggregateOutputType | null
-  }
-
-  export type KnowledgeDocumentMinAggregateOutputType = {
-    id: string | null
-    title: string | null
-    content: string | null
-    type: string | null
-    status: $Enums.DocumentStatus | null
-    createdAt: Date | null
-    updatedAt: Date | null
-    knowledgeBaseId: string | null
-  }
-
-  export type KnowledgeDocumentMaxAggregateOutputType = {
-    id: string | null
-    title: string | null
-    content: string | null
-    type: string | null
-    status: $Enums.DocumentStatus | null
-    createdAt: Date | null
-    updatedAt: Date | null
-    knowledgeBaseId: string | null
-  }
-
-  export type KnowledgeDocumentCountAggregateOutputType = {
-    id: number
-    title: number
-    content: number
-    type: number
-    status: number
-    createdAt: number
-    updatedAt: number
-    metadata: number
-    embedding: number
-    knowledgeBaseId: number
-    _all: number
-  }
-
-
-  export type KnowledgeDocumentMinAggregateInputType = {
-    id?: true
-    title?: true
-    content?: true
-    type?: true
-    status?: true
-    createdAt?: true
-    updatedAt?: true
-    knowledgeBaseId?: true
-  }
-
-  export type KnowledgeDocumentMaxAggregateInputType = {
-    id?: true
-    title?: true
-    content?: true
-    type?: true
-    status?: true
-    createdAt?: true
-    updatedAt?: true
-    knowledgeBaseId?: true
-  }
-
-  export type KnowledgeDocumentCountAggregateInputType = {
-    id?: true
-    title?: true
-    content?: true
-    type?: true
-    status?: true
-    createdAt?: true
-    updatedAt?: true
-    metadata?: true
-    embedding?: true
-    knowledgeBaseId?: true
-    _all?: true
-  }
-
-  export type KnowledgeDocumentAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which KnowledgeDocument to aggregate.
-     */
-    where?: KnowledgeDocumentWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of KnowledgeDocuments to fetch.
-     */
-    orderBy?: KnowledgeDocumentOrderByWithRelationInput | KnowledgeDocumentOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: KnowledgeDocumentWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` KnowledgeDocuments from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` KnowledgeDocuments.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned KnowledgeDocuments
-    **/
-    _count?: true | KnowledgeDocumentCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: KnowledgeDocumentMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: KnowledgeDocumentMaxAggregateInputType
-  }
-
-  export type GetKnowledgeDocumentAggregateType<T extends KnowledgeDocumentAggregateArgs> = {
-        [P in keyof T & keyof AggregateKnowledgeDocument]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateKnowledgeDocument[P]>
-      : GetScalarType<T[P], AggregateKnowledgeDocument[P]>
-  }
-
-
-
-
-  export type KnowledgeDocumentGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: KnowledgeDocumentWhereInput
-    orderBy?: KnowledgeDocumentOrderByWithAggregationInput | KnowledgeDocumentOrderByWithAggregationInput[]
-    by: KnowledgeDocumentScalarFieldEnum[] | KnowledgeDocumentScalarFieldEnum
-    having?: KnowledgeDocumentScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: KnowledgeDocumentCountAggregateInputType | true
-    _min?: KnowledgeDocumentMinAggregateInputType
-    _max?: KnowledgeDocumentMaxAggregateInputType
-  }
-
-  export type KnowledgeDocumentGroupByOutputType = {
-    id: string
-    title: string
-    content: string
-    type: string
-    status: $Enums.DocumentStatus
-    createdAt: Date
-    updatedAt: Date
-    metadata: JsonValue | null
-    embedding: JsonValue | null
-    knowledgeBaseId: string
-    _count: KnowledgeDocumentCountAggregateOutputType | null
-    _min: KnowledgeDocumentMinAggregateOutputType | null
-    _max: KnowledgeDocumentMaxAggregateOutputType | null
-  }
-
-  type GetKnowledgeDocumentGroupByPayload<T extends KnowledgeDocumentGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<KnowledgeDocumentGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof KnowledgeDocumentGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], KnowledgeDocumentGroupByOutputType[P]>
-            : GetScalarType<T[P], KnowledgeDocumentGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type KnowledgeDocumentSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    title?: boolean
-    content?: boolean
-    type?: boolean
-    status?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    metadata?: boolean
-    embedding?: boolean
-    knowledgeBaseId?: boolean
-    knowledgeBase?: boolean | KnowledgeBaseDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["knowledgeDocument"]>
-
-  export type KnowledgeDocumentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    title?: boolean
-    content?: boolean
-    type?: boolean
-    status?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    metadata?: boolean
-    embedding?: boolean
-    knowledgeBaseId?: boolean
-    knowledgeBase?: boolean | KnowledgeBaseDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["knowledgeDocument"]>
-
-  export type KnowledgeDocumentSelectScalar = {
-    id?: boolean
-    title?: boolean
-    content?: boolean
-    type?: boolean
-    status?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    metadata?: boolean
-    embedding?: boolean
-    knowledgeBaseId?: boolean
-  }
-
-  export type KnowledgeDocumentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    knowledgeBase?: boolean | KnowledgeBaseDefaultArgs<ExtArgs>
-  }
-  export type KnowledgeDocumentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    knowledgeBase?: boolean | KnowledgeBaseDefaultArgs<ExtArgs>
-  }
-
-  export type $KnowledgeDocumentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "KnowledgeDocument"
-    objects: {
-      knowledgeBase: Prisma.$KnowledgeBasePayload<ExtArgs>
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      title: string
-      content: string
-      type: string
-      status: $Enums.DocumentStatus
-      createdAt: Date
-      updatedAt: Date
-      metadata: Prisma.JsonValue | null
-      embedding: Prisma.JsonValue | null
-      knowledgeBaseId: string
-    }, ExtArgs["result"]["knowledgeDocument"]>
-    composites: {}
-  }
-
-  type KnowledgeDocumentGetPayload<S extends boolean | null | undefined | KnowledgeDocumentDefaultArgs> = $Result.GetResult<Prisma.$KnowledgeDocumentPayload, S>
-
-  type KnowledgeDocumentCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<KnowledgeDocumentFindManyArgs, 'select' | 'include' | 'distinct'> & {
-      select?: KnowledgeDocumentCountAggregateInputType | true
-    }
-
-  export interface KnowledgeDocumentDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['KnowledgeDocument'], meta: { name: 'KnowledgeDocument' } }
-    /**
-     * Find zero or one KnowledgeDocument that matches the filter.
-     * @param {KnowledgeDocumentFindUniqueArgs} args - Arguments to find a KnowledgeDocument
-     * @example
-     * // Get one KnowledgeDocument
-     * const knowledgeDocument = await prisma.knowledgeDocument.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends KnowledgeDocumentFindUniqueArgs>(args: SelectSubset<T, KnowledgeDocumentFindUniqueArgs<ExtArgs>>): Prisma__KnowledgeDocumentClient<$Result.GetResult<Prisma.$KnowledgeDocumentPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
-
-    /**
-     * Find one KnowledgeDocument that matches the filter or throw an error with `error.code='P2025'` 
-     * if no matches were found.
-     * @param {KnowledgeDocumentFindUniqueOrThrowArgs} args - Arguments to find a KnowledgeDocument
-     * @example
-     * // Get one KnowledgeDocument
-     * const knowledgeDocument = await prisma.knowledgeDocument.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends KnowledgeDocumentFindUniqueOrThrowArgs>(args: SelectSubset<T, KnowledgeDocumentFindUniqueOrThrowArgs<ExtArgs>>): Prisma__KnowledgeDocumentClient<$Result.GetResult<Prisma.$KnowledgeDocumentPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
-
-    /**
-     * Find the first KnowledgeDocument that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {KnowledgeDocumentFindFirstArgs} args - Arguments to find a KnowledgeDocument
-     * @example
-     * // Get one KnowledgeDocument
-     * const knowledgeDocument = await prisma.knowledgeDocument.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends KnowledgeDocumentFindFirstArgs>(args?: SelectSubset<T, KnowledgeDocumentFindFirstArgs<ExtArgs>>): Prisma__KnowledgeDocumentClient<$Result.GetResult<Prisma.$KnowledgeDocumentPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
-
-    /**
-     * Find the first KnowledgeDocument that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {KnowledgeDocumentFindFirstOrThrowArgs} args - Arguments to find a KnowledgeDocument
-     * @example
-     * // Get one KnowledgeDocument
-     * const knowledgeDocument = await prisma.knowledgeDocument.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends KnowledgeDocumentFindFirstOrThrowArgs>(args?: SelectSubset<T, KnowledgeDocumentFindFirstOrThrowArgs<ExtArgs>>): Prisma__KnowledgeDocumentClient<$Result.GetResult<Prisma.$KnowledgeDocumentPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
-
-    /**
-     * Find zero or more KnowledgeDocuments that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {KnowledgeDocumentFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all KnowledgeDocuments
-     * const knowledgeDocuments = await prisma.knowledgeDocument.findMany()
-     * 
-     * // Get first 10 KnowledgeDocuments
-     * const knowledgeDocuments = await prisma.knowledgeDocument.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const knowledgeDocumentWithIdOnly = await prisma.knowledgeDocument.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends KnowledgeDocumentFindManyArgs>(args?: SelectSubset<T, KnowledgeDocumentFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$KnowledgeDocumentPayload<ExtArgs>, T, "findMany">>
-
-    /**
-     * Create a KnowledgeDocument.
-     * @param {KnowledgeDocumentCreateArgs} args - Arguments to create a KnowledgeDocument.
-     * @example
-     * // Create one KnowledgeDocument
-     * const KnowledgeDocument = await prisma.knowledgeDocument.create({
-     *   data: {
-     *     // ... data to create a KnowledgeDocument
-     *   }
-     * })
-     * 
-     */
-    create<T extends KnowledgeDocumentCreateArgs>(args: SelectSubset<T, KnowledgeDocumentCreateArgs<ExtArgs>>): Prisma__KnowledgeDocumentClient<$Result.GetResult<Prisma.$KnowledgeDocumentPayload<ExtArgs>, T, "create">, never, ExtArgs>
-
-    /**
-     * Create many KnowledgeDocuments.
-     * @param {KnowledgeDocumentCreateManyArgs} args - Arguments to create many KnowledgeDocuments.
-     * @example
-     * // Create many KnowledgeDocuments
-     * const knowledgeDocument = await prisma.knowledgeDocument.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends KnowledgeDocumentCreateManyArgs>(args?: SelectSubset<T, KnowledgeDocumentCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many KnowledgeDocuments and returns the data saved in the database.
-     * @param {KnowledgeDocumentCreateManyAndReturnArgs} args - Arguments to create many KnowledgeDocuments.
-     * @example
-     * // Create many KnowledgeDocuments
-     * const knowledgeDocument = await prisma.knowledgeDocument.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many KnowledgeDocuments and only return the `id`
-     * const knowledgeDocumentWithIdOnly = await prisma.knowledgeDocument.createManyAndReturn({ 
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends KnowledgeDocumentCreateManyAndReturnArgs>(args?: SelectSubset<T, KnowledgeDocumentCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$KnowledgeDocumentPayload<ExtArgs>, T, "createManyAndReturn">>
-
-    /**
-     * Delete a KnowledgeDocument.
-     * @param {KnowledgeDocumentDeleteArgs} args - Arguments to delete one KnowledgeDocument.
-     * @example
-     * // Delete one KnowledgeDocument
-     * const KnowledgeDocument = await prisma.knowledgeDocument.delete({
-     *   where: {
-     *     // ... filter to delete one KnowledgeDocument
-     *   }
-     * })
-     * 
-     */
-    delete<T extends KnowledgeDocumentDeleteArgs>(args: SelectSubset<T, KnowledgeDocumentDeleteArgs<ExtArgs>>): Prisma__KnowledgeDocumentClient<$Result.GetResult<Prisma.$KnowledgeDocumentPayload<ExtArgs>, T, "delete">, never, ExtArgs>
-
-    /**
-     * Update one KnowledgeDocument.
-     * @param {KnowledgeDocumentUpdateArgs} args - Arguments to update one KnowledgeDocument.
-     * @example
-     * // Update one KnowledgeDocument
-     * const knowledgeDocument = await prisma.knowledgeDocument.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends KnowledgeDocumentUpdateArgs>(args: SelectSubset<T, KnowledgeDocumentUpdateArgs<ExtArgs>>): Prisma__KnowledgeDocumentClient<$Result.GetResult<Prisma.$KnowledgeDocumentPayload<ExtArgs>, T, "update">, never, ExtArgs>
-
-    /**
-     * Delete zero or more KnowledgeDocuments.
-     * @param {KnowledgeDocumentDeleteManyArgs} args - Arguments to filter KnowledgeDocuments to delete.
-     * @example
-     * // Delete a few KnowledgeDocuments
-     * const { count } = await prisma.knowledgeDocument.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends KnowledgeDocumentDeleteManyArgs>(args?: SelectSubset<T, KnowledgeDocumentDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more KnowledgeDocuments.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {KnowledgeDocumentUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many KnowledgeDocuments
-     * const knowledgeDocument = await prisma.knowledgeDocument.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends KnowledgeDocumentUpdateManyArgs>(args: SelectSubset<T, KnowledgeDocumentUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create or update one KnowledgeDocument.
-     * @param {KnowledgeDocumentUpsertArgs} args - Arguments to update or create a KnowledgeDocument.
-     * @example
-     * // Update or create a KnowledgeDocument
-     * const knowledgeDocument = await prisma.knowledgeDocument.upsert({
-     *   create: {
-     *     // ... data to create a KnowledgeDocument
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the KnowledgeDocument we want to update
-     *   }
-     * })
-     */
-    upsert<T extends KnowledgeDocumentUpsertArgs>(args: SelectSubset<T, KnowledgeDocumentUpsertArgs<ExtArgs>>): Prisma__KnowledgeDocumentClient<$Result.GetResult<Prisma.$KnowledgeDocumentPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
-
-
-    /**
-     * Count the number of KnowledgeDocuments.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {KnowledgeDocumentCountArgs} args - Arguments to filter KnowledgeDocuments to count.
-     * @example
-     * // Count the number of KnowledgeDocuments
-     * const count = await prisma.knowledgeDocument.count({
-     *   where: {
-     *     // ... the filter for the KnowledgeDocuments we want to count
-     *   }
-     * })
-    **/
-    count<T extends KnowledgeDocumentCountArgs>(
-      args?: Subset<T, KnowledgeDocumentCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], KnowledgeDocumentCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a KnowledgeDocument.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {KnowledgeDocumentAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends KnowledgeDocumentAggregateArgs>(args: Subset<T, KnowledgeDocumentAggregateArgs>): Prisma.PrismaPromise<GetKnowledgeDocumentAggregateType<T>>
-
-    /**
-     * Group by KnowledgeDocument.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {KnowledgeDocumentGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends KnowledgeDocumentGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: KnowledgeDocumentGroupByArgs['orderBy'] }
-        : { orderBy?: KnowledgeDocumentGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, KnowledgeDocumentGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetKnowledgeDocumentGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the KnowledgeDocument model
-   */
-  readonly fields: KnowledgeDocumentFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for KnowledgeDocument.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__KnowledgeDocumentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    knowledgeBase<T extends KnowledgeBaseDefaultArgs<ExtArgs> = {}>(args?: Subset<T, KnowledgeBaseDefaultArgs<ExtArgs>>): Prisma__KnowledgeBaseClient<$Result.GetResult<Prisma.$KnowledgeBasePayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the KnowledgeDocument model
-   */ 
-  interface KnowledgeDocumentFieldRefs {
-    readonly id: FieldRef<"KnowledgeDocument", 'String'>
-    readonly title: FieldRef<"KnowledgeDocument", 'String'>
-    readonly content: FieldRef<"KnowledgeDocument", 'String'>
-    readonly type: FieldRef<"KnowledgeDocument", 'String'>
-    readonly status: FieldRef<"KnowledgeDocument", 'DocumentStatus'>
-    readonly createdAt: FieldRef<"KnowledgeDocument", 'DateTime'>
-    readonly updatedAt: FieldRef<"KnowledgeDocument", 'DateTime'>
-    readonly metadata: FieldRef<"KnowledgeDocument", 'Json'>
-    readonly embedding: FieldRef<"KnowledgeDocument", 'Json'>
-    readonly knowledgeBaseId: FieldRef<"KnowledgeDocument", 'String'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * KnowledgeDocument findUnique
-   */
-  export type KnowledgeDocumentFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the KnowledgeDocument
-     */
-    select?: KnowledgeDocumentSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: KnowledgeDocumentInclude<ExtArgs> | null
-    /**
-     * Filter, which KnowledgeDocument to fetch.
-     */
-    where: KnowledgeDocumentWhereUniqueInput
-  }
-
-  /**
-   * KnowledgeDocument findUniqueOrThrow
-   */
-  export type KnowledgeDocumentFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the KnowledgeDocument
-     */
-    select?: KnowledgeDocumentSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: KnowledgeDocumentInclude<ExtArgs> | null
-    /**
-     * Filter, which KnowledgeDocument to fetch.
-     */
-    where: KnowledgeDocumentWhereUniqueInput
-  }
-
-  /**
-   * KnowledgeDocument findFirst
-   */
-  export type KnowledgeDocumentFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the KnowledgeDocument
-     */
-    select?: KnowledgeDocumentSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: KnowledgeDocumentInclude<ExtArgs> | null
-    /**
-     * Filter, which KnowledgeDocument to fetch.
-     */
-    where?: KnowledgeDocumentWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of KnowledgeDocuments to fetch.
-     */
-    orderBy?: KnowledgeDocumentOrderByWithRelationInput | KnowledgeDocumentOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for KnowledgeDocuments.
-     */
-    cursor?: KnowledgeDocumentWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` KnowledgeDocuments from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` KnowledgeDocuments.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of KnowledgeDocuments.
-     */
-    distinct?: KnowledgeDocumentScalarFieldEnum | KnowledgeDocumentScalarFieldEnum[]
-  }
-
-  /**
-   * KnowledgeDocument findFirstOrThrow
-   */
-  export type KnowledgeDocumentFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the KnowledgeDocument
-     */
-    select?: KnowledgeDocumentSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: KnowledgeDocumentInclude<ExtArgs> | null
-    /**
-     * Filter, which KnowledgeDocument to fetch.
-     */
-    where?: KnowledgeDocumentWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of KnowledgeDocuments to fetch.
-     */
-    orderBy?: KnowledgeDocumentOrderByWithRelationInput | KnowledgeDocumentOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for KnowledgeDocuments.
-     */
-    cursor?: KnowledgeDocumentWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` KnowledgeDocuments from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` KnowledgeDocuments.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of KnowledgeDocuments.
-     */
-    distinct?: KnowledgeDocumentScalarFieldEnum | KnowledgeDocumentScalarFieldEnum[]
-  }
-
-  /**
-   * KnowledgeDocument findMany
-   */
-  export type KnowledgeDocumentFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the KnowledgeDocument
-     */
-    select?: KnowledgeDocumentSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: KnowledgeDocumentInclude<ExtArgs> | null
-    /**
-     * Filter, which KnowledgeDocuments to fetch.
-     */
-    where?: KnowledgeDocumentWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of KnowledgeDocuments to fetch.
-     */
-    orderBy?: KnowledgeDocumentOrderByWithRelationInput | KnowledgeDocumentOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing KnowledgeDocuments.
-     */
-    cursor?: KnowledgeDocumentWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` KnowledgeDocuments from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` KnowledgeDocuments.
-     */
-    skip?: number
-    distinct?: KnowledgeDocumentScalarFieldEnum | KnowledgeDocumentScalarFieldEnum[]
-  }
-
-  /**
-   * KnowledgeDocument create
-   */
-  export type KnowledgeDocumentCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the KnowledgeDocument
-     */
-    select?: KnowledgeDocumentSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: KnowledgeDocumentInclude<ExtArgs> | null
-    /**
-     * The data needed to create a KnowledgeDocument.
-     */
-    data: XOR<KnowledgeDocumentCreateInput, KnowledgeDocumentUncheckedCreateInput>
-  }
-
-  /**
-   * KnowledgeDocument createMany
-   */
-  export type KnowledgeDocumentCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many KnowledgeDocuments.
-     */
-    data: KnowledgeDocumentCreateManyInput | KnowledgeDocumentCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * KnowledgeDocument createManyAndReturn
-   */
-  export type KnowledgeDocumentCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the KnowledgeDocument
-     */
-    select?: KnowledgeDocumentSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * The data used to create many KnowledgeDocuments.
-     */
-    data: KnowledgeDocumentCreateManyInput | KnowledgeDocumentCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: KnowledgeDocumentIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * KnowledgeDocument update
-   */
-  export type KnowledgeDocumentUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the KnowledgeDocument
-     */
-    select?: KnowledgeDocumentSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: KnowledgeDocumentInclude<ExtArgs> | null
-    /**
-     * The data needed to update a KnowledgeDocument.
-     */
-    data: XOR<KnowledgeDocumentUpdateInput, KnowledgeDocumentUncheckedUpdateInput>
-    /**
-     * Choose, which KnowledgeDocument to update.
-     */
-    where: KnowledgeDocumentWhereUniqueInput
-  }
-
-  /**
-   * KnowledgeDocument updateMany
-   */
-  export type KnowledgeDocumentUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update KnowledgeDocuments.
-     */
-    data: XOR<KnowledgeDocumentUpdateManyMutationInput, KnowledgeDocumentUncheckedUpdateManyInput>
-    /**
-     * Filter which KnowledgeDocuments to update
-     */
-    where?: KnowledgeDocumentWhereInput
-  }
-
-  /**
-   * KnowledgeDocument upsert
-   */
-  export type KnowledgeDocumentUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the KnowledgeDocument
-     */
-    select?: KnowledgeDocumentSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: KnowledgeDocumentInclude<ExtArgs> | null
-    /**
-     * The filter to search for the KnowledgeDocument to update in case it exists.
-     */
-    where: KnowledgeDocumentWhereUniqueInput
-    /**
-     * In case the KnowledgeDocument found by the `where` argument doesn't exist, create a new KnowledgeDocument with this data.
-     */
-    create: XOR<KnowledgeDocumentCreateInput, KnowledgeDocumentUncheckedCreateInput>
-    /**
-     * In case the KnowledgeDocument was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<KnowledgeDocumentUpdateInput, KnowledgeDocumentUncheckedUpdateInput>
-  }
-
-  /**
-   * KnowledgeDocument delete
-   */
-  export type KnowledgeDocumentDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the KnowledgeDocument
-     */
-    select?: KnowledgeDocumentSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: KnowledgeDocumentInclude<ExtArgs> | null
-    /**
-     * Filter which KnowledgeDocument to delete.
-     */
-    where: KnowledgeDocumentWhereUniqueInput
-  }
-
-  /**
-   * KnowledgeDocument deleteMany
-   */
-  export type KnowledgeDocumentDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which KnowledgeDocuments to delete
-     */
-    where?: KnowledgeDocumentWhereInput
-  }
-
-  /**
-   * KnowledgeDocument without action
-   */
-  export type KnowledgeDocumentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the KnowledgeDocument
-     */
-    select?: KnowledgeDocumentSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: KnowledgeDocumentInclude<ExtArgs> | null
-  }
-
-
-  /**
    * Enums
    */
 
   export const TransactionIsolationLevel: {
-    ReadUncommitted: 'ReadUncommitted',
-    ReadCommitted: 'ReadCommitted',
-    RepeatableRead: 'RepeatableRead',
     Serializable: 'Serializable'
   };
 
@@ -18004,9 +6734,11 @@ export namespace Prisma {
     authType: 'authType',
     password: 'password',
     privateKey: 'privateKey',
+    publicKey: 'publicKey',
     passphrase: 'passphrase',
     status: 'status',
     lastUsed: 'lastUsed',
+    isActive: 'isActive',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     meta: 'meta',
@@ -18019,207 +6751,53 @@ export namespace Prisma {
   export const ChatSessionScalarFieldEnum: {
     id: 'id',
     title: 'title',
-    model: 'model',
     type: 'type',
-    isActive: 'isActive',
-    pinned: 'pinned',
-    group: 'group',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     config: 'config',
     meta: 'meta',
-    userId: 'userId'
+    userId: 'userId',
+    sshConnectionId: 'sshConnectionId'
   };
 
   export type ChatSessionScalarFieldEnum = (typeof ChatSessionScalarFieldEnum)[keyof typeof ChatSessionScalarFieldEnum]
 
 
-  export const TopicScalarFieldEnum: {
-    id: 'id',
-    title: 'title',
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt',
-    meta: 'meta',
-    sessionId: 'sessionId'
-  };
-
-  export type TopicScalarFieldEnum = (typeof TopicScalarFieldEnum)[keyof typeof TopicScalarFieldEnum]
-
-
   export const MessageScalarFieldEnum: {
     id: 'id',
-    role: 'role',
     content: 'content',
-    parentId: 'parentId',
+    role: 'role',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     meta: 'meta',
     extra: 'extra',
-    tokens: 'tokens',
-    fromModel: 'fromModel',
-    fromProvider: 'fromProvider',
+    isDeleted: 'isDeleted',
+    isEdited: 'isEdited',
     plugin: 'plugin',
     pluginState: 'pluginState',
     translate: 'translate',
     tts: 'tts',
-    userId: 'userId',
     sessionId: 'sessionId',
-    topicId: 'topicId'
-  };
-
-  export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeof MessageScalarFieldEnum]
-
-
-  export const MessageFileScalarFieldEnum: {
-    id: 'id',
-    messageId: 'messageId',
-    fileId: 'fileId',
-    createdAt: 'createdAt'
-  };
-
-  export type MessageFileScalarFieldEnum = (typeof MessageFileScalarFieldEnum)[keyof typeof MessageFileScalarFieldEnum]
-
-
-  export const FileScalarFieldEnum: {
-    id: 'id',
-    name: 'name',
-    type: 'type',
-    size: 'size',
-    url: 'url',
-    path: 'path',
-    hash: 'hash',
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt',
-    metadata: 'metadata',
     userId: 'userId'
   };
 
-  export type FileScalarFieldEnum = (typeof FileScalarFieldEnum)[keyof typeof FileScalarFieldEnum]
+  export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeof MessageScalarFieldEnum]
 
 
   export const CommandLogScalarFieldEnum: {
     id: 'id',
     command: 'command',
     output: 'output',
-    error: 'error',
     exitCode: 'exitCode',
     duration: 'duration',
-    isSuccess: 'isSuccess',
+    createdAt: 'createdAt',
     safetyLevel: 'safetyLevel',
-    executedAt: 'executedAt',
     metadata: 'metadata',
     userId: 'userId',
-    connectionId: 'connectionId'
+    sshConnectionId: 'sshConnectionId'
   };
 
   export type CommandLogScalarFieldEnum = (typeof CommandLogScalarFieldEnum)[keyof typeof CommandLogScalarFieldEnum]
-
-
-  export const UsageStatsScalarFieldEnum: {
-    id: 'id',
-    date: 'date',
-    commandsCount: 'commandsCount',
-    aiRequestsCount: 'aiRequestsCount',
-    tokensUsed: 'tokensUsed',
-    connectionsUsed: 'connectionsUsed',
-    createdAt: 'createdAt',
-    userId: 'userId'
-  };
-
-  export type UsageStatsScalarFieldEnum = (typeof UsageStatsScalarFieldEnum)[keyof typeof UsageStatsScalarFieldEnum]
-
-
-  export const ApiKeyScalarFieldEnum: {
-    id: 'id',
-    name: 'name',
-    key: 'key',
-    type: 'type',
-    isActive: 'isActive',
-    expiresAt: 'expiresAt',
-    lastUsed: 'lastUsed',
-    createdAt: 'createdAt',
-    scopes: 'scopes',
-    userId: 'userId'
-  };
-
-  export type ApiKeyScalarFieldEnum = (typeof ApiKeyScalarFieldEnum)[keyof typeof ApiKeyScalarFieldEnum]
-
-
-  export const SystemConfigScalarFieldEnum: {
-    id: 'id',
-    key: 'key',
-    value: 'value',
-    type: 'type',
-    description: 'description',
-    category: 'category',
-    isPublic: 'isPublic',
-    updatedAt: 'updatedAt',
-    createdAt: 'createdAt'
-  };
-
-  export type SystemConfigScalarFieldEnum = (typeof SystemConfigScalarFieldEnum)[keyof typeof SystemConfigScalarFieldEnum]
-
-
-  export const SessionGroupScalarFieldEnum: {
-    id: 'id',
-    name: 'name',
-    sort: 'sort',
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt',
-    meta: 'meta',
-    userId: 'userId'
-  };
-
-  export type SessionGroupScalarFieldEnum = (typeof SessionGroupScalarFieldEnum)[keyof typeof SessionGroupScalarFieldEnum]
-
-
-  export const PluginScalarFieldEnum: {
-    id: 'id',
-    identifier: 'identifier',
-    name: 'name',
-    version: 'version',
-    enabled: 'enabled',
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt',
-    config: 'config',
-    meta: 'meta',
-    settings: 'settings',
-    userId: 'userId'
-  };
-
-  export type PluginScalarFieldEnum = (typeof PluginScalarFieldEnum)[keyof typeof PluginScalarFieldEnum]
-
-
-  export const KnowledgeBaseScalarFieldEnum: {
-    id: 'id',
-    name: 'name',
-    description: 'description',
-    type: 'type',
-    isActive: 'isActive',
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt',
-    config: 'config',
-    meta: 'meta',
-    userId: 'userId'
-  };
-
-  export type KnowledgeBaseScalarFieldEnum = (typeof KnowledgeBaseScalarFieldEnum)[keyof typeof KnowledgeBaseScalarFieldEnum]
-
-
-  export const KnowledgeDocumentScalarFieldEnum: {
-    id: 'id',
-    title: 'title',
-    content: 'content',
-    type: 'type',
-    status: 'status',
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt',
-    metadata: 'metadata',
-    embedding: 'embedding',
-    knowledgeBaseId: 'knowledgeBaseId'
-  };
-
-  export type KnowledgeDocumentScalarFieldEnum = (typeof KnowledgeDocumentScalarFieldEnum)[keyof typeof KnowledgeDocumentScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -18228,31 +6806,6 @@ export namespace Prisma {
   };
 
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
-
-
-  export const NullableJsonNullValueInput: {
-    DbNull: typeof DbNull,
-    JsonNull: typeof JsonNull
-  };
-
-  export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
-
-
-  export const QueryMode: {
-    default: 'default',
-    insensitive: 'insensitive'
-  };
-
-  export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
-
-
-  export const JsonNullValueFilter: {
-    DbNull: typeof DbNull,
-    JsonNull: typeof JsonNull,
-    AnyNull: typeof AnyNull
-  };
-
-  export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
   export const NullsOrder: {
@@ -18276,27 +6829,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'String[]'
-   */
-  export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'UserRole'
-   */
-  export type EnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserRole'>
-    
-
-
-  /**
-   * Reference to a field of type 'UserRole[]'
-   */
-  export type ListEnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserRole[]'>
-    
-
-
-  /**
    * Reference to a field of type 'Boolean'
    */
   export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
@@ -18311,20 +6843,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'DateTime[]'
-   */
-  export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'Json'
-   */
-  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
-    
-
-
-  /**
    * Reference to a field of type 'Int'
    */
   export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
@@ -18332,163 +6850,9 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Int[]'
-   */
-  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'SSHAuthType'
-   */
-  export type EnumSSHAuthTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SSHAuthType'>
-    
-
-
-  /**
-   * Reference to a field of type 'SSHAuthType[]'
-   */
-  export type ListEnumSSHAuthTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SSHAuthType[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'ConnectionStatus'
-   */
-  export type EnumConnectionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ConnectionStatus'>
-    
-
-
-  /**
-   * Reference to a field of type 'ConnectionStatus[]'
-   */
-  export type ListEnumConnectionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ConnectionStatus[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'SessionType'
-   */
-  export type EnumSessionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SessionType'>
-    
-
-
-  /**
-   * Reference to a field of type 'SessionType[]'
-   */
-  export type ListEnumSessionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SessionType[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'MessageRole'
-   */
-  export type EnumMessageRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MessageRole'>
-    
-
-
-  /**
-   * Reference to a field of type 'MessageRole[]'
-   */
-  export type ListEnumMessageRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MessageRole[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'BigInt'
-   */
-  export type BigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt'>
-    
-
-
-  /**
-   * Reference to a field of type 'BigInt[]'
-   */
-  export type ListBigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'SafetyLevel'
-   */
-  export type EnumSafetyLevelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SafetyLevel'>
-    
-
-
-  /**
-   * Reference to a field of type 'SafetyLevel[]'
-   */
-  export type ListEnumSafetyLevelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SafetyLevel[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'ApiKeyType'
-   */
-  export type EnumApiKeyTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ApiKeyType'>
-    
-
-
-  /**
-   * Reference to a field of type 'ApiKeyType[]'
-   */
-  export type ListEnumApiKeyTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ApiKeyType[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'ConfigType'
-   */
-  export type EnumConfigTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ConfigType'>
-    
-
-
-  /**
-   * Reference to a field of type 'ConfigType[]'
-   */
-  export type ListEnumConfigTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ConfigType[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'KnowledgeType'
-   */
-  export type EnumKnowledgeTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'KnowledgeType'>
-    
-
-
-  /**
-   * Reference to a field of type 'KnowledgeType[]'
-   */
-  export type ListEnumKnowledgeTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'KnowledgeType[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'DocumentStatus'
-   */
-  export type EnumDocumentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DocumentStatus'>
-    
-
-
-  /**
-   * Reference to a field of type 'DocumentStatus[]'
-   */
-  export type ListEnumDocumentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DocumentStatus[]'>
-    
-
-
-  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
-    
-
-
-  /**
-   * Reference to a field of type 'Float[]'
-   */
-  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
   /**
    * Deep Input Types
@@ -18505,21 +6869,15 @@ export namespace Prisma {
     username?: StringNullableFilter<"User"> | string | null
     password?: StringNullableFilter<"User"> | string | null
     avatar?: StringNullableFilter<"User"> | string | null
-    role?: EnumUserRoleFilter<"User"> | $Enums.UserRole
+    role?: StringFilter<"User"> | string
     isActive?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
-    settings?: JsonNullableFilter<"User">
+    settings?: StringNullableFilter<"User"> | string | null
     sshConnections?: SSHConnectionListRelationFilter
     chatSessions?: ChatSessionListRelationFilter
     messages?: MessageListRelationFilter
     commandLogs?: CommandLogListRelationFilter
-    usageStats?: UsageStatsListRelationFilter
-    apiKeys?: ApiKeyListRelationFilter
-    sessionGroups?: SessionGroupListRelationFilter
-    plugins?: PluginListRelationFilter
-    knowledgeBases?: KnowledgeBaseListRelationFilter
-    files?: FileListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -18538,12 +6896,6 @@ export namespace Prisma {
     chatSessions?: ChatSessionOrderByRelationAggregateInput
     messages?: MessageOrderByRelationAggregateInput
     commandLogs?: CommandLogOrderByRelationAggregateInput
-    usageStats?: UsageStatsOrderByRelationAggregateInput
-    apiKeys?: ApiKeyOrderByRelationAggregateInput
-    sessionGroups?: SessionGroupOrderByRelationAggregateInput
-    plugins?: PluginOrderByRelationAggregateInput
-    knowledgeBases?: KnowledgeBaseOrderByRelationAggregateInput
-    files?: FileOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -18556,21 +6908,15 @@ export namespace Prisma {
     NOT?: UserWhereInput | UserWhereInput[]
     password?: StringNullableFilter<"User"> | string | null
     avatar?: StringNullableFilter<"User"> | string | null
-    role?: EnumUserRoleFilter<"User"> | $Enums.UserRole
+    role?: StringFilter<"User"> | string
     isActive?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
-    settings?: JsonNullableFilter<"User">
+    settings?: StringNullableFilter<"User"> | string | null
     sshConnections?: SSHConnectionListRelationFilter
     chatSessions?: ChatSessionListRelationFilter
     messages?: MessageListRelationFilter
     commandLogs?: CommandLogListRelationFilter
-    usageStats?: UsageStatsListRelationFilter
-    apiKeys?: ApiKeyListRelationFilter
-    sessionGroups?: SessionGroupListRelationFilter
-    plugins?: PluginListRelationFilter
-    knowledgeBases?: KnowledgeBaseListRelationFilter
-    files?: FileListRelationFilter
   }, "id" | "uuid" | "email" | "username">
 
   export type UserOrderByWithAggregationInput = {
@@ -18600,11 +6946,11 @@ export namespace Prisma {
     username?: StringNullableWithAggregatesFilter<"User"> | string | null
     password?: StringNullableWithAggregatesFilter<"User"> | string | null
     avatar?: StringNullableWithAggregatesFilter<"User"> | string | null
-    role?: EnumUserRoleWithAggregatesFilter<"User"> | $Enums.UserRole
+    role?: StringWithAggregatesFilter<"User"> | string
     isActive?: BoolWithAggregatesFilter<"User"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
-    settings?: JsonNullableWithAggregatesFilter<"User">
+    settings?: StringNullableWithAggregatesFilter<"User"> | string | null
   }
 
   export type SSHConnectionWhereInput = {
@@ -18616,17 +6962,20 @@ export namespace Prisma {
     host?: StringFilter<"SSHConnection"> | string
     port?: IntFilter<"SSHConnection"> | number
     username?: StringFilter<"SSHConnection"> | string
-    authType?: EnumSSHAuthTypeFilter<"SSHConnection"> | $Enums.SSHAuthType
+    authType?: StringFilter<"SSHConnection"> | string
     password?: StringNullableFilter<"SSHConnection"> | string | null
     privateKey?: StringNullableFilter<"SSHConnection"> | string | null
+    publicKey?: StringNullableFilter<"SSHConnection"> | string | null
     passphrase?: StringNullableFilter<"SSHConnection"> | string | null
-    status?: EnumConnectionStatusFilter<"SSHConnection"> | $Enums.ConnectionStatus
+    status?: StringFilter<"SSHConnection"> | string
     lastUsed?: DateTimeNullableFilter<"SSHConnection"> | Date | string | null
+    isActive?: BoolFilter<"SSHConnection"> | boolean
     createdAt?: DateTimeFilter<"SSHConnection"> | Date | string
     updatedAt?: DateTimeFilter<"SSHConnection"> | Date | string
-    meta?: JsonNullableFilter<"SSHConnection">
+    meta?: StringNullableFilter<"SSHConnection"> | string | null
     userId?: StringFilter<"SSHConnection"> | string
     user?: XOR<UserRelationFilter, UserWhereInput>
+    chatSessions?: ChatSessionListRelationFilter
     commandLogs?: CommandLogListRelationFilter
   }
 
@@ -18639,14 +6988,17 @@ export namespace Prisma {
     authType?: SortOrder
     password?: SortOrderInput | SortOrder
     privateKey?: SortOrderInput | SortOrder
+    publicKey?: SortOrderInput | SortOrder
     passphrase?: SortOrderInput | SortOrder
     status?: SortOrder
     lastUsed?: SortOrderInput | SortOrder
+    isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     meta?: SortOrderInput | SortOrder
     userId?: SortOrder
     user?: UserOrderByWithRelationInput
+    chatSessions?: ChatSessionOrderByRelationAggregateInput
     commandLogs?: CommandLogOrderByRelationAggregateInput
   }
 
@@ -18659,17 +7011,20 @@ export namespace Prisma {
     host?: StringFilter<"SSHConnection"> | string
     port?: IntFilter<"SSHConnection"> | number
     username?: StringFilter<"SSHConnection"> | string
-    authType?: EnumSSHAuthTypeFilter<"SSHConnection"> | $Enums.SSHAuthType
+    authType?: StringFilter<"SSHConnection"> | string
     password?: StringNullableFilter<"SSHConnection"> | string | null
     privateKey?: StringNullableFilter<"SSHConnection"> | string | null
+    publicKey?: StringNullableFilter<"SSHConnection"> | string | null
     passphrase?: StringNullableFilter<"SSHConnection"> | string | null
-    status?: EnumConnectionStatusFilter<"SSHConnection"> | $Enums.ConnectionStatus
+    status?: StringFilter<"SSHConnection"> | string
     lastUsed?: DateTimeNullableFilter<"SSHConnection"> | Date | string | null
+    isActive?: BoolFilter<"SSHConnection"> | boolean
     createdAt?: DateTimeFilter<"SSHConnection"> | Date | string
     updatedAt?: DateTimeFilter<"SSHConnection"> | Date | string
-    meta?: JsonNullableFilter<"SSHConnection">
+    meta?: StringNullableFilter<"SSHConnection"> | string | null
     userId?: StringFilter<"SSHConnection"> | string
     user?: XOR<UserRelationFilter, UserWhereInput>
+    chatSessions?: ChatSessionListRelationFilter
     commandLogs?: CommandLogListRelationFilter
   }, "id">
 
@@ -18682,9 +7037,11 @@ export namespace Prisma {
     authType?: SortOrder
     password?: SortOrderInput | SortOrder
     privateKey?: SortOrderInput | SortOrder
+    publicKey?: SortOrderInput | SortOrder
     passphrase?: SortOrderInput | SortOrder
     status?: SortOrder
     lastUsed?: SortOrderInput | SortOrder
+    isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     meta?: SortOrderInput | SortOrder
@@ -18705,15 +7062,17 @@ export namespace Prisma {
     host?: StringWithAggregatesFilter<"SSHConnection"> | string
     port?: IntWithAggregatesFilter<"SSHConnection"> | number
     username?: StringWithAggregatesFilter<"SSHConnection"> | string
-    authType?: EnumSSHAuthTypeWithAggregatesFilter<"SSHConnection"> | $Enums.SSHAuthType
+    authType?: StringWithAggregatesFilter<"SSHConnection"> | string
     password?: StringNullableWithAggregatesFilter<"SSHConnection"> | string | null
     privateKey?: StringNullableWithAggregatesFilter<"SSHConnection"> | string | null
+    publicKey?: StringNullableWithAggregatesFilter<"SSHConnection"> | string | null
     passphrase?: StringNullableWithAggregatesFilter<"SSHConnection"> | string | null
-    status?: EnumConnectionStatusWithAggregatesFilter<"SSHConnection"> | $Enums.ConnectionStatus
+    status?: StringWithAggregatesFilter<"SSHConnection"> | string
     lastUsed?: DateTimeNullableWithAggregatesFilter<"SSHConnection"> | Date | string | null
+    isActive?: BoolWithAggregatesFilter<"SSHConnection"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"SSHConnection"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"SSHConnection"> | Date | string
-    meta?: JsonNullableWithAggregatesFilter<"SSHConnection">
+    meta?: StringNullableWithAggregatesFilter<"SSHConnection"> | string | null
     userId?: StringWithAggregatesFilter<"SSHConnection"> | string
   }
 
@@ -18722,38 +7081,32 @@ export namespace Prisma {
     OR?: ChatSessionWhereInput[]
     NOT?: ChatSessionWhereInput | ChatSessionWhereInput[]
     id?: StringFilter<"ChatSession"> | string
-    title?: StringNullableFilter<"ChatSession"> | string | null
-    model?: StringFilter<"ChatSession"> | string
-    type?: EnumSessionTypeFilter<"ChatSession"> | $Enums.SessionType
-    isActive?: BoolFilter<"ChatSession"> | boolean
-    pinned?: BoolFilter<"ChatSession"> | boolean
-    group?: StringFilter<"ChatSession"> | string
+    title?: StringFilter<"ChatSession"> | string
+    type?: StringFilter<"ChatSession"> | string
     createdAt?: DateTimeFilter<"ChatSession"> | Date | string
     updatedAt?: DateTimeFilter<"ChatSession"> | Date | string
-    config?: JsonNullableFilter<"ChatSession">
-    meta?: JsonNullableFilter<"ChatSession">
+    config?: StringNullableFilter<"ChatSession"> | string | null
+    meta?: StringNullableFilter<"ChatSession"> | string | null
     userId?: StringFilter<"ChatSession"> | string
+    sshConnectionId?: StringNullableFilter<"ChatSession"> | string | null
     user?: XOR<UserRelationFilter, UserWhereInput>
+    sshConnection?: XOR<SSHConnectionNullableRelationFilter, SSHConnectionWhereInput> | null
     messages?: MessageListRelationFilter
-    topics?: TopicListRelationFilter
   }
 
   export type ChatSessionOrderByWithRelationInput = {
     id?: SortOrder
-    title?: SortOrderInput | SortOrder
-    model?: SortOrder
+    title?: SortOrder
     type?: SortOrder
-    isActive?: SortOrder
-    pinned?: SortOrder
-    group?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     config?: SortOrderInput | SortOrder
     meta?: SortOrderInput | SortOrder
     userId?: SortOrder
+    sshConnectionId?: SortOrderInput | SortOrder
     user?: UserOrderByWithRelationInput
+    sshConnection?: SSHConnectionOrderByWithRelationInput
     messages?: MessageOrderByRelationAggregateInput
-    topics?: TopicOrderByRelationAggregateInput
   }
 
   export type ChatSessionWhereUniqueInput = Prisma.AtLeast<{
@@ -18761,35 +7114,29 @@ export namespace Prisma {
     AND?: ChatSessionWhereInput | ChatSessionWhereInput[]
     OR?: ChatSessionWhereInput[]
     NOT?: ChatSessionWhereInput | ChatSessionWhereInput[]
-    title?: StringNullableFilter<"ChatSession"> | string | null
-    model?: StringFilter<"ChatSession"> | string
-    type?: EnumSessionTypeFilter<"ChatSession"> | $Enums.SessionType
-    isActive?: BoolFilter<"ChatSession"> | boolean
-    pinned?: BoolFilter<"ChatSession"> | boolean
-    group?: StringFilter<"ChatSession"> | string
+    title?: StringFilter<"ChatSession"> | string
+    type?: StringFilter<"ChatSession"> | string
     createdAt?: DateTimeFilter<"ChatSession"> | Date | string
     updatedAt?: DateTimeFilter<"ChatSession"> | Date | string
-    config?: JsonNullableFilter<"ChatSession">
-    meta?: JsonNullableFilter<"ChatSession">
+    config?: StringNullableFilter<"ChatSession"> | string | null
+    meta?: StringNullableFilter<"ChatSession"> | string | null
     userId?: StringFilter<"ChatSession"> | string
+    sshConnectionId?: StringNullableFilter<"ChatSession"> | string | null
     user?: XOR<UserRelationFilter, UserWhereInput>
+    sshConnection?: XOR<SSHConnectionNullableRelationFilter, SSHConnectionWhereInput> | null
     messages?: MessageListRelationFilter
-    topics?: TopicListRelationFilter
   }, "id">
 
   export type ChatSessionOrderByWithAggregationInput = {
     id?: SortOrder
-    title?: SortOrderInput | SortOrder
-    model?: SortOrder
+    title?: SortOrder
     type?: SortOrder
-    isActive?: SortOrder
-    pinned?: SortOrder
-    group?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     config?: SortOrderInput | SortOrder
     meta?: SortOrderInput | SortOrder
     userId?: SortOrder
+    sshConnectionId?: SortOrderInput | SortOrder
     _count?: ChatSessionCountOrderByAggregateInput
     _max?: ChatSessionMaxOrderByAggregateInput
     _min?: ChatSessionMinOrderByAggregateInput
@@ -18800,80 +7147,14 @@ export namespace Prisma {
     OR?: ChatSessionScalarWhereWithAggregatesInput[]
     NOT?: ChatSessionScalarWhereWithAggregatesInput | ChatSessionScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"ChatSession"> | string
-    title?: StringNullableWithAggregatesFilter<"ChatSession"> | string | null
-    model?: StringWithAggregatesFilter<"ChatSession"> | string
-    type?: EnumSessionTypeWithAggregatesFilter<"ChatSession"> | $Enums.SessionType
-    isActive?: BoolWithAggregatesFilter<"ChatSession"> | boolean
-    pinned?: BoolWithAggregatesFilter<"ChatSession"> | boolean
-    group?: StringWithAggregatesFilter<"ChatSession"> | string
+    title?: StringWithAggregatesFilter<"ChatSession"> | string
+    type?: StringWithAggregatesFilter<"ChatSession"> | string
     createdAt?: DateTimeWithAggregatesFilter<"ChatSession"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"ChatSession"> | Date | string
-    config?: JsonNullableWithAggregatesFilter<"ChatSession">
-    meta?: JsonNullableWithAggregatesFilter<"ChatSession">
+    config?: StringNullableWithAggregatesFilter<"ChatSession"> | string | null
+    meta?: StringNullableWithAggregatesFilter<"ChatSession"> | string | null
     userId?: StringWithAggregatesFilter<"ChatSession"> | string
-  }
-
-  export type TopicWhereInput = {
-    AND?: TopicWhereInput | TopicWhereInput[]
-    OR?: TopicWhereInput[]
-    NOT?: TopicWhereInput | TopicWhereInput[]
-    id?: StringFilter<"Topic"> | string
-    title?: StringFilter<"Topic"> | string
-    createdAt?: DateTimeFilter<"Topic"> | Date | string
-    updatedAt?: DateTimeFilter<"Topic"> | Date | string
-    meta?: JsonNullableFilter<"Topic">
-    sessionId?: StringFilter<"Topic"> | string
-    session?: XOR<ChatSessionRelationFilter, ChatSessionWhereInput>
-    messages?: MessageListRelationFilter
-  }
-
-  export type TopicOrderByWithRelationInput = {
-    id?: SortOrder
-    title?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    meta?: SortOrderInput | SortOrder
-    sessionId?: SortOrder
-    session?: ChatSessionOrderByWithRelationInput
-    messages?: MessageOrderByRelationAggregateInput
-  }
-
-  export type TopicWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    AND?: TopicWhereInput | TopicWhereInput[]
-    OR?: TopicWhereInput[]
-    NOT?: TopicWhereInput | TopicWhereInput[]
-    title?: StringFilter<"Topic"> | string
-    createdAt?: DateTimeFilter<"Topic"> | Date | string
-    updatedAt?: DateTimeFilter<"Topic"> | Date | string
-    meta?: JsonNullableFilter<"Topic">
-    sessionId?: StringFilter<"Topic"> | string
-    session?: XOR<ChatSessionRelationFilter, ChatSessionWhereInput>
-    messages?: MessageListRelationFilter
-  }, "id">
-
-  export type TopicOrderByWithAggregationInput = {
-    id?: SortOrder
-    title?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    meta?: SortOrderInput | SortOrder
-    sessionId?: SortOrder
-    _count?: TopicCountOrderByAggregateInput
-    _max?: TopicMaxOrderByAggregateInput
-    _min?: TopicMinOrderByAggregateInput
-  }
-
-  export type TopicScalarWhereWithAggregatesInput = {
-    AND?: TopicScalarWhereWithAggregatesInput | TopicScalarWhereWithAggregatesInput[]
-    OR?: TopicScalarWhereWithAggregatesInput[]
-    NOT?: TopicScalarWhereWithAggregatesInput | TopicScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"Topic"> | string
-    title?: StringWithAggregatesFilter<"Topic"> | string
-    createdAt?: DateTimeWithAggregatesFilter<"Topic"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"Topic"> | Date | string
-    meta?: JsonNullableWithAggregatesFilter<"Topic">
-    sessionId?: StringWithAggregatesFilter<"Topic"> | string
+    sshConnectionId?: StringNullableWithAggregatesFilter<"ChatSession"> | string | null
   }
 
   export type MessageWhereInput = {
@@ -18881,52 +7162,42 @@ export namespace Prisma {
     OR?: MessageWhereInput[]
     NOT?: MessageWhereInput | MessageWhereInput[]
     id?: StringFilter<"Message"> | string
-    role?: EnumMessageRoleFilter<"Message"> | $Enums.MessageRole
     content?: StringFilter<"Message"> | string
-    parentId?: StringNullableFilter<"Message"> | string | null
+    role?: StringFilter<"Message"> | string
     createdAt?: DateTimeFilter<"Message"> | Date | string
     updatedAt?: DateTimeFilter<"Message"> | Date | string
-    meta?: JsonNullableFilter<"Message">
-    extra?: JsonNullableFilter<"Message">
-    tokens?: IntNullableFilter<"Message"> | number | null
-    fromModel?: StringNullableFilter<"Message"> | string | null
-    fromProvider?: StringNullableFilter<"Message"> | string | null
-    plugin?: JsonNullableFilter<"Message">
-    pluginState?: JsonNullableFilter<"Message">
-    translate?: JsonNullableFilter<"Message">
-    tts?: JsonNullableFilter<"Message">
-    userId?: StringFilter<"Message"> | string
+    meta?: StringNullableFilter<"Message"> | string | null
+    extra?: StringNullableFilter<"Message"> | string | null
+    isDeleted?: BoolFilter<"Message"> | boolean
+    isEdited?: BoolFilter<"Message"> | boolean
+    plugin?: StringNullableFilter<"Message"> | string | null
+    pluginState?: StringNullableFilter<"Message"> | string | null
+    translate?: StringNullableFilter<"Message"> | string | null
+    tts?: StringNullableFilter<"Message"> | string | null
     sessionId?: StringFilter<"Message"> | string
-    topicId?: StringNullableFilter<"Message"> | string | null
-    user?: XOR<UserRelationFilter, UserWhereInput>
+    userId?: StringFilter<"Message"> | string
     session?: XOR<ChatSessionRelationFilter, ChatSessionWhereInput>
-    topic?: XOR<TopicNullableRelationFilter, TopicWhereInput> | null
-    files?: MessageFileListRelationFilter
+    user?: XOR<UserRelationFilter, UserWhereInput>
   }
 
   export type MessageOrderByWithRelationInput = {
     id?: SortOrder
-    role?: SortOrder
     content?: SortOrder
-    parentId?: SortOrderInput | SortOrder
+    role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     meta?: SortOrderInput | SortOrder
     extra?: SortOrderInput | SortOrder
-    tokens?: SortOrderInput | SortOrder
-    fromModel?: SortOrderInput | SortOrder
-    fromProvider?: SortOrderInput | SortOrder
+    isDeleted?: SortOrder
+    isEdited?: SortOrder
     plugin?: SortOrderInput | SortOrder
     pluginState?: SortOrderInput | SortOrder
     translate?: SortOrderInput | SortOrder
     tts?: SortOrderInput | SortOrder
-    userId?: SortOrder
     sessionId?: SortOrder
-    topicId?: SortOrderInput | SortOrder
-    user?: UserOrderByWithRelationInput
+    userId?: SortOrder
     session?: ChatSessionOrderByWithRelationInput
-    topic?: TopicOrderByWithRelationInput
-    files?: MessageFileOrderByRelationAggregateInput
+    user?: UserOrderByWithRelationInput
   }
 
   export type MessageWhereUniqueInput = Prisma.AtLeast<{
@@ -18934,53 +7205,43 @@ export namespace Prisma {
     AND?: MessageWhereInput | MessageWhereInput[]
     OR?: MessageWhereInput[]
     NOT?: MessageWhereInput | MessageWhereInput[]
-    role?: EnumMessageRoleFilter<"Message"> | $Enums.MessageRole
     content?: StringFilter<"Message"> | string
-    parentId?: StringNullableFilter<"Message"> | string | null
+    role?: StringFilter<"Message"> | string
     createdAt?: DateTimeFilter<"Message"> | Date | string
     updatedAt?: DateTimeFilter<"Message"> | Date | string
-    meta?: JsonNullableFilter<"Message">
-    extra?: JsonNullableFilter<"Message">
-    tokens?: IntNullableFilter<"Message"> | number | null
-    fromModel?: StringNullableFilter<"Message"> | string | null
-    fromProvider?: StringNullableFilter<"Message"> | string | null
-    plugin?: JsonNullableFilter<"Message">
-    pluginState?: JsonNullableFilter<"Message">
-    translate?: JsonNullableFilter<"Message">
-    tts?: JsonNullableFilter<"Message">
-    userId?: StringFilter<"Message"> | string
+    meta?: StringNullableFilter<"Message"> | string | null
+    extra?: StringNullableFilter<"Message"> | string | null
+    isDeleted?: BoolFilter<"Message"> | boolean
+    isEdited?: BoolFilter<"Message"> | boolean
+    plugin?: StringNullableFilter<"Message"> | string | null
+    pluginState?: StringNullableFilter<"Message"> | string | null
+    translate?: StringNullableFilter<"Message"> | string | null
+    tts?: StringNullableFilter<"Message"> | string | null
     sessionId?: StringFilter<"Message"> | string
-    topicId?: StringNullableFilter<"Message"> | string | null
-    user?: XOR<UserRelationFilter, UserWhereInput>
+    userId?: StringFilter<"Message"> | string
     session?: XOR<ChatSessionRelationFilter, ChatSessionWhereInput>
-    topic?: XOR<TopicNullableRelationFilter, TopicWhereInput> | null
-    files?: MessageFileListRelationFilter
+    user?: XOR<UserRelationFilter, UserWhereInput>
   }, "id">
 
   export type MessageOrderByWithAggregationInput = {
     id?: SortOrder
-    role?: SortOrder
     content?: SortOrder
-    parentId?: SortOrderInput | SortOrder
+    role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     meta?: SortOrderInput | SortOrder
     extra?: SortOrderInput | SortOrder
-    tokens?: SortOrderInput | SortOrder
-    fromModel?: SortOrderInput | SortOrder
-    fromProvider?: SortOrderInput | SortOrder
+    isDeleted?: SortOrder
+    isEdited?: SortOrder
     plugin?: SortOrderInput | SortOrder
     pluginState?: SortOrderInput | SortOrder
     translate?: SortOrderInput | SortOrder
     tts?: SortOrderInput | SortOrder
-    userId?: SortOrder
     sessionId?: SortOrder
-    topicId?: SortOrderInput | SortOrder
+    userId?: SortOrder
     _count?: MessageCountOrderByAggregateInput
-    _avg?: MessageAvgOrderByAggregateInput
     _max?: MessageMaxOrderByAggregateInput
     _min?: MessageMinOrderByAggregateInput
-    _sum?: MessageSumOrderByAggregateInput
   }
 
   export type MessageScalarWhereWithAggregatesInput = {
@@ -18988,167 +7249,20 @@ export namespace Prisma {
     OR?: MessageScalarWhereWithAggregatesInput[]
     NOT?: MessageScalarWhereWithAggregatesInput | MessageScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Message"> | string
-    role?: EnumMessageRoleWithAggregatesFilter<"Message"> | $Enums.MessageRole
     content?: StringWithAggregatesFilter<"Message"> | string
-    parentId?: StringNullableWithAggregatesFilter<"Message"> | string | null
+    role?: StringWithAggregatesFilter<"Message"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Message"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Message"> | Date | string
-    meta?: JsonNullableWithAggregatesFilter<"Message">
-    extra?: JsonNullableWithAggregatesFilter<"Message">
-    tokens?: IntNullableWithAggregatesFilter<"Message"> | number | null
-    fromModel?: StringNullableWithAggregatesFilter<"Message"> | string | null
-    fromProvider?: StringNullableWithAggregatesFilter<"Message"> | string | null
-    plugin?: JsonNullableWithAggregatesFilter<"Message">
-    pluginState?: JsonNullableWithAggregatesFilter<"Message">
-    translate?: JsonNullableWithAggregatesFilter<"Message">
-    tts?: JsonNullableWithAggregatesFilter<"Message">
-    userId?: StringWithAggregatesFilter<"Message"> | string
+    meta?: StringNullableWithAggregatesFilter<"Message"> | string | null
+    extra?: StringNullableWithAggregatesFilter<"Message"> | string | null
+    isDeleted?: BoolWithAggregatesFilter<"Message"> | boolean
+    isEdited?: BoolWithAggregatesFilter<"Message"> | boolean
+    plugin?: StringNullableWithAggregatesFilter<"Message"> | string | null
+    pluginState?: StringNullableWithAggregatesFilter<"Message"> | string | null
+    translate?: StringNullableWithAggregatesFilter<"Message"> | string | null
+    tts?: StringNullableWithAggregatesFilter<"Message"> | string | null
     sessionId?: StringWithAggregatesFilter<"Message"> | string
-    topicId?: StringNullableWithAggregatesFilter<"Message"> | string | null
-  }
-
-  export type MessageFileWhereInput = {
-    AND?: MessageFileWhereInput | MessageFileWhereInput[]
-    OR?: MessageFileWhereInput[]
-    NOT?: MessageFileWhereInput | MessageFileWhereInput[]
-    id?: StringFilter<"MessageFile"> | string
-    messageId?: StringFilter<"MessageFile"> | string
-    fileId?: StringFilter<"MessageFile"> | string
-    createdAt?: DateTimeFilter<"MessageFile"> | Date | string
-    message?: XOR<MessageRelationFilter, MessageWhereInput>
-    file?: XOR<FileRelationFilter, FileWhereInput>
-  }
-
-  export type MessageFileOrderByWithRelationInput = {
-    id?: SortOrder
-    messageId?: SortOrder
-    fileId?: SortOrder
-    createdAt?: SortOrder
-    message?: MessageOrderByWithRelationInput
-    file?: FileOrderByWithRelationInput
-  }
-
-  export type MessageFileWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    messageId_fileId?: MessageFileMessageIdFileIdCompoundUniqueInput
-    AND?: MessageFileWhereInput | MessageFileWhereInput[]
-    OR?: MessageFileWhereInput[]
-    NOT?: MessageFileWhereInput | MessageFileWhereInput[]
-    messageId?: StringFilter<"MessageFile"> | string
-    fileId?: StringFilter<"MessageFile"> | string
-    createdAt?: DateTimeFilter<"MessageFile"> | Date | string
-    message?: XOR<MessageRelationFilter, MessageWhereInput>
-    file?: XOR<FileRelationFilter, FileWhereInput>
-  }, "id" | "messageId_fileId">
-
-  export type MessageFileOrderByWithAggregationInput = {
-    id?: SortOrder
-    messageId?: SortOrder
-    fileId?: SortOrder
-    createdAt?: SortOrder
-    _count?: MessageFileCountOrderByAggregateInput
-    _max?: MessageFileMaxOrderByAggregateInput
-    _min?: MessageFileMinOrderByAggregateInput
-  }
-
-  export type MessageFileScalarWhereWithAggregatesInput = {
-    AND?: MessageFileScalarWhereWithAggregatesInput | MessageFileScalarWhereWithAggregatesInput[]
-    OR?: MessageFileScalarWhereWithAggregatesInput[]
-    NOT?: MessageFileScalarWhereWithAggregatesInput | MessageFileScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"MessageFile"> | string
-    messageId?: StringWithAggregatesFilter<"MessageFile"> | string
-    fileId?: StringWithAggregatesFilter<"MessageFile"> | string
-    createdAt?: DateTimeWithAggregatesFilter<"MessageFile"> | Date | string
-  }
-
-  export type FileWhereInput = {
-    AND?: FileWhereInput | FileWhereInput[]
-    OR?: FileWhereInput[]
-    NOT?: FileWhereInput | FileWhereInput[]
-    id?: StringFilter<"File"> | string
-    name?: StringFilter<"File"> | string
-    type?: StringFilter<"File"> | string
-    size?: BigIntFilter<"File"> | bigint | number
-    url?: StringNullableFilter<"File"> | string | null
-    path?: StringNullableFilter<"File"> | string | null
-    hash?: StringNullableFilter<"File"> | string | null
-    createdAt?: DateTimeFilter<"File"> | Date | string
-    updatedAt?: DateTimeFilter<"File"> | Date | string
-    metadata?: JsonNullableFilter<"File">
-    userId?: StringFilter<"File"> | string
-    user?: XOR<UserRelationFilter, UserWhereInput>
-    messages?: MessageFileListRelationFilter
-  }
-
-  export type FileOrderByWithRelationInput = {
-    id?: SortOrder
-    name?: SortOrder
-    type?: SortOrder
-    size?: SortOrder
-    url?: SortOrderInput | SortOrder
-    path?: SortOrderInput | SortOrder
-    hash?: SortOrderInput | SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    metadata?: SortOrderInput | SortOrder
-    userId?: SortOrder
-    user?: UserOrderByWithRelationInput
-    messages?: MessageFileOrderByRelationAggregateInput
-  }
-
-  export type FileWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    AND?: FileWhereInput | FileWhereInput[]
-    OR?: FileWhereInput[]
-    NOT?: FileWhereInput | FileWhereInput[]
-    name?: StringFilter<"File"> | string
-    type?: StringFilter<"File"> | string
-    size?: BigIntFilter<"File"> | bigint | number
-    url?: StringNullableFilter<"File"> | string | null
-    path?: StringNullableFilter<"File"> | string | null
-    hash?: StringNullableFilter<"File"> | string | null
-    createdAt?: DateTimeFilter<"File"> | Date | string
-    updatedAt?: DateTimeFilter<"File"> | Date | string
-    metadata?: JsonNullableFilter<"File">
-    userId?: StringFilter<"File"> | string
-    user?: XOR<UserRelationFilter, UserWhereInput>
-    messages?: MessageFileListRelationFilter
-  }, "id">
-
-  export type FileOrderByWithAggregationInput = {
-    id?: SortOrder
-    name?: SortOrder
-    type?: SortOrder
-    size?: SortOrder
-    url?: SortOrderInput | SortOrder
-    path?: SortOrderInput | SortOrder
-    hash?: SortOrderInput | SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    metadata?: SortOrderInput | SortOrder
-    userId?: SortOrder
-    _count?: FileCountOrderByAggregateInput
-    _avg?: FileAvgOrderByAggregateInput
-    _max?: FileMaxOrderByAggregateInput
-    _min?: FileMinOrderByAggregateInput
-    _sum?: FileSumOrderByAggregateInput
-  }
-
-  export type FileScalarWhereWithAggregatesInput = {
-    AND?: FileScalarWhereWithAggregatesInput | FileScalarWhereWithAggregatesInput[]
-    OR?: FileScalarWhereWithAggregatesInput[]
-    NOT?: FileScalarWhereWithAggregatesInput | FileScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"File"> | string
-    name?: StringWithAggregatesFilter<"File"> | string
-    type?: StringWithAggregatesFilter<"File"> | string
-    size?: BigIntWithAggregatesFilter<"File"> | bigint | number
-    url?: StringNullableWithAggregatesFilter<"File"> | string | null
-    path?: StringNullableWithAggregatesFilter<"File"> | string | null
-    hash?: StringNullableWithAggregatesFilter<"File"> | string | null
-    createdAt?: DateTimeWithAggregatesFilter<"File"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"File"> | Date | string
-    metadata?: JsonNullableWithAggregatesFilter<"File">
-    userId?: StringWithAggregatesFilter<"File"> | string
+    userId?: StringWithAggregatesFilter<"Message"> | string
   }
 
   export type CommandLogWhereInput = {
@@ -19158,34 +7272,30 @@ export namespace Prisma {
     id?: StringFilter<"CommandLog"> | string
     command?: StringFilter<"CommandLog"> | string
     output?: StringNullableFilter<"CommandLog"> | string | null
-    error?: StringNullableFilter<"CommandLog"> | string | null
     exitCode?: IntNullableFilter<"CommandLog"> | number | null
-    duration?: IntFilter<"CommandLog"> | number
-    isSuccess?: BoolFilter<"CommandLog"> | boolean
-    safetyLevel?: EnumSafetyLevelFilter<"CommandLog"> | $Enums.SafetyLevel
-    executedAt?: DateTimeFilter<"CommandLog"> | Date | string
-    metadata?: JsonNullableFilter<"CommandLog">
+    duration?: IntNullableFilter<"CommandLog"> | number | null
+    createdAt?: DateTimeFilter<"CommandLog"> | Date | string
+    safetyLevel?: StringFilter<"CommandLog"> | string
+    metadata?: StringNullableFilter<"CommandLog"> | string | null
     userId?: StringFilter<"CommandLog"> | string
-    connectionId?: StringFilter<"CommandLog"> | string
+    sshConnectionId?: StringNullableFilter<"CommandLog"> | string | null
     user?: XOR<UserRelationFilter, UserWhereInput>
-    connection?: XOR<SSHConnectionRelationFilter, SSHConnectionWhereInput>
+    sshConnection?: XOR<SSHConnectionNullableRelationFilter, SSHConnectionWhereInput> | null
   }
 
   export type CommandLogOrderByWithRelationInput = {
     id?: SortOrder
     command?: SortOrder
     output?: SortOrderInput | SortOrder
-    error?: SortOrderInput | SortOrder
     exitCode?: SortOrderInput | SortOrder
-    duration?: SortOrder
-    isSuccess?: SortOrder
+    duration?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
     safetyLevel?: SortOrder
-    executedAt?: SortOrder
     metadata?: SortOrderInput | SortOrder
     userId?: SortOrder
-    connectionId?: SortOrder
+    sshConnectionId?: SortOrderInput | SortOrder
     user?: UserOrderByWithRelationInput
-    connection?: SSHConnectionOrderByWithRelationInput
+    sshConnection?: SSHConnectionOrderByWithRelationInput
   }
 
   export type CommandLogWhereUniqueInput = Prisma.AtLeast<{
@@ -19195,32 +7305,28 @@ export namespace Prisma {
     NOT?: CommandLogWhereInput | CommandLogWhereInput[]
     command?: StringFilter<"CommandLog"> | string
     output?: StringNullableFilter<"CommandLog"> | string | null
-    error?: StringNullableFilter<"CommandLog"> | string | null
     exitCode?: IntNullableFilter<"CommandLog"> | number | null
-    duration?: IntFilter<"CommandLog"> | number
-    isSuccess?: BoolFilter<"CommandLog"> | boolean
-    safetyLevel?: EnumSafetyLevelFilter<"CommandLog"> | $Enums.SafetyLevel
-    executedAt?: DateTimeFilter<"CommandLog"> | Date | string
-    metadata?: JsonNullableFilter<"CommandLog">
+    duration?: IntNullableFilter<"CommandLog"> | number | null
+    createdAt?: DateTimeFilter<"CommandLog"> | Date | string
+    safetyLevel?: StringFilter<"CommandLog"> | string
+    metadata?: StringNullableFilter<"CommandLog"> | string | null
     userId?: StringFilter<"CommandLog"> | string
-    connectionId?: StringFilter<"CommandLog"> | string
+    sshConnectionId?: StringNullableFilter<"CommandLog"> | string | null
     user?: XOR<UserRelationFilter, UserWhereInput>
-    connection?: XOR<SSHConnectionRelationFilter, SSHConnectionWhereInput>
+    sshConnection?: XOR<SSHConnectionNullableRelationFilter, SSHConnectionWhereInput> | null
   }, "id">
 
   export type CommandLogOrderByWithAggregationInput = {
     id?: SortOrder
     command?: SortOrder
     output?: SortOrderInput | SortOrder
-    error?: SortOrderInput | SortOrder
     exitCode?: SortOrderInput | SortOrder
-    duration?: SortOrder
-    isSuccess?: SortOrder
+    duration?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
     safetyLevel?: SortOrder
-    executedAt?: SortOrder
     metadata?: SortOrderInput | SortOrder
     userId?: SortOrder
-    connectionId?: SortOrder
+    sshConnectionId?: SortOrderInput | SortOrder
     _count?: CommandLogCountOrderByAggregateInput
     _avg?: CommandLogAvgOrderByAggregateInput
     _max?: CommandLogMaxOrderByAggregateInput
@@ -19235,555 +7341,13 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"CommandLog"> | string
     command?: StringWithAggregatesFilter<"CommandLog"> | string
     output?: StringNullableWithAggregatesFilter<"CommandLog"> | string | null
-    error?: StringNullableWithAggregatesFilter<"CommandLog"> | string | null
     exitCode?: IntNullableWithAggregatesFilter<"CommandLog"> | number | null
-    duration?: IntWithAggregatesFilter<"CommandLog"> | number
-    isSuccess?: BoolWithAggregatesFilter<"CommandLog"> | boolean
-    safetyLevel?: EnumSafetyLevelWithAggregatesFilter<"CommandLog"> | $Enums.SafetyLevel
-    executedAt?: DateTimeWithAggregatesFilter<"CommandLog"> | Date | string
-    metadata?: JsonNullableWithAggregatesFilter<"CommandLog">
+    duration?: IntNullableWithAggregatesFilter<"CommandLog"> | number | null
+    createdAt?: DateTimeWithAggregatesFilter<"CommandLog"> | Date | string
+    safetyLevel?: StringWithAggregatesFilter<"CommandLog"> | string
+    metadata?: StringNullableWithAggregatesFilter<"CommandLog"> | string | null
     userId?: StringWithAggregatesFilter<"CommandLog"> | string
-    connectionId?: StringWithAggregatesFilter<"CommandLog"> | string
-  }
-
-  export type UsageStatsWhereInput = {
-    AND?: UsageStatsWhereInput | UsageStatsWhereInput[]
-    OR?: UsageStatsWhereInput[]
-    NOT?: UsageStatsWhereInput | UsageStatsWhereInput[]
-    id?: StringFilter<"UsageStats"> | string
-    date?: DateTimeFilter<"UsageStats"> | Date | string
-    commandsCount?: IntFilter<"UsageStats"> | number
-    aiRequestsCount?: IntFilter<"UsageStats"> | number
-    tokensUsed?: IntFilter<"UsageStats"> | number
-    connectionsUsed?: IntFilter<"UsageStats"> | number
-    createdAt?: DateTimeFilter<"UsageStats"> | Date | string
-    userId?: StringFilter<"UsageStats"> | string
-    user?: XOR<UserRelationFilter, UserWhereInput>
-  }
-
-  export type UsageStatsOrderByWithRelationInput = {
-    id?: SortOrder
-    date?: SortOrder
-    commandsCount?: SortOrder
-    aiRequestsCount?: SortOrder
-    tokensUsed?: SortOrder
-    connectionsUsed?: SortOrder
-    createdAt?: SortOrder
-    userId?: SortOrder
-    user?: UserOrderByWithRelationInput
-  }
-
-  export type UsageStatsWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    userId_date?: UsageStatsUserIdDateCompoundUniqueInput
-    AND?: UsageStatsWhereInput | UsageStatsWhereInput[]
-    OR?: UsageStatsWhereInput[]
-    NOT?: UsageStatsWhereInput | UsageStatsWhereInput[]
-    date?: DateTimeFilter<"UsageStats"> | Date | string
-    commandsCount?: IntFilter<"UsageStats"> | number
-    aiRequestsCount?: IntFilter<"UsageStats"> | number
-    tokensUsed?: IntFilter<"UsageStats"> | number
-    connectionsUsed?: IntFilter<"UsageStats"> | number
-    createdAt?: DateTimeFilter<"UsageStats"> | Date | string
-    userId?: StringFilter<"UsageStats"> | string
-    user?: XOR<UserRelationFilter, UserWhereInput>
-  }, "id" | "userId_date">
-
-  export type UsageStatsOrderByWithAggregationInput = {
-    id?: SortOrder
-    date?: SortOrder
-    commandsCount?: SortOrder
-    aiRequestsCount?: SortOrder
-    tokensUsed?: SortOrder
-    connectionsUsed?: SortOrder
-    createdAt?: SortOrder
-    userId?: SortOrder
-    _count?: UsageStatsCountOrderByAggregateInput
-    _avg?: UsageStatsAvgOrderByAggregateInput
-    _max?: UsageStatsMaxOrderByAggregateInput
-    _min?: UsageStatsMinOrderByAggregateInput
-    _sum?: UsageStatsSumOrderByAggregateInput
-  }
-
-  export type UsageStatsScalarWhereWithAggregatesInput = {
-    AND?: UsageStatsScalarWhereWithAggregatesInput | UsageStatsScalarWhereWithAggregatesInput[]
-    OR?: UsageStatsScalarWhereWithAggregatesInput[]
-    NOT?: UsageStatsScalarWhereWithAggregatesInput | UsageStatsScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"UsageStats"> | string
-    date?: DateTimeWithAggregatesFilter<"UsageStats"> | Date | string
-    commandsCount?: IntWithAggregatesFilter<"UsageStats"> | number
-    aiRequestsCount?: IntWithAggregatesFilter<"UsageStats"> | number
-    tokensUsed?: IntWithAggregatesFilter<"UsageStats"> | number
-    connectionsUsed?: IntWithAggregatesFilter<"UsageStats"> | number
-    createdAt?: DateTimeWithAggregatesFilter<"UsageStats"> | Date | string
-    userId?: StringWithAggregatesFilter<"UsageStats"> | string
-  }
-
-  export type ApiKeyWhereInput = {
-    AND?: ApiKeyWhereInput | ApiKeyWhereInput[]
-    OR?: ApiKeyWhereInput[]
-    NOT?: ApiKeyWhereInput | ApiKeyWhereInput[]
-    id?: StringFilter<"ApiKey"> | string
-    name?: StringFilter<"ApiKey"> | string
-    key?: StringFilter<"ApiKey"> | string
-    type?: EnumApiKeyTypeFilter<"ApiKey"> | $Enums.ApiKeyType
-    isActive?: BoolFilter<"ApiKey"> | boolean
-    expiresAt?: DateTimeNullableFilter<"ApiKey"> | Date | string | null
-    lastUsed?: DateTimeNullableFilter<"ApiKey"> | Date | string | null
-    createdAt?: DateTimeFilter<"ApiKey"> | Date | string
-    scopes?: StringNullableListFilter<"ApiKey">
-    userId?: StringFilter<"ApiKey"> | string
-    user?: XOR<UserRelationFilter, UserWhereInput>
-  }
-
-  export type ApiKeyOrderByWithRelationInput = {
-    id?: SortOrder
-    name?: SortOrder
-    key?: SortOrder
-    type?: SortOrder
-    isActive?: SortOrder
-    expiresAt?: SortOrderInput | SortOrder
-    lastUsed?: SortOrderInput | SortOrder
-    createdAt?: SortOrder
-    scopes?: SortOrder
-    userId?: SortOrder
-    user?: UserOrderByWithRelationInput
-  }
-
-  export type ApiKeyWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    key?: string
-    AND?: ApiKeyWhereInput | ApiKeyWhereInput[]
-    OR?: ApiKeyWhereInput[]
-    NOT?: ApiKeyWhereInput | ApiKeyWhereInput[]
-    name?: StringFilter<"ApiKey"> | string
-    type?: EnumApiKeyTypeFilter<"ApiKey"> | $Enums.ApiKeyType
-    isActive?: BoolFilter<"ApiKey"> | boolean
-    expiresAt?: DateTimeNullableFilter<"ApiKey"> | Date | string | null
-    lastUsed?: DateTimeNullableFilter<"ApiKey"> | Date | string | null
-    createdAt?: DateTimeFilter<"ApiKey"> | Date | string
-    scopes?: StringNullableListFilter<"ApiKey">
-    userId?: StringFilter<"ApiKey"> | string
-    user?: XOR<UserRelationFilter, UserWhereInput>
-  }, "id" | "key">
-
-  export type ApiKeyOrderByWithAggregationInput = {
-    id?: SortOrder
-    name?: SortOrder
-    key?: SortOrder
-    type?: SortOrder
-    isActive?: SortOrder
-    expiresAt?: SortOrderInput | SortOrder
-    lastUsed?: SortOrderInput | SortOrder
-    createdAt?: SortOrder
-    scopes?: SortOrder
-    userId?: SortOrder
-    _count?: ApiKeyCountOrderByAggregateInput
-    _max?: ApiKeyMaxOrderByAggregateInput
-    _min?: ApiKeyMinOrderByAggregateInput
-  }
-
-  export type ApiKeyScalarWhereWithAggregatesInput = {
-    AND?: ApiKeyScalarWhereWithAggregatesInput | ApiKeyScalarWhereWithAggregatesInput[]
-    OR?: ApiKeyScalarWhereWithAggregatesInput[]
-    NOT?: ApiKeyScalarWhereWithAggregatesInput | ApiKeyScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"ApiKey"> | string
-    name?: StringWithAggregatesFilter<"ApiKey"> | string
-    key?: StringWithAggregatesFilter<"ApiKey"> | string
-    type?: EnumApiKeyTypeWithAggregatesFilter<"ApiKey"> | $Enums.ApiKeyType
-    isActive?: BoolWithAggregatesFilter<"ApiKey"> | boolean
-    expiresAt?: DateTimeNullableWithAggregatesFilter<"ApiKey"> | Date | string | null
-    lastUsed?: DateTimeNullableWithAggregatesFilter<"ApiKey"> | Date | string | null
-    createdAt?: DateTimeWithAggregatesFilter<"ApiKey"> | Date | string
-    scopes?: StringNullableListFilter<"ApiKey">
-    userId?: StringWithAggregatesFilter<"ApiKey"> | string
-  }
-
-  export type SystemConfigWhereInput = {
-    AND?: SystemConfigWhereInput | SystemConfigWhereInput[]
-    OR?: SystemConfigWhereInput[]
-    NOT?: SystemConfigWhereInput | SystemConfigWhereInput[]
-    id?: StringFilter<"SystemConfig"> | string
-    key?: StringFilter<"SystemConfig"> | string
-    value?: StringFilter<"SystemConfig"> | string
-    type?: EnumConfigTypeFilter<"SystemConfig"> | $Enums.ConfigType
-    description?: StringNullableFilter<"SystemConfig"> | string | null
-    category?: StringNullableFilter<"SystemConfig"> | string | null
-    isPublic?: BoolFilter<"SystemConfig"> | boolean
-    updatedAt?: DateTimeFilter<"SystemConfig"> | Date | string
-    createdAt?: DateTimeFilter<"SystemConfig"> | Date | string
-  }
-
-  export type SystemConfigOrderByWithRelationInput = {
-    id?: SortOrder
-    key?: SortOrder
-    value?: SortOrder
-    type?: SortOrder
-    description?: SortOrderInput | SortOrder
-    category?: SortOrderInput | SortOrder
-    isPublic?: SortOrder
-    updatedAt?: SortOrder
-    createdAt?: SortOrder
-  }
-
-  export type SystemConfigWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    key?: string
-    AND?: SystemConfigWhereInput | SystemConfigWhereInput[]
-    OR?: SystemConfigWhereInput[]
-    NOT?: SystemConfigWhereInput | SystemConfigWhereInput[]
-    value?: StringFilter<"SystemConfig"> | string
-    type?: EnumConfigTypeFilter<"SystemConfig"> | $Enums.ConfigType
-    description?: StringNullableFilter<"SystemConfig"> | string | null
-    category?: StringNullableFilter<"SystemConfig"> | string | null
-    isPublic?: BoolFilter<"SystemConfig"> | boolean
-    updatedAt?: DateTimeFilter<"SystemConfig"> | Date | string
-    createdAt?: DateTimeFilter<"SystemConfig"> | Date | string
-  }, "id" | "key">
-
-  export type SystemConfigOrderByWithAggregationInput = {
-    id?: SortOrder
-    key?: SortOrder
-    value?: SortOrder
-    type?: SortOrder
-    description?: SortOrderInput | SortOrder
-    category?: SortOrderInput | SortOrder
-    isPublic?: SortOrder
-    updatedAt?: SortOrder
-    createdAt?: SortOrder
-    _count?: SystemConfigCountOrderByAggregateInput
-    _max?: SystemConfigMaxOrderByAggregateInput
-    _min?: SystemConfigMinOrderByAggregateInput
-  }
-
-  export type SystemConfigScalarWhereWithAggregatesInput = {
-    AND?: SystemConfigScalarWhereWithAggregatesInput | SystemConfigScalarWhereWithAggregatesInput[]
-    OR?: SystemConfigScalarWhereWithAggregatesInput[]
-    NOT?: SystemConfigScalarWhereWithAggregatesInput | SystemConfigScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"SystemConfig"> | string
-    key?: StringWithAggregatesFilter<"SystemConfig"> | string
-    value?: StringWithAggregatesFilter<"SystemConfig"> | string
-    type?: EnumConfigTypeWithAggregatesFilter<"SystemConfig"> | $Enums.ConfigType
-    description?: StringNullableWithAggregatesFilter<"SystemConfig"> | string | null
-    category?: StringNullableWithAggregatesFilter<"SystemConfig"> | string | null
-    isPublic?: BoolWithAggregatesFilter<"SystemConfig"> | boolean
-    updatedAt?: DateTimeWithAggregatesFilter<"SystemConfig"> | Date | string
-    createdAt?: DateTimeWithAggregatesFilter<"SystemConfig"> | Date | string
-  }
-
-  export type SessionGroupWhereInput = {
-    AND?: SessionGroupWhereInput | SessionGroupWhereInput[]
-    OR?: SessionGroupWhereInput[]
-    NOT?: SessionGroupWhereInput | SessionGroupWhereInput[]
-    id?: StringFilter<"SessionGroup"> | string
-    name?: StringFilter<"SessionGroup"> | string
-    sort?: IntFilter<"SessionGroup"> | number
-    createdAt?: DateTimeFilter<"SessionGroup"> | Date | string
-    updatedAt?: DateTimeFilter<"SessionGroup"> | Date | string
-    meta?: JsonNullableFilter<"SessionGroup">
-    userId?: StringFilter<"SessionGroup"> | string
-    user?: XOR<UserRelationFilter, UserWhereInput>
-  }
-
-  export type SessionGroupOrderByWithRelationInput = {
-    id?: SortOrder
-    name?: SortOrder
-    sort?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    meta?: SortOrderInput | SortOrder
-    userId?: SortOrder
-    user?: UserOrderByWithRelationInput
-  }
-
-  export type SessionGroupWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    AND?: SessionGroupWhereInput | SessionGroupWhereInput[]
-    OR?: SessionGroupWhereInput[]
-    NOT?: SessionGroupWhereInput | SessionGroupWhereInput[]
-    name?: StringFilter<"SessionGroup"> | string
-    sort?: IntFilter<"SessionGroup"> | number
-    createdAt?: DateTimeFilter<"SessionGroup"> | Date | string
-    updatedAt?: DateTimeFilter<"SessionGroup"> | Date | string
-    meta?: JsonNullableFilter<"SessionGroup">
-    userId?: StringFilter<"SessionGroup"> | string
-    user?: XOR<UserRelationFilter, UserWhereInput>
-  }, "id">
-
-  export type SessionGroupOrderByWithAggregationInput = {
-    id?: SortOrder
-    name?: SortOrder
-    sort?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    meta?: SortOrderInput | SortOrder
-    userId?: SortOrder
-    _count?: SessionGroupCountOrderByAggregateInput
-    _avg?: SessionGroupAvgOrderByAggregateInput
-    _max?: SessionGroupMaxOrderByAggregateInput
-    _min?: SessionGroupMinOrderByAggregateInput
-    _sum?: SessionGroupSumOrderByAggregateInput
-  }
-
-  export type SessionGroupScalarWhereWithAggregatesInput = {
-    AND?: SessionGroupScalarWhereWithAggregatesInput | SessionGroupScalarWhereWithAggregatesInput[]
-    OR?: SessionGroupScalarWhereWithAggregatesInput[]
-    NOT?: SessionGroupScalarWhereWithAggregatesInput | SessionGroupScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"SessionGroup"> | string
-    name?: StringWithAggregatesFilter<"SessionGroup"> | string
-    sort?: IntWithAggregatesFilter<"SessionGroup"> | number
-    createdAt?: DateTimeWithAggregatesFilter<"SessionGroup"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"SessionGroup"> | Date | string
-    meta?: JsonNullableWithAggregatesFilter<"SessionGroup">
-    userId?: StringWithAggregatesFilter<"SessionGroup"> | string
-  }
-
-  export type PluginWhereInput = {
-    AND?: PluginWhereInput | PluginWhereInput[]
-    OR?: PluginWhereInput[]
-    NOT?: PluginWhereInput | PluginWhereInput[]
-    id?: StringFilter<"Plugin"> | string
-    identifier?: StringFilter<"Plugin"> | string
-    name?: StringFilter<"Plugin"> | string
-    version?: StringFilter<"Plugin"> | string
-    enabled?: BoolFilter<"Plugin"> | boolean
-    createdAt?: DateTimeFilter<"Plugin"> | Date | string
-    updatedAt?: DateTimeFilter<"Plugin"> | Date | string
-    config?: JsonNullableFilter<"Plugin">
-    meta?: JsonNullableFilter<"Plugin">
-    settings?: JsonNullableFilter<"Plugin">
-    userId?: StringFilter<"Plugin"> | string
-    user?: XOR<UserRelationFilter, UserWhereInput>
-  }
-
-  export type PluginOrderByWithRelationInput = {
-    id?: SortOrder
-    identifier?: SortOrder
-    name?: SortOrder
-    version?: SortOrder
-    enabled?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    config?: SortOrderInput | SortOrder
-    meta?: SortOrderInput | SortOrder
-    settings?: SortOrderInput | SortOrder
-    userId?: SortOrder
-    user?: UserOrderByWithRelationInput
-  }
-
-  export type PluginWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    identifier?: string
-    AND?: PluginWhereInput | PluginWhereInput[]
-    OR?: PluginWhereInput[]
-    NOT?: PluginWhereInput | PluginWhereInput[]
-    name?: StringFilter<"Plugin"> | string
-    version?: StringFilter<"Plugin"> | string
-    enabled?: BoolFilter<"Plugin"> | boolean
-    createdAt?: DateTimeFilter<"Plugin"> | Date | string
-    updatedAt?: DateTimeFilter<"Plugin"> | Date | string
-    config?: JsonNullableFilter<"Plugin">
-    meta?: JsonNullableFilter<"Plugin">
-    settings?: JsonNullableFilter<"Plugin">
-    userId?: StringFilter<"Plugin"> | string
-    user?: XOR<UserRelationFilter, UserWhereInput>
-  }, "id" | "identifier">
-
-  export type PluginOrderByWithAggregationInput = {
-    id?: SortOrder
-    identifier?: SortOrder
-    name?: SortOrder
-    version?: SortOrder
-    enabled?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    config?: SortOrderInput | SortOrder
-    meta?: SortOrderInput | SortOrder
-    settings?: SortOrderInput | SortOrder
-    userId?: SortOrder
-    _count?: PluginCountOrderByAggregateInput
-    _max?: PluginMaxOrderByAggregateInput
-    _min?: PluginMinOrderByAggregateInput
-  }
-
-  export type PluginScalarWhereWithAggregatesInput = {
-    AND?: PluginScalarWhereWithAggregatesInput | PluginScalarWhereWithAggregatesInput[]
-    OR?: PluginScalarWhereWithAggregatesInput[]
-    NOT?: PluginScalarWhereWithAggregatesInput | PluginScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"Plugin"> | string
-    identifier?: StringWithAggregatesFilter<"Plugin"> | string
-    name?: StringWithAggregatesFilter<"Plugin"> | string
-    version?: StringWithAggregatesFilter<"Plugin"> | string
-    enabled?: BoolWithAggregatesFilter<"Plugin"> | boolean
-    createdAt?: DateTimeWithAggregatesFilter<"Plugin"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"Plugin"> | Date | string
-    config?: JsonNullableWithAggregatesFilter<"Plugin">
-    meta?: JsonNullableWithAggregatesFilter<"Plugin">
-    settings?: JsonNullableWithAggregatesFilter<"Plugin">
-    userId?: StringWithAggregatesFilter<"Plugin"> | string
-  }
-
-  export type KnowledgeBaseWhereInput = {
-    AND?: KnowledgeBaseWhereInput | KnowledgeBaseWhereInput[]
-    OR?: KnowledgeBaseWhereInput[]
-    NOT?: KnowledgeBaseWhereInput | KnowledgeBaseWhereInput[]
-    id?: StringFilter<"KnowledgeBase"> | string
-    name?: StringFilter<"KnowledgeBase"> | string
-    description?: StringNullableFilter<"KnowledgeBase"> | string | null
-    type?: EnumKnowledgeTypeFilter<"KnowledgeBase"> | $Enums.KnowledgeType
-    isActive?: BoolFilter<"KnowledgeBase"> | boolean
-    createdAt?: DateTimeFilter<"KnowledgeBase"> | Date | string
-    updatedAt?: DateTimeFilter<"KnowledgeBase"> | Date | string
-    config?: JsonNullableFilter<"KnowledgeBase">
-    meta?: JsonNullableFilter<"KnowledgeBase">
-    userId?: StringFilter<"KnowledgeBase"> | string
-    user?: XOR<UserRelationFilter, UserWhereInput>
-    documents?: KnowledgeDocumentListRelationFilter
-  }
-
-  export type KnowledgeBaseOrderByWithRelationInput = {
-    id?: SortOrder
-    name?: SortOrder
-    description?: SortOrderInput | SortOrder
-    type?: SortOrder
-    isActive?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    config?: SortOrderInput | SortOrder
-    meta?: SortOrderInput | SortOrder
-    userId?: SortOrder
-    user?: UserOrderByWithRelationInput
-    documents?: KnowledgeDocumentOrderByRelationAggregateInput
-  }
-
-  export type KnowledgeBaseWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    AND?: KnowledgeBaseWhereInput | KnowledgeBaseWhereInput[]
-    OR?: KnowledgeBaseWhereInput[]
-    NOT?: KnowledgeBaseWhereInput | KnowledgeBaseWhereInput[]
-    name?: StringFilter<"KnowledgeBase"> | string
-    description?: StringNullableFilter<"KnowledgeBase"> | string | null
-    type?: EnumKnowledgeTypeFilter<"KnowledgeBase"> | $Enums.KnowledgeType
-    isActive?: BoolFilter<"KnowledgeBase"> | boolean
-    createdAt?: DateTimeFilter<"KnowledgeBase"> | Date | string
-    updatedAt?: DateTimeFilter<"KnowledgeBase"> | Date | string
-    config?: JsonNullableFilter<"KnowledgeBase">
-    meta?: JsonNullableFilter<"KnowledgeBase">
-    userId?: StringFilter<"KnowledgeBase"> | string
-    user?: XOR<UserRelationFilter, UserWhereInput>
-    documents?: KnowledgeDocumentListRelationFilter
-  }, "id">
-
-  export type KnowledgeBaseOrderByWithAggregationInput = {
-    id?: SortOrder
-    name?: SortOrder
-    description?: SortOrderInput | SortOrder
-    type?: SortOrder
-    isActive?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    config?: SortOrderInput | SortOrder
-    meta?: SortOrderInput | SortOrder
-    userId?: SortOrder
-    _count?: KnowledgeBaseCountOrderByAggregateInput
-    _max?: KnowledgeBaseMaxOrderByAggregateInput
-    _min?: KnowledgeBaseMinOrderByAggregateInput
-  }
-
-  export type KnowledgeBaseScalarWhereWithAggregatesInput = {
-    AND?: KnowledgeBaseScalarWhereWithAggregatesInput | KnowledgeBaseScalarWhereWithAggregatesInput[]
-    OR?: KnowledgeBaseScalarWhereWithAggregatesInput[]
-    NOT?: KnowledgeBaseScalarWhereWithAggregatesInput | KnowledgeBaseScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"KnowledgeBase"> | string
-    name?: StringWithAggregatesFilter<"KnowledgeBase"> | string
-    description?: StringNullableWithAggregatesFilter<"KnowledgeBase"> | string | null
-    type?: EnumKnowledgeTypeWithAggregatesFilter<"KnowledgeBase"> | $Enums.KnowledgeType
-    isActive?: BoolWithAggregatesFilter<"KnowledgeBase"> | boolean
-    createdAt?: DateTimeWithAggregatesFilter<"KnowledgeBase"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"KnowledgeBase"> | Date | string
-    config?: JsonNullableWithAggregatesFilter<"KnowledgeBase">
-    meta?: JsonNullableWithAggregatesFilter<"KnowledgeBase">
-    userId?: StringWithAggregatesFilter<"KnowledgeBase"> | string
-  }
-
-  export type KnowledgeDocumentWhereInput = {
-    AND?: KnowledgeDocumentWhereInput | KnowledgeDocumentWhereInput[]
-    OR?: KnowledgeDocumentWhereInput[]
-    NOT?: KnowledgeDocumentWhereInput | KnowledgeDocumentWhereInput[]
-    id?: StringFilter<"KnowledgeDocument"> | string
-    title?: StringFilter<"KnowledgeDocument"> | string
-    content?: StringFilter<"KnowledgeDocument"> | string
-    type?: StringFilter<"KnowledgeDocument"> | string
-    status?: EnumDocumentStatusFilter<"KnowledgeDocument"> | $Enums.DocumentStatus
-    createdAt?: DateTimeFilter<"KnowledgeDocument"> | Date | string
-    updatedAt?: DateTimeFilter<"KnowledgeDocument"> | Date | string
-    metadata?: JsonNullableFilter<"KnowledgeDocument">
-    embedding?: JsonNullableFilter<"KnowledgeDocument">
-    knowledgeBaseId?: StringFilter<"KnowledgeDocument"> | string
-    knowledgeBase?: XOR<KnowledgeBaseRelationFilter, KnowledgeBaseWhereInput>
-  }
-
-  export type KnowledgeDocumentOrderByWithRelationInput = {
-    id?: SortOrder
-    title?: SortOrder
-    content?: SortOrder
-    type?: SortOrder
-    status?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    metadata?: SortOrderInput | SortOrder
-    embedding?: SortOrderInput | SortOrder
-    knowledgeBaseId?: SortOrder
-    knowledgeBase?: KnowledgeBaseOrderByWithRelationInput
-  }
-
-  export type KnowledgeDocumentWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    AND?: KnowledgeDocumentWhereInput | KnowledgeDocumentWhereInput[]
-    OR?: KnowledgeDocumentWhereInput[]
-    NOT?: KnowledgeDocumentWhereInput | KnowledgeDocumentWhereInput[]
-    title?: StringFilter<"KnowledgeDocument"> | string
-    content?: StringFilter<"KnowledgeDocument"> | string
-    type?: StringFilter<"KnowledgeDocument"> | string
-    status?: EnumDocumentStatusFilter<"KnowledgeDocument"> | $Enums.DocumentStatus
-    createdAt?: DateTimeFilter<"KnowledgeDocument"> | Date | string
-    updatedAt?: DateTimeFilter<"KnowledgeDocument"> | Date | string
-    metadata?: JsonNullableFilter<"KnowledgeDocument">
-    embedding?: JsonNullableFilter<"KnowledgeDocument">
-    knowledgeBaseId?: StringFilter<"KnowledgeDocument"> | string
-    knowledgeBase?: XOR<KnowledgeBaseRelationFilter, KnowledgeBaseWhereInput>
-  }, "id">
-
-  export type KnowledgeDocumentOrderByWithAggregationInput = {
-    id?: SortOrder
-    title?: SortOrder
-    content?: SortOrder
-    type?: SortOrder
-    status?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    metadata?: SortOrderInput | SortOrder
-    embedding?: SortOrderInput | SortOrder
-    knowledgeBaseId?: SortOrder
-    _count?: KnowledgeDocumentCountOrderByAggregateInput
-    _max?: KnowledgeDocumentMaxOrderByAggregateInput
-    _min?: KnowledgeDocumentMinOrderByAggregateInput
-  }
-
-  export type KnowledgeDocumentScalarWhereWithAggregatesInput = {
-    AND?: KnowledgeDocumentScalarWhereWithAggregatesInput | KnowledgeDocumentScalarWhereWithAggregatesInput[]
-    OR?: KnowledgeDocumentScalarWhereWithAggregatesInput[]
-    NOT?: KnowledgeDocumentScalarWhereWithAggregatesInput | KnowledgeDocumentScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"KnowledgeDocument"> | string
-    title?: StringWithAggregatesFilter<"KnowledgeDocument"> | string
-    content?: StringWithAggregatesFilter<"KnowledgeDocument"> | string
-    type?: StringWithAggregatesFilter<"KnowledgeDocument"> | string
-    status?: EnumDocumentStatusWithAggregatesFilter<"KnowledgeDocument"> | $Enums.DocumentStatus
-    createdAt?: DateTimeWithAggregatesFilter<"KnowledgeDocument"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"KnowledgeDocument"> | Date | string
-    metadata?: JsonNullableWithAggregatesFilter<"KnowledgeDocument">
-    embedding?: JsonNullableWithAggregatesFilter<"KnowledgeDocument">
-    knowledgeBaseId?: StringWithAggregatesFilter<"KnowledgeDocument"> | string
+    sshConnectionId?: StringNullableWithAggregatesFilter<"CommandLog"> | string | null
   }
 
   export type UserCreateInput = {
@@ -19793,21 +7357,15 @@ export namespace Prisma {
     username?: string | null
     password?: string | null
     avatar?: string | null
-    role?: $Enums.UserRole
+    role?: string
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
+    settings?: string | null
     sshConnections?: SSHConnectionCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
     messages?: MessageCreateNestedManyWithoutUserInput
     commandLogs?: CommandLogCreateNestedManyWithoutUserInput
-    usageStats?: UsageStatsCreateNestedManyWithoutUserInput
-    apiKeys?: ApiKeyCreateNestedManyWithoutUserInput
-    sessionGroups?: SessionGroupCreateNestedManyWithoutUserInput
-    plugins?: PluginCreateNestedManyWithoutUserInput
-    knowledgeBases?: KnowledgeBaseCreateNestedManyWithoutUserInput
-    files?: FileCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -19817,21 +7375,15 @@ export namespace Prisma {
     username?: string | null
     password?: string | null
     avatar?: string | null
-    role?: $Enums.UserRole
+    role?: string
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
+    settings?: string | null
     sshConnections?: SSHConnectionUncheckedCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
     messages?: MessageUncheckedCreateNestedManyWithoutUserInput
     commandLogs?: CommandLogUncheckedCreateNestedManyWithoutUserInput
-    usageStats?: UsageStatsUncheckedCreateNestedManyWithoutUserInput
-    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutUserInput
-    sessionGroups?: SessionGroupUncheckedCreateNestedManyWithoutUserInput
-    plugins?: PluginUncheckedCreateNestedManyWithoutUserInput
-    knowledgeBases?: KnowledgeBaseUncheckedCreateNestedManyWithoutUserInput
-    files?: FileUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -19841,21 +7393,15 @@ export namespace Prisma {
     username?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    role?: StringFieldUpdateOperationsInput | string
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
+    settings?: NullableStringFieldUpdateOperationsInput | string | null
     sshConnections?: SSHConnectionUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
     messages?: MessageUpdateManyWithoutUserNestedInput
     commandLogs?: CommandLogUpdateManyWithoutUserNestedInput
-    usageStats?: UsageStatsUpdateManyWithoutUserNestedInput
-    apiKeys?: ApiKeyUpdateManyWithoutUserNestedInput
-    sessionGroups?: SessionGroupUpdateManyWithoutUserNestedInput
-    plugins?: PluginUpdateManyWithoutUserNestedInput
-    knowledgeBases?: KnowledgeBaseUpdateManyWithoutUserNestedInput
-    files?: FileUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -19865,21 +7411,15 @@ export namespace Prisma {
     username?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    role?: StringFieldUpdateOperationsInput | string
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
+    settings?: NullableStringFieldUpdateOperationsInput | string | null
     sshConnections?: SSHConnectionUncheckedUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
     messages?: MessageUncheckedUpdateManyWithoutUserNestedInput
     commandLogs?: CommandLogUncheckedUpdateManyWithoutUserNestedInput
-    usageStats?: UsageStatsUncheckedUpdateManyWithoutUserNestedInput
-    apiKeys?: ApiKeyUncheckedUpdateManyWithoutUserNestedInput
-    sessionGroups?: SessionGroupUncheckedUpdateManyWithoutUserNestedInput
-    plugins?: PluginUncheckedUpdateManyWithoutUserNestedInput
-    knowledgeBases?: KnowledgeBaseUncheckedUpdateManyWithoutUserNestedInput
-    files?: FileUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -19889,11 +7429,11 @@ export namespace Prisma {
     username?: string | null
     password?: string | null
     avatar?: string | null
-    role?: $Enums.UserRole
+    role?: string
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
+    settings?: string | null
   }
 
   export type UserUpdateManyMutationInput = {
@@ -19903,11 +7443,11 @@ export namespace Prisma {
     username?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    role?: StringFieldUpdateOperationsInput | string
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
+    settings?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UserUncheckedUpdateManyInput = {
@@ -19917,11 +7457,11 @@ export namespace Prisma {
     username?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    role?: StringFieldUpdateOperationsInput | string
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
+    settings?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type SSHConnectionCreateInput = {
@@ -19930,17 +7470,20 @@ export namespace Prisma {
     host: string
     port?: number
     username: string
-    authType: $Enums.SSHAuthType
+    authType: string
     password?: string | null
     privateKey?: string | null
+    publicKey?: string | null
     passphrase?: string | null
-    status?: $Enums.ConnectionStatus
+    status?: string
     lastUsed?: Date | string | null
+    isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
+    meta?: string | null
     user: UserCreateNestedOneWithoutSshConnectionsInput
-    commandLogs?: CommandLogCreateNestedManyWithoutConnectionInput
+    chatSessions?: ChatSessionCreateNestedManyWithoutSshConnectionInput
+    commandLogs?: CommandLogCreateNestedManyWithoutSshConnectionInput
   }
 
   export type SSHConnectionUncheckedCreateInput = {
@@ -19949,17 +7492,20 @@ export namespace Prisma {
     host: string
     port?: number
     username: string
-    authType: $Enums.SSHAuthType
+    authType: string
     password?: string | null
     privateKey?: string | null
+    publicKey?: string | null
     passphrase?: string | null
-    status?: $Enums.ConnectionStatus
+    status?: string
     lastUsed?: Date | string | null
+    isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
+    meta?: string | null
     userId: string
-    commandLogs?: CommandLogUncheckedCreateNestedManyWithoutConnectionInput
+    chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutSshConnectionInput
+    commandLogs?: CommandLogUncheckedCreateNestedManyWithoutSshConnectionInput
   }
 
   export type SSHConnectionUpdateInput = {
@@ -19968,17 +7514,20 @@ export namespace Prisma {
     host?: StringFieldUpdateOperationsInput | string
     port?: IntFieldUpdateOperationsInput | number
     username?: StringFieldUpdateOperationsInput | string
-    authType?: EnumSSHAuthTypeFieldUpdateOperationsInput | $Enums.SSHAuthType
+    authType?: StringFieldUpdateOperationsInput | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
     privateKey?: NullableStringFieldUpdateOperationsInput | string | null
+    publicKey?: NullableStringFieldUpdateOperationsInput | string | null
     passphrase?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: EnumConnectionStatusFieldUpdateOperationsInput | $Enums.ConnectionStatus
+    status?: StringFieldUpdateOperationsInput | string
     lastUsed?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
     user?: UserUpdateOneRequiredWithoutSshConnectionsNestedInput
-    commandLogs?: CommandLogUpdateManyWithoutConnectionNestedInput
+    chatSessions?: ChatSessionUpdateManyWithoutSshConnectionNestedInput
+    commandLogs?: CommandLogUpdateManyWithoutSshConnectionNestedInput
   }
 
   export type SSHConnectionUncheckedUpdateInput = {
@@ -19987,17 +7536,20 @@ export namespace Prisma {
     host?: StringFieldUpdateOperationsInput | string
     port?: IntFieldUpdateOperationsInput | number
     username?: StringFieldUpdateOperationsInput | string
-    authType?: EnumSSHAuthTypeFieldUpdateOperationsInput | $Enums.SSHAuthType
+    authType?: StringFieldUpdateOperationsInput | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
     privateKey?: NullableStringFieldUpdateOperationsInput | string | null
+    publicKey?: NullableStringFieldUpdateOperationsInput | string | null
     passphrase?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: EnumConnectionStatusFieldUpdateOperationsInput | $Enums.ConnectionStatus
+    status?: StringFieldUpdateOperationsInput | string
     lastUsed?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
-    commandLogs?: CommandLogUncheckedUpdateManyWithoutConnectionNestedInput
+    chatSessions?: ChatSessionUncheckedUpdateManyWithoutSshConnectionNestedInput
+    commandLogs?: CommandLogUncheckedUpdateManyWithoutSshConnectionNestedInput
   }
 
   export type SSHConnectionCreateManyInput = {
@@ -20006,15 +7558,17 @@ export namespace Prisma {
     host: string
     port?: number
     username: string
-    authType: $Enums.SSHAuthType
+    authType: string
     password?: string | null
     privateKey?: string | null
+    publicKey?: string | null
     passphrase?: string | null
-    status?: $Enums.ConnectionStatus
+    status?: string
     lastUsed?: Date | string | null
+    isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
+    meta?: string | null
     userId: string
   }
 
@@ -20024,15 +7578,17 @@ export namespace Prisma {
     host?: StringFieldUpdateOperationsInput | string
     port?: IntFieldUpdateOperationsInput | number
     username?: StringFieldUpdateOperationsInput | string
-    authType?: EnumSSHAuthTypeFieldUpdateOperationsInput | $Enums.SSHAuthType
+    authType?: StringFieldUpdateOperationsInput | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
     privateKey?: NullableStringFieldUpdateOperationsInput | string | null
+    publicKey?: NullableStringFieldUpdateOperationsInput | string | null
     passphrase?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: EnumConnectionStatusFieldUpdateOperationsInput | $Enums.ConnectionStatus
+    status?: StringFieldUpdateOperationsInput | string
     lastUsed?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type SSHConnectionUncheckedUpdateManyInput = {
@@ -20041,489 +7597,227 @@ export namespace Prisma {
     host?: StringFieldUpdateOperationsInput | string
     port?: IntFieldUpdateOperationsInput | number
     username?: StringFieldUpdateOperationsInput | string
-    authType?: EnumSSHAuthTypeFieldUpdateOperationsInput | $Enums.SSHAuthType
+    authType?: StringFieldUpdateOperationsInput | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
     privateKey?: NullableStringFieldUpdateOperationsInput | string | null
+    publicKey?: NullableStringFieldUpdateOperationsInput | string | null
     passphrase?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: EnumConnectionStatusFieldUpdateOperationsInput | $Enums.ConnectionStatus
+    status?: StringFieldUpdateOperationsInput | string
     lastUsed?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
   }
 
   export type ChatSessionCreateInput = {
     id?: string
-    title?: string | null
-    model?: string
-    type?: $Enums.SessionType
-    isActive?: boolean
-    pinned?: boolean
-    group?: string
+    title: string
+    type?: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
+    config?: string | null
+    meta?: string | null
     user: UserCreateNestedOneWithoutChatSessionsInput
+    sshConnection?: SSHConnectionCreateNestedOneWithoutChatSessionsInput
     messages?: MessageCreateNestedManyWithoutSessionInput
-    topics?: TopicCreateNestedManyWithoutSessionInput
   }
 
   export type ChatSessionUncheckedCreateInput = {
     id?: string
-    title?: string | null
-    model?: string
-    type?: $Enums.SessionType
-    isActive?: boolean
-    pinned?: boolean
-    group?: string
+    title: string
+    type?: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
+    config?: string | null
+    meta?: string | null
     userId: string
+    sshConnectionId?: string | null
     messages?: MessageUncheckedCreateNestedManyWithoutSessionInput
-    topics?: TopicUncheckedCreateNestedManyWithoutSessionInput
   }
 
   export type ChatSessionUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    title?: NullableStringFieldUpdateOperationsInput | string | null
-    model?: StringFieldUpdateOperationsInput | string
-    type?: EnumSessionTypeFieldUpdateOperationsInput | $Enums.SessionType
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    pinned?: BoolFieldUpdateOperationsInput | boolean
-    group?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
+    config?: NullableStringFieldUpdateOperationsInput | string | null
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
     user?: UserUpdateOneRequiredWithoutChatSessionsNestedInput
+    sshConnection?: SSHConnectionUpdateOneWithoutChatSessionsNestedInput
     messages?: MessageUpdateManyWithoutSessionNestedInput
-    topics?: TopicUpdateManyWithoutSessionNestedInput
   }
 
   export type ChatSessionUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    title?: NullableStringFieldUpdateOperationsInput | string | null
-    model?: StringFieldUpdateOperationsInput | string
-    type?: EnumSessionTypeFieldUpdateOperationsInput | $Enums.SessionType
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    pinned?: BoolFieldUpdateOperationsInput | boolean
-    group?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
+    config?: NullableStringFieldUpdateOperationsInput | string | null
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
+    sshConnectionId?: NullableStringFieldUpdateOperationsInput | string | null
     messages?: MessageUncheckedUpdateManyWithoutSessionNestedInput
-    topics?: TopicUncheckedUpdateManyWithoutSessionNestedInput
   }
 
   export type ChatSessionCreateManyInput = {
     id?: string
-    title?: string | null
-    model?: string
-    type?: $Enums.SessionType
-    isActive?: boolean
-    pinned?: boolean
-    group?: string
+    title: string
+    type?: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
+    config?: string | null
+    meta?: string | null
     userId: string
+    sshConnectionId?: string | null
   }
 
   export type ChatSessionUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    title?: NullableStringFieldUpdateOperationsInput | string | null
-    model?: StringFieldUpdateOperationsInput | string
-    type?: EnumSessionTypeFieldUpdateOperationsInput | $Enums.SessionType
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    pinned?: BoolFieldUpdateOperationsInput | boolean
-    group?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
+    config?: NullableStringFieldUpdateOperationsInput | string | null
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ChatSessionUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    title?: NullableStringFieldUpdateOperationsInput | string | null
-    model?: StringFieldUpdateOperationsInput | string
-    type?: EnumSessionTypeFieldUpdateOperationsInput | $Enums.SessionType
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    pinned?: BoolFieldUpdateOperationsInput | boolean
-    group?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
+    config?: NullableStringFieldUpdateOperationsInput | string | null
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type TopicCreateInput = {
-    id?: string
-    title: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    session: ChatSessionCreateNestedOneWithoutTopicsInput
-    messages?: MessageCreateNestedManyWithoutTopicInput
-  }
-
-  export type TopicUncheckedCreateInput = {
-    id?: string
-    title: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    sessionId: string
-    messages?: MessageUncheckedCreateNestedManyWithoutTopicInput
-  }
-
-  export type TopicUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    session?: ChatSessionUpdateOneRequiredWithoutTopicsNestedInput
-    messages?: MessageUpdateManyWithoutTopicNestedInput
-  }
-
-  export type TopicUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    sessionId?: StringFieldUpdateOperationsInput | string
-    messages?: MessageUncheckedUpdateManyWithoutTopicNestedInput
-  }
-
-  export type TopicCreateManyInput = {
-    id?: string
-    title: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    sessionId: string
-  }
-
-  export type TopicUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-  }
-
-  export type TopicUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    sessionId?: StringFieldUpdateOperationsInput | string
+    sshConnectionId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type MessageCreateInput = {
     id?: string
-    role: $Enums.MessageRole
     content: string
-    parentId?: string | null
+    role: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
-    tokens?: number | null
-    fromModel?: string | null
-    fromProvider?: string | null
-    plugin?: NullableJsonNullValueInput | InputJsonValue
-    pluginState?: NullableJsonNullValueInput | InputJsonValue
-    translate?: NullableJsonNullValueInput | InputJsonValue
-    tts?: NullableJsonNullValueInput | InputJsonValue
-    user: UserCreateNestedOneWithoutMessagesInput
+    meta?: string | null
+    extra?: string | null
+    isDeleted?: boolean
+    isEdited?: boolean
+    plugin?: string | null
+    pluginState?: string | null
+    translate?: string | null
+    tts?: string | null
     session: ChatSessionCreateNestedOneWithoutMessagesInput
-    topic?: TopicCreateNestedOneWithoutMessagesInput
-    files?: MessageFileCreateNestedManyWithoutMessageInput
+    user: UserCreateNestedOneWithoutMessagesInput
   }
 
   export type MessageUncheckedCreateInput = {
     id?: string
-    role: $Enums.MessageRole
     content: string
-    parentId?: string | null
+    role: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
-    tokens?: number | null
-    fromModel?: string | null
-    fromProvider?: string | null
-    plugin?: NullableJsonNullValueInput | InputJsonValue
-    pluginState?: NullableJsonNullValueInput | InputJsonValue
-    translate?: NullableJsonNullValueInput | InputJsonValue
-    tts?: NullableJsonNullValueInput | InputJsonValue
-    userId: string
+    meta?: string | null
+    extra?: string | null
+    isDeleted?: boolean
+    isEdited?: boolean
+    plugin?: string | null
+    pluginState?: string | null
+    translate?: string | null
+    tts?: string | null
     sessionId: string
-    topicId?: string | null
-    files?: MessageFileUncheckedCreateNestedManyWithoutMessageInput
+    userId: string
   }
 
   export type MessageUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    role?: EnumMessageRoleFieldUpdateOperationsInput | $Enums.MessageRole
     content?: StringFieldUpdateOperationsInput | string
-    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
-    tokens?: NullableIntFieldUpdateOperationsInput | number | null
-    fromModel?: NullableStringFieldUpdateOperationsInput | string | null
-    fromProvider?: NullableStringFieldUpdateOperationsInput | string | null
-    plugin?: NullableJsonNullValueInput | InputJsonValue
-    pluginState?: NullableJsonNullValueInput | InputJsonValue
-    translate?: NullableJsonNullValueInput | InputJsonValue
-    tts?: NullableJsonNullValueInput | InputJsonValue
-    user?: UserUpdateOneRequiredWithoutMessagesNestedInput
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
+    extra?: NullableStringFieldUpdateOperationsInput | string | null
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    isEdited?: BoolFieldUpdateOperationsInput | boolean
+    plugin?: NullableStringFieldUpdateOperationsInput | string | null
+    pluginState?: NullableStringFieldUpdateOperationsInput | string | null
+    translate?: NullableStringFieldUpdateOperationsInput | string | null
+    tts?: NullableStringFieldUpdateOperationsInput | string | null
     session?: ChatSessionUpdateOneRequiredWithoutMessagesNestedInput
-    topic?: TopicUpdateOneWithoutMessagesNestedInput
-    files?: MessageFileUpdateManyWithoutMessageNestedInput
+    user?: UserUpdateOneRequiredWithoutMessagesNestedInput
   }
 
   export type MessageUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    role?: EnumMessageRoleFieldUpdateOperationsInput | $Enums.MessageRole
     content?: StringFieldUpdateOperationsInput | string
-    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
-    tokens?: NullableIntFieldUpdateOperationsInput | number | null
-    fromModel?: NullableStringFieldUpdateOperationsInput | string | null
-    fromProvider?: NullableStringFieldUpdateOperationsInput | string | null
-    plugin?: NullableJsonNullValueInput | InputJsonValue
-    pluginState?: NullableJsonNullValueInput | InputJsonValue
-    translate?: NullableJsonNullValueInput | InputJsonValue
-    tts?: NullableJsonNullValueInput | InputJsonValue
-    userId?: StringFieldUpdateOperationsInput | string
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
+    extra?: NullableStringFieldUpdateOperationsInput | string | null
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    isEdited?: BoolFieldUpdateOperationsInput | boolean
+    plugin?: NullableStringFieldUpdateOperationsInput | string | null
+    pluginState?: NullableStringFieldUpdateOperationsInput | string | null
+    translate?: NullableStringFieldUpdateOperationsInput | string | null
+    tts?: NullableStringFieldUpdateOperationsInput | string | null
     sessionId?: StringFieldUpdateOperationsInput | string
-    topicId?: NullableStringFieldUpdateOperationsInput | string | null
-    files?: MessageFileUncheckedUpdateManyWithoutMessageNestedInput
+    userId?: StringFieldUpdateOperationsInput | string
   }
 
   export type MessageCreateManyInput = {
     id?: string
-    role: $Enums.MessageRole
     content: string
-    parentId?: string | null
+    role: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
-    tokens?: number | null
-    fromModel?: string | null
-    fromProvider?: string | null
-    plugin?: NullableJsonNullValueInput | InputJsonValue
-    pluginState?: NullableJsonNullValueInput | InputJsonValue
-    translate?: NullableJsonNullValueInput | InputJsonValue
-    tts?: NullableJsonNullValueInput | InputJsonValue
-    userId: string
+    meta?: string | null
+    extra?: string | null
+    isDeleted?: boolean
+    isEdited?: boolean
+    plugin?: string | null
+    pluginState?: string | null
+    translate?: string | null
+    tts?: string | null
     sessionId: string
-    topicId?: string | null
+    userId: string
   }
 
   export type MessageUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    role?: EnumMessageRoleFieldUpdateOperationsInput | $Enums.MessageRole
     content?: StringFieldUpdateOperationsInput | string
-    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
-    tokens?: NullableIntFieldUpdateOperationsInput | number | null
-    fromModel?: NullableStringFieldUpdateOperationsInput | string | null
-    fromProvider?: NullableStringFieldUpdateOperationsInput | string | null
-    plugin?: NullableJsonNullValueInput | InputJsonValue
-    pluginState?: NullableJsonNullValueInput | InputJsonValue
-    translate?: NullableJsonNullValueInput | InputJsonValue
-    tts?: NullableJsonNullValueInput | InputJsonValue
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
+    extra?: NullableStringFieldUpdateOperationsInput | string | null
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    isEdited?: BoolFieldUpdateOperationsInput | boolean
+    plugin?: NullableStringFieldUpdateOperationsInput | string | null
+    pluginState?: NullableStringFieldUpdateOperationsInput | string | null
+    translate?: NullableStringFieldUpdateOperationsInput | string | null
+    tts?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type MessageUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    role?: EnumMessageRoleFieldUpdateOperationsInput | $Enums.MessageRole
     content?: StringFieldUpdateOperationsInput | string
-    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
-    tokens?: NullableIntFieldUpdateOperationsInput | number | null
-    fromModel?: NullableStringFieldUpdateOperationsInput | string | null
-    fromProvider?: NullableStringFieldUpdateOperationsInput | string | null
-    plugin?: NullableJsonNullValueInput | InputJsonValue
-    pluginState?: NullableJsonNullValueInput | InputJsonValue
-    translate?: NullableJsonNullValueInput | InputJsonValue
-    tts?: NullableJsonNullValueInput | InputJsonValue
-    userId?: StringFieldUpdateOperationsInput | string
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
+    extra?: NullableStringFieldUpdateOperationsInput | string | null
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    isEdited?: BoolFieldUpdateOperationsInput | boolean
+    plugin?: NullableStringFieldUpdateOperationsInput | string | null
+    pluginState?: NullableStringFieldUpdateOperationsInput | string | null
+    translate?: NullableStringFieldUpdateOperationsInput | string | null
+    tts?: NullableStringFieldUpdateOperationsInput | string | null
     sessionId?: StringFieldUpdateOperationsInput | string
-    topicId?: NullableStringFieldUpdateOperationsInput | string | null
-  }
-
-  export type MessageFileCreateInput = {
-    id?: string
-    createdAt?: Date | string
-    message: MessageCreateNestedOneWithoutFilesInput
-    file: FileCreateNestedOneWithoutMessagesInput
-  }
-
-  export type MessageFileUncheckedCreateInput = {
-    id?: string
-    messageId: string
-    fileId: string
-    createdAt?: Date | string
-  }
-
-  export type MessageFileUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    message?: MessageUpdateOneRequiredWithoutFilesNestedInput
-    file?: FileUpdateOneRequiredWithoutMessagesNestedInput
-  }
-
-  export type MessageFileUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    messageId?: StringFieldUpdateOperationsInput | string
-    fileId?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type MessageFileCreateManyInput = {
-    id?: string
-    messageId: string
-    fileId: string
-    createdAt?: Date | string
-  }
-
-  export type MessageFileUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type MessageFileUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    messageId?: StringFieldUpdateOperationsInput | string
-    fileId?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type FileCreateInput = {
-    id?: string
-    name: string
-    type: string
-    size: bigint | number
-    url?: string | null
-    path?: string | null
-    hash?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    user: UserCreateNestedOneWithoutFilesInput
-    messages?: MessageFileCreateNestedManyWithoutFileInput
-  }
-
-  export type FileUncheckedCreateInput = {
-    id?: string
-    name: string
-    type: string
-    size: bigint | number
-    url?: string | null
-    path?: string | null
-    hash?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    userId: string
-    messages?: MessageFileUncheckedCreateNestedManyWithoutFileInput
-  }
-
-  export type FileUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    size?: BigIntFieldUpdateOperationsInput | bigint | number
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    path?: NullableStringFieldUpdateOperationsInput | string | null
-    hash?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    user?: UserUpdateOneRequiredWithoutFilesNestedInput
-    messages?: MessageFileUpdateManyWithoutFileNestedInput
-  }
-
-  export type FileUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    size?: BigIntFieldUpdateOperationsInput | bigint | number
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    path?: NullableStringFieldUpdateOperationsInput | string | null
-    hash?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    userId?: StringFieldUpdateOperationsInput | string
-    messages?: MessageFileUncheckedUpdateManyWithoutFileNestedInput
-  }
-
-  export type FileCreateManyInput = {
-    id?: string
-    name: string
-    type: string
-    size: bigint | number
-    url?: string | null
-    path?: string | null
-    hash?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    userId: string
-  }
-
-  export type FileUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    size?: BigIntFieldUpdateOperationsInput | bigint | number
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    path?: NullableStringFieldUpdateOperationsInput | string | null
-    hash?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-  }
-
-  export type FileUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    size?: BigIntFieldUpdateOperationsInput | bigint | number
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    path?: NullableStringFieldUpdateOperationsInput | string | null
-    hash?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
     userId?: StringFieldUpdateOperationsInput | string
   }
 
@@ -20531,709 +7825,95 @@ export namespace Prisma {
     id?: string
     command: string
     output?: string | null
-    error?: string | null
     exitCode?: number | null
-    duration: number
-    isSuccess: boolean
-    safetyLevel?: $Enums.SafetyLevel
-    executedAt?: Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
+    duration?: number | null
+    createdAt?: Date | string
+    safetyLevel?: string
+    metadata?: string | null
     user: UserCreateNestedOneWithoutCommandLogsInput
-    connection: SSHConnectionCreateNestedOneWithoutCommandLogsInput
+    sshConnection?: SSHConnectionCreateNestedOneWithoutCommandLogsInput
   }
 
   export type CommandLogUncheckedCreateInput = {
     id?: string
     command: string
     output?: string | null
-    error?: string | null
     exitCode?: number | null
-    duration: number
-    isSuccess: boolean
-    safetyLevel?: $Enums.SafetyLevel
-    executedAt?: Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
+    duration?: number | null
+    createdAt?: Date | string
+    safetyLevel?: string
+    metadata?: string | null
     userId: string
-    connectionId: string
+    sshConnectionId?: string | null
   }
 
   export type CommandLogUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     command?: StringFieldUpdateOperationsInput | string
     output?: NullableStringFieldUpdateOperationsInput | string | null
-    error?: NullableStringFieldUpdateOperationsInput | string | null
     exitCode?: NullableIntFieldUpdateOperationsInput | number | null
-    duration?: IntFieldUpdateOperationsInput | number
-    isSuccess?: BoolFieldUpdateOperationsInput | boolean
-    safetyLevel?: EnumSafetyLevelFieldUpdateOperationsInput | $Enums.SafetyLevel
-    executedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
+    duration?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    safetyLevel?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableStringFieldUpdateOperationsInput | string | null
     user?: UserUpdateOneRequiredWithoutCommandLogsNestedInput
-    connection?: SSHConnectionUpdateOneRequiredWithoutCommandLogsNestedInput
+    sshConnection?: SSHConnectionUpdateOneWithoutCommandLogsNestedInput
   }
 
   export type CommandLogUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     command?: StringFieldUpdateOperationsInput | string
     output?: NullableStringFieldUpdateOperationsInput | string | null
-    error?: NullableStringFieldUpdateOperationsInput | string | null
     exitCode?: NullableIntFieldUpdateOperationsInput | number | null
-    duration?: IntFieldUpdateOperationsInput | number
-    isSuccess?: BoolFieldUpdateOperationsInput | boolean
-    safetyLevel?: EnumSafetyLevelFieldUpdateOperationsInput | $Enums.SafetyLevel
-    executedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
+    duration?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    safetyLevel?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
-    connectionId?: StringFieldUpdateOperationsInput | string
+    sshConnectionId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CommandLogCreateManyInput = {
     id?: string
     command: string
     output?: string | null
-    error?: string | null
     exitCode?: number | null
-    duration: number
-    isSuccess: boolean
-    safetyLevel?: $Enums.SafetyLevel
-    executedAt?: Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
+    duration?: number | null
+    createdAt?: Date | string
+    safetyLevel?: string
+    metadata?: string | null
     userId: string
-    connectionId: string
+    sshConnectionId?: string | null
   }
 
   export type CommandLogUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     command?: StringFieldUpdateOperationsInput | string
     output?: NullableStringFieldUpdateOperationsInput | string | null
-    error?: NullableStringFieldUpdateOperationsInput | string | null
     exitCode?: NullableIntFieldUpdateOperationsInput | number | null
-    duration?: IntFieldUpdateOperationsInput | number
-    isSuccess?: BoolFieldUpdateOperationsInput | boolean
-    safetyLevel?: EnumSafetyLevelFieldUpdateOperationsInput | $Enums.SafetyLevel
-    executedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
+    duration?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    safetyLevel?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CommandLogUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     command?: StringFieldUpdateOperationsInput | string
     output?: NullableStringFieldUpdateOperationsInput | string | null
-    error?: NullableStringFieldUpdateOperationsInput | string | null
     exitCode?: NullableIntFieldUpdateOperationsInput | number | null
-    duration?: IntFieldUpdateOperationsInput | number
-    isSuccess?: BoolFieldUpdateOperationsInput | boolean
-    safetyLevel?: EnumSafetyLevelFieldUpdateOperationsInput | $Enums.SafetyLevel
-    executedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
+    duration?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    safetyLevel?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
-    connectionId?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type UsageStatsCreateInput = {
-    id?: string
-    date: Date | string
-    commandsCount?: number
-    aiRequestsCount?: number
-    tokensUsed?: number
-    connectionsUsed?: number
-    createdAt?: Date | string
-    user: UserCreateNestedOneWithoutUsageStatsInput
-  }
-
-  export type UsageStatsUncheckedCreateInput = {
-    id?: string
-    date: Date | string
-    commandsCount?: number
-    aiRequestsCount?: number
-    tokensUsed?: number
-    connectionsUsed?: number
-    createdAt?: Date | string
-    userId: string
-  }
-
-  export type UsageStatsUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    date?: DateTimeFieldUpdateOperationsInput | Date | string
-    commandsCount?: IntFieldUpdateOperationsInput | number
-    aiRequestsCount?: IntFieldUpdateOperationsInput | number
-    tokensUsed?: IntFieldUpdateOperationsInput | number
-    connectionsUsed?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutUsageStatsNestedInput
-  }
-
-  export type UsageStatsUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    date?: DateTimeFieldUpdateOperationsInput | Date | string
-    commandsCount?: IntFieldUpdateOperationsInput | number
-    aiRequestsCount?: IntFieldUpdateOperationsInput | number
-    tokensUsed?: IntFieldUpdateOperationsInput | number
-    connectionsUsed?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userId?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type UsageStatsCreateManyInput = {
-    id?: string
-    date: Date | string
-    commandsCount?: number
-    aiRequestsCount?: number
-    tokensUsed?: number
-    connectionsUsed?: number
-    createdAt?: Date | string
-    userId: string
-  }
-
-  export type UsageStatsUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    date?: DateTimeFieldUpdateOperationsInput | Date | string
-    commandsCount?: IntFieldUpdateOperationsInput | number
-    aiRequestsCount?: IntFieldUpdateOperationsInput | number
-    tokensUsed?: IntFieldUpdateOperationsInput | number
-    connectionsUsed?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type UsageStatsUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    date?: DateTimeFieldUpdateOperationsInput | Date | string
-    commandsCount?: IntFieldUpdateOperationsInput | number
-    aiRequestsCount?: IntFieldUpdateOperationsInput | number
-    tokensUsed?: IntFieldUpdateOperationsInput | number
-    connectionsUsed?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userId?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type ApiKeyCreateInput = {
-    id?: string
-    name: string
-    key: string
-    type?: $Enums.ApiKeyType
-    isActive?: boolean
-    expiresAt?: Date | string | null
-    lastUsed?: Date | string | null
-    createdAt?: Date | string
-    scopes?: ApiKeyCreatescopesInput | string[]
-    user: UserCreateNestedOneWithoutApiKeysInput
-  }
-
-  export type ApiKeyUncheckedCreateInput = {
-    id?: string
-    name: string
-    key: string
-    type?: $Enums.ApiKeyType
-    isActive?: boolean
-    expiresAt?: Date | string | null
-    lastUsed?: Date | string | null
-    createdAt?: Date | string
-    scopes?: ApiKeyCreatescopesInput | string[]
-    userId: string
-  }
-
-  export type ApiKeyUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    key?: StringFieldUpdateOperationsInput | string
-    type?: EnumApiKeyTypeFieldUpdateOperationsInput | $Enums.ApiKeyType
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    lastUsed?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    scopes?: ApiKeyUpdatescopesInput | string[]
-    user?: UserUpdateOneRequiredWithoutApiKeysNestedInput
-  }
-
-  export type ApiKeyUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    key?: StringFieldUpdateOperationsInput | string
-    type?: EnumApiKeyTypeFieldUpdateOperationsInput | $Enums.ApiKeyType
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    lastUsed?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    scopes?: ApiKeyUpdatescopesInput | string[]
-    userId?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type ApiKeyCreateManyInput = {
-    id?: string
-    name: string
-    key: string
-    type?: $Enums.ApiKeyType
-    isActive?: boolean
-    expiresAt?: Date | string | null
-    lastUsed?: Date | string | null
-    createdAt?: Date | string
-    scopes?: ApiKeyCreatescopesInput | string[]
-    userId: string
-  }
-
-  export type ApiKeyUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    key?: StringFieldUpdateOperationsInput | string
-    type?: EnumApiKeyTypeFieldUpdateOperationsInput | $Enums.ApiKeyType
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    lastUsed?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    scopes?: ApiKeyUpdatescopesInput | string[]
-  }
-
-  export type ApiKeyUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    key?: StringFieldUpdateOperationsInput | string
-    type?: EnumApiKeyTypeFieldUpdateOperationsInput | $Enums.ApiKeyType
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    lastUsed?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    scopes?: ApiKeyUpdatescopesInput | string[]
-    userId?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type SystemConfigCreateInput = {
-    id?: string
-    key: string
-    value: string
-    type?: $Enums.ConfigType
-    description?: string | null
-    category?: string | null
-    isPublic?: boolean
-    updatedAt?: Date | string
-    createdAt?: Date | string
-  }
-
-  export type SystemConfigUncheckedCreateInput = {
-    id?: string
-    key: string
-    value: string
-    type?: $Enums.ConfigType
-    description?: string | null
-    category?: string | null
-    isPublic?: boolean
-    updatedAt?: Date | string
-    createdAt?: Date | string
-  }
-
-  export type SystemConfigUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    key?: StringFieldUpdateOperationsInput | string
-    value?: StringFieldUpdateOperationsInput | string
-    type?: EnumConfigTypeFieldUpdateOperationsInput | $Enums.ConfigType
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    category?: NullableStringFieldUpdateOperationsInput | string | null
-    isPublic?: BoolFieldUpdateOperationsInput | boolean
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type SystemConfigUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    key?: StringFieldUpdateOperationsInput | string
-    value?: StringFieldUpdateOperationsInput | string
-    type?: EnumConfigTypeFieldUpdateOperationsInput | $Enums.ConfigType
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    category?: NullableStringFieldUpdateOperationsInput | string | null
-    isPublic?: BoolFieldUpdateOperationsInput | boolean
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type SystemConfigCreateManyInput = {
-    id?: string
-    key: string
-    value: string
-    type?: $Enums.ConfigType
-    description?: string | null
-    category?: string | null
-    isPublic?: boolean
-    updatedAt?: Date | string
-    createdAt?: Date | string
-  }
-
-  export type SystemConfigUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    key?: StringFieldUpdateOperationsInput | string
-    value?: StringFieldUpdateOperationsInput | string
-    type?: EnumConfigTypeFieldUpdateOperationsInput | $Enums.ConfigType
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    category?: NullableStringFieldUpdateOperationsInput | string | null
-    isPublic?: BoolFieldUpdateOperationsInput | boolean
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type SystemConfigUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    key?: StringFieldUpdateOperationsInput | string
-    value?: StringFieldUpdateOperationsInput | string
-    type?: EnumConfigTypeFieldUpdateOperationsInput | $Enums.ConfigType
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    category?: NullableStringFieldUpdateOperationsInput | string | null
-    isPublic?: BoolFieldUpdateOperationsInput | boolean
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type SessionGroupCreateInput = {
-    id?: string
-    name: string
-    sort?: number
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    user: UserCreateNestedOneWithoutSessionGroupsInput
-  }
-
-  export type SessionGroupUncheckedCreateInput = {
-    id?: string
-    name: string
-    sort?: number
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    userId: string
-  }
-
-  export type SessionGroupUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    sort?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    user?: UserUpdateOneRequiredWithoutSessionGroupsNestedInput
-  }
-
-  export type SessionGroupUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    sort?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    userId?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type SessionGroupCreateManyInput = {
-    id?: string
-    name: string
-    sort?: number
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    userId: string
-  }
-
-  export type SessionGroupUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    sort?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-  }
-
-  export type SessionGroupUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    sort?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    userId?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type PluginCreateInput = {
-    id?: string
-    identifier: string
-    name: string
-    version: string
-    enabled?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    user: UserCreateNestedOneWithoutPluginsInput
-  }
-
-  export type PluginUncheckedCreateInput = {
-    id?: string
-    identifier: string
-    name: string
-    version: string
-    enabled?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    userId: string
-  }
-
-  export type PluginUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    identifier?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    version?: StringFieldUpdateOperationsInput | string
-    enabled?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    user?: UserUpdateOneRequiredWithoutPluginsNestedInput
-  }
-
-  export type PluginUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    identifier?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    version?: StringFieldUpdateOperationsInput | string
-    enabled?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    userId?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type PluginCreateManyInput = {
-    id?: string
-    identifier: string
-    name: string
-    version: string
-    enabled?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    userId: string
-  }
-
-  export type PluginUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    identifier?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    version?: StringFieldUpdateOperationsInput | string
-    enabled?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    settings?: NullableJsonNullValueInput | InputJsonValue
-  }
-
-  export type PluginUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    identifier?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    version?: StringFieldUpdateOperationsInput | string
-    enabled?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    userId?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type KnowledgeBaseCreateInput = {
-    id?: string
-    name: string
-    description?: string | null
-    type?: $Enums.KnowledgeType
-    isActive?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    user: UserCreateNestedOneWithoutKnowledgeBasesInput
-    documents?: KnowledgeDocumentCreateNestedManyWithoutKnowledgeBaseInput
-  }
-
-  export type KnowledgeBaseUncheckedCreateInput = {
-    id?: string
-    name: string
-    description?: string | null
-    type?: $Enums.KnowledgeType
-    isActive?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    userId: string
-    documents?: KnowledgeDocumentUncheckedCreateNestedManyWithoutKnowledgeBaseInput
-  }
-
-  export type KnowledgeBaseUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumKnowledgeTypeFieldUpdateOperationsInput | $Enums.KnowledgeType
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    user?: UserUpdateOneRequiredWithoutKnowledgeBasesNestedInput
-    documents?: KnowledgeDocumentUpdateManyWithoutKnowledgeBaseNestedInput
-  }
-
-  export type KnowledgeBaseUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumKnowledgeTypeFieldUpdateOperationsInput | $Enums.KnowledgeType
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    userId?: StringFieldUpdateOperationsInput | string
-    documents?: KnowledgeDocumentUncheckedUpdateManyWithoutKnowledgeBaseNestedInput
-  }
-
-  export type KnowledgeBaseCreateManyInput = {
-    id?: string
-    name: string
-    description?: string | null
-    type?: $Enums.KnowledgeType
-    isActive?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    userId: string
-  }
-
-  export type KnowledgeBaseUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumKnowledgeTypeFieldUpdateOperationsInput | $Enums.KnowledgeType
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
-  }
-
-  export type KnowledgeBaseUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumKnowledgeTypeFieldUpdateOperationsInput | $Enums.KnowledgeType
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    userId?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type KnowledgeDocumentCreateInput = {
-    id?: string
-    title: string
-    content: string
-    type: string
-    status?: $Enums.DocumentStatus
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    embedding?: NullableJsonNullValueInput | InputJsonValue
-    knowledgeBase: KnowledgeBaseCreateNestedOneWithoutDocumentsInput
-  }
-
-  export type KnowledgeDocumentUncheckedCreateInput = {
-    id?: string
-    title: string
-    content: string
-    type: string
-    status?: $Enums.DocumentStatus
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    embedding?: NullableJsonNullValueInput | InputJsonValue
-    knowledgeBaseId: string
-  }
-
-  export type KnowledgeDocumentUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    content?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    status?: EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    embedding?: NullableJsonNullValueInput | InputJsonValue
-    knowledgeBase?: KnowledgeBaseUpdateOneRequiredWithoutDocumentsNestedInput
-  }
-
-  export type KnowledgeDocumentUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    content?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    status?: EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    embedding?: NullableJsonNullValueInput | InputJsonValue
-    knowledgeBaseId?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type KnowledgeDocumentCreateManyInput = {
-    id?: string
-    title: string
-    content: string
-    type: string
-    status?: $Enums.DocumentStatus
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    embedding?: NullableJsonNullValueInput | InputJsonValue
-    knowledgeBaseId: string
-  }
-
-  export type KnowledgeDocumentUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    content?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    status?: EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    embedding?: NullableJsonNullValueInput | InputJsonValue
-  }
-
-  export type KnowledgeDocumentUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    content?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    status?: EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    embedding?: NullableJsonNullValueInput | InputJsonValue
-    knowledgeBaseId?: StringFieldUpdateOperationsInput | string
+    sshConnectionId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
-    in?: string[] | ListStringFieldRefInput<$PrismaModel>
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
+    in?: string[]
+    notIn?: string[]
     lt?: string | StringFieldRefInput<$PrismaModel>
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
@@ -21241,14 +7921,13 @@ export namespace Prisma {
     contains?: string | StringFieldRefInput<$PrismaModel>
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
   export type StringNullableFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    in?: string[] | null
+    notIn?: string[] | null
     lt?: string | StringFieldRefInput<$PrismaModel>
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
@@ -21256,15 +7935,7 @@ export namespace Prisma {
     contains?: string | StringFieldRefInput<$PrismaModel>
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
-  export type EnumUserRoleFilter<$PrismaModel = never> = {
-    equals?: $Enums.UserRole | EnumUserRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.UserRole[] | ListEnumUserRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.UserRole[] | ListEnumUserRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumUserRoleFilter<$PrismaModel> | $Enums.UserRole
   }
 
   export type BoolFilter<$PrismaModel = never> = {
@@ -21274,35 +7945,13 @@ export namespace Prisma {
 
   export type DateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[]
+    notIn?: Date[] | string[]
     lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
-  }
-  export type JsonNullableFilter<$PrismaModel = never> = 
-    | PatchUndefined<
-        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
-        Required<JsonNullableFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
-
-  export type JsonNullableFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
   export type SSHConnectionListRelationFilter = {
@@ -21329,42 +7978,6 @@ export namespace Prisma {
     none?: CommandLogWhereInput
   }
 
-  export type UsageStatsListRelationFilter = {
-    every?: UsageStatsWhereInput
-    some?: UsageStatsWhereInput
-    none?: UsageStatsWhereInput
-  }
-
-  export type ApiKeyListRelationFilter = {
-    every?: ApiKeyWhereInput
-    some?: ApiKeyWhereInput
-    none?: ApiKeyWhereInput
-  }
-
-  export type SessionGroupListRelationFilter = {
-    every?: SessionGroupWhereInput
-    some?: SessionGroupWhereInput
-    none?: SessionGroupWhereInput
-  }
-
-  export type PluginListRelationFilter = {
-    every?: PluginWhereInput
-    some?: PluginWhereInput
-    none?: PluginWhereInput
-  }
-
-  export type KnowledgeBaseListRelationFilter = {
-    every?: KnowledgeBaseWhereInput
-    some?: KnowledgeBaseWhereInput
-    none?: KnowledgeBaseWhereInput
-  }
-
-  export type FileListRelationFilter = {
-    every?: FileWhereInput
-    some?: FileWhereInput
-    none?: FileWhereInput
-  }
-
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -21383,30 +7996,6 @@ export namespace Prisma {
   }
 
   export type CommandLogOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type UsageStatsOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type ApiKeyOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type SessionGroupOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type PluginOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type KnowledgeBaseOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type FileOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -21435,6 +8024,7 @@ export namespace Prisma {
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    settings?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
@@ -21448,12 +8038,13 @@ export namespace Prisma {
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    settings?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
-    in?: string[] | ListStringFieldRefInput<$PrismaModel>
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
+    in?: string[]
+    notIn?: string[]
     lt?: string | StringFieldRefInput<$PrismaModel>
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
@@ -21461,7 +8052,6 @@ export namespace Prisma {
     contains?: string | StringFieldRefInput<$PrismaModel>
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
     not?: NestedStringWithAggregatesFilter<$PrismaModel> | string
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedStringFilter<$PrismaModel>
@@ -21470,8 +8060,8 @@ export namespace Prisma {
 
   export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    in?: string[] | null
+    notIn?: string[] | null
     lt?: string | StringFieldRefInput<$PrismaModel>
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
@@ -21479,21 +8069,10 @@ export namespace Prisma {
     contains?: string | StringFieldRefInput<$PrismaModel>
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
     not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedStringNullableFilter<$PrismaModel>
     _max?: NestedStringNullableFilter<$PrismaModel>
-  }
-
-  export type EnumUserRoleWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.UserRole | EnumUserRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.UserRole[] | ListEnumUserRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.UserRole[] | ListEnumUserRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumUserRoleWithAggregatesFilter<$PrismaModel> | $Enums.UserRole
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumUserRoleFilter<$PrismaModel>
-    _max?: NestedEnumUserRoleFilter<$PrismaModel>
   }
 
   export type BoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -21506,8 +8085,8 @@ export namespace Prisma {
 
   export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[]
+    notIn?: Date[] | string[]
     lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
@@ -21517,36 +8096,11 @@ export namespace Prisma {
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
-  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> = 
-    | PatchUndefined<
-        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
-        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
-
-  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedJsonNullableFilter<$PrismaModel>
-    _max?: NestedJsonNullableFilter<$PrismaModel>
-  }
 
   export type IntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    in?: number[]
+    notIn?: number[]
     lt?: number | IntFieldRefInput<$PrismaModel>
     lte?: number | IntFieldRefInput<$PrismaModel>
     gt?: number | IntFieldRefInput<$PrismaModel>
@@ -21554,24 +8108,10 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
-  export type EnumSSHAuthTypeFilter<$PrismaModel = never> = {
-    equals?: $Enums.SSHAuthType | EnumSSHAuthTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.SSHAuthType[] | ListEnumSSHAuthTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.SSHAuthType[] | ListEnumSSHAuthTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumSSHAuthTypeFilter<$PrismaModel> | $Enums.SSHAuthType
-  }
-
-  export type EnumConnectionStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.ConnectionStatus | EnumConnectionStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.ConnectionStatus[] | ListEnumConnectionStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.ConnectionStatus[] | ListEnumConnectionStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumConnectionStatusFilter<$PrismaModel> | $Enums.ConnectionStatus
-  }
-
   export type DateTimeNullableFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | null
+    notIn?: Date[] | string[] | null
     lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
@@ -21593,9 +8133,11 @@ export namespace Prisma {
     authType?: SortOrder
     password?: SortOrder
     privateKey?: SortOrder
+    publicKey?: SortOrder
     passphrase?: SortOrder
     status?: SortOrder
     lastUsed?: SortOrder
+    isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     meta?: SortOrder
@@ -21615,11 +8157,14 @@ export namespace Prisma {
     authType?: SortOrder
     password?: SortOrder
     privateKey?: SortOrder
+    publicKey?: SortOrder
     passphrase?: SortOrder
     status?: SortOrder
     lastUsed?: SortOrder
+    isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    meta?: SortOrder
     userId?: SortOrder
   }
 
@@ -21632,11 +8177,14 @@ export namespace Prisma {
     authType?: SortOrder
     password?: SortOrder
     privateKey?: SortOrder
+    publicKey?: SortOrder
     passphrase?: SortOrder
     status?: SortOrder
     lastUsed?: SortOrder
+    isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    meta?: SortOrder
     userId?: SortOrder
   }
 
@@ -21646,8 +8194,8 @@ export namespace Prisma {
 
   export type IntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    in?: number[]
+    notIn?: number[]
     lt?: number | IntFieldRefInput<$PrismaModel>
     lte?: number | IntFieldRefInput<$PrismaModel>
     gt?: number | IntFieldRefInput<$PrismaModel>
@@ -21660,30 +8208,10 @@ export namespace Prisma {
     _max?: NestedIntFilter<$PrismaModel>
   }
 
-  export type EnumSSHAuthTypeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.SSHAuthType | EnumSSHAuthTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.SSHAuthType[] | ListEnumSSHAuthTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.SSHAuthType[] | ListEnumSSHAuthTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumSSHAuthTypeWithAggregatesFilter<$PrismaModel> | $Enums.SSHAuthType
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumSSHAuthTypeFilter<$PrismaModel>
-    _max?: NestedEnumSSHAuthTypeFilter<$PrismaModel>
-  }
-
-  export type EnumConnectionStatusWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.ConnectionStatus | EnumConnectionStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.ConnectionStatus[] | ListEnumConnectionStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.ConnectionStatus[] | ListEnumConnectionStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumConnectionStatusWithAggregatesFilter<$PrismaModel> | $Enums.ConnectionStatus
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumConnectionStatusFilter<$PrismaModel>
-    _max?: NestedEnumConnectionStatusFilter<$PrismaModel>
-  }
-
   export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | null
+    notIn?: Date[] | string[] | null
     lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
@@ -21694,72 +8222,45 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
-  export type EnumSessionTypeFilter<$PrismaModel = never> = {
-    equals?: $Enums.SessionType | EnumSessionTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.SessionType[] | ListEnumSessionTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.SessionType[] | ListEnumSessionTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumSessionTypeFilter<$PrismaModel> | $Enums.SessionType
-  }
-
-  export type TopicListRelationFilter = {
-    every?: TopicWhereInput
-    some?: TopicWhereInput
-    none?: TopicWhereInput
-  }
-
-  export type TopicOrderByRelationAggregateInput = {
-    _count?: SortOrder
+  export type SSHConnectionNullableRelationFilter = {
+    is?: SSHConnectionWhereInput | null
+    isNot?: SSHConnectionWhereInput | null
   }
 
   export type ChatSessionCountOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
-    model?: SortOrder
     type?: SortOrder
-    isActive?: SortOrder
-    pinned?: SortOrder
-    group?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     config?: SortOrder
     meta?: SortOrder
     userId?: SortOrder
+    sshConnectionId?: SortOrder
   }
 
   export type ChatSessionMaxOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
-    model?: SortOrder
     type?: SortOrder
-    isActive?: SortOrder
-    pinned?: SortOrder
-    group?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    config?: SortOrder
+    meta?: SortOrder
     userId?: SortOrder
+    sshConnectionId?: SortOrder
   }
 
   export type ChatSessionMinOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
-    model?: SortOrder
     type?: SortOrder
-    isActive?: SortOrder
-    pinned?: SortOrder
-    group?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    config?: SortOrder
+    meta?: SortOrder
     userId?: SortOrder
-  }
-
-  export type EnumSessionTypeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.SessionType | EnumSessionTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.SessionType[] | ListEnumSessionTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.SessionType[] | ListEnumSessionTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumSessionTypeWithAggregatesFilter<$PrismaModel> | $Enums.SessionType
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumSessionTypeFilter<$PrismaModel>
-    _max?: NestedEnumSessionTypeFilter<$PrismaModel>
+    sshConnectionId?: SortOrder
   }
 
   export type ChatSessionRelationFilter = {
@@ -21767,42 +8268,64 @@ export namespace Prisma {
     isNot?: ChatSessionWhereInput
   }
 
-  export type TopicCountOrderByAggregateInput = {
+  export type MessageCountOrderByAggregateInput = {
     id?: SortOrder
-    title?: SortOrder
+    content?: SortOrder
+    role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     meta?: SortOrder
+    extra?: SortOrder
+    isDeleted?: SortOrder
+    isEdited?: SortOrder
+    plugin?: SortOrder
+    pluginState?: SortOrder
+    translate?: SortOrder
+    tts?: SortOrder
     sessionId?: SortOrder
+    userId?: SortOrder
   }
 
-  export type TopicMaxOrderByAggregateInput = {
+  export type MessageMaxOrderByAggregateInput = {
     id?: SortOrder
-    title?: SortOrder
+    content?: SortOrder
+    role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    meta?: SortOrder
+    extra?: SortOrder
+    isDeleted?: SortOrder
+    isEdited?: SortOrder
+    plugin?: SortOrder
+    pluginState?: SortOrder
+    translate?: SortOrder
+    tts?: SortOrder
     sessionId?: SortOrder
+    userId?: SortOrder
   }
 
-  export type TopicMinOrderByAggregateInput = {
+  export type MessageMinOrderByAggregateInput = {
     id?: SortOrder
-    title?: SortOrder
+    content?: SortOrder
+    role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    meta?: SortOrder
+    extra?: SortOrder
+    isDeleted?: SortOrder
+    isEdited?: SortOrder
+    plugin?: SortOrder
+    pluginState?: SortOrder
+    translate?: SortOrder
+    tts?: SortOrder
     sessionId?: SortOrder
-  }
-
-  export type EnumMessageRoleFilter<$PrismaModel = never> = {
-    equals?: $Enums.MessageRole | EnumMessageRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.MessageRole[] | ListEnumMessageRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.MessageRole[] | ListEnumMessageRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumMessageRoleFilter<$PrismaModel> | $Enums.MessageRole
+    userId?: SortOrder
   }
 
   export type IntNullableFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    in?: number[] | null
+    notIn?: number[] | null
     lt?: number | IntFieldRefInput<$PrismaModel>
     lte?: number | IntFieldRefInput<$PrismaModel>
     gt?: number | IntFieldRefInput<$PrismaModel>
@@ -21810,242 +8333,17 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
-  export type TopicNullableRelationFilter = {
-    is?: TopicWhereInput | null
-    isNot?: TopicWhereInput | null
-  }
-
-  export type MessageFileListRelationFilter = {
-    every?: MessageFileWhereInput
-    some?: MessageFileWhereInput
-    none?: MessageFileWhereInput
-  }
-
-  export type MessageFileOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type MessageCountOrderByAggregateInput = {
-    id?: SortOrder
-    role?: SortOrder
-    content?: SortOrder
-    parentId?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    meta?: SortOrder
-    extra?: SortOrder
-    tokens?: SortOrder
-    fromModel?: SortOrder
-    fromProvider?: SortOrder
-    plugin?: SortOrder
-    pluginState?: SortOrder
-    translate?: SortOrder
-    tts?: SortOrder
-    userId?: SortOrder
-    sessionId?: SortOrder
-    topicId?: SortOrder
-  }
-
-  export type MessageAvgOrderByAggregateInput = {
-    tokens?: SortOrder
-  }
-
-  export type MessageMaxOrderByAggregateInput = {
-    id?: SortOrder
-    role?: SortOrder
-    content?: SortOrder
-    parentId?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    tokens?: SortOrder
-    fromModel?: SortOrder
-    fromProvider?: SortOrder
-    userId?: SortOrder
-    sessionId?: SortOrder
-    topicId?: SortOrder
-  }
-
-  export type MessageMinOrderByAggregateInput = {
-    id?: SortOrder
-    role?: SortOrder
-    content?: SortOrder
-    parentId?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    tokens?: SortOrder
-    fromModel?: SortOrder
-    fromProvider?: SortOrder
-    userId?: SortOrder
-    sessionId?: SortOrder
-    topicId?: SortOrder
-  }
-
-  export type MessageSumOrderByAggregateInput = {
-    tokens?: SortOrder
-  }
-
-  export type EnumMessageRoleWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.MessageRole | EnumMessageRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.MessageRole[] | ListEnumMessageRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.MessageRole[] | ListEnumMessageRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumMessageRoleWithAggregatesFilter<$PrismaModel> | $Enums.MessageRole
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumMessageRoleFilter<$PrismaModel>
-    _max?: NestedEnumMessageRoleFilter<$PrismaModel>
-  }
-
-  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
-  }
-
-  export type MessageRelationFilter = {
-    is?: MessageWhereInput
-    isNot?: MessageWhereInput
-  }
-
-  export type FileRelationFilter = {
-    is?: FileWhereInput
-    isNot?: FileWhereInput
-  }
-
-  export type MessageFileMessageIdFileIdCompoundUniqueInput = {
-    messageId: string
-    fileId: string
-  }
-
-  export type MessageFileCountOrderByAggregateInput = {
-    id?: SortOrder
-    messageId?: SortOrder
-    fileId?: SortOrder
-    createdAt?: SortOrder
-  }
-
-  export type MessageFileMaxOrderByAggregateInput = {
-    id?: SortOrder
-    messageId?: SortOrder
-    fileId?: SortOrder
-    createdAt?: SortOrder
-  }
-
-  export type MessageFileMinOrderByAggregateInput = {
-    id?: SortOrder
-    messageId?: SortOrder
-    fileId?: SortOrder
-    createdAt?: SortOrder
-  }
-
-  export type BigIntFilter<$PrismaModel = never> = {
-    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
-    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
-    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    not?: NestedBigIntFilter<$PrismaModel> | bigint | number
-  }
-
-  export type FileCountOrderByAggregateInput = {
-    id?: SortOrder
-    name?: SortOrder
-    type?: SortOrder
-    size?: SortOrder
-    url?: SortOrder
-    path?: SortOrder
-    hash?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    metadata?: SortOrder
-    userId?: SortOrder
-  }
-
-  export type FileAvgOrderByAggregateInput = {
-    size?: SortOrder
-  }
-
-  export type FileMaxOrderByAggregateInput = {
-    id?: SortOrder
-    name?: SortOrder
-    type?: SortOrder
-    size?: SortOrder
-    url?: SortOrder
-    path?: SortOrder
-    hash?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    userId?: SortOrder
-  }
-
-  export type FileMinOrderByAggregateInput = {
-    id?: SortOrder
-    name?: SortOrder
-    type?: SortOrder
-    size?: SortOrder
-    url?: SortOrder
-    path?: SortOrder
-    hash?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    userId?: SortOrder
-  }
-
-  export type FileSumOrderByAggregateInput = {
-    size?: SortOrder
-  }
-
-  export type BigIntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
-    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
-    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    not?: NestedBigIntWithAggregatesFilter<$PrismaModel> | bigint | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedBigIntFilter<$PrismaModel>
-    _min?: NestedBigIntFilter<$PrismaModel>
-    _max?: NestedBigIntFilter<$PrismaModel>
-  }
-
-  export type EnumSafetyLevelFilter<$PrismaModel = never> = {
-    equals?: $Enums.SafetyLevel | EnumSafetyLevelFieldRefInput<$PrismaModel>
-    in?: $Enums.SafetyLevel[] | ListEnumSafetyLevelFieldRefInput<$PrismaModel>
-    notIn?: $Enums.SafetyLevel[] | ListEnumSafetyLevelFieldRefInput<$PrismaModel>
-    not?: NestedEnumSafetyLevelFilter<$PrismaModel> | $Enums.SafetyLevel
-  }
-
-  export type SSHConnectionRelationFilter = {
-    is?: SSHConnectionWhereInput
-    isNot?: SSHConnectionWhereInput
-  }
-
   export type CommandLogCountOrderByAggregateInput = {
     id?: SortOrder
     command?: SortOrder
     output?: SortOrder
-    error?: SortOrder
     exitCode?: SortOrder
     duration?: SortOrder
-    isSuccess?: SortOrder
+    createdAt?: SortOrder
     safetyLevel?: SortOrder
-    executedAt?: SortOrder
     metadata?: SortOrder
     userId?: SortOrder
-    connectionId?: SortOrder
+    sshConnectionId?: SortOrder
   }
 
   export type CommandLogAvgOrderByAggregateInput = {
@@ -22057,28 +8355,26 @@ export namespace Prisma {
     id?: SortOrder
     command?: SortOrder
     output?: SortOrder
-    error?: SortOrder
     exitCode?: SortOrder
     duration?: SortOrder
-    isSuccess?: SortOrder
+    createdAt?: SortOrder
     safetyLevel?: SortOrder
-    executedAt?: SortOrder
+    metadata?: SortOrder
     userId?: SortOrder
-    connectionId?: SortOrder
+    sshConnectionId?: SortOrder
   }
 
   export type CommandLogMinOrderByAggregateInput = {
     id?: SortOrder
     command?: SortOrder
     output?: SortOrder
-    error?: SortOrder
     exitCode?: SortOrder
     duration?: SortOrder
-    isSuccess?: SortOrder
+    createdAt?: SortOrder
     safetyLevel?: SortOrder
-    executedAt?: SortOrder
+    metadata?: SortOrder
     userId?: SortOrder
-    connectionId?: SortOrder
+    sshConnectionId?: SortOrder
   }
 
   export type CommandLogSumOrderByAggregateInput = {
@@ -22086,372 +8382,20 @@ export namespace Prisma {
     duration?: SortOrder
   }
 
-  export type EnumSafetyLevelWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.SafetyLevel | EnumSafetyLevelFieldRefInput<$PrismaModel>
-    in?: $Enums.SafetyLevel[] | ListEnumSafetyLevelFieldRefInput<$PrismaModel>
-    notIn?: $Enums.SafetyLevel[] | ListEnumSafetyLevelFieldRefInput<$PrismaModel>
-    not?: NestedEnumSafetyLevelWithAggregatesFilter<$PrismaModel> | $Enums.SafetyLevel
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumSafetyLevelFilter<$PrismaModel>
-    _max?: NestedEnumSafetyLevelFilter<$PrismaModel>
-  }
-
-  export type UsageStatsUserIdDateCompoundUniqueInput = {
-    userId: string
-    date: Date | string
-  }
-
-  export type UsageStatsCountOrderByAggregateInput = {
-    id?: SortOrder
-    date?: SortOrder
-    commandsCount?: SortOrder
-    aiRequestsCount?: SortOrder
-    tokensUsed?: SortOrder
-    connectionsUsed?: SortOrder
-    createdAt?: SortOrder
-    userId?: SortOrder
-  }
-
-  export type UsageStatsAvgOrderByAggregateInput = {
-    commandsCount?: SortOrder
-    aiRequestsCount?: SortOrder
-    tokensUsed?: SortOrder
-    connectionsUsed?: SortOrder
-  }
-
-  export type UsageStatsMaxOrderByAggregateInput = {
-    id?: SortOrder
-    date?: SortOrder
-    commandsCount?: SortOrder
-    aiRequestsCount?: SortOrder
-    tokensUsed?: SortOrder
-    connectionsUsed?: SortOrder
-    createdAt?: SortOrder
-    userId?: SortOrder
-  }
-
-  export type UsageStatsMinOrderByAggregateInput = {
-    id?: SortOrder
-    date?: SortOrder
-    commandsCount?: SortOrder
-    aiRequestsCount?: SortOrder
-    tokensUsed?: SortOrder
-    connectionsUsed?: SortOrder
-    createdAt?: SortOrder
-    userId?: SortOrder
-  }
-
-  export type UsageStatsSumOrderByAggregateInput = {
-    commandsCount?: SortOrder
-    aiRequestsCount?: SortOrder
-    tokensUsed?: SortOrder
-    connectionsUsed?: SortOrder
-  }
-
-  export type EnumApiKeyTypeFilter<$PrismaModel = never> = {
-    equals?: $Enums.ApiKeyType | EnumApiKeyTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.ApiKeyType[] | ListEnumApiKeyTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.ApiKeyType[] | ListEnumApiKeyTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumApiKeyTypeFilter<$PrismaModel> | $Enums.ApiKeyType
-  }
-
-  export type StringNullableListFilter<$PrismaModel = never> = {
-    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    has?: string | StringFieldRefInput<$PrismaModel> | null
-    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
-    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
-    isEmpty?: boolean
-  }
-
-  export type ApiKeyCountOrderByAggregateInput = {
-    id?: SortOrder
-    name?: SortOrder
-    key?: SortOrder
-    type?: SortOrder
-    isActive?: SortOrder
-    expiresAt?: SortOrder
-    lastUsed?: SortOrder
-    createdAt?: SortOrder
-    scopes?: SortOrder
-    userId?: SortOrder
-  }
-
-  export type ApiKeyMaxOrderByAggregateInput = {
-    id?: SortOrder
-    name?: SortOrder
-    key?: SortOrder
-    type?: SortOrder
-    isActive?: SortOrder
-    expiresAt?: SortOrder
-    lastUsed?: SortOrder
-    createdAt?: SortOrder
-    userId?: SortOrder
-  }
-
-  export type ApiKeyMinOrderByAggregateInput = {
-    id?: SortOrder
-    name?: SortOrder
-    key?: SortOrder
-    type?: SortOrder
-    isActive?: SortOrder
-    expiresAt?: SortOrder
-    lastUsed?: SortOrder
-    createdAt?: SortOrder
-    userId?: SortOrder
-  }
-
-  export type EnumApiKeyTypeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.ApiKeyType | EnumApiKeyTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.ApiKeyType[] | ListEnumApiKeyTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.ApiKeyType[] | ListEnumApiKeyTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumApiKeyTypeWithAggregatesFilter<$PrismaModel> | $Enums.ApiKeyType
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumApiKeyTypeFilter<$PrismaModel>
-    _max?: NestedEnumApiKeyTypeFilter<$PrismaModel>
-  }
-
-  export type EnumConfigTypeFilter<$PrismaModel = never> = {
-    equals?: $Enums.ConfigType | EnumConfigTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.ConfigType[] | ListEnumConfigTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.ConfigType[] | ListEnumConfigTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumConfigTypeFilter<$PrismaModel> | $Enums.ConfigType
-  }
-
-  export type SystemConfigCountOrderByAggregateInput = {
-    id?: SortOrder
-    key?: SortOrder
-    value?: SortOrder
-    type?: SortOrder
-    description?: SortOrder
-    category?: SortOrder
-    isPublic?: SortOrder
-    updatedAt?: SortOrder
-    createdAt?: SortOrder
-  }
-
-  export type SystemConfigMaxOrderByAggregateInput = {
-    id?: SortOrder
-    key?: SortOrder
-    value?: SortOrder
-    type?: SortOrder
-    description?: SortOrder
-    category?: SortOrder
-    isPublic?: SortOrder
-    updatedAt?: SortOrder
-    createdAt?: SortOrder
-  }
-
-  export type SystemConfigMinOrderByAggregateInput = {
-    id?: SortOrder
-    key?: SortOrder
-    value?: SortOrder
-    type?: SortOrder
-    description?: SortOrder
-    category?: SortOrder
-    isPublic?: SortOrder
-    updatedAt?: SortOrder
-    createdAt?: SortOrder
-  }
-
-  export type EnumConfigTypeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.ConfigType | EnumConfigTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.ConfigType[] | ListEnumConfigTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.ConfigType[] | ListEnumConfigTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumConfigTypeWithAggregatesFilter<$PrismaModel> | $Enums.ConfigType
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumConfigTypeFilter<$PrismaModel>
-    _max?: NestedEnumConfigTypeFilter<$PrismaModel>
-  }
-
-  export type SessionGroupCountOrderByAggregateInput = {
-    id?: SortOrder
-    name?: SortOrder
-    sort?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    meta?: SortOrder
-    userId?: SortOrder
-  }
-
-  export type SessionGroupAvgOrderByAggregateInput = {
-    sort?: SortOrder
-  }
-
-  export type SessionGroupMaxOrderByAggregateInput = {
-    id?: SortOrder
-    name?: SortOrder
-    sort?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    userId?: SortOrder
-  }
-
-  export type SessionGroupMinOrderByAggregateInput = {
-    id?: SortOrder
-    name?: SortOrder
-    sort?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    userId?: SortOrder
-  }
-
-  export type SessionGroupSumOrderByAggregateInput = {
-    sort?: SortOrder
-  }
-
-  export type PluginCountOrderByAggregateInput = {
-    id?: SortOrder
-    identifier?: SortOrder
-    name?: SortOrder
-    version?: SortOrder
-    enabled?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    config?: SortOrder
-    meta?: SortOrder
-    settings?: SortOrder
-    userId?: SortOrder
-  }
-
-  export type PluginMaxOrderByAggregateInput = {
-    id?: SortOrder
-    identifier?: SortOrder
-    name?: SortOrder
-    version?: SortOrder
-    enabled?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    userId?: SortOrder
-  }
-
-  export type PluginMinOrderByAggregateInput = {
-    id?: SortOrder
-    identifier?: SortOrder
-    name?: SortOrder
-    version?: SortOrder
-    enabled?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    userId?: SortOrder
-  }
-
-  export type EnumKnowledgeTypeFilter<$PrismaModel = never> = {
-    equals?: $Enums.KnowledgeType | EnumKnowledgeTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.KnowledgeType[] | ListEnumKnowledgeTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.KnowledgeType[] | ListEnumKnowledgeTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumKnowledgeTypeFilter<$PrismaModel> | $Enums.KnowledgeType
-  }
-
-  export type KnowledgeDocumentListRelationFilter = {
-    every?: KnowledgeDocumentWhereInput
-    some?: KnowledgeDocumentWhereInput
-    none?: KnowledgeDocumentWhereInput
-  }
-
-  export type KnowledgeDocumentOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type KnowledgeBaseCountOrderByAggregateInput = {
-    id?: SortOrder
-    name?: SortOrder
-    description?: SortOrder
-    type?: SortOrder
-    isActive?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    config?: SortOrder
-    meta?: SortOrder
-    userId?: SortOrder
-  }
-
-  export type KnowledgeBaseMaxOrderByAggregateInput = {
-    id?: SortOrder
-    name?: SortOrder
-    description?: SortOrder
-    type?: SortOrder
-    isActive?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    userId?: SortOrder
-  }
-
-  export type KnowledgeBaseMinOrderByAggregateInput = {
-    id?: SortOrder
-    name?: SortOrder
-    description?: SortOrder
-    type?: SortOrder
-    isActive?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    userId?: SortOrder
-  }
-
-  export type EnumKnowledgeTypeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.KnowledgeType | EnumKnowledgeTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.KnowledgeType[] | ListEnumKnowledgeTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.KnowledgeType[] | ListEnumKnowledgeTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumKnowledgeTypeWithAggregatesFilter<$PrismaModel> | $Enums.KnowledgeType
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumKnowledgeTypeFilter<$PrismaModel>
-    _max?: NestedEnumKnowledgeTypeFilter<$PrismaModel>
-  }
-
-  export type EnumDocumentStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.DocumentStatus | EnumDocumentStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.DocumentStatus[] | ListEnumDocumentStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.DocumentStatus[] | ListEnumDocumentStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumDocumentStatusFilter<$PrismaModel> | $Enums.DocumentStatus
-  }
-
-  export type KnowledgeBaseRelationFilter = {
-    is?: KnowledgeBaseWhereInput
-    isNot?: KnowledgeBaseWhereInput
-  }
-
-  export type KnowledgeDocumentCountOrderByAggregateInput = {
-    id?: SortOrder
-    title?: SortOrder
-    content?: SortOrder
-    type?: SortOrder
-    status?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    metadata?: SortOrder
-    embedding?: SortOrder
-    knowledgeBaseId?: SortOrder
-  }
-
-  export type KnowledgeDocumentMaxOrderByAggregateInput = {
-    id?: SortOrder
-    title?: SortOrder
-    content?: SortOrder
-    type?: SortOrder
-    status?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    knowledgeBaseId?: SortOrder
-  }
-
-  export type KnowledgeDocumentMinOrderByAggregateInput = {
-    id?: SortOrder
-    title?: SortOrder
-    content?: SortOrder
-    type?: SortOrder
-    status?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    knowledgeBaseId?: SortOrder
-  }
-
-  export type EnumDocumentStatusWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.DocumentStatus | EnumDocumentStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.DocumentStatus[] | ListEnumDocumentStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.DocumentStatus[] | ListEnumDocumentStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumDocumentStatusWithAggregatesFilter<$PrismaModel> | $Enums.DocumentStatus
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumDocumentStatusFilter<$PrismaModel>
-    _max?: NestedEnumDocumentStatusFilter<$PrismaModel>
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | null
+    notIn?: number[] | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
   export type SSHConnectionCreateNestedManyWithoutUserInput = {
@@ -22482,48 +8426,6 @@ export namespace Prisma {
     connect?: CommandLogWhereUniqueInput | CommandLogWhereUniqueInput[]
   }
 
-  export type UsageStatsCreateNestedManyWithoutUserInput = {
-    create?: XOR<UsageStatsCreateWithoutUserInput, UsageStatsUncheckedCreateWithoutUserInput> | UsageStatsCreateWithoutUserInput[] | UsageStatsUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: UsageStatsCreateOrConnectWithoutUserInput | UsageStatsCreateOrConnectWithoutUserInput[]
-    createMany?: UsageStatsCreateManyUserInputEnvelope
-    connect?: UsageStatsWhereUniqueInput | UsageStatsWhereUniqueInput[]
-  }
-
-  export type ApiKeyCreateNestedManyWithoutUserInput = {
-    create?: XOR<ApiKeyCreateWithoutUserInput, ApiKeyUncheckedCreateWithoutUserInput> | ApiKeyCreateWithoutUserInput[] | ApiKeyUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: ApiKeyCreateOrConnectWithoutUserInput | ApiKeyCreateOrConnectWithoutUserInput[]
-    createMany?: ApiKeyCreateManyUserInputEnvelope
-    connect?: ApiKeyWhereUniqueInput | ApiKeyWhereUniqueInput[]
-  }
-
-  export type SessionGroupCreateNestedManyWithoutUserInput = {
-    create?: XOR<SessionGroupCreateWithoutUserInput, SessionGroupUncheckedCreateWithoutUserInput> | SessionGroupCreateWithoutUserInput[] | SessionGroupUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: SessionGroupCreateOrConnectWithoutUserInput | SessionGroupCreateOrConnectWithoutUserInput[]
-    createMany?: SessionGroupCreateManyUserInputEnvelope
-    connect?: SessionGroupWhereUniqueInput | SessionGroupWhereUniqueInput[]
-  }
-
-  export type PluginCreateNestedManyWithoutUserInput = {
-    create?: XOR<PluginCreateWithoutUserInput, PluginUncheckedCreateWithoutUserInput> | PluginCreateWithoutUserInput[] | PluginUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: PluginCreateOrConnectWithoutUserInput | PluginCreateOrConnectWithoutUserInput[]
-    createMany?: PluginCreateManyUserInputEnvelope
-    connect?: PluginWhereUniqueInput | PluginWhereUniqueInput[]
-  }
-
-  export type KnowledgeBaseCreateNestedManyWithoutUserInput = {
-    create?: XOR<KnowledgeBaseCreateWithoutUserInput, KnowledgeBaseUncheckedCreateWithoutUserInput> | KnowledgeBaseCreateWithoutUserInput[] | KnowledgeBaseUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: KnowledgeBaseCreateOrConnectWithoutUserInput | KnowledgeBaseCreateOrConnectWithoutUserInput[]
-    createMany?: KnowledgeBaseCreateManyUserInputEnvelope
-    connect?: KnowledgeBaseWhereUniqueInput | KnowledgeBaseWhereUniqueInput[]
-  }
-
-  export type FileCreateNestedManyWithoutUserInput = {
-    create?: XOR<FileCreateWithoutUserInput, FileUncheckedCreateWithoutUserInput> | FileCreateWithoutUserInput[] | FileUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: FileCreateOrConnectWithoutUserInput | FileCreateOrConnectWithoutUserInput[]
-    createMany?: FileCreateManyUserInputEnvelope
-    connect?: FileWhereUniqueInput | FileWhereUniqueInput[]
-  }
-
   export type SSHConnectionUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<SSHConnectionCreateWithoutUserInput, SSHConnectionUncheckedCreateWithoutUserInput> | SSHConnectionCreateWithoutUserInput[] | SSHConnectionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: SSHConnectionCreateOrConnectWithoutUserInput | SSHConnectionCreateOrConnectWithoutUserInput[]
@@ -22552,58 +8454,12 @@ export namespace Prisma {
     connect?: CommandLogWhereUniqueInput | CommandLogWhereUniqueInput[]
   }
 
-  export type UsageStatsUncheckedCreateNestedManyWithoutUserInput = {
-    create?: XOR<UsageStatsCreateWithoutUserInput, UsageStatsUncheckedCreateWithoutUserInput> | UsageStatsCreateWithoutUserInput[] | UsageStatsUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: UsageStatsCreateOrConnectWithoutUserInput | UsageStatsCreateOrConnectWithoutUserInput[]
-    createMany?: UsageStatsCreateManyUserInputEnvelope
-    connect?: UsageStatsWhereUniqueInput | UsageStatsWhereUniqueInput[]
-  }
-
-  export type ApiKeyUncheckedCreateNestedManyWithoutUserInput = {
-    create?: XOR<ApiKeyCreateWithoutUserInput, ApiKeyUncheckedCreateWithoutUserInput> | ApiKeyCreateWithoutUserInput[] | ApiKeyUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: ApiKeyCreateOrConnectWithoutUserInput | ApiKeyCreateOrConnectWithoutUserInput[]
-    createMany?: ApiKeyCreateManyUserInputEnvelope
-    connect?: ApiKeyWhereUniqueInput | ApiKeyWhereUniqueInput[]
-  }
-
-  export type SessionGroupUncheckedCreateNestedManyWithoutUserInput = {
-    create?: XOR<SessionGroupCreateWithoutUserInput, SessionGroupUncheckedCreateWithoutUserInput> | SessionGroupCreateWithoutUserInput[] | SessionGroupUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: SessionGroupCreateOrConnectWithoutUserInput | SessionGroupCreateOrConnectWithoutUserInput[]
-    createMany?: SessionGroupCreateManyUserInputEnvelope
-    connect?: SessionGroupWhereUniqueInput | SessionGroupWhereUniqueInput[]
-  }
-
-  export type PluginUncheckedCreateNestedManyWithoutUserInput = {
-    create?: XOR<PluginCreateWithoutUserInput, PluginUncheckedCreateWithoutUserInput> | PluginCreateWithoutUserInput[] | PluginUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: PluginCreateOrConnectWithoutUserInput | PluginCreateOrConnectWithoutUserInput[]
-    createMany?: PluginCreateManyUserInputEnvelope
-    connect?: PluginWhereUniqueInput | PluginWhereUniqueInput[]
-  }
-
-  export type KnowledgeBaseUncheckedCreateNestedManyWithoutUserInput = {
-    create?: XOR<KnowledgeBaseCreateWithoutUserInput, KnowledgeBaseUncheckedCreateWithoutUserInput> | KnowledgeBaseCreateWithoutUserInput[] | KnowledgeBaseUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: KnowledgeBaseCreateOrConnectWithoutUserInput | KnowledgeBaseCreateOrConnectWithoutUserInput[]
-    createMany?: KnowledgeBaseCreateManyUserInputEnvelope
-    connect?: KnowledgeBaseWhereUniqueInput | KnowledgeBaseWhereUniqueInput[]
-  }
-
-  export type FileUncheckedCreateNestedManyWithoutUserInput = {
-    create?: XOR<FileCreateWithoutUserInput, FileUncheckedCreateWithoutUserInput> | FileCreateWithoutUserInput[] | FileUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: FileCreateOrConnectWithoutUserInput | FileCreateOrConnectWithoutUserInput[]
-    createMany?: FileCreateManyUserInputEnvelope
-    connect?: FileWhereUniqueInput | FileWhereUniqueInput[]
-  }
-
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
 
   export type NullableStringFieldUpdateOperationsInput = {
     set?: string | null
-  }
-
-  export type EnumUserRoleFieldUpdateOperationsInput = {
-    set?: $Enums.UserRole
   }
 
   export type BoolFieldUpdateOperationsInput = {
@@ -22670,90 +8526,6 @@ export namespace Prisma {
     deleteMany?: CommandLogScalarWhereInput | CommandLogScalarWhereInput[]
   }
 
-  export type UsageStatsUpdateManyWithoutUserNestedInput = {
-    create?: XOR<UsageStatsCreateWithoutUserInput, UsageStatsUncheckedCreateWithoutUserInput> | UsageStatsCreateWithoutUserInput[] | UsageStatsUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: UsageStatsCreateOrConnectWithoutUserInput | UsageStatsCreateOrConnectWithoutUserInput[]
-    upsert?: UsageStatsUpsertWithWhereUniqueWithoutUserInput | UsageStatsUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: UsageStatsCreateManyUserInputEnvelope
-    set?: UsageStatsWhereUniqueInput | UsageStatsWhereUniqueInput[]
-    disconnect?: UsageStatsWhereUniqueInput | UsageStatsWhereUniqueInput[]
-    delete?: UsageStatsWhereUniqueInput | UsageStatsWhereUniqueInput[]
-    connect?: UsageStatsWhereUniqueInput | UsageStatsWhereUniqueInput[]
-    update?: UsageStatsUpdateWithWhereUniqueWithoutUserInput | UsageStatsUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: UsageStatsUpdateManyWithWhereWithoutUserInput | UsageStatsUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: UsageStatsScalarWhereInput | UsageStatsScalarWhereInput[]
-  }
-
-  export type ApiKeyUpdateManyWithoutUserNestedInput = {
-    create?: XOR<ApiKeyCreateWithoutUserInput, ApiKeyUncheckedCreateWithoutUserInput> | ApiKeyCreateWithoutUserInput[] | ApiKeyUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: ApiKeyCreateOrConnectWithoutUserInput | ApiKeyCreateOrConnectWithoutUserInput[]
-    upsert?: ApiKeyUpsertWithWhereUniqueWithoutUserInput | ApiKeyUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: ApiKeyCreateManyUserInputEnvelope
-    set?: ApiKeyWhereUniqueInput | ApiKeyWhereUniqueInput[]
-    disconnect?: ApiKeyWhereUniqueInput | ApiKeyWhereUniqueInput[]
-    delete?: ApiKeyWhereUniqueInput | ApiKeyWhereUniqueInput[]
-    connect?: ApiKeyWhereUniqueInput | ApiKeyWhereUniqueInput[]
-    update?: ApiKeyUpdateWithWhereUniqueWithoutUserInput | ApiKeyUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: ApiKeyUpdateManyWithWhereWithoutUserInput | ApiKeyUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: ApiKeyScalarWhereInput | ApiKeyScalarWhereInput[]
-  }
-
-  export type SessionGroupUpdateManyWithoutUserNestedInput = {
-    create?: XOR<SessionGroupCreateWithoutUserInput, SessionGroupUncheckedCreateWithoutUserInput> | SessionGroupCreateWithoutUserInput[] | SessionGroupUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: SessionGroupCreateOrConnectWithoutUserInput | SessionGroupCreateOrConnectWithoutUserInput[]
-    upsert?: SessionGroupUpsertWithWhereUniqueWithoutUserInput | SessionGroupUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: SessionGroupCreateManyUserInputEnvelope
-    set?: SessionGroupWhereUniqueInput | SessionGroupWhereUniqueInput[]
-    disconnect?: SessionGroupWhereUniqueInput | SessionGroupWhereUniqueInput[]
-    delete?: SessionGroupWhereUniqueInput | SessionGroupWhereUniqueInput[]
-    connect?: SessionGroupWhereUniqueInput | SessionGroupWhereUniqueInput[]
-    update?: SessionGroupUpdateWithWhereUniqueWithoutUserInput | SessionGroupUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: SessionGroupUpdateManyWithWhereWithoutUserInput | SessionGroupUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: SessionGroupScalarWhereInput | SessionGroupScalarWhereInput[]
-  }
-
-  export type PluginUpdateManyWithoutUserNestedInput = {
-    create?: XOR<PluginCreateWithoutUserInput, PluginUncheckedCreateWithoutUserInput> | PluginCreateWithoutUserInput[] | PluginUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: PluginCreateOrConnectWithoutUserInput | PluginCreateOrConnectWithoutUserInput[]
-    upsert?: PluginUpsertWithWhereUniqueWithoutUserInput | PluginUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: PluginCreateManyUserInputEnvelope
-    set?: PluginWhereUniqueInput | PluginWhereUniqueInput[]
-    disconnect?: PluginWhereUniqueInput | PluginWhereUniqueInput[]
-    delete?: PluginWhereUniqueInput | PluginWhereUniqueInput[]
-    connect?: PluginWhereUniqueInput | PluginWhereUniqueInput[]
-    update?: PluginUpdateWithWhereUniqueWithoutUserInput | PluginUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: PluginUpdateManyWithWhereWithoutUserInput | PluginUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: PluginScalarWhereInput | PluginScalarWhereInput[]
-  }
-
-  export type KnowledgeBaseUpdateManyWithoutUserNestedInput = {
-    create?: XOR<KnowledgeBaseCreateWithoutUserInput, KnowledgeBaseUncheckedCreateWithoutUserInput> | KnowledgeBaseCreateWithoutUserInput[] | KnowledgeBaseUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: KnowledgeBaseCreateOrConnectWithoutUserInput | KnowledgeBaseCreateOrConnectWithoutUserInput[]
-    upsert?: KnowledgeBaseUpsertWithWhereUniqueWithoutUserInput | KnowledgeBaseUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: KnowledgeBaseCreateManyUserInputEnvelope
-    set?: KnowledgeBaseWhereUniqueInput | KnowledgeBaseWhereUniqueInput[]
-    disconnect?: KnowledgeBaseWhereUniqueInput | KnowledgeBaseWhereUniqueInput[]
-    delete?: KnowledgeBaseWhereUniqueInput | KnowledgeBaseWhereUniqueInput[]
-    connect?: KnowledgeBaseWhereUniqueInput | KnowledgeBaseWhereUniqueInput[]
-    update?: KnowledgeBaseUpdateWithWhereUniqueWithoutUserInput | KnowledgeBaseUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: KnowledgeBaseUpdateManyWithWhereWithoutUserInput | KnowledgeBaseUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: KnowledgeBaseScalarWhereInput | KnowledgeBaseScalarWhereInput[]
-  }
-
-  export type FileUpdateManyWithoutUserNestedInput = {
-    create?: XOR<FileCreateWithoutUserInput, FileUncheckedCreateWithoutUserInput> | FileCreateWithoutUserInput[] | FileUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: FileCreateOrConnectWithoutUserInput | FileCreateOrConnectWithoutUserInput[]
-    upsert?: FileUpsertWithWhereUniqueWithoutUserInput | FileUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: FileCreateManyUserInputEnvelope
-    set?: FileWhereUniqueInput | FileWhereUniqueInput[]
-    disconnect?: FileWhereUniqueInput | FileWhereUniqueInput[]
-    delete?: FileWhereUniqueInput | FileWhereUniqueInput[]
-    connect?: FileWhereUniqueInput | FileWhereUniqueInput[]
-    update?: FileUpdateWithWhereUniqueWithoutUserInput | FileUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: FileUpdateManyWithWhereWithoutUserInput | FileUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: FileScalarWhereInput | FileScalarWhereInput[]
-  }
-
   export type SSHConnectionUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<SSHConnectionCreateWithoutUserInput, SSHConnectionUncheckedCreateWithoutUserInput> | SSHConnectionCreateWithoutUserInput[] | SSHConnectionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: SSHConnectionCreateOrConnectWithoutUserInput | SSHConnectionCreateOrConnectWithoutUserInput[]
@@ -22810,107 +8582,37 @@ export namespace Prisma {
     deleteMany?: CommandLogScalarWhereInput | CommandLogScalarWhereInput[]
   }
 
-  export type UsageStatsUncheckedUpdateManyWithoutUserNestedInput = {
-    create?: XOR<UsageStatsCreateWithoutUserInput, UsageStatsUncheckedCreateWithoutUserInput> | UsageStatsCreateWithoutUserInput[] | UsageStatsUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: UsageStatsCreateOrConnectWithoutUserInput | UsageStatsCreateOrConnectWithoutUserInput[]
-    upsert?: UsageStatsUpsertWithWhereUniqueWithoutUserInput | UsageStatsUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: UsageStatsCreateManyUserInputEnvelope
-    set?: UsageStatsWhereUniqueInput | UsageStatsWhereUniqueInput[]
-    disconnect?: UsageStatsWhereUniqueInput | UsageStatsWhereUniqueInput[]
-    delete?: UsageStatsWhereUniqueInput | UsageStatsWhereUniqueInput[]
-    connect?: UsageStatsWhereUniqueInput | UsageStatsWhereUniqueInput[]
-    update?: UsageStatsUpdateWithWhereUniqueWithoutUserInput | UsageStatsUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: UsageStatsUpdateManyWithWhereWithoutUserInput | UsageStatsUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: UsageStatsScalarWhereInput | UsageStatsScalarWhereInput[]
-  }
-
-  export type ApiKeyUncheckedUpdateManyWithoutUserNestedInput = {
-    create?: XOR<ApiKeyCreateWithoutUserInput, ApiKeyUncheckedCreateWithoutUserInput> | ApiKeyCreateWithoutUserInput[] | ApiKeyUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: ApiKeyCreateOrConnectWithoutUserInput | ApiKeyCreateOrConnectWithoutUserInput[]
-    upsert?: ApiKeyUpsertWithWhereUniqueWithoutUserInput | ApiKeyUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: ApiKeyCreateManyUserInputEnvelope
-    set?: ApiKeyWhereUniqueInput | ApiKeyWhereUniqueInput[]
-    disconnect?: ApiKeyWhereUniqueInput | ApiKeyWhereUniqueInput[]
-    delete?: ApiKeyWhereUniqueInput | ApiKeyWhereUniqueInput[]
-    connect?: ApiKeyWhereUniqueInput | ApiKeyWhereUniqueInput[]
-    update?: ApiKeyUpdateWithWhereUniqueWithoutUserInput | ApiKeyUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: ApiKeyUpdateManyWithWhereWithoutUserInput | ApiKeyUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: ApiKeyScalarWhereInput | ApiKeyScalarWhereInput[]
-  }
-
-  export type SessionGroupUncheckedUpdateManyWithoutUserNestedInput = {
-    create?: XOR<SessionGroupCreateWithoutUserInput, SessionGroupUncheckedCreateWithoutUserInput> | SessionGroupCreateWithoutUserInput[] | SessionGroupUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: SessionGroupCreateOrConnectWithoutUserInput | SessionGroupCreateOrConnectWithoutUserInput[]
-    upsert?: SessionGroupUpsertWithWhereUniqueWithoutUserInput | SessionGroupUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: SessionGroupCreateManyUserInputEnvelope
-    set?: SessionGroupWhereUniqueInput | SessionGroupWhereUniqueInput[]
-    disconnect?: SessionGroupWhereUniqueInput | SessionGroupWhereUniqueInput[]
-    delete?: SessionGroupWhereUniqueInput | SessionGroupWhereUniqueInput[]
-    connect?: SessionGroupWhereUniqueInput | SessionGroupWhereUniqueInput[]
-    update?: SessionGroupUpdateWithWhereUniqueWithoutUserInput | SessionGroupUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: SessionGroupUpdateManyWithWhereWithoutUserInput | SessionGroupUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: SessionGroupScalarWhereInput | SessionGroupScalarWhereInput[]
-  }
-
-  export type PluginUncheckedUpdateManyWithoutUserNestedInput = {
-    create?: XOR<PluginCreateWithoutUserInput, PluginUncheckedCreateWithoutUserInput> | PluginCreateWithoutUserInput[] | PluginUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: PluginCreateOrConnectWithoutUserInput | PluginCreateOrConnectWithoutUserInput[]
-    upsert?: PluginUpsertWithWhereUniqueWithoutUserInput | PluginUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: PluginCreateManyUserInputEnvelope
-    set?: PluginWhereUniqueInput | PluginWhereUniqueInput[]
-    disconnect?: PluginWhereUniqueInput | PluginWhereUniqueInput[]
-    delete?: PluginWhereUniqueInput | PluginWhereUniqueInput[]
-    connect?: PluginWhereUniqueInput | PluginWhereUniqueInput[]
-    update?: PluginUpdateWithWhereUniqueWithoutUserInput | PluginUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: PluginUpdateManyWithWhereWithoutUserInput | PluginUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: PluginScalarWhereInput | PluginScalarWhereInput[]
-  }
-
-  export type KnowledgeBaseUncheckedUpdateManyWithoutUserNestedInput = {
-    create?: XOR<KnowledgeBaseCreateWithoutUserInput, KnowledgeBaseUncheckedCreateWithoutUserInput> | KnowledgeBaseCreateWithoutUserInput[] | KnowledgeBaseUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: KnowledgeBaseCreateOrConnectWithoutUserInput | KnowledgeBaseCreateOrConnectWithoutUserInput[]
-    upsert?: KnowledgeBaseUpsertWithWhereUniqueWithoutUserInput | KnowledgeBaseUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: KnowledgeBaseCreateManyUserInputEnvelope
-    set?: KnowledgeBaseWhereUniqueInput | KnowledgeBaseWhereUniqueInput[]
-    disconnect?: KnowledgeBaseWhereUniqueInput | KnowledgeBaseWhereUniqueInput[]
-    delete?: KnowledgeBaseWhereUniqueInput | KnowledgeBaseWhereUniqueInput[]
-    connect?: KnowledgeBaseWhereUniqueInput | KnowledgeBaseWhereUniqueInput[]
-    update?: KnowledgeBaseUpdateWithWhereUniqueWithoutUserInput | KnowledgeBaseUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: KnowledgeBaseUpdateManyWithWhereWithoutUserInput | KnowledgeBaseUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: KnowledgeBaseScalarWhereInput | KnowledgeBaseScalarWhereInput[]
-  }
-
-  export type FileUncheckedUpdateManyWithoutUserNestedInput = {
-    create?: XOR<FileCreateWithoutUserInput, FileUncheckedCreateWithoutUserInput> | FileCreateWithoutUserInput[] | FileUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: FileCreateOrConnectWithoutUserInput | FileCreateOrConnectWithoutUserInput[]
-    upsert?: FileUpsertWithWhereUniqueWithoutUserInput | FileUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: FileCreateManyUserInputEnvelope
-    set?: FileWhereUniqueInput | FileWhereUniqueInput[]
-    disconnect?: FileWhereUniqueInput | FileWhereUniqueInput[]
-    delete?: FileWhereUniqueInput | FileWhereUniqueInput[]
-    connect?: FileWhereUniqueInput | FileWhereUniqueInput[]
-    update?: FileUpdateWithWhereUniqueWithoutUserInput | FileUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: FileUpdateManyWithWhereWithoutUserInput | FileUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: FileScalarWhereInput | FileScalarWhereInput[]
-  }
-
   export type UserCreateNestedOneWithoutSshConnectionsInput = {
     create?: XOR<UserCreateWithoutSshConnectionsInput, UserUncheckedCreateWithoutSshConnectionsInput>
     connectOrCreate?: UserCreateOrConnectWithoutSshConnectionsInput
     connect?: UserWhereUniqueInput
   }
 
-  export type CommandLogCreateNestedManyWithoutConnectionInput = {
-    create?: XOR<CommandLogCreateWithoutConnectionInput, CommandLogUncheckedCreateWithoutConnectionInput> | CommandLogCreateWithoutConnectionInput[] | CommandLogUncheckedCreateWithoutConnectionInput[]
-    connectOrCreate?: CommandLogCreateOrConnectWithoutConnectionInput | CommandLogCreateOrConnectWithoutConnectionInput[]
-    createMany?: CommandLogCreateManyConnectionInputEnvelope
+  export type ChatSessionCreateNestedManyWithoutSshConnectionInput = {
+    create?: XOR<ChatSessionCreateWithoutSshConnectionInput, ChatSessionUncheckedCreateWithoutSshConnectionInput> | ChatSessionCreateWithoutSshConnectionInput[] | ChatSessionUncheckedCreateWithoutSshConnectionInput[]
+    connectOrCreate?: ChatSessionCreateOrConnectWithoutSshConnectionInput | ChatSessionCreateOrConnectWithoutSshConnectionInput[]
+    createMany?: ChatSessionCreateManySshConnectionInputEnvelope
+    connect?: ChatSessionWhereUniqueInput | ChatSessionWhereUniqueInput[]
+  }
+
+  export type CommandLogCreateNestedManyWithoutSshConnectionInput = {
+    create?: XOR<CommandLogCreateWithoutSshConnectionInput, CommandLogUncheckedCreateWithoutSshConnectionInput> | CommandLogCreateWithoutSshConnectionInput[] | CommandLogUncheckedCreateWithoutSshConnectionInput[]
+    connectOrCreate?: CommandLogCreateOrConnectWithoutSshConnectionInput | CommandLogCreateOrConnectWithoutSshConnectionInput[]
+    createMany?: CommandLogCreateManySshConnectionInputEnvelope
     connect?: CommandLogWhereUniqueInput | CommandLogWhereUniqueInput[]
   }
 
-  export type CommandLogUncheckedCreateNestedManyWithoutConnectionInput = {
-    create?: XOR<CommandLogCreateWithoutConnectionInput, CommandLogUncheckedCreateWithoutConnectionInput> | CommandLogCreateWithoutConnectionInput[] | CommandLogUncheckedCreateWithoutConnectionInput[]
-    connectOrCreate?: CommandLogCreateOrConnectWithoutConnectionInput | CommandLogCreateOrConnectWithoutConnectionInput[]
-    createMany?: CommandLogCreateManyConnectionInputEnvelope
+  export type ChatSessionUncheckedCreateNestedManyWithoutSshConnectionInput = {
+    create?: XOR<ChatSessionCreateWithoutSshConnectionInput, ChatSessionUncheckedCreateWithoutSshConnectionInput> | ChatSessionCreateWithoutSshConnectionInput[] | ChatSessionUncheckedCreateWithoutSshConnectionInput[]
+    connectOrCreate?: ChatSessionCreateOrConnectWithoutSshConnectionInput | ChatSessionCreateOrConnectWithoutSshConnectionInput[]
+    createMany?: ChatSessionCreateManySshConnectionInputEnvelope
+    connect?: ChatSessionWhereUniqueInput | ChatSessionWhereUniqueInput[]
+  }
+
+  export type CommandLogUncheckedCreateNestedManyWithoutSshConnectionInput = {
+    create?: XOR<CommandLogCreateWithoutSshConnectionInput, CommandLogUncheckedCreateWithoutSshConnectionInput> | CommandLogCreateWithoutSshConnectionInput[] | CommandLogUncheckedCreateWithoutSshConnectionInput[]
+    connectOrCreate?: CommandLogCreateOrConnectWithoutSshConnectionInput | CommandLogCreateOrConnectWithoutSshConnectionInput[]
+    createMany?: CommandLogCreateManySshConnectionInputEnvelope
     connect?: CommandLogWhereUniqueInput | CommandLogWhereUniqueInput[]
   }
 
@@ -22920,14 +8622,6 @@ export namespace Prisma {
     decrement?: number
     multiply?: number
     divide?: number
-  }
-
-  export type EnumSSHAuthTypeFieldUpdateOperationsInput = {
-    set?: $Enums.SSHAuthType
-  }
-
-  export type EnumConnectionStatusFieldUpdateOperationsInput = {
-    set?: $Enums.ConnectionStatus
   }
 
   export type NullableDateTimeFieldUpdateOperationsInput = {
@@ -22942,31 +8636,59 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSshConnectionsInput, UserUpdateWithoutSshConnectionsInput>, UserUncheckedUpdateWithoutSshConnectionsInput>
   }
 
-  export type CommandLogUpdateManyWithoutConnectionNestedInput = {
-    create?: XOR<CommandLogCreateWithoutConnectionInput, CommandLogUncheckedCreateWithoutConnectionInput> | CommandLogCreateWithoutConnectionInput[] | CommandLogUncheckedCreateWithoutConnectionInput[]
-    connectOrCreate?: CommandLogCreateOrConnectWithoutConnectionInput | CommandLogCreateOrConnectWithoutConnectionInput[]
-    upsert?: CommandLogUpsertWithWhereUniqueWithoutConnectionInput | CommandLogUpsertWithWhereUniqueWithoutConnectionInput[]
-    createMany?: CommandLogCreateManyConnectionInputEnvelope
+  export type ChatSessionUpdateManyWithoutSshConnectionNestedInput = {
+    create?: XOR<ChatSessionCreateWithoutSshConnectionInput, ChatSessionUncheckedCreateWithoutSshConnectionInput> | ChatSessionCreateWithoutSshConnectionInput[] | ChatSessionUncheckedCreateWithoutSshConnectionInput[]
+    connectOrCreate?: ChatSessionCreateOrConnectWithoutSshConnectionInput | ChatSessionCreateOrConnectWithoutSshConnectionInput[]
+    upsert?: ChatSessionUpsertWithWhereUniqueWithoutSshConnectionInput | ChatSessionUpsertWithWhereUniqueWithoutSshConnectionInput[]
+    createMany?: ChatSessionCreateManySshConnectionInputEnvelope
+    set?: ChatSessionWhereUniqueInput | ChatSessionWhereUniqueInput[]
+    disconnect?: ChatSessionWhereUniqueInput | ChatSessionWhereUniqueInput[]
+    delete?: ChatSessionWhereUniqueInput | ChatSessionWhereUniqueInput[]
+    connect?: ChatSessionWhereUniqueInput | ChatSessionWhereUniqueInput[]
+    update?: ChatSessionUpdateWithWhereUniqueWithoutSshConnectionInput | ChatSessionUpdateWithWhereUniqueWithoutSshConnectionInput[]
+    updateMany?: ChatSessionUpdateManyWithWhereWithoutSshConnectionInput | ChatSessionUpdateManyWithWhereWithoutSshConnectionInput[]
+    deleteMany?: ChatSessionScalarWhereInput | ChatSessionScalarWhereInput[]
+  }
+
+  export type CommandLogUpdateManyWithoutSshConnectionNestedInput = {
+    create?: XOR<CommandLogCreateWithoutSshConnectionInput, CommandLogUncheckedCreateWithoutSshConnectionInput> | CommandLogCreateWithoutSshConnectionInput[] | CommandLogUncheckedCreateWithoutSshConnectionInput[]
+    connectOrCreate?: CommandLogCreateOrConnectWithoutSshConnectionInput | CommandLogCreateOrConnectWithoutSshConnectionInput[]
+    upsert?: CommandLogUpsertWithWhereUniqueWithoutSshConnectionInput | CommandLogUpsertWithWhereUniqueWithoutSshConnectionInput[]
+    createMany?: CommandLogCreateManySshConnectionInputEnvelope
     set?: CommandLogWhereUniqueInput | CommandLogWhereUniqueInput[]
     disconnect?: CommandLogWhereUniqueInput | CommandLogWhereUniqueInput[]
     delete?: CommandLogWhereUniqueInput | CommandLogWhereUniqueInput[]
     connect?: CommandLogWhereUniqueInput | CommandLogWhereUniqueInput[]
-    update?: CommandLogUpdateWithWhereUniqueWithoutConnectionInput | CommandLogUpdateWithWhereUniqueWithoutConnectionInput[]
-    updateMany?: CommandLogUpdateManyWithWhereWithoutConnectionInput | CommandLogUpdateManyWithWhereWithoutConnectionInput[]
+    update?: CommandLogUpdateWithWhereUniqueWithoutSshConnectionInput | CommandLogUpdateWithWhereUniqueWithoutSshConnectionInput[]
+    updateMany?: CommandLogUpdateManyWithWhereWithoutSshConnectionInput | CommandLogUpdateManyWithWhereWithoutSshConnectionInput[]
     deleteMany?: CommandLogScalarWhereInput | CommandLogScalarWhereInput[]
   }
 
-  export type CommandLogUncheckedUpdateManyWithoutConnectionNestedInput = {
-    create?: XOR<CommandLogCreateWithoutConnectionInput, CommandLogUncheckedCreateWithoutConnectionInput> | CommandLogCreateWithoutConnectionInput[] | CommandLogUncheckedCreateWithoutConnectionInput[]
-    connectOrCreate?: CommandLogCreateOrConnectWithoutConnectionInput | CommandLogCreateOrConnectWithoutConnectionInput[]
-    upsert?: CommandLogUpsertWithWhereUniqueWithoutConnectionInput | CommandLogUpsertWithWhereUniqueWithoutConnectionInput[]
-    createMany?: CommandLogCreateManyConnectionInputEnvelope
+  export type ChatSessionUncheckedUpdateManyWithoutSshConnectionNestedInput = {
+    create?: XOR<ChatSessionCreateWithoutSshConnectionInput, ChatSessionUncheckedCreateWithoutSshConnectionInput> | ChatSessionCreateWithoutSshConnectionInput[] | ChatSessionUncheckedCreateWithoutSshConnectionInput[]
+    connectOrCreate?: ChatSessionCreateOrConnectWithoutSshConnectionInput | ChatSessionCreateOrConnectWithoutSshConnectionInput[]
+    upsert?: ChatSessionUpsertWithWhereUniqueWithoutSshConnectionInput | ChatSessionUpsertWithWhereUniqueWithoutSshConnectionInput[]
+    createMany?: ChatSessionCreateManySshConnectionInputEnvelope
+    set?: ChatSessionWhereUniqueInput | ChatSessionWhereUniqueInput[]
+    disconnect?: ChatSessionWhereUniqueInput | ChatSessionWhereUniqueInput[]
+    delete?: ChatSessionWhereUniqueInput | ChatSessionWhereUniqueInput[]
+    connect?: ChatSessionWhereUniqueInput | ChatSessionWhereUniqueInput[]
+    update?: ChatSessionUpdateWithWhereUniqueWithoutSshConnectionInput | ChatSessionUpdateWithWhereUniqueWithoutSshConnectionInput[]
+    updateMany?: ChatSessionUpdateManyWithWhereWithoutSshConnectionInput | ChatSessionUpdateManyWithWhereWithoutSshConnectionInput[]
+    deleteMany?: ChatSessionScalarWhereInput | ChatSessionScalarWhereInput[]
+  }
+
+  export type CommandLogUncheckedUpdateManyWithoutSshConnectionNestedInput = {
+    create?: XOR<CommandLogCreateWithoutSshConnectionInput, CommandLogUncheckedCreateWithoutSshConnectionInput> | CommandLogCreateWithoutSshConnectionInput[] | CommandLogUncheckedCreateWithoutSshConnectionInput[]
+    connectOrCreate?: CommandLogCreateOrConnectWithoutSshConnectionInput | CommandLogCreateOrConnectWithoutSshConnectionInput[]
+    upsert?: CommandLogUpsertWithWhereUniqueWithoutSshConnectionInput | CommandLogUpsertWithWhereUniqueWithoutSshConnectionInput[]
+    createMany?: CommandLogCreateManySshConnectionInputEnvelope
     set?: CommandLogWhereUniqueInput | CommandLogWhereUniqueInput[]
     disconnect?: CommandLogWhereUniqueInput | CommandLogWhereUniqueInput[]
     delete?: CommandLogWhereUniqueInput | CommandLogWhereUniqueInput[]
     connect?: CommandLogWhereUniqueInput | CommandLogWhereUniqueInput[]
-    update?: CommandLogUpdateWithWhereUniqueWithoutConnectionInput | CommandLogUpdateWithWhereUniqueWithoutConnectionInput[]
-    updateMany?: CommandLogUpdateManyWithWhereWithoutConnectionInput | CommandLogUpdateManyWithWhereWithoutConnectionInput[]
+    update?: CommandLogUpdateWithWhereUniqueWithoutSshConnectionInput | CommandLogUpdateWithWhereUniqueWithoutSshConnectionInput[]
+    updateMany?: CommandLogUpdateManyWithWhereWithoutSshConnectionInput | CommandLogUpdateManyWithWhereWithoutSshConnectionInput[]
     deleteMany?: CommandLogScalarWhereInput | CommandLogScalarWhereInput[]
   }
 
@@ -22976,18 +8698,17 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+  export type SSHConnectionCreateNestedOneWithoutChatSessionsInput = {
+    create?: XOR<SSHConnectionCreateWithoutChatSessionsInput, SSHConnectionUncheckedCreateWithoutChatSessionsInput>
+    connectOrCreate?: SSHConnectionCreateOrConnectWithoutChatSessionsInput
+    connect?: SSHConnectionWhereUniqueInput
+  }
+
   export type MessageCreateNestedManyWithoutSessionInput = {
     create?: XOR<MessageCreateWithoutSessionInput, MessageUncheckedCreateWithoutSessionInput> | MessageCreateWithoutSessionInput[] | MessageUncheckedCreateWithoutSessionInput[]
     connectOrCreate?: MessageCreateOrConnectWithoutSessionInput | MessageCreateOrConnectWithoutSessionInput[]
     createMany?: MessageCreateManySessionInputEnvelope
     connect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
-  }
-
-  export type TopicCreateNestedManyWithoutSessionInput = {
-    create?: XOR<TopicCreateWithoutSessionInput, TopicUncheckedCreateWithoutSessionInput> | TopicCreateWithoutSessionInput[] | TopicUncheckedCreateWithoutSessionInput[]
-    connectOrCreate?: TopicCreateOrConnectWithoutSessionInput | TopicCreateOrConnectWithoutSessionInput[]
-    createMany?: TopicCreateManySessionInputEnvelope
-    connect?: TopicWhereUniqueInput | TopicWhereUniqueInput[]
   }
 
   export type MessageUncheckedCreateNestedManyWithoutSessionInput = {
@@ -22997,23 +8718,22 @@ export namespace Prisma {
     connect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
   }
 
-  export type TopicUncheckedCreateNestedManyWithoutSessionInput = {
-    create?: XOR<TopicCreateWithoutSessionInput, TopicUncheckedCreateWithoutSessionInput> | TopicCreateWithoutSessionInput[] | TopicUncheckedCreateWithoutSessionInput[]
-    connectOrCreate?: TopicCreateOrConnectWithoutSessionInput | TopicCreateOrConnectWithoutSessionInput[]
-    createMany?: TopicCreateManySessionInputEnvelope
-    connect?: TopicWhereUniqueInput | TopicWhereUniqueInput[]
-  }
-
-  export type EnumSessionTypeFieldUpdateOperationsInput = {
-    set?: $Enums.SessionType
-  }
-
   export type UserUpdateOneRequiredWithoutChatSessionsNestedInput = {
     create?: XOR<UserCreateWithoutChatSessionsInput, UserUncheckedCreateWithoutChatSessionsInput>
     connectOrCreate?: UserCreateOrConnectWithoutChatSessionsInput
     upsert?: UserUpsertWithoutChatSessionsInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutChatSessionsInput, UserUpdateWithoutChatSessionsInput>, UserUncheckedUpdateWithoutChatSessionsInput>
+  }
+
+  export type SSHConnectionUpdateOneWithoutChatSessionsNestedInput = {
+    create?: XOR<SSHConnectionCreateWithoutChatSessionsInput, SSHConnectionUncheckedCreateWithoutChatSessionsInput>
+    connectOrCreate?: SSHConnectionCreateOrConnectWithoutChatSessionsInput
+    upsert?: SSHConnectionUpsertWithoutChatSessionsInput
+    disconnect?: SSHConnectionWhereInput | boolean
+    delete?: SSHConnectionWhereInput | boolean
+    connect?: SSHConnectionWhereUniqueInput
+    update?: XOR<XOR<SSHConnectionUpdateToOneWithWhereWithoutChatSessionsInput, SSHConnectionUpdateWithoutChatSessionsInput>, SSHConnectionUncheckedUpdateWithoutChatSessionsInput>
   }
 
   export type MessageUpdateManyWithoutSessionNestedInput = {
@@ -23030,20 +8750,6 @@ export namespace Prisma {
     deleteMany?: MessageScalarWhereInput | MessageScalarWhereInput[]
   }
 
-  export type TopicUpdateManyWithoutSessionNestedInput = {
-    create?: XOR<TopicCreateWithoutSessionInput, TopicUncheckedCreateWithoutSessionInput> | TopicCreateWithoutSessionInput[] | TopicUncheckedCreateWithoutSessionInput[]
-    connectOrCreate?: TopicCreateOrConnectWithoutSessionInput | TopicCreateOrConnectWithoutSessionInput[]
-    upsert?: TopicUpsertWithWhereUniqueWithoutSessionInput | TopicUpsertWithWhereUniqueWithoutSessionInput[]
-    createMany?: TopicCreateManySessionInputEnvelope
-    set?: TopicWhereUniqueInput | TopicWhereUniqueInput[]
-    disconnect?: TopicWhereUniqueInput | TopicWhereUniqueInput[]
-    delete?: TopicWhereUniqueInput | TopicWhereUniqueInput[]
-    connect?: TopicWhereUniqueInput | TopicWhereUniqueInput[]
-    update?: TopicUpdateWithWhereUniqueWithoutSessionInput | TopicUpdateWithWhereUniqueWithoutSessionInput[]
-    updateMany?: TopicUpdateManyWithWhereWithoutSessionInput | TopicUpdateManyWithWhereWithoutSessionInput[]
-    deleteMany?: TopicScalarWhereInput | TopicScalarWhereInput[]
-  }
-
   export type MessageUncheckedUpdateManyWithoutSessionNestedInput = {
     create?: XOR<MessageCreateWithoutSessionInput, MessageUncheckedCreateWithoutSessionInput> | MessageCreateWithoutSessionInput[] | MessageUncheckedCreateWithoutSessionInput[]
     connectOrCreate?: MessageCreateOrConnectWithoutSessionInput | MessageCreateOrConnectWithoutSessionInput[]
@@ -23058,126 +8764,16 @@ export namespace Prisma {
     deleteMany?: MessageScalarWhereInput | MessageScalarWhereInput[]
   }
 
-  export type TopicUncheckedUpdateManyWithoutSessionNestedInput = {
-    create?: XOR<TopicCreateWithoutSessionInput, TopicUncheckedCreateWithoutSessionInput> | TopicCreateWithoutSessionInput[] | TopicUncheckedCreateWithoutSessionInput[]
-    connectOrCreate?: TopicCreateOrConnectWithoutSessionInput | TopicCreateOrConnectWithoutSessionInput[]
-    upsert?: TopicUpsertWithWhereUniqueWithoutSessionInput | TopicUpsertWithWhereUniqueWithoutSessionInput[]
-    createMany?: TopicCreateManySessionInputEnvelope
-    set?: TopicWhereUniqueInput | TopicWhereUniqueInput[]
-    disconnect?: TopicWhereUniqueInput | TopicWhereUniqueInput[]
-    delete?: TopicWhereUniqueInput | TopicWhereUniqueInput[]
-    connect?: TopicWhereUniqueInput | TopicWhereUniqueInput[]
-    update?: TopicUpdateWithWhereUniqueWithoutSessionInput | TopicUpdateWithWhereUniqueWithoutSessionInput[]
-    updateMany?: TopicUpdateManyWithWhereWithoutSessionInput | TopicUpdateManyWithWhereWithoutSessionInput[]
-    deleteMany?: TopicScalarWhereInput | TopicScalarWhereInput[]
-  }
-
-  export type ChatSessionCreateNestedOneWithoutTopicsInput = {
-    create?: XOR<ChatSessionCreateWithoutTopicsInput, ChatSessionUncheckedCreateWithoutTopicsInput>
-    connectOrCreate?: ChatSessionCreateOrConnectWithoutTopicsInput
-    connect?: ChatSessionWhereUniqueInput
-  }
-
-  export type MessageCreateNestedManyWithoutTopicInput = {
-    create?: XOR<MessageCreateWithoutTopicInput, MessageUncheckedCreateWithoutTopicInput> | MessageCreateWithoutTopicInput[] | MessageUncheckedCreateWithoutTopicInput[]
-    connectOrCreate?: MessageCreateOrConnectWithoutTopicInput | MessageCreateOrConnectWithoutTopicInput[]
-    createMany?: MessageCreateManyTopicInputEnvelope
-    connect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
-  }
-
-  export type MessageUncheckedCreateNestedManyWithoutTopicInput = {
-    create?: XOR<MessageCreateWithoutTopicInput, MessageUncheckedCreateWithoutTopicInput> | MessageCreateWithoutTopicInput[] | MessageUncheckedCreateWithoutTopicInput[]
-    connectOrCreate?: MessageCreateOrConnectWithoutTopicInput | MessageCreateOrConnectWithoutTopicInput[]
-    createMany?: MessageCreateManyTopicInputEnvelope
-    connect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
-  }
-
-  export type ChatSessionUpdateOneRequiredWithoutTopicsNestedInput = {
-    create?: XOR<ChatSessionCreateWithoutTopicsInput, ChatSessionUncheckedCreateWithoutTopicsInput>
-    connectOrCreate?: ChatSessionCreateOrConnectWithoutTopicsInput
-    upsert?: ChatSessionUpsertWithoutTopicsInput
-    connect?: ChatSessionWhereUniqueInput
-    update?: XOR<XOR<ChatSessionUpdateToOneWithWhereWithoutTopicsInput, ChatSessionUpdateWithoutTopicsInput>, ChatSessionUncheckedUpdateWithoutTopicsInput>
-  }
-
-  export type MessageUpdateManyWithoutTopicNestedInput = {
-    create?: XOR<MessageCreateWithoutTopicInput, MessageUncheckedCreateWithoutTopicInput> | MessageCreateWithoutTopicInput[] | MessageUncheckedCreateWithoutTopicInput[]
-    connectOrCreate?: MessageCreateOrConnectWithoutTopicInput | MessageCreateOrConnectWithoutTopicInput[]
-    upsert?: MessageUpsertWithWhereUniqueWithoutTopicInput | MessageUpsertWithWhereUniqueWithoutTopicInput[]
-    createMany?: MessageCreateManyTopicInputEnvelope
-    set?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
-    disconnect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
-    delete?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
-    connect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
-    update?: MessageUpdateWithWhereUniqueWithoutTopicInput | MessageUpdateWithWhereUniqueWithoutTopicInput[]
-    updateMany?: MessageUpdateManyWithWhereWithoutTopicInput | MessageUpdateManyWithWhereWithoutTopicInput[]
-    deleteMany?: MessageScalarWhereInput | MessageScalarWhereInput[]
-  }
-
-  export type MessageUncheckedUpdateManyWithoutTopicNestedInput = {
-    create?: XOR<MessageCreateWithoutTopicInput, MessageUncheckedCreateWithoutTopicInput> | MessageCreateWithoutTopicInput[] | MessageUncheckedCreateWithoutTopicInput[]
-    connectOrCreate?: MessageCreateOrConnectWithoutTopicInput | MessageCreateOrConnectWithoutTopicInput[]
-    upsert?: MessageUpsertWithWhereUniqueWithoutTopicInput | MessageUpsertWithWhereUniqueWithoutTopicInput[]
-    createMany?: MessageCreateManyTopicInputEnvelope
-    set?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
-    disconnect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
-    delete?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
-    connect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
-    update?: MessageUpdateWithWhereUniqueWithoutTopicInput | MessageUpdateWithWhereUniqueWithoutTopicInput[]
-    updateMany?: MessageUpdateManyWithWhereWithoutTopicInput | MessageUpdateManyWithWhereWithoutTopicInput[]
-    deleteMany?: MessageScalarWhereInput | MessageScalarWhereInput[]
-  }
-
-  export type UserCreateNestedOneWithoutMessagesInput = {
-    create?: XOR<UserCreateWithoutMessagesInput, UserUncheckedCreateWithoutMessagesInput>
-    connectOrCreate?: UserCreateOrConnectWithoutMessagesInput
-    connect?: UserWhereUniqueInput
-  }
-
   export type ChatSessionCreateNestedOneWithoutMessagesInput = {
     create?: XOR<ChatSessionCreateWithoutMessagesInput, ChatSessionUncheckedCreateWithoutMessagesInput>
     connectOrCreate?: ChatSessionCreateOrConnectWithoutMessagesInput
     connect?: ChatSessionWhereUniqueInput
   }
 
-  export type TopicCreateNestedOneWithoutMessagesInput = {
-    create?: XOR<TopicCreateWithoutMessagesInput, TopicUncheckedCreateWithoutMessagesInput>
-    connectOrCreate?: TopicCreateOrConnectWithoutMessagesInput
-    connect?: TopicWhereUniqueInput
-  }
-
-  export type MessageFileCreateNestedManyWithoutMessageInput = {
-    create?: XOR<MessageFileCreateWithoutMessageInput, MessageFileUncheckedCreateWithoutMessageInput> | MessageFileCreateWithoutMessageInput[] | MessageFileUncheckedCreateWithoutMessageInput[]
-    connectOrCreate?: MessageFileCreateOrConnectWithoutMessageInput | MessageFileCreateOrConnectWithoutMessageInput[]
-    createMany?: MessageFileCreateManyMessageInputEnvelope
-    connect?: MessageFileWhereUniqueInput | MessageFileWhereUniqueInput[]
-  }
-
-  export type MessageFileUncheckedCreateNestedManyWithoutMessageInput = {
-    create?: XOR<MessageFileCreateWithoutMessageInput, MessageFileUncheckedCreateWithoutMessageInput> | MessageFileCreateWithoutMessageInput[] | MessageFileUncheckedCreateWithoutMessageInput[]
-    connectOrCreate?: MessageFileCreateOrConnectWithoutMessageInput | MessageFileCreateOrConnectWithoutMessageInput[]
-    createMany?: MessageFileCreateManyMessageInputEnvelope
-    connect?: MessageFileWhereUniqueInput | MessageFileWhereUniqueInput[]
-  }
-
-  export type EnumMessageRoleFieldUpdateOperationsInput = {
-    set?: $Enums.MessageRole
-  }
-
-  export type NullableIntFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
-  }
-
-  export type UserUpdateOneRequiredWithoutMessagesNestedInput = {
+  export type UserCreateNestedOneWithoutMessagesInput = {
     create?: XOR<UserCreateWithoutMessagesInput, UserUncheckedCreateWithoutMessagesInput>
     connectOrCreate?: UserCreateOrConnectWithoutMessagesInput
-    upsert?: UserUpsertWithoutMessagesInput
     connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutMessagesInput, UserUpdateWithoutMessagesInput>, UserUncheckedUpdateWithoutMessagesInput>
   }
 
   export type ChatSessionUpdateOneRequiredWithoutMessagesNestedInput = {
@@ -23188,134 +8784,12 @@ export namespace Prisma {
     update?: XOR<XOR<ChatSessionUpdateToOneWithWhereWithoutMessagesInput, ChatSessionUpdateWithoutMessagesInput>, ChatSessionUncheckedUpdateWithoutMessagesInput>
   }
 
-  export type TopicUpdateOneWithoutMessagesNestedInput = {
-    create?: XOR<TopicCreateWithoutMessagesInput, TopicUncheckedCreateWithoutMessagesInput>
-    connectOrCreate?: TopicCreateOrConnectWithoutMessagesInput
-    upsert?: TopicUpsertWithoutMessagesInput
-    disconnect?: TopicWhereInput | boolean
-    delete?: TopicWhereInput | boolean
-    connect?: TopicWhereUniqueInput
-    update?: XOR<XOR<TopicUpdateToOneWithWhereWithoutMessagesInput, TopicUpdateWithoutMessagesInput>, TopicUncheckedUpdateWithoutMessagesInput>
-  }
-
-  export type MessageFileUpdateManyWithoutMessageNestedInput = {
-    create?: XOR<MessageFileCreateWithoutMessageInput, MessageFileUncheckedCreateWithoutMessageInput> | MessageFileCreateWithoutMessageInput[] | MessageFileUncheckedCreateWithoutMessageInput[]
-    connectOrCreate?: MessageFileCreateOrConnectWithoutMessageInput | MessageFileCreateOrConnectWithoutMessageInput[]
-    upsert?: MessageFileUpsertWithWhereUniqueWithoutMessageInput | MessageFileUpsertWithWhereUniqueWithoutMessageInput[]
-    createMany?: MessageFileCreateManyMessageInputEnvelope
-    set?: MessageFileWhereUniqueInput | MessageFileWhereUniqueInput[]
-    disconnect?: MessageFileWhereUniqueInput | MessageFileWhereUniqueInput[]
-    delete?: MessageFileWhereUniqueInput | MessageFileWhereUniqueInput[]
-    connect?: MessageFileWhereUniqueInput | MessageFileWhereUniqueInput[]
-    update?: MessageFileUpdateWithWhereUniqueWithoutMessageInput | MessageFileUpdateWithWhereUniqueWithoutMessageInput[]
-    updateMany?: MessageFileUpdateManyWithWhereWithoutMessageInput | MessageFileUpdateManyWithWhereWithoutMessageInput[]
-    deleteMany?: MessageFileScalarWhereInput | MessageFileScalarWhereInput[]
-  }
-
-  export type MessageFileUncheckedUpdateManyWithoutMessageNestedInput = {
-    create?: XOR<MessageFileCreateWithoutMessageInput, MessageFileUncheckedCreateWithoutMessageInput> | MessageFileCreateWithoutMessageInput[] | MessageFileUncheckedCreateWithoutMessageInput[]
-    connectOrCreate?: MessageFileCreateOrConnectWithoutMessageInput | MessageFileCreateOrConnectWithoutMessageInput[]
-    upsert?: MessageFileUpsertWithWhereUniqueWithoutMessageInput | MessageFileUpsertWithWhereUniqueWithoutMessageInput[]
-    createMany?: MessageFileCreateManyMessageInputEnvelope
-    set?: MessageFileWhereUniqueInput | MessageFileWhereUniqueInput[]
-    disconnect?: MessageFileWhereUniqueInput | MessageFileWhereUniqueInput[]
-    delete?: MessageFileWhereUniqueInput | MessageFileWhereUniqueInput[]
-    connect?: MessageFileWhereUniqueInput | MessageFileWhereUniqueInput[]
-    update?: MessageFileUpdateWithWhereUniqueWithoutMessageInput | MessageFileUpdateWithWhereUniqueWithoutMessageInput[]
-    updateMany?: MessageFileUpdateManyWithWhereWithoutMessageInput | MessageFileUpdateManyWithWhereWithoutMessageInput[]
-    deleteMany?: MessageFileScalarWhereInput | MessageFileScalarWhereInput[]
-  }
-
-  export type MessageCreateNestedOneWithoutFilesInput = {
-    create?: XOR<MessageCreateWithoutFilesInput, MessageUncheckedCreateWithoutFilesInput>
-    connectOrCreate?: MessageCreateOrConnectWithoutFilesInput
-    connect?: MessageWhereUniqueInput
-  }
-
-  export type FileCreateNestedOneWithoutMessagesInput = {
-    create?: XOR<FileCreateWithoutMessagesInput, FileUncheckedCreateWithoutMessagesInput>
-    connectOrCreate?: FileCreateOrConnectWithoutMessagesInput
-    connect?: FileWhereUniqueInput
-  }
-
-  export type MessageUpdateOneRequiredWithoutFilesNestedInput = {
-    create?: XOR<MessageCreateWithoutFilesInput, MessageUncheckedCreateWithoutFilesInput>
-    connectOrCreate?: MessageCreateOrConnectWithoutFilesInput
-    upsert?: MessageUpsertWithoutFilesInput
-    connect?: MessageWhereUniqueInput
-    update?: XOR<XOR<MessageUpdateToOneWithWhereWithoutFilesInput, MessageUpdateWithoutFilesInput>, MessageUncheckedUpdateWithoutFilesInput>
-  }
-
-  export type FileUpdateOneRequiredWithoutMessagesNestedInput = {
-    create?: XOR<FileCreateWithoutMessagesInput, FileUncheckedCreateWithoutMessagesInput>
-    connectOrCreate?: FileCreateOrConnectWithoutMessagesInput
-    upsert?: FileUpsertWithoutMessagesInput
-    connect?: FileWhereUniqueInput
-    update?: XOR<XOR<FileUpdateToOneWithWhereWithoutMessagesInput, FileUpdateWithoutMessagesInput>, FileUncheckedUpdateWithoutMessagesInput>
-  }
-
-  export type UserCreateNestedOneWithoutFilesInput = {
-    create?: XOR<UserCreateWithoutFilesInput, UserUncheckedCreateWithoutFilesInput>
-    connectOrCreate?: UserCreateOrConnectWithoutFilesInput
+  export type UserUpdateOneRequiredWithoutMessagesNestedInput = {
+    create?: XOR<UserCreateWithoutMessagesInput, UserUncheckedCreateWithoutMessagesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutMessagesInput
+    upsert?: UserUpsertWithoutMessagesInput
     connect?: UserWhereUniqueInput
-  }
-
-  export type MessageFileCreateNestedManyWithoutFileInput = {
-    create?: XOR<MessageFileCreateWithoutFileInput, MessageFileUncheckedCreateWithoutFileInput> | MessageFileCreateWithoutFileInput[] | MessageFileUncheckedCreateWithoutFileInput[]
-    connectOrCreate?: MessageFileCreateOrConnectWithoutFileInput | MessageFileCreateOrConnectWithoutFileInput[]
-    createMany?: MessageFileCreateManyFileInputEnvelope
-    connect?: MessageFileWhereUniqueInput | MessageFileWhereUniqueInput[]
-  }
-
-  export type MessageFileUncheckedCreateNestedManyWithoutFileInput = {
-    create?: XOR<MessageFileCreateWithoutFileInput, MessageFileUncheckedCreateWithoutFileInput> | MessageFileCreateWithoutFileInput[] | MessageFileUncheckedCreateWithoutFileInput[]
-    connectOrCreate?: MessageFileCreateOrConnectWithoutFileInput | MessageFileCreateOrConnectWithoutFileInput[]
-    createMany?: MessageFileCreateManyFileInputEnvelope
-    connect?: MessageFileWhereUniqueInput | MessageFileWhereUniqueInput[]
-  }
-
-  export type BigIntFieldUpdateOperationsInput = {
-    set?: bigint | number
-    increment?: bigint | number
-    decrement?: bigint | number
-    multiply?: bigint | number
-    divide?: bigint | number
-  }
-
-  export type UserUpdateOneRequiredWithoutFilesNestedInput = {
-    create?: XOR<UserCreateWithoutFilesInput, UserUncheckedCreateWithoutFilesInput>
-    connectOrCreate?: UserCreateOrConnectWithoutFilesInput
-    upsert?: UserUpsertWithoutFilesInput
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutFilesInput, UserUpdateWithoutFilesInput>, UserUncheckedUpdateWithoutFilesInput>
-  }
-
-  export type MessageFileUpdateManyWithoutFileNestedInput = {
-    create?: XOR<MessageFileCreateWithoutFileInput, MessageFileUncheckedCreateWithoutFileInput> | MessageFileCreateWithoutFileInput[] | MessageFileUncheckedCreateWithoutFileInput[]
-    connectOrCreate?: MessageFileCreateOrConnectWithoutFileInput | MessageFileCreateOrConnectWithoutFileInput[]
-    upsert?: MessageFileUpsertWithWhereUniqueWithoutFileInput | MessageFileUpsertWithWhereUniqueWithoutFileInput[]
-    createMany?: MessageFileCreateManyFileInputEnvelope
-    set?: MessageFileWhereUniqueInput | MessageFileWhereUniqueInput[]
-    disconnect?: MessageFileWhereUniqueInput | MessageFileWhereUniqueInput[]
-    delete?: MessageFileWhereUniqueInput | MessageFileWhereUniqueInput[]
-    connect?: MessageFileWhereUniqueInput | MessageFileWhereUniqueInput[]
-    update?: MessageFileUpdateWithWhereUniqueWithoutFileInput | MessageFileUpdateWithWhereUniqueWithoutFileInput[]
-    updateMany?: MessageFileUpdateManyWithWhereWithoutFileInput | MessageFileUpdateManyWithWhereWithoutFileInput[]
-    deleteMany?: MessageFileScalarWhereInput | MessageFileScalarWhereInput[]
-  }
-
-  export type MessageFileUncheckedUpdateManyWithoutFileNestedInput = {
-    create?: XOR<MessageFileCreateWithoutFileInput, MessageFileUncheckedCreateWithoutFileInput> | MessageFileCreateWithoutFileInput[] | MessageFileUncheckedCreateWithoutFileInput[]
-    connectOrCreate?: MessageFileCreateOrConnectWithoutFileInput | MessageFileCreateOrConnectWithoutFileInput[]
-    upsert?: MessageFileUpsertWithWhereUniqueWithoutFileInput | MessageFileUpsertWithWhereUniqueWithoutFileInput[]
-    createMany?: MessageFileCreateManyFileInputEnvelope
-    set?: MessageFileWhereUniqueInput | MessageFileWhereUniqueInput[]
-    disconnect?: MessageFileWhereUniqueInput | MessageFileWhereUniqueInput[]
-    delete?: MessageFileWhereUniqueInput | MessageFileWhereUniqueInput[]
-    connect?: MessageFileWhereUniqueInput | MessageFileWhereUniqueInput[]
-    update?: MessageFileUpdateWithWhereUniqueWithoutFileInput | MessageFileUpdateWithWhereUniqueWithoutFileInput[]
-    updateMany?: MessageFileUpdateManyWithWhereWithoutFileInput | MessageFileUpdateManyWithWhereWithoutFileInput[]
-    deleteMany?: MessageFileScalarWhereInput | MessageFileScalarWhereInput[]
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutMessagesInput, UserUpdateWithoutMessagesInput>, UserUncheckedUpdateWithoutMessagesInput>
   }
 
   export type UserCreateNestedOneWithoutCommandLogsInput = {
@@ -23330,8 +8804,12 @@ export namespace Prisma {
     connect?: SSHConnectionWhereUniqueInput
   }
 
-  export type EnumSafetyLevelFieldUpdateOperationsInput = {
-    set?: $Enums.SafetyLevel
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
   export type UserUpdateOneRequiredWithoutCommandLogsNestedInput = {
@@ -23342,169 +8820,20 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCommandLogsInput, UserUpdateWithoutCommandLogsInput>, UserUncheckedUpdateWithoutCommandLogsInput>
   }
 
-  export type SSHConnectionUpdateOneRequiredWithoutCommandLogsNestedInput = {
+  export type SSHConnectionUpdateOneWithoutCommandLogsNestedInput = {
     create?: XOR<SSHConnectionCreateWithoutCommandLogsInput, SSHConnectionUncheckedCreateWithoutCommandLogsInput>
     connectOrCreate?: SSHConnectionCreateOrConnectWithoutCommandLogsInput
     upsert?: SSHConnectionUpsertWithoutCommandLogsInput
+    disconnect?: SSHConnectionWhereInput | boolean
+    delete?: SSHConnectionWhereInput | boolean
     connect?: SSHConnectionWhereUniqueInput
     update?: XOR<XOR<SSHConnectionUpdateToOneWithWhereWithoutCommandLogsInput, SSHConnectionUpdateWithoutCommandLogsInput>, SSHConnectionUncheckedUpdateWithoutCommandLogsInput>
   }
 
-  export type UserCreateNestedOneWithoutUsageStatsInput = {
-    create?: XOR<UserCreateWithoutUsageStatsInput, UserUncheckedCreateWithoutUsageStatsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutUsageStatsInput
-    connect?: UserWhereUniqueInput
-  }
-
-  export type UserUpdateOneRequiredWithoutUsageStatsNestedInput = {
-    create?: XOR<UserCreateWithoutUsageStatsInput, UserUncheckedCreateWithoutUsageStatsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutUsageStatsInput
-    upsert?: UserUpsertWithoutUsageStatsInput
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutUsageStatsInput, UserUpdateWithoutUsageStatsInput>, UserUncheckedUpdateWithoutUsageStatsInput>
-  }
-
-  export type ApiKeyCreatescopesInput = {
-    set: string[]
-  }
-
-  export type UserCreateNestedOneWithoutApiKeysInput = {
-    create?: XOR<UserCreateWithoutApiKeysInput, UserUncheckedCreateWithoutApiKeysInput>
-    connectOrCreate?: UserCreateOrConnectWithoutApiKeysInput
-    connect?: UserWhereUniqueInput
-  }
-
-  export type EnumApiKeyTypeFieldUpdateOperationsInput = {
-    set?: $Enums.ApiKeyType
-  }
-
-  export type ApiKeyUpdatescopesInput = {
-    set?: string[]
-    push?: string | string[]
-  }
-
-  export type UserUpdateOneRequiredWithoutApiKeysNestedInput = {
-    create?: XOR<UserCreateWithoutApiKeysInput, UserUncheckedCreateWithoutApiKeysInput>
-    connectOrCreate?: UserCreateOrConnectWithoutApiKeysInput
-    upsert?: UserUpsertWithoutApiKeysInput
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutApiKeysInput, UserUpdateWithoutApiKeysInput>, UserUncheckedUpdateWithoutApiKeysInput>
-  }
-
-  export type EnumConfigTypeFieldUpdateOperationsInput = {
-    set?: $Enums.ConfigType
-  }
-
-  export type UserCreateNestedOneWithoutSessionGroupsInput = {
-    create?: XOR<UserCreateWithoutSessionGroupsInput, UserUncheckedCreateWithoutSessionGroupsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutSessionGroupsInput
-    connect?: UserWhereUniqueInput
-  }
-
-  export type UserUpdateOneRequiredWithoutSessionGroupsNestedInput = {
-    create?: XOR<UserCreateWithoutSessionGroupsInput, UserUncheckedCreateWithoutSessionGroupsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutSessionGroupsInput
-    upsert?: UserUpsertWithoutSessionGroupsInput
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSessionGroupsInput, UserUpdateWithoutSessionGroupsInput>, UserUncheckedUpdateWithoutSessionGroupsInput>
-  }
-
-  export type UserCreateNestedOneWithoutPluginsInput = {
-    create?: XOR<UserCreateWithoutPluginsInput, UserUncheckedCreateWithoutPluginsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutPluginsInput
-    connect?: UserWhereUniqueInput
-  }
-
-  export type UserUpdateOneRequiredWithoutPluginsNestedInput = {
-    create?: XOR<UserCreateWithoutPluginsInput, UserUncheckedCreateWithoutPluginsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutPluginsInput
-    upsert?: UserUpsertWithoutPluginsInput
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutPluginsInput, UserUpdateWithoutPluginsInput>, UserUncheckedUpdateWithoutPluginsInput>
-  }
-
-  export type UserCreateNestedOneWithoutKnowledgeBasesInput = {
-    create?: XOR<UserCreateWithoutKnowledgeBasesInput, UserUncheckedCreateWithoutKnowledgeBasesInput>
-    connectOrCreate?: UserCreateOrConnectWithoutKnowledgeBasesInput
-    connect?: UserWhereUniqueInput
-  }
-
-  export type KnowledgeDocumentCreateNestedManyWithoutKnowledgeBaseInput = {
-    create?: XOR<KnowledgeDocumentCreateWithoutKnowledgeBaseInput, KnowledgeDocumentUncheckedCreateWithoutKnowledgeBaseInput> | KnowledgeDocumentCreateWithoutKnowledgeBaseInput[] | KnowledgeDocumentUncheckedCreateWithoutKnowledgeBaseInput[]
-    connectOrCreate?: KnowledgeDocumentCreateOrConnectWithoutKnowledgeBaseInput | KnowledgeDocumentCreateOrConnectWithoutKnowledgeBaseInput[]
-    createMany?: KnowledgeDocumentCreateManyKnowledgeBaseInputEnvelope
-    connect?: KnowledgeDocumentWhereUniqueInput | KnowledgeDocumentWhereUniqueInput[]
-  }
-
-  export type KnowledgeDocumentUncheckedCreateNestedManyWithoutKnowledgeBaseInput = {
-    create?: XOR<KnowledgeDocumentCreateWithoutKnowledgeBaseInput, KnowledgeDocumentUncheckedCreateWithoutKnowledgeBaseInput> | KnowledgeDocumentCreateWithoutKnowledgeBaseInput[] | KnowledgeDocumentUncheckedCreateWithoutKnowledgeBaseInput[]
-    connectOrCreate?: KnowledgeDocumentCreateOrConnectWithoutKnowledgeBaseInput | KnowledgeDocumentCreateOrConnectWithoutKnowledgeBaseInput[]
-    createMany?: KnowledgeDocumentCreateManyKnowledgeBaseInputEnvelope
-    connect?: KnowledgeDocumentWhereUniqueInput | KnowledgeDocumentWhereUniqueInput[]
-  }
-
-  export type EnumKnowledgeTypeFieldUpdateOperationsInput = {
-    set?: $Enums.KnowledgeType
-  }
-
-  export type UserUpdateOneRequiredWithoutKnowledgeBasesNestedInput = {
-    create?: XOR<UserCreateWithoutKnowledgeBasesInput, UserUncheckedCreateWithoutKnowledgeBasesInput>
-    connectOrCreate?: UserCreateOrConnectWithoutKnowledgeBasesInput
-    upsert?: UserUpsertWithoutKnowledgeBasesInput
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutKnowledgeBasesInput, UserUpdateWithoutKnowledgeBasesInput>, UserUncheckedUpdateWithoutKnowledgeBasesInput>
-  }
-
-  export type KnowledgeDocumentUpdateManyWithoutKnowledgeBaseNestedInput = {
-    create?: XOR<KnowledgeDocumentCreateWithoutKnowledgeBaseInput, KnowledgeDocumentUncheckedCreateWithoutKnowledgeBaseInput> | KnowledgeDocumentCreateWithoutKnowledgeBaseInput[] | KnowledgeDocumentUncheckedCreateWithoutKnowledgeBaseInput[]
-    connectOrCreate?: KnowledgeDocumentCreateOrConnectWithoutKnowledgeBaseInput | KnowledgeDocumentCreateOrConnectWithoutKnowledgeBaseInput[]
-    upsert?: KnowledgeDocumentUpsertWithWhereUniqueWithoutKnowledgeBaseInput | KnowledgeDocumentUpsertWithWhereUniqueWithoutKnowledgeBaseInput[]
-    createMany?: KnowledgeDocumentCreateManyKnowledgeBaseInputEnvelope
-    set?: KnowledgeDocumentWhereUniqueInput | KnowledgeDocumentWhereUniqueInput[]
-    disconnect?: KnowledgeDocumentWhereUniqueInput | KnowledgeDocumentWhereUniqueInput[]
-    delete?: KnowledgeDocumentWhereUniqueInput | KnowledgeDocumentWhereUniqueInput[]
-    connect?: KnowledgeDocumentWhereUniqueInput | KnowledgeDocumentWhereUniqueInput[]
-    update?: KnowledgeDocumentUpdateWithWhereUniqueWithoutKnowledgeBaseInput | KnowledgeDocumentUpdateWithWhereUniqueWithoutKnowledgeBaseInput[]
-    updateMany?: KnowledgeDocumentUpdateManyWithWhereWithoutKnowledgeBaseInput | KnowledgeDocumentUpdateManyWithWhereWithoutKnowledgeBaseInput[]
-    deleteMany?: KnowledgeDocumentScalarWhereInput | KnowledgeDocumentScalarWhereInput[]
-  }
-
-  export type KnowledgeDocumentUncheckedUpdateManyWithoutKnowledgeBaseNestedInput = {
-    create?: XOR<KnowledgeDocumentCreateWithoutKnowledgeBaseInput, KnowledgeDocumentUncheckedCreateWithoutKnowledgeBaseInput> | KnowledgeDocumentCreateWithoutKnowledgeBaseInput[] | KnowledgeDocumentUncheckedCreateWithoutKnowledgeBaseInput[]
-    connectOrCreate?: KnowledgeDocumentCreateOrConnectWithoutKnowledgeBaseInput | KnowledgeDocumentCreateOrConnectWithoutKnowledgeBaseInput[]
-    upsert?: KnowledgeDocumentUpsertWithWhereUniqueWithoutKnowledgeBaseInput | KnowledgeDocumentUpsertWithWhereUniqueWithoutKnowledgeBaseInput[]
-    createMany?: KnowledgeDocumentCreateManyKnowledgeBaseInputEnvelope
-    set?: KnowledgeDocumentWhereUniqueInput | KnowledgeDocumentWhereUniqueInput[]
-    disconnect?: KnowledgeDocumentWhereUniqueInput | KnowledgeDocumentWhereUniqueInput[]
-    delete?: KnowledgeDocumentWhereUniqueInput | KnowledgeDocumentWhereUniqueInput[]
-    connect?: KnowledgeDocumentWhereUniqueInput | KnowledgeDocumentWhereUniqueInput[]
-    update?: KnowledgeDocumentUpdateWithWhereUniqueWithoutKnowledgeBaseInput | KnowledgeDocumentUpdateWithWhereUniqueWithoutKnowledgeBaseInput[]
-    updateMany?: KnowledgeDocumentUpdateManyWithWhereWithoutKnowledgeBaseInput | KnowledgeDocumentUpdateManyWithWhereWithoutKnowledgeBaseInput[]
-    deleteMany?: KnowledgeDocumentScalarWhereInput | KnowledgeDocumentScalarWhereInput[]
-  }
-
-  export type KnowledgeBaseCreateNestedOneWithoutDocumentsInput = {
-    create?: XOR<KnowledgeBaseCreateWithoutDocumentsInput, KnowledgeBaseUncheckedCreateWithoutDocumentsInput>
-    connectOrCreate?: KnowledgeBaseCreateOrConnectWithoutDocumentsInput
-    connect?: KnowledgeBaseWhereUniqueInput
-  }
-
-  export type EnumDocumentStatusFieldUpdateOperationsInput = {
-    set?: $Enums.DocumentStatus
-  }
-
-  export type KnowledgeBaseUpdateOneRequiredWithoutDocumentsNestedInput = {
-    create?: XOR<KnowledgeBaseCreateWithoutDocumentsInput, KnowledgeBaseUncheckedCreateWithoutDocumentsInput>
-    connectOrCreate?: KnowledgeBaseCreateOrConnectWithoutDocumentsInput
-    upsert?: KnowledgeBaseUpsertWithoutDocumentsInput
-    connect?: KnowledgeBaseWhereUniqueInput
-    update?: XOR<XOR<KnowledgeBaseUpdateToOneWithWhereWithoutDocumentsInput, KnowledgeBaseUpdateWithoutDocumentsInput>, KnowledgeBaseUncheckedUpdateWithoutDocumentsInput>
-  }
-
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
-    in?: string[] | ListStringFieldRefInput<$PrismaModel>
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
+    in?: string[]
+    notIn?: string[]
     lt?: string | StringFieldRefInput<$PrismaModel>
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
@@ -23517,8 +8846,8 @@ export namespace Prisma {
 
   export type NestedStringNullableFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    in?: string[] | null
+    notIn?: string[] | null
     lt?: string | StringFieldRefInput<$PrismaModel>
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
@@ -23529,13 +8858,6 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
-  export type NestedEnumUserRoleFilter<$PrismaModel = never> = {
-    equals?: $Enums.UserRole | EnumUserRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.UserRole[] | ListEnumUserRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.UserRole[] | ListEnumUserRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumUserRoleFilter<$PrismaModel> | $Enums.UserRole
-  }
-
   export type NestedBoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
@@ -23543,8 +8865,8 @@ export namespace Prisma {
 
   export type NestedDateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[]
+    notIn?: Date[] | string[]
     lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
@@ -23554,8 +8876,8 @@ export namespace Prisma {
 
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
-    in?: string[] | ListStringFieldRefInput<$PrismaModel>
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
+    in?: string[]
+    notIn?: string[]
     lt?: string | StringFieldRefInput<$PrismaModel>
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
@@ -23571,8 +8893,8 @@ export namespace Prisma {
 
   export type NestedIntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    in?: number[]
+    notIn?: number[]
     lt?: number | IntFieldRefInput<$PrismaModel>
     lte?: number | IntFieldRefInput<$PrismaModel>
     gt?: number | IntFieldRefInput<$PrismaModel>
@@ -23582,8 +8904,8 @@ export namespace Prisma {
 
   export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    in?: string[] | null
+    notIn?: string[] | null
     lt?: string | StringFieldRefInput<$PrismaModel>
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
@@ -23599,23 +8921,13 @@ export namespace Prisma {
 
   export type NestedIntNullableFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    in?: number[] | null
+    notIn?: number[] | null
     lt?: number | IntFieldRefInput<$PrismaModel>
     lte?: number | IntFieldRefInput<$PrismaModel>
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
-  }
-
-  export type NestedEnumUserRoleWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.UserRole | EnumUserRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.UserRole[] | ListEnumUserRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.UserRole[] | ListEnumUserRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumUserRoleWithAggregatesFilter<$PrismaModel> | $Enums.UserRole
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumUserRoleFilter<$PrismaModel>
-    _max?: NestedEnumUserRoleFilter<$PrismaModel>
   }
 
   export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -23628,8 +8940,8 @@ export namespace Prisma {
 
   export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[]
+    notIn?: Date[] | string[]
     lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
@@ -23639,47 +8951,11 @@ export namespace Prisma {
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
-  export type NestedJsonNullableFilter<$PrismaModel = never> = 
-    | PatchUndefined<
-        Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
-        Required<NestedJsonNullableFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>
-
-  export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-  }
-
-  export type NestedEnumSSHAuthTypeFilter<$PrismaModel = never> = {
-    equals?: $Enums.SSHAuthType | EnumSSHAuthTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.SSHAuthType[] | ListEnumSSHAuthTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.SSHAuthType[] | ListEnumSSHAuthTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumSSHAuthTypeFilter<$PrismaModel> | $Enums.SSHAuthType
-  }
-
-  export type NestedEnumConnectionStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.ConnectionStatus | EnumConnectionStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.ConnectionStatus[] | ListEnumConnectionStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.ConnectionStatus[] | ListEnumConnectionStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumConnectionStatusFilter<$PrismaModel> | $Enums.ConnectionStatus
-  }
 
   export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | null
+    notIn?: Date[] | string[] | null
     lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
@@ -23689,8 +8965,8 @@ export namespace Prisma {
 
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    in?: number[]
+    notIn?: number[]
     lt?: number | IntFieldRefInput<$PrismaModel>
     lte?: number | IntFieldRefInput<$PrismaModel>
     gt?: number | IntFieldRefInput<$PrismaModel>
@@ -23705,8 +8981,8 @@ export namespace Prisma {
 
   export type NestedFloatFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    in?: number[]
+    notIn?: number[]
     lt?: number | FloatFieldRefInput<$PrismaModel>
     lte?: number | FloatFieldRefInput<$PrismaModel>
     gt?: number | FloatFieldRefInput<$PrismaModel>
@@ -23714,30 +8990,10 @@ export namespace Prisma {
     not?: NestedFloatFilter<$PrismaModel> | number
   }
 
-  export type NestedEnumSSHAuthTypeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.SSHAuthType | EnumSSHAuthTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.SSHAuthType[] | ListEnumSSHAuthTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.SSHAuthType[] | ListEnumSSHAuthTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumSSHAuthTypeWithAggregatesFilter<$PrismaModel> | $Enums.SSHAuthType
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumSSHAuthTypeFilter<$PrismaModel>
-    _max?: NestedEnumSSHAuthTypeFilter<$PrismaModel>
-  }
-
-  export type NestedEnumConnectionStatusWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.ConnectionStatus | EnumConnectionStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.ConnectionStatus[] | ListEnumConnectionStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.ConnectionStatus[] | ListEnumConnectionStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumConnectionStatusWithAggregatesFilter<$PrismaModel> | $Enums.ConnectionStatus
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumConnectionStatusFilter<$PrismaModel>
-    _max?: NestedEnumConnectionStatusFilter<$PrismaModel>
-  }
-
   export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | null
+    notIn?: Date[] | string[] | null
     lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
@@ -23748,44 +9004,10 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
-  export type NestedEnumSessionTypeFilter<$PrismaModel = never> = {
-    equals?: $Enums.SessionType | EnumSessionTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.SessionType[] | ListEnumSessionTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.SessionType[] | ListEnumSessionTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumSessionTypeFilter<$PrismaModel> | $Enums.SessionType
-  }
-
-  export type NestedEnumSessionTypeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.SessionType | EnumSessionTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.SessionType[] | ListEnumSessionTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.SessionType[] | ListEnumSessionTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumSessionTypeWithAggregatesFilter<$PrismaModel> | $Enums.SessionType
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumSessionTypeFilter<$PrismaModel>
-    _max?: NestedEnumSessionTypeFilter<$PrismaModel>
-  }
-
-  export type NestedEnumMessageRoleFilter<$PrismaModel = never> = {
-    equals?: $Enums.MessageRole | EnumMessageRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.MessageRole[] | ListEnumMessageRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.MessageRole[] | ListEnumMessageRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumMessageRoleFilter<$PrismaModel> | $Enums.MessageRole
-  }
-
-  export type NestedEnumMessageRoleWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.MessageRole | EnumMessageRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.MessageRole[] | ListEnumMessageRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.MessageRole[] | ListEnumMessageRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumMessageRoleWithAggregatesFilter<$PrismaModel> | $Enums.MessageRole
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumMessageRoleFilter<$PrismaModel>
-    _max?: NestedEnumMessageRoleFilter<$PrismaModel>
-  }
-
   export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    in?: number[] | null
+    notIn?: number[] | null
     lt?: number | IntFieldRefInput<$PrismaModel>
     lte?: number | IntFieldRefInput<$PrismaModel>
     gt?: number | IntFieldRefInput<$PrismaModel>
@@ -23800,125 +9022,13 @@ export namespace Prisma {
 
   export type NestedFloatNullableFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | null
+    notIn?: number[] | null
     lt?: number | FloatFieldRefInput<$PrismaModel>
     lte?: number | FloatFieldRefInput<$PrismaModel>
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
-  }
-
-  export type NestedBigIntFilter<$PrismaModel = never> = {
-    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
-    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
-    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    not?: NestedBigIntFilter<$PrismaModel> | bigint | number
-  }
-
-  export type NestedBigIntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
-    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
-    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    not?: NestedBigIntWithAggregatesFilter<$PrismaModel> | bigint | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedBigIntFilter<$PrismaModel>
-    _min?: NestedBigIntFilter<$PrismaModel>
-    _max?: NestedBigIntFilter<$PrismaModel>
-  }
-
-  export type NestedEnumSafetyLevelFilter<$PrismaModel = never> = {
-    equals?: $Enums.SafetyLevel | EnumSafetyLevelFieldRefInput<$PrismaModel>
-    in?: $Enums.SafetyLevel[] | ListEnumSafetyLevelFieldRefInput<$PrismaModel>
-    notIn?: $Enums.SafetyLevel[] | ListEnumSafetyLevelFieldRefInput<$PrismaModel>
-    not?: NestedEnumSafetyLevelFilter<$PrismaModel> | $Enums.SafetyLevel
-  }
-
-  export type NestedEnumSafetyLevelWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.SafetyLevel | EnumSafetyLevelFieldRefInput<$PrismaModel>
-    in?: $Enums.SafetyLevel[] | ListEnumSafetyLevelFieldRefInput<$PrismaModel>
-    notIn?: $Enums.SafetyLevel[] | ListEnumSafetyLevelFieldRefInput<$PrismaModel>
-    not?: NestedEnumSafetyLevelWithAggregatesFilter<$PrismaModel> | $Enums.SafetyLevel
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumSafetyLevelFilter<$PrismaModel>
-    _max?: NestedEnumSafetyLevelFilter<$PrismaModel>
-  }
-
-  export type NestedEnumApiKeyTypeFilter<$PrismaModel = never> = {
-    equals?: $Enums.ApiKeyType | EnumApiKeyTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.ApiKeyType[] | ListEnumApiKeyTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.ApiKeyType[] | ListEnumApiKeyTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumApiKeyTypeFilter<$PrismaModel> | $Enums.ApiKeyType
-  }
-
-  export type NestedEnumApiKeyTypeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.ApiKeyType | EnumApiKeyTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.ApiKeyType[] | ListEnumApiKeyTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.ApiKeyType[] | ListEnumApiKeyTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumApiKeyTypeWithAggregatesFilter<$PrismaModel> | $Enums.ApiKeyType
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumApiKeyTypeFilter<$PrismaModel>
-    _max?: NestedEnumApiKeyTypeFilter<$PrismaModel>
-  }
-
-  export type NestedEnumConfigTypeFilter<$PrismaModel = never> = {
-    equals?: $Enums.ConfigType | EnumConfigTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.ConfigType[] | ListEnumConfigTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.ConfigType[] | ListEnumConfigTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumConfigTypeFilter<$PrismaModel> | $Enums.ConfigType
-  }
-
-  export type NestedEnumConfigTypeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.ConfigType | EnumConfigTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.ConfigType[] | ListEnumConfigTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.ConfigType[] | ListEnumConfigTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumConfigTypeWithAggregatesFilter<$PrismaModel> | $Enums.ConfigType
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumConfigTypeFilter<$PrismaModel>
-    _max?: NestedEnumConfigTypeFilter<$PrismaModel>
-  }
-
-  export type NestedEnumKnowledgeTypeFilter<$PrismaModel = never> = {
-    equals?: $Enums.KnowledgeType | EnumKnowledgeTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.KnowledgeType[] | ListEnumKnowledgeTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.KnowledgeType[] | ListEnumKnowledgeTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumKnowledgeTypeFilter<$PrismaModel> | $Enums.KnowledgeType
-  }
-
-  export type NestedEnumKnowledgeTypeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.KnowledgeType | EnumKnowledgeTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.KnowledgeType[] | ListEnumKnowledgeTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.KnowledgeType[] | ListEnumKnowledgeTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumKnowledgeTypeWithAggregatesFilter<$PrismaModel> | $Enums.KnowledgeType
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumKnowledgeTypeFilter<$PrismaModel>
-    _max?: NestedEnumKnowledgeTypeFilter<$PrismaModel>
-  }
-
-  export type NestedEnumDocumentStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.DocumentStatus | EnumDocumentStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.DocumentStatus[] | ListEnumDocumentStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.DocumentStatus[] | ListEnumDocumentStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumDocumentStatusFilter<$PrismaModel> | $Enums.DocumentStatus
-  }
-
-  export type NestedEnumDocumentStatusWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.DocumentStatus | EnumDocumentStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.DocumentStatus[] | ListEnumDocumentStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.DocumentStatus[] | ListEnumDocumentStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumDocumentStatusWithAggregatesFilter<$PrismaModel> | $Enums.DocumentStatus
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumDocumentStatusFilter<$PrismaModel>
-    _max?: NestedEnumDocumentStatusFilter<$PrismaModel>
   }
 
   export type SSHConnectionCreateWithoutUserInput = {
@@ -23927,16 +9037,19 @@ export namespace Prisma {
     host: string
     port?: number
     username: string
-    authType: $Enums.SSHAuthType
+    authType: string
     password?: string | null
     privateKey?: string | null
+    publicKey?: string | null
     passphrase?: string | null
-    status?: $Enums.ConnectionStatus
+    status?: string
     lastUsed?: Date | string | null
+    isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    commandLogs?: CommandLogCreateNestedManyWithoutConnectionInput
+    meta?: string | null
+    chatSessions?: ChatSessionCreateNestedManyWithoutSshConnectionInput
+    commandLogs?: CommandLogCreateNestedManyWithoutSshConnectionInput
   }
 
   export type SSHConnectionUncheckedCreateWithoutUserInput = {
@@ -23945,16 +9058,19 @@ export namespace Prisma {
     host: string
     port?: number
     username: string
-    authType: $Enums.SSHAuthType
+    authType: string
     password?: string | null
     privateKey?: string | null
+    publicKey?: string | null
     passphrase?: string | null
-    status?: $Enums.ConnectionStatus
+    status?: string
     lastUsed?: Date | string | null
+    isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    commandLogs?: CommandLogUncheckedCreateNestedManyWithoutConnectionInput
+    meta?: string | null
+    chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutSshConnectionInput
+    commandLogs?: CommandLogUncheckedCreateNestedManyWithoutSshConnectionInput
   }
 
   export type SSHConnectionCreateOrConnectWithoutUserInput = {
@@ -23964,39 +9080,30 @@ export namespace Prisma {
 
   export type SSHConnectionCreateManyUserInputEnvelope = {
     data: SSHConnectionCreateManyUserInput | SSHConnectionCreateManyUserInput[]
-    skipDuplicates?: boolean
   }
 
   export type ChatSessionCreateWithoutUserInput = {
     id?: string
-    title?: string | null
-    model?: string
-    type?: $Enums.SessionType
-    isActive?: boolean
-    pinned?: boolean
-    group?: string
+    title: string
+    type?: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
+    config?: string | null
+    meta?: string | null
+    sshConnection?: SSHConnectionCreateNestedOneWithoutChatSessionsInput
     messages?: MessageCreateNestedManyWithoutSessionInput
-    topics?: TopicCreateNestedManyWithoutSessionInput
   }
 
   export type ChatSessionUncheckedCreateWithoutUserInput = {
     id?: string
-    title?: string | null
-    model?: string
-    type?: $Enums.SessionType
-    isActive?: boolean
-    pinned?: boolean
-    group?: string
+    title: string
+    type?: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
+    config?: string | null
+    meta?: string | null
+    sshConnectionId?: string | null
     messages?: MessageUncheckedCreateNestedManyWithoutSessionInput
-    topics?: TopicUncheckedCreateNestedManyWithoutSessionInput
   }
 
   export type ChatSessionCreateOrConnectWithoutUserInput = {
@@ -24006,49 +9113,40 @@ export namespace Prisma {
 
   export type ChatSessionCreateManyUserInputEnvelope = {
     data: ChatSessionCreateManyUserInput | ChatSessionCreateManyUserInput[]
-    skipDuplicates?: boolean
   }
 
   export type MessageCreateWithoutUserInput = {
     id?: string
-    role: $Enums.MessageRole
     content: string
-    parentId?: string | null
+    role: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
-    tokens?: number | null
-    fromModel?: string | null
-    fromProvider?: string | null
-    plugin?: NullableJsonNullValueInput | InputJsonValue
-    pluginState?: NullableJsonNullValueInput | InputJsonValue
-    translate?: NullableJsonNullValueInput | InputJsonValue
-    tts?: NullableJsonNullValueInput | InputJsonValue
+    meta?: string | null
+    extra?: string | null
+    isDeleted?: boolean
+    isEdited?: boolean
+    plugin?: string | null
+    pluginState?: string | null
+    translate?: string | null
+    tts?: string | null
     session: ChatSessionCreateNestedOneWithoutMessagesInput
-    topic?: TopicCreateNestedOneWithoutMessagesInput
-    files?: MessageFileCreateNestedManyWithoutMessageInput
   }
 
   export type MessageUncheckedCreateWithoutUserInput = {
     id?: string
-    role: $Enums.MessageRole
     content: string
-    parentId?: string | null
+    role: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
-    tokens?: number | null
-    fromModel?: string | null
-    fromProvider?: string | null
-    plugin?: NullableJsonNullValueInput | InputJsonValue
-    pluginState?: NullableJsonNullValueInput | InputJsonValue
-    translate?: NullableJsonNullValueInput | InputJsonValue
-    tts?: NullableJsonNullValueInput | InputJsonValue
+    meta?: string | null
+    extra?: string | null
+    isDeleted?: boolean
+    isEdited?: boolean
+    plugin?: string | null
+    pluginState?: string | null
+    translate?: string | null
+    tts?: string | null
     sessionId: string
-    topicId?: string | null
-    files?: MessageFileUncheckedCreateNestedManyWithoutMessageInput
   }
 
   export type MessageCreateOrConnectWithoutUserInput = {
@@ -24058,35 +9156,30 @@ export namespace Prisma {
 
   export type MessageCreateManyUserInputEnvelope = {
     data: MessageCreateManyUserInput | MessageCreateManyUserInput[]
-    skipDuplicates?: boolean
   }
 
   export type CommandLogCreateWithoutUserInput = {
     id?: string
     command: string
     output?: string | null
-    error?: string | null
     exitCode?: number | null
-    duration: number
-    isSuccess: boolean
-    safetyLevel?: $Enums.SafetyLevel
-    executedAt?: Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    connection: SSHConnectionCreateNestedOneWithoutCommandLogsInput
+    duration?: number | null
+    createdAt?: Date | string
+    safetyLevel?: string
+    metadata?: string | null
+    sshConnection?: SSHConnectionCreateNestedOneWithoutCommandLogsInput
   }
 
   export type CommandLogUncheckedCreateWithoutUserInput = {
     id?: string
     command: string
     output?: string | null
-    error?: string | null
     exitCode?: number | null
-    duration: number
-    isSuccess: boolean
-    safetyLevel?: $Enums.SafetyLevel
-    executedAt?: Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    connectionId: string
+    duration?: number | null
+    createdAt?: Date | string
+    safetyLevel?: string
+    metadata?: string | null
+    sshConnectionId?: string | null
   }
 
   export type CommandLogCreateOrConnectWithoutUserInput = {
@@ -24096,209 +9189,6 @@ export namespace Prisma {
 
   export type CommandLogCreateManyUserInputEnvelope = {
     data: CommandLogCreateManyUserInput | CommandLogCreateManyUserInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type UsageStatsCreateWithoutUserInput = {
-    id?: string
-    date: Date | string
-    commandsCount?: number
-    aiRequestsCount?: number
-    tokensUsed?: number
-    connectionsUsed?: number
-    createdAt?: Date | string
-  }
-
-  export type UsageStatsUncheckedCreateWithoutUserInput = {
-    id?: string
-    date: Date | string
-    commandsCount?: number
-    aiRequestsCount?: number
-    tokensUsed?: number
-    connectionsUsed?: number
-    createdAt?: Date | string
-  }
-
-  export type UsageStatsCreateOrConnectWithoutUserInput = {
-    where: UsageStatsWhereUniqueInput
-    create: XOR<UsageStatsCreateWithoutUserInput, UsageStatsUncheckedCreateWithoutUserInput>
-  }
-
-  export type UsageStatsCreateManyUserInputEnvelope = {
-    data: UsageStatsCreateManyUserInput | UsageStatsCreateManyUserInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type ApiKeyCreateWithoutUserInput = {
-    id?: string
-    name: string
-    key: string
-    type?: $Enums.ApiKeyType
-    isActive?: boolean
-    expiresAt?: Date | string | null
-    lastUsed?: Date | string | null
-    createdAt?: Date | string
-    scopes?: ApiKeyCreatescopesInput | string[]
-  }
-
-  export type ApiKeyUncheckedCreateWithoutUserInput = {
-    id?: string
-    name: string
-    key: string
-    type?: $Enums.ApiKeyType
-    isActive?: boolean
-    expiresAt?: Date | string | null
-    lastUsed?: Date | string | null
-    createdAt?: Date | string
-    scopes?: ApiKeyCreatescopesInput | string[]
-  }
-
-  export type ApiKeyCreateOrConnectWithoutUserInput = {
-    where: ApiKeyWhereUniqueInput
-    create: XOR<ApiKeyCreateWithoutUserInput, ApiKeyUncheckedCreateWithoutUserInput>
-  }
-
-  export type ApiKeyCreateManyUserInputEnvelope = {
-    data: ApiKeyCreateManyUserInput | ApiKeyCreateManyUserInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type SessionGroupCreateWithoutUserInput = {
-    id?: string
-    name: string
-    sort?: number
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-  }
-
-  export type SessionGroupUncheckedCreateWithoutUserInput = {
-    id?: string
-    name: string
-    sort?: number
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-  }
-
-  export type SessionGroupCreateOrConnectWithoutUserInput = {
-    where: SessionGroupWhereUniqueInput
-    create: XOR<SessionGroupCreateWithoutUserInput, SessionGroupUncheckedCreateWithoutUserInput>
-  }
-
-  export type SessionGroupCreateManyUserInputEnvelope = {
-    data: SessionGroupCreateManyUserInput | SessionGroupCreateManyUserInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type PluginCreateWithoutUserInput = {
-    id?: string
-    identifier: string
-    name: string
-    version: string
-    enabled?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    settings?: NullableJsonNullValueInput | InputJsonValue
-  }
-
-  export type PluginUncheckedCreateWithoutUserInput = {
-    id?: string
-    identifier: string
-    name: string
-    version: string
-    enabled?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    settings?: NullableJsonNullValueInput | InputJsonValue
-  }
-
-  export type PluginCreateOrConnectWithoutUserInput = {
-    where: PluginWhereUniqueInput
-    create: XOR<PluginCreateWithoutUserInput, PluginUncheckedCreateWithoutUserInput>
-  }
-
-  export type PluginCreateManyUserInputEnvelope = {
-    data: PluginCreateManyUserInput | PluginCreateManyUserInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type KnowledgeBaseCreateWithoutUserInput = {
-    id?: string
-    name: string
-    description?: string | null
-    type?: $Enums.KnowledgeType
-    isActive?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    documents?: KnowledgeDocumentCreateNestedManyWithoutKnowledgeBaseInput
-  }
-
-  export type KnowledgeBaseUncheckedCreateWithoutUserInput = {
-    id?: string
-    name: string
-    description?: string | null
-    type?: $Enums.KnowledgeType
-    isActive?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    documents?: KnowledgeDocumentUncheckedCreateNestedManyWithoutKnowledgeBaseInput
-  }
-
-  export type KnowledgeBaseCreateOrConnectWithoutUserInput = {
-    where: KnowledgeBaseWhereUniqueInput
-    create: XOR<KnowledgeBaseCreateWithoutUserInput, KnowledgeBaseUncheckedCreateWithoutUserInput>
-  }
-
-  export type KnowledgeBaseCreateManyUserInputEnvelope = {
-    data: KnowledgeBaseCreateManyUserInput | KnowledgeBaseCreateManyUserInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type FileCreateWithoutUserInput = {
-    id?: string
-    name: string
-    type: string
-    size: bigint | number
-    url?: string | null
-    path?: string | null
-    hash?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    messages?: MessageFileCreateNestedManyWithoutFileInput
-  }
-
-  export type FileUncheckedCreateWithoutUserInput = {
-    id?: string
-    name: string
-    type: string
-    size: bigint | number
-    url?: string | null
-    path?: string | null
-    hash?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    messages?: MessageFileUncheckedCreateNestedManyWithoutFileInput
-  }
-
-  export type FileCreateOrConnectWithoutUserInput = {
-    where: FileWhereUniqueInput
-    create: XOR<FileCreateWithoutUserInput, FileUncheckedCreateWithoutUserInput>
-  }
-
-  export type FileCreateManyUserInputEnvelope = {
-    data: FileCreateManyUserInput | FileCreateManyUserInput[]
-    skipDuplicates?: boolean
   }
 
   export type SSHConnectionUpsertWithWhereUniqueWithoutUserInput = {
@@ -24326,15 +9216,17 @@ export namespace Prisma {
     host?: StringFilter<"SSHConnection"> | string
     port?: IntFilter<"SSHConnection"> | number
     username?: StringFilter<"SSHConnection"> | string
-    authType?: EnumSSHAuthTypeFilter<"SSHConnection"> | $Enums.SSHAuthType
+    authType?: StringFilter<"SSHConnection"> | string
     password?: StringNullableFilter<"SSHConnection"> | string | null
     privateKey?: StringNullableFilter<"SSHConnection"> | string | null
+    publicKey?: StringNullableFilter<"SSHConnection"> | string | null
     passphrase?: StringNullableFilter<"SSHConnection"> | string | null
-    status?: EnumConnectionStatusFilter<"SSHConnection"> | $Enums.ConnectionStatus
+    status?: StringFilter<"SSHConnection"> | string
     lastUsed?: DateTimeNullableFilter<"SSHConnection"> | Date | string | null
+    isActive?: BoolFilter<"SSHConnection"> | boolean
     createdAt?: DateTimeFilter<"SSHConnection"> | Date | string
     updatedAt?: DateTimeFilter<"SSHConnection"> | Date | string
-    meta?: JsonNullableFilter<"SSHConnection">
+    meta?: StringNullableFilter<"SSHConnection"> | string | null
     userId?: StringFilter<"SSHConnection"> | string
   }
 
@@ -24359,17 +9251,14 @@ export namespace Prisma {
     OR?: ChatSessionScalarWhereInput[]
     NOT?: ChatSessionScalarWhereInput | ChatSessionScalarWhereInput[]
     id?: StringFilter<"ChatSession"> | string
-    title?: StringNullableFilter<"ChatSession"> | string | null
-    model?: StringFilter<"ChatSession"> | string
-    type?: EnumSessionTypeFilter<"ChatSession"> | $Enums.SessionType
-    isActive?: BoolFilter<"ChatSession"> | boolean
-    pinned?: BoolFilter<"ChatSession"> | boolean
-    group?: StringFilter<"ChatSession"> | string
+    title?: StringFilter<"ChatSession"> | string
+    type?: StringFilter<"ChatSession"> | string
     createdAt?: DateTimeFilter<"ChatSession"> | Date | string
     updatedAt?: DateTimeFilter<"ChatSession"> | Date | string
-    config?: JsonNullableFilter<"ChatSession">
-    meta?: JsonNullableFilter<"ChatSession">
+    config?: StringNullableFilter<"ChatSession"> | string | null
+    meta?: StringNullableFilter<"ChatSession"> | string | null
     userId?: StringFilter<"ChatSession"> | string
+    sshConnectionId?: StringNullableFilter<"ChatSession"> | string | null
   }
 
   export type MessageUpsertWithWhereUniqueWithoutUserInput = {
@@ -24393,23 +9282,20 @@ export namespace Prisma {
     OR?: MessageScalarWhereInput[]
     NOT?: MessageScalarWhereInput | MessageScalarWhereInput[]
     id?: StringFilter<"Message"> | string
-    role?: EnumMessageRoleFilter<"Message"> | $Enums.MessageRole
     content?: StringFilter<"Message"> | string
-    parentId?: StringNullableFilter<"Message"> | string | null
+    role?: StringFilter<"Message"> | string
     createdAt?: DateTimeFilter<"Message"> | Date | string
     updatedAt?: DateTimeFilter<"Message"> | Date | string
-    meta?: JsonNullableFilter<"Message">
-    extra?: JsonNullableFilter<"Message">
-    tokens?: IntNullableFilter<"Message"> | number | null
-    fromModel?: StringNullableFilter<"Message"> | string | null
-    fromProvider?: StringNullableFilter<"Message"> | string | null
-    plugin?: JsonNullableFilter<"Message">
-    pluginState?: JsonNullableFilter<"Message">
-    translate?: JsonNullableFilter<"Message">
-    tts?: JsonNullableFilter<"Message">
-    userId?: StringFilter<"Message"> | string
+    meta?: StringNullableFilter<"Message"> | string | null
+    extra?: StringNullableFilter<"Message"> | string | null
+    isDeleted?: BoolFilter<"Message"> | boolean
+    isEdited?: BoolFilter<"Message"> | boolean
+    plugin?: StringNullableFilter<"Message"> | string | null
+    pluginState?: StringNullableFilter<"Message"> | string | null
+    translate?: StringNullableFilter<"Message"> | string | null
+    tts?: StringNullableFilter<"Message"> | string | null
     sessionId?: StringFilter<"Message"> | string
-    topicId?: StringNullableFilter<"Message"> | string | null
+    userId?: StringFilter<"Message"> | string
   }
 
   export type CommandLogUpsertWithWhereUniqueWithoutUserInput = {
@@ -24435,204 +9321,13 @@ export namespace Prisma {
     id?: StringFilter<"CommandLog"> | string
     command?: StringFilter<"CommandLog"> | string
     output?: StringNullableFilter<"CommandLog"> | string | null
-    error?: StringNullableFilter<"CommandLog"> | string | null
     exitCode?: IntNullableFilter<"CommandLog"> | number | null
-    duration?: IntFilter<"CommandLog"> | number
-    isSuccess?: BoolFilter<"CommandLog"> | boolean
-    safetyLevel?: EnumSafetyLevelFilter<"CommandLog"> | $Enums.SafetyLevel
-    executedAt?: DateTimeFilter<"CommandLog"> | Date | string
-    metadata?: JsonNullableFilter<"CommandLog">
+    duration?: IntNullableFilter<"CommandLog"> | number | null
+    createdAt?: DateTimeFilter<"CommandLog"> | Date | string
+    safetyLevel?: StringFilter<"CommandLog"> | string
+    metadata?: StringNullableFilter<"CommandLog"> | string | null
     userId?: StringFilter<"CommandLog"> | string
-    connectionId?: StringFilter<"CommandLog"> | string
-  }
-
-  export type UsageStatsUpsertWithWhereUniqueWithoutUserInput = {
-    where: UsageStatsWhereUniqueInput
-    update: XOR<UsageStatsUpdateWithoutUserInput, UsageStatsUncheckedUpdateWithoutUserInput>
-    create: XOR<UsageStatsCreateWithoutUserInput, UsageStatsUncheckedCreateWithoutUserInput>
-  }
-
-  export type UsageStatsUpdateWithWhereUniqueWithoutUserInput = {
-    where: UsageStatsWhereUniqueInput
-    data: XOR<UsageStatsUpdateWithoutUserInput, UsageStatsUncheckedUpdateWithoutUserInput>
-  }
-
-  export type UsageStatsUpdateManyWithWhereWithoutUserInput = {
-    where: UsageStatsScalarWhereInput
-    data: XOR<UsageStatsUpdateManyMutationInput, UsageStatsUncheckedUpdateManyWithoutUserInput>
-  }
-
-  export type UsageStatsScalarWhereInput = {
-    AND?: UsageStatsScalarWhereInput | UsageStatsScalarWhereInput[]
-    OR?: UsageStatsScalarWhereInput[]
-    NOT?: UsageStatsScalarWhereInput | UsageStatsScalarWhereInput[]
-    id?: StringFilter<"UsageStats"> | string
-    date?: DateTimeFilter<"UsageStats"> | Date | string
-    commandsCount?: IntFilter<"UsageStats"> | number
-    aiRequestsCount?: IntFilter<"UsageStats"> | number
-    tokensUsed?: IntFilter<"UsageStats"> | number
-    connectionsUsed?: IntFilter<"UsageStats"> | number
-    createdAt?: DateTimeFilter<"UsageStats"> | Date | string
-    userId?: StringFilter<"UsageStats"> | string
-  }
-
-  export type ApiKeyUpsertWithWhereUniqueWithoutUserInput = {
-    where: ApiKeyWhereUniqueInput
-    update: XOR<ApiKeyUpdateWithoutUserInput, ApiKeyUncheckedUpdateWithoutUserInput>
-    create: XOR<ApiKeyCreateWithoutUserInput, ApiKeyUncheckedCreateWithoutUserInput>
-  }
-
-  export type ApiKeyUpdateWithWhereUniqueWithoutUserInput = {
-    where: ApiKeyWhereUniqueInput
-    data: XOR<ApiKeyUpdateWithoutUserInput, ApiKeyUncheckedUpdateWithoutUserInput>
-  }
-
-  export type ApiKeyUpdateManyWithWhereWithoutUserInput = {
-    where: ApiKeyScalarWhereInput
-    data: XOR<ApiKeyUpdateManyMutationInput, ApiKeyUncheckedUpdateManyWithoutUserInput>
-  }
-
-  export type ApiKeyScalarWhereInput = {
-    AND?: ApiKeyScalarWhereInput | ApiKeyScalarWhereInput[]
-    OR?: ApiKeyScalarWhereInput[]
-    NOT?: ApiKeyScalarWhereInput | ApiKeyScalarWhereInput[]
-    id?: StringFilter<"ApiKey"> | string
-    name?: StringFilter<"ApiKey"> | string
-    key?: StringFilter<"ApiKey"> | string
-    type?: EnumApiKeyTypeFilter<"ApiKey"> | $Enums.ApiKeyType
-    isActive?: BoolFilter<"ApiKey"> | boolean
-    expiresAt?: DateTimeNullableFilter<"ApiKey"> | Date | string | null
-    lastUsed?: DateTimeNullableFilter<"ApiKey"> | Date | string | null
-    createdAt?: DateTimeFilter<"ApiKey"> | Date | string
-    scopes?: StringNullableListFilter<"ApiKey">
-    userId?: StringFilter<"ApiKey"> | string
-  }
-
-  export type SessionGroupUpsertWithWhereUniqueWithoutUserInput = {
-    where: SessionGroupWhereUniqueInput
-    update: XOR<SessionGroupUpdateWithoutUserInput, SessionGroupUncheckedUpdateWithoutUserInput>
-    create: XOR<SessionGroupCreateWithoutUserInput, SessionGroupUncheckedCreateWithoutUserInput>
-  }
-
-  export type SessionGroupUpdateWithWhereUniqueWithoutUserInput = {
-    where: SessionGroupWhereUniqueInput
-    data: XOR<SessionGroupUpdateWithoutUserInput, SessionGroupUncheckedUpdateWithoutUserInput>
-  }
-
-  export type SessionGroupUpdateManyWithWhereWithoutUserInput = {
-    where: SessionGroupScalarWhereInput
-    data: XOR<SessionGroupUpdateManyMutationInput, SessionGroupUncheckedUpdateManyWithoutUserInput>
-  }
-
-  export type SessionGroupScalarWhereInput = {
-    AND?: SessionGroupScalarWhereInput | SessionGroupScalarWhereInput[]
-    OR?: SessionGroupScalarWhereInput[]
-    NOT?: SessionGroupScalarWhereInput | SessionGroupScalarWhereInput[]
-    id?: StringFilter<"SessionGroup"> | string
-    name?: StringFilter<"SessionGroup"> | string
-    sort?: IntFilter<"SessionGroup"> | number
-    createdAt?: DateTimeFilter<"SessionGroup"> | Date | string
-    updatedAt?: DateTimeFilter<"SessionGroup"> | Date | string
-    meta?: JsonNullableFilter<"SessionGroup">
-    userId?: StringFilter<"SessionGroup"> | string
-  }
-
-  export type PluginUpsertWithWhereUniqueWithoutUserInput = {
-    where: PluginWhereUniqueInput
-    update: XOR<PluginUpdateWithoutUserInput, PluginUncheckedUpdateWithoutUserInput>
-    create: XOR<PluginCreateWithoutUserInput, PluginUncheckedCreateWithoutUserInput>
-  }
-
-  export type PluginUpdateWithWhereUniqueWithoutUserInput = {
-    where: PluginWhereUniqueInput
-    data: XOR<PluginUpdateWithoutUserInput, PluginUncheckedUpdateWithoutUserInput>
-  }
-
-  export type PluginUpdateManyWithWhereWithoutUserInput = {
-    where: PluginScalarWhereInput
-    data: XOR<PluginUpdateManyMutationInput, PluginUncheckedUpdateManyWithoutUserInput>
-  }
-
-  export type PluginScalarWhereInput = {
-    AND?: PluginScalarWhereInput | PluginScalarWhereInput[]
-    OR?: PluginScalarWhereInput[]
-    NOT?: PluginScalarWhereInput | PluginScalarWhereInput[]
-    id?: StringFilter<"Plugin"> | string
-    identifier?: StringFilter<"Plugin"> | string
-    name?: StringFilter<"Plugin"> | string
-    version?: StringFilter<"Plugin"> | string
-    enabled?: BoolFilter<"Plugin"> | boolean
-    createdAt?: DateTimeFilter<"Plugin"> | Date | string
-    updatedAt?: DateTimeFilter<"Plugin"> | Date | string
-    config?: JsonNullableFilter<"Plugin">
-    meta?: JsonNullableFilter<"Plugin">
-    settings?: JsonNullableFilter<"Plugin">
-    userId?: StringFilter<"Plugin"> | string
-  }
-
-  export type KnowledgeBaseUpsertWithWhereUniqueWithoutUserInput = {
-    where: KnowledgeBaseWhereUniqueInput
-    update: XOR<KnowledgeBaseUpdateWithoutUserInput, KnowledgeBaseUncheckedUpdateWithoutUserInput>
-    create: XOR<KnowledgeBaseCreateWithoutUserInput, KnowledgeBaseUncheckedCreateWithoutUserInput>
-  }
-
-  export type KnowledgeBaseUpdateWithWhereUniqueWithoutUserInput = {
-    where: KnowledgeBaseWhereUniqueInput
-    data: XOR<KnowledgeBaseUpdateWithoutUserInput, KnowledgeBaseUncheckedUpdateWithoutUserInput>
-  }
-
-  export type KnowledgeBaseUpdateManyWithWhereWithoutUserInput = {
-    where: KnowledgeBaseScalarWhereInput
-    data: XOR<KnowledgeBaseUpdateManyMutationInput, KnowledgeBaseUncheckedUpdateManyWithoutUserInput>
-  }
-
-  export type KnowledgeBaseScalarWhereInput = {
-    AND?: KnowledgeBaseScalarWhereInput | KnowledgeBaseScalarWhereInput[]
-    OR?: KnowledgeBaseScalarWhereInput[]
-    NOT?: KnowledgeBaseScalarWhereInput | KnowledgeBaseScalarWhereInput[]
-    id?: StringFilter<"KnowledgeBase"> | string
-    name?: StringFilter<"KnowledgeBase"> | string
-    description?: StringNullableFilter<"KnowledgeBase"> | string | null
-    type?: EnumKnowledgeTypeFilter<"KnowledgeBase"> | $Enums.KnowledgeType
-    isActive?: BoolFilter<"KnowledgeBase"> | boolean
-    createdAt?: DateTimeFilter<"KnowledgeBase"> | Date | string
-    updatedAt?: DateTimeFilter<"KnowledgeBase"> | Date | string
-    config?: JsonNullableFilter<"KnowledgeBase">
-    meta?: JsonNullableFilter<"KnowledgeBase">
-    userId?: StringFilter<"KnowledgeBase"> | string
-  }
-
-  export type FileUpsertWithWhereUniqueWithoutUserInput = {
-    where: FileWhereUniqueInput
-    update: XOR<FileUpdateWithoutUserInput, FileUncheckedUpdateWithoutUserInput>
-    create: XOR<FileCreateWithoutUserInput, FileUncheckedCreateWithoutUserInput>
-  }
-
-  export type FileUpdateWithWhereUniqueWithoutUserInput = {
-    where: FileWhereUniqueInput
-    data: XOR<FileUpdateWithoutUserInput, FileUncheckedUpdateWithoutUserInput>
-  }
-
-  export type FileUpdateManyWithWhereWithoutUserInput = {
-    where: FileScalarWhereInput
-    data: XOR<FileUpdateManyMutationInput, FileUncheckedUpdateManyWithoutUserInput>
-  }
-
-  export type FileScalarWhereInput = {
-    AND?: FileScalarWhereInput | FileScalarWhereInput[]
-    OR?: FileScalarWhereInput[]
-    NOT?: FileScalarWhereInput | FileScalarWhereInput[]
-    id?: StringFilter<"File"> | string
-    name?: StringFilter<"File"> | string
-    type?: StringFilter<"File"> | string
-    size?: BigIntFilter<"File"> | bigint | number
-    url?: StringNullableFilter<"File"> | string | null
-    path?: StringNullableFilter<"File"> | string | null
-    hash?: StringNullableFilter<"File"> | string | null
-    createdAt?: DateTimeFilter<"File"> | Date | string
-    updatedAt?: DateTimeFilter<"File"> | Date | string
-    metadata?: JsonNullableFilter<"File">
-    userId?: StringFilter<"File"> | string
+    sshConnectionId?: StringNullableFilter<"CommandLog"> | string | null
   }
 
   export type UserCreateWithoutSshConnectionsInput = {
@@ -24642,20 +9337,14 @@ export namespace Prisma {
     username?: string | null
     password?: string | null
     avatar?: string | null
-    role?: $Enums.UserRole
+    role?: string
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
+    settings?: string | null
     chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
     messages?: MessageCreateNestedManyWithoutUserInput
     commandLogs?: CommandLogCreateNestedManyWithoutUserInput
-    usageStats?: UsageStatsCreateNestedManyWithoutUserInput
-    apiKeys?: ApiKeyCreateNestedManyWithoutUserInput
-    sessionGroups?: SessionGroupCreateNestedManyWithoutUserInput
-    plugins?: PluginCreateNestedManyWithoutUserInput
-    knowledgeBases?: KnowledgeBaseCreateNestedManyWithoutUserInput
-    files?: FileCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSshConnectionsInput = {
@@ -24665,20 +9354,14 @@ export namespace Prisma {
     username?: string | null
     password?: string | null
     avatar?: string | null
-    role?: $Enums.UserRole
+    role?: string
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
+    settings?: string | null
     chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
     messages?: MessageUncheckedCreateNestedManyWithoutUserInput
     commandLogs?: CommandLogUncheckedCreateNestedManyWithoutUserInput
-    usageStats?: UsageStatsUncheckedCreateNestedManyWithoutUserInput
-    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutUserInput
-    sessionGroups?: SessionGroupUncheckedCreateNestedManyWithoutUserInput
-    plugins?: PluginUncheckedCreateNestedManyWithoutUserInput
-    knowledgeBases?: KnowledgeBaseUncheckedCreateNestedManyWithoutUserInput
-    files?: FileUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSshConnectionsInput = {
@@ -24686,42 +9369,70 @@ export namespace Prisma {
     create: XOR<UserCreateWithoutSshConnectionsInput, UserUncheckedCreateWithoutSshConnectionsInput>
   }
 
-  export type CommandLogCreateWithoutConnectionInput = {
+  export type ChatSessionCreateWithoutSshConnectionInput = {
+    id?: string
+    title: string
+    type?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    config?: string | null
+    meta?: string | null
+    user: UserCreateNestedOneWithoutChatSessionsInput
+    messages?: MessageCreateNestedManyWithoutSessionInput
+  }
+
+  export type ChatSessionUncheckedCreateWithoutSshConnectionInput = {
+    id?: string
+    title: string
+    type?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    config?: string | null
+    meta?: string | null
+    userId: string
+    messages?: MessageUncheckedCreateNestedManyWithoutSessionInput
+  }
+
+  export type ChatSessionCreateOrConnectWithoutSshConnectionInput = {
+    where: ChatSessionWhereUniqueInput
+    create: XOR<ChatSessionCreateWithoutSshConnectionInput, ChatSessionUncheckedCreateWithoutSshConnectionInput>
+  }
+
+  export type ChatSessionCreateManySshConnectionInputEnvelope = {
+    data: ChatSessionCreateManySshConnectionInput | ChatSessionCreateManySshConnectionInput[]
+  }
+
+  export type CommandLogCreateWithoutSshConnectionInput = {
     id?: string
     command: string
     output?: string | null
-    error?: string | null
     exitCode?: number | null
-    duration: number
-    isSuccess: boolean
-    safetyLevel?: $Enums.SafetyLevel
-    executedAt?: Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
+    duration?: number | null
+    createdAt?: Date | string
+    safetyLevel?: string
+    metadata?: string | null
     user: UserCreateNestedOneWithoutCommandLogsInput
   }
 
-  export type CommandLogUncheckedCreateWithoutConnectionInput = {
+  export type CommandLogUncheckedCreateWithoutSshConnectionInput = {
     id?: string
     command: string
     output?: string | null
-    error?: string | null
     exitCode?: number | null
-    duration: number
-    isSuccess: boolean
-    safetyLevel?: $Enums.SafetyLevel
-    executedAt?: Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
+    duration?: number | null
+    createdAt?: Date | string
+    safetyLevel?: string
+    metadata?: string | null
     userId: string
   }
 
-  export type CommandLogCreateOrConnectWithoutConnectionInput = {
+  export type CommandLogCreateOrConnectWithoutSshConnectionInput = {
     where: CommandLogWhereUniqueInput
-    create: XOR<CommandLogCreateWithoutConnectionInput, CommandLogUncheckedCreateWithoutConnectionInput>
+    create: XOR<CommandLogCreateWithoutSshConnectionInput, CommandLogUncheckedCreateWithoutSshConnectionInput>
   }
 
-  export type CommandLogCreateManyConnectionInputEnvelope = {
-    data: CommandLogCreateManyConnectionInput | CommandLogCreateManyConnectionInput[]
-    skipDuplicates?: boolean
+  export type CommandLogCreateManySshConnectionInputEnvelope = {
+    data: CommandLogCreateManySshConnectionInput | CommandLogCreateManySshConnectionInput[]
   }
 
   export type UserUpsertWithoutSshConnectionsInput = {
@@ -24742,20 +9453,14 @@ export namespace Prisma {
     username?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    role?: StringFieldUpdateOperationsInput | string
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
+    settings?: NullableStringFieldUpdateOperationsInput | string | null
     chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
     messages?: MessageUpdateManyWithoutUserNestedInput
     commandLogs?: CommandLogUpdateManyWithoutUserNestedInput
-    usageStats?: UsageStatsUpdateManyWithoutUserNestedInput
-    apiKeys?: ApiKeyUpdateManyWithoutUserNestedInput
-    sessionGroups?: SessionGroupUpdateManyWithoutUserNestedInput
-    plugins?: PluginUpdateManyWithoutUserNestedInput
-    knowledgeBases?: KnowledgeBaseUpdateManyWithoutUserNestedInput
-    files?: FileUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSshConnectionsInput = {
@@ -24765,36 +9470,46 @@ export namespace Prisma {
     username?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    role?: StringFieldUpdateOperationsInput | string
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
+    settings?: NullableStringFieldUpdateOperationsInput | string | null
     chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
     messages?: MessageUncheckedUpdateManyWithoutUserNestedInput
     commandLogs?: CommandLogUncheckedUpdateManyWithoutUserNestedInput
-    usageStats?: UsageStatsUncheckedUpdateManyWithoutUserNestedInput
-    apiKeys?: ApiKeyUncheckedUpdateManyWithoutUserNestedInput
-    sessionGroups?: SessionGroupUncheckedUpdateManyWithoutUserNestedInput
-    plugins?: PluginUncheckedUpdateManyWithoutUserNestedInput
-    knowledgeBases?: KnowledgeBaseUncheckedUpdateManyWithoutUserNestedInput
-    files?: FileUncheckedUpdateManyWithoutUserNestedInput
   }
 
-  export type CommandLogUpsertWithWhereUniqueWithoutConnectionInput = {
+  export type ChatSessionUpsertWithWhereUniqueWithoutSshConnectionInput = {
+    where: ChatSessionWhereUniqueInput
+    update: XOR<ChatSessionUpdateWithoutSshConnectionInput, ChatSessionUncheckedUpdateWithoutSshConnectionInput>
+    create: XOR<ChatSessionCreateWithoutSshConnectionInput, ChatSessionUncheckedCreateWithoutSshConnectionInput>
+  }
+
+  export type ChatSessionUpdateWithWhereUniqueWithoutSshConnectionInput = {
+    where: ChatSessionWhereUniqueInput
+    data: XOR<ChatSessionUpdateWithoutSshConnectionInput, ChatSessionUncheckedUpdateWithoutSshConnectionInput>
+  }
+
+  export type ChatSessionUpdateManyWithWhereWithoutSshConnectionInput = {
+    where: ChatSessionScalarWhereInput
+    data: XOR<ChatSessionUpdateManyMutationInput, ChatSessionUncheckedUpdateManyWithoutSshConnectionInput>
+  }
+
+  export type CommandLogUpsertWithWhereUniqueWithoutSshConnectionInput = {
     where: CommandLogWhereUniqueInput
-    update: XOR<CommandLogUpdateWithoutConnectionInput, CommandLogUncheckedUpdateWithoutConnectionInput>
-    create: XOR<CommandLogCreateWithoutConnectionInput, CommandLogUncheckedCreateWithoutConnectionInput>
+    update: XOR<CommandLogUpdateWithoutSshConnectionInput, CommandLogUncheckedUpdateWithoutSshConnectionInput>
+    create: XOR<CommandLogCreateWithoutSshConnectionInput, CommandLogUncheckedCreateWithoutSshConnectionInput>
   }
 
-  export type CommandLogUpdateWithWhereUniqueWithoutConnectionInput = {
+  export type CommandLogUpdateWithWhereUniqueWithoutSshConnectionInput = {
     where: CommandLogWhereUniqueInput
-    data: XOR<CommandLogUpdateWithoutConnectionInput, CommandLogUncheckedUpdateWithoutConnectionInput>
+    data: XOR<CommandLogUpdateWithoutSshConnectionInput, CommandLogUncheckedUpdateWithoutSshConnectionInput>
   }
 
-  export type CommandLogUpdateManyWithWhereWithoutConnectionInput = {
+  export type CommandLogUpdateManyWithWhereWithoutSshConnectionInput = {
     where: CommandLogScalarWhereInput
-    data: XOR<CommandLogUpdateManyMutationInput, CommandLogUncheckedUpdateManyWithoutConnectionInput>
+    data: XOR<CommandLogUpdateManyMutationInput, CommandLogUncheckedUpdateManyWithoutSshConnectionInput>
   }
 
   export type UserCreateWithoutChatSessionsInput = {
@@ -24804,20 +9519,14 @@ export namespace Prisma {
     username?: string | null
     password?: string | null
     avatar?: string | null
-    role?: $Enums.UserRole
+    role?: string
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
+    settings?: string | null
     sshConnections?: SSHConnectionCreateNestedManyWithoutUserInput
     messages?: MessageCreateNestedManyWithoutUserInput
     commandLogs?: CommandLogCreateNestedManyWithoutUserInput
-    usageStats?: UsageStatsCreateNestedManyWithoutUserInput
-    apiKeys?: ApiKeyCreateNestedManyWithoutUserInput
-    sessionGroups?: SessionGroupCreateNestedManyWithoutUserInput
-    plugins?: PluginCreateNestedManyWithoutUserInput
-    knowledgeBases?: KnowledgeBaseCreateNestedManyWithoutUserInput
-    files?: FileCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutChatSessionsInput = {
@@ -24827,20 +9536,14 @@ export namespace Prisma {
     username?: string | null
     password?: string | null
     avatar?: string | null
-    role?: $Enums.UserRole
+    role?: string
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
+    settings?: string | null
     sshConnections?: SSHConnectionUncheckedCreateNestedManyWithoutUserInput
     messages?: MessageUncheckedCreateNestedManyWithoutUserInput
     commandLogs?: CommandLogUncheckedCreateNestedManyWithoutUserInput
-    usageStats?: UsageStatsUncheckedCreateNestedManyWithoutUserInput
-    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutUserInput
-    sessionGroups?: SessionGroupUncheckedCreateNestedManyWithoutUserInput
-    plugins?: PluginUncheckedCreateNestedManyWithoutUserInput
-    knowledgeBases?: KnowledgeBaseUncheckedCreateNestedManyWithoutUserInput
-    files?: FileUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutChatSessionsInput = {
@@ -24848,46 +9551,85 @@ export namespace Prisma {
     create: XOR<UserCreateWithoutChatSessionsInput, UserUncheckedCreateWithoutChatSessionsInput>
   }
 
-  export type MessageCreateWithoutSessionInput = {
+  export type SSHConnectionCreateWithoutChatSessionsInput = {
     id?: string
-    role: $Enums.MessageRole
-    content: string
-    parentId?: string | null
+    name: string
+    host: string
+    port?: number
+    username: string
+    authType: string
+    password?: string | null
+    privateKey?: string | null
+    publicKey?: string | null
+    passphrase?: string | null
+    status?: string
+    lastUsed?: Date | string | null
+    isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
-    tokens?: number | null
-    fromModel?: string | null
-    fromProvider?: string | null
-    plugin?: NullableJsonNullValueInput | InputJsonValue
-    pluginState?: NullableJsonNullValueInput | InputJsonValue
-    translate?: NullableJsonNullValueInput | InputJsonValue
-    tts?: NullableJsonNullValueInput | InputJsonValue
+    meta?: string | null
+    user: UserCreateNestedOneWithoutSshConnectionsInput
+    commandLogs?: CommandLogCreateNestedManyWithoutSshConnectionInput
+  }
+
+  export type SSHConnectionUncheckedCreateWithoutChatSessionsInput = {
+    id?: string
+    name: string
+    host: string
+    port?: number
+    username: string
+    authType: string
+    password?: string | null
+    privateKey?: string | null
+    publicKey?: string | null
+    passphrase?: string | null
+    status?: string
+    lastUsed?: Date | string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    meta?: string | null
+    userId: string
+    commandLogs?: CommandLogUncheckedCreateNestedManyWithoutSshConnectionInput
+  }
+
+  export type SSHConnectionCreateOrConnectWithoutChatSessionsInput = {
+    where: SSHConnectionWhereUniqueInput
+    create: XOR<SSHConnectionCreateWithoutChatSessionsInput, SSHConnectionUncheckedCreateWithoutChatSessionsInput>
+  }
+
+  export type MessageCreateWithoutSessionInput = {
+    id?: string
+    content: string
+    role: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    meta?: string | null
+    extra?: string | null
+    isDeleted?: boolean
+    isEdited?: boolean
+    plugin?: string | null
+    pluginState?: string | null
+    translate?: string | null
+    tts?: string | null
     user: UserCreateNestedOneWithoutMessagesInput
-    topic?: TopicCreateNestedOneWithoutMessagesInput
-    files?: MessageFileCreateNestedManyWithoutMessageInput
   }
 
   export type MessageUncheckedCreateWithoutSessionInput = {
     id?: string
-    role: $Enums.MessageRole
     content: string
-    parentId?: string | null
+    role: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
-    tokens?: number | null
-    fromModel?: string | null
-    fromProvider?: string | null
-    plugin?: NullableJsonNullValueInput | InputJsonValue
-    pluginState?: NullableJsonNullValueInput | InputJsonValue
-    translate?: NullableJsonNullValueInput | InputJsonValue
-    tts?: NullableJsonNullValueInput | InputJsonValue
+    meta?: string | null
+    extra?: string | null
+    isDeleted?: boolean
+    isEdited?: boolean
+    plugin?: string | null
+    pluginState?: string | null
+    translate?: string | null
+    tts?: string | null
     userId: string
-    topicId?: string | null
-    files?: MessageFileUncheckedCreateNestedManyWithoutMessageInput
   }
 
   export type MessageCreateOrConnectWithoutSessionInput = {
@@ -24897,35 +9639,6 @@ export namespace Prisma {
 
   export type MessageCreateManySessionInputEnvelope = {
     data: MessageCreateManySessionInput | MessageCreateManySessionInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type TopicCreateWithoutSessionInput = {
-    id?: string
-    title: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    messages?: MessageCreateNestedManyWithoutTopicInput
-  }
-
-  export type TopicUncheckedCreateWithoutSessionInput = {
-    id?: string
-    title: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    messages?: MessageUncheckedCreateNestedManyWithoutTopicInput
-  }
-
-  export type TopicCreateOrConnectWithoutSessionInput = {
-    where: TopicWhereUniqueInput
-    create: XOR<TopicCreateWithoutSessionInput, TopicUncheckedCreateWithoutSessionInput>
-  }
-
-  export type TopicCreateManySessionInputEnvelope = {
-    data: TopicCreateManySessionInput | TopicCreateManySessionInput[]
-    skipDuplicates?: boolean
   }
 
   export type UserUpsertWithoutChatSessionsInput = {
@@ -24946,20 +9659,14 @@ export namespace Prisma {
     username?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    role?: StringFieldUpdateOperationsInput | string
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
+    settings?: NullableStringFieldUpdateOperationsInput | string | null
     sshConnections?: SSHConnectionUpdateManyWithoutUserNestedInput
     messages?: MessageUpdateManyWithoutUserNestedInput
     commandLogs?: CommandLogUpdateManyWithoutUserNestedInput
-    usageStats?: UsageStatsUpdateManyWithoutUserNestedInput
-    apiKeys?: ApiKeyUpdateManyWithoutUserNestedInput
-    sessionGroups?: SessionGroupUpdateManyWithoutUserNestedInput
-    plugins?: PluginUpdateManyWithoutUserNestedInput
-    knowledgeBases?: KnowledgeBaseUpdateManyWithoutUserNestedInput
-    files?: FileUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutChatSessionsInput = {
@@ -24969,20 +9676,67 @@ export namespace Prisma {
     username?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    role?: StringFieldUpdateOperationsInput | string
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
+    settings?: NullableStringFieldUpdateOperationsInput | string | null
     sshConnections?: SSHConnectionUncheckedUpdateManyWithoutUserNestedInput
     messages?: MessageUncheckedUpdateManyWithoutUserNestedInput
     commandLogs?: CommandLogUncheckedUpdateManyWithoutUserNestedInput
-    usageStats?: UsageStatsUncheckedUpdateManyWithoutUserNestedInput
-    apiKeys?: ApiKeyUncheckedUpdateManyWithoutUserNestedInput
-    sessionGroups?: SessionGroupUncheckedUpdateManyWithoutUserNestedInput
-    plugins?: PluginUncheckedUpdateManyWithoutUserNestedInput
-    knowledgeBases?: KnowledgeBaseUncheckedUpdateManyWithoutUserNestedInput
-    files?: FileUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type SSHConnectionUpsertWithoutChatSessionsInput = {
+    update: XOR<SSHConnectionUpdateWithoutChatSessionsInput, SSHConnectionUncheckedUpdateWithoutChatSessionsInput>
+    create: XOR<SSHConnectionCreateWithoutChatSessionsInput, SSHConnectionUncheckedCreateWithoutChatSessionsInput>
+    where?: SSHConnectionWhereInput
+  }
+
+  export type SSHConnectionUpdateToOneWithWhereWithoutChatSessionsInput = {
+    where?: SSHConnectionWhereInput
+    data: XOR<SSHConnectionUpdateWithoutChatSessionsInput, SSHConnectionUncheckedUpdateWithoutChatSessionsInput>
+  }
+
+  export type SSHConnectionUpdateWithoutChatSessionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    host?: StringFieldUpdateOperationsInput | string
+    port?: IntFieldUpdateOperationsInput | number
+    username?: StringFieldUpdateOperationsInput | string
+    authType?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    privateKey?: NullableStringFieldUpdateOperationsInput | string | null
+    publicKey?: NullableStringFieldUpdateOperationsInput | string | null
+    passphrase?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    lastUsed?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
+    user?: UserUpdateOneRequiredWithoutSshConnectionsNestedInput
+    commandLogs?: CommandLogUpdateManyWithoutSshConnectionNestedInput
+  }
+
+  export type SSHConnectionUncheckedUpdateWithoutChatSessionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    host?: StringFieldUpdateOperationsInput | string
+    port?: IntFieldUpdateOperationsInput | number
+    username?: StringFieldUpdateOperationsInput | string
+    authType?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    privateKey?: NullableStringFieldUpdateOperationsInput | string | null
+    publicKey?: NullableStringFieldUpdateOperationsInput | string | null
+    passphrase?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    lastUsed?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
+    userId?: StringFieldUpdateOperationsInput | string
+    commandLogs?: CommandLogUncheckedUpdateManyWithoutSshConnectionNestedInput
   }
 
   export type MessageUpsertWithWhereUniqueWithoutSessionInput = {
@@ -25001,180 +9755,33 @@ export namespace Prisma {
     data: XOR<MessageUpdateManyMutationInput, MessageUncheckedUpdateManyWithoutSessionInput>
   }
 
-  export type TopicUpsertWithWhereUniqueWithoutSessionInput = {
-    where: TopicWhereUniqueInput
-    update: XOR<TopicUpdateWithoutSessionInput, TopicUncheckedUpdateWithoutSessionInput>
-    create: XOR<TopicCreateWithoutSessionInput, TopicUncheckedCreateWithoutSessionInput>
-  }
-
-  export type TopicUpdateWithWhereUniqueWithoutSessionInput = {
-    where: TopicWhereUniqueInput
-    data: XOR<TopicUpdateWithoutSessionInput, TopicUncheckedUpdateWithoutSessionInput>
-  }
-
-  export type TopicUpdateManyWithWhereWithoutSessionInput = {
-    where: TopicScalarWhereInput
-    data: XOR<TopicUpdateManyMutationInput, TopicUncheckedUpdateManyWithoutSessionInput>
-  }
-
-  export type TopicScalarWhereInput = {
-    AND?: TopicScalarWhereInput | TopicScalarWhereInput[]
-    OR?: TopicScalarWhereInput[]
-    NOT?: TopicScalarWhereInput | TopicScalarWhereInput[]
-    id?: StringFilter<"Topic"> | string
-    title?: StringFilter<"Topic"> | string
-    createdAt?: DateTimeFilter<"Topic"> | Date | string
-    updatedAt?: DateTimeFilter<"Topic"> | Date | string
-    meta?: JsonNullableFilter<"Topic">
-    sessionId?: StringFilter<"Topic"> | string
-  }
-
-  export type ChatSessionCreateWithoutTopicsInput = {
+  export type ChatSessionCreateWithoutMessagesInput = {
     id?: string
-    title?: string | null
-    model?: string
-    type?: $Enums.SessionType
-    isActive?: boolean
-    pinned?: boolean
-    group?: string
+    title: string
+    type?: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
+    config?: string | null
+    meta?: string | null
     user: UserCreateNestedOneWithoutChatSessionsInput
-    messages?: MessageCreateNestedManyWithoutSessionInput
+    sshConnection?: SSHConnectionCreateNestedOneWithoutChatSessionsInput
   }
 
-  export type ChatSessionUncheckedCreateWithoutTopicsInput = {
+  export type ChatSessionUncheckedCreateWithoutMessagesInput = {
     id?: string
-    title?: string | null
-    model?: string
-    type?: $Enums.SessionType
-    isActive?: boolean
-    pinned?: boolean
-    group?: string
+    title: string
+    type?: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
+    config?: string | null
+    meta?: string | null
     userId: string
-    messages?: MessageUncheckedCreateNestedManyWithoutSessionInput
+    sshConnectionId?: string | null
   }
 
-  export type ChatSessionCreateOrConnectWithoutTopicsInput = {
+  export type ChatSessionCreateOrConnectWithoutMessagesInput = {
     where: ChatSessionWhereUniqueInput
-    create: XOR<ChatSessionCreateWithoutTopicsInput, ChatSessionUncheckedCreateWithoutTopicsInput>
-  }
-
-  export type MessageCreateWithoutTopicInput = {
-    id?: string
-    role: $Enums.MessageRole
-    content: string
-    parentId?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
-    tokens?: number | null
-    fromModel?: string | null
-    fromProvider?: string | null
-    plugin?: NullableJsonNullValueInput | InputJsonValue
-    pluginState?: NullableJsonNullValueInput | InputJsonValue
-    translate?: NullableJsonNullValueInput | InputJsonValue
-    tts?: NullableJsonNullValueInput | InputJsonValue
-    user: UserCreateNestedOneWithoutMessagesInput
-    session: ChatSessionCreateNestedOneWithoutMessagesInput
-    files?: MessageFileCreateNestedManyWithoutMessageInput
-  }
-
-  export type MessageUncheckedCreateWithoutTopicInput = {
-    id?: string
-    role: $Enums.MessageRole
-    content: string
-    parentId?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
-    tokens?: number | null
-    fromModel?: string | null
-    fromProvider?: string | null
-    plugin?: NullableJsonNullValueInput | InputJsonValue
-    pluginState?: NullableJsonNullValueInput | InputJsonValue
-    translate?: NullableJsonNullValueInput | InputJsonValue
-    tts?: NullableJsonNullValueInput | InputJsonValue
-    userId: string
-    sessionId: string
-    files?: MessageFileUncheckedCreateNestedManyWithoutMessageInput
-  }
-
-  export type MessageCreateOrConnectWithoutTopicInput = {
-    where: MessageWhereUniqueInput
-    create: XOR<MessageCreateWithoutTopicInput, MessageUncheckedCreateWithoutTopicInput>
-  }
-
-  export type MessageCreateManyTopicInputEnvelope = {
-    data: MessageCreateManyTopicInput | MessageCreateManyTopicInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type ChatSessionUpsertWithoutTopicsInput = {
-    update: XOR<ChatSessionUpdateWithoutTopicsInput, ChatSessionUncheckedUpdateWithoutTopicsInput>
-    create: XOR<ChatSessionCreateWithoutTopicsInput, ChatSessionUncheckedCreateWithoutTopicsInput>
-    where?: ChatSessionWhereInput
-  }
-
-  export type ChatSessionUpdateToOneWithWhereWithoutTopicsInput = {
-    where?: ChatSessionWhereInput
-    data: XOR<ChatSessionUpdateWithoutTopicsInput, ChatSessionUncheckedUpdateWithoutTopicsInput>
-  }
-
-  export type ChatSessionUpdateWithoutTopicsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: NullableStringFieldUpdateOperationsInput | string | null
-    model?: StringFieldUpdateOperationsInput | string
-    type?: EnumSessionTypeFieldUpdateOperationsInput | $Enums.SessionType
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    pinned?: BoolFieldUpdateOperationsInput | boolean
-    group?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    user?: UserUpdateOneRequiredWithoutChatSessionsNestedInput
-    messages?: MessageUpdateManyWithoutSessionNestedInput
-  }
-
-  export type ChatSessionUncheckedUpdateWithoutTopicsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: NullableStringFieldUpdateOperationsInput | string | null
-    model?: StringFieldUpdateOperationsInput | string
-    type?: EnumSessionTypeFieldUpdateOperationsInput | $Enums.SessionType
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    pinned?: BoolFieldUpdateOperationsInput | boolean
-    group?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    userId?: StringFieldUpdateOperationsInput | string
-    messages?: MessageUncheckedUpdateManyWithoutSessionNestedInput
-  }
-
-  export type MessageUpsertWithWhereUniqueWithoutTopicInput = {
-    where: MessageWhereUniqueInput
-    update: XOR<MessageUpdateWithoutTopicInput, MessageUncheckedUpdateWithoutTopicInput>
-    create: XOR<MessageCreateWithoutTopicInput, MessageUncheckedCreateWithoutTopicInput>
-  }
-
-  export type MessageUpdateWithWhereUniqueWithoutTopicInput = {
-    where: MessageWhereUniqueInput
-    data: XOR<MessageUpdateWithoutTopicInput, MessageUncheckedUpdateWithoutTopicInput>
-  }
-
-  export type MessageUpdateManyWithWhereWithoutTopicInput = {
-    where: MessageScalarWhereInput
-    data: XOR<MessageUpdateManyMutationInput, MessageUncheckedUpdateManyWithoutTopicInput>
+    create: XOR<ChatSessionCreateWithoutMessagesInput, ChatSessionUncheckedCreateWithoutMessagesInput>
   }
 
   export type UserCreateWithoutMessagesInput = {
@@ -25184,20 +9791,14 @@ export namespace Prisma {
     username?: string | null
     password?: string | null
     avatar?: string | null
-    role?: $Enums.UserRole
+    role?: string
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
+    settings?: string | null
     sshConnections?: SSHConnectionCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
     commandLogs?: CommandLogCreateNestedManyWithoutUserInput
-    usageStats?: UsageStatsCreateNestedManyWithoutUserInput
-    apiKeys?: ApiKeyCreateNestedManyWithoutUserInput
-    sessionGroups?: SessionGroupCreateNestedManyWithoutUserInput
-    plugins?: PluginCreateNestedManyWithoutUserInput
-    knowledgeBases?: KnowledgeBaseCreateNestedManyWithoutUserInput
-    files?: FileCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutMessagesInput = {
@@ -25207,20 +9808,14 @@ export namespace Prisma {
     username?: string | null
     password?: string | null
     avatar?: string | null
-    role?: $Enums.UserRole
+    role?: string
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
+    settings?: string | null
     sshConnections?: SSHConnectionUncheckedCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
     commandLogs?: CommandLogUncheckedCreateNestedManyWithoutUserInput
-    usageStats?: UsageStatsUncheckedCreateNestedManyWithoutUserInput
-    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutUserInput
-    sessionGroups?: SessionGroupUncheckedCreateNestedManyWithoutUserInput
-    plugins?: PluginUncheckedCreateNestedManyWithoutUserInput
-    knowledgeBases?: KnowledgeBaseUncheckedCreateNestedManyWithoutUserInput
-    files?: FileUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutMessagesInput = {
@@ -25228,86 +9823,39 @@ export namespace Prisma {
     create: XOR<UserCreateWithoutMessagesInput, UserUncheckedCreateWithoutMessagesInput>
   }
 
-  export type ChatSessionCreateWithoutMessagesInput = {
-    id?: string
-    title?: string | null
-    model?: string
-    type?: $Enums.SessionType
-    isActive?: boolean
-    pinned?: boolean
-    group?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    user: UserCreateNestedOneWithoutChatSessionsInput
-    topics?: TopicCreateNestedManyWithoutSessionInput
-  }
-
-  export type ChatSessionUncheckedCreateWithoutMessagesInput = {
-    id?: string
-    title?: string | null
-    model?: string
-    type?: $Enums.SessionType
-    isActive?: boolean
-    pinned?: boolean
-    group?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    userId: string
-    topics?: TopicUncheckedCreateNestedManyWithoutSessionInput
-  }
-
-  export type ChatSessionCreateOrConnectWithoutMessagesInput = {
-    where: ChatSessionWhereUniqueInput
+  export type ChatSessionUpsertWithoutMessagesInput = {
+    update: XOR<ChatSessionUpdateWithoutMessagesInput, ChatSessionUncheckedUpdateWithoutMessagesInput>
     create: XOR<ChatSessionCreateWithoutMessagesInput, ChatSessionUncheckedCreateWithoutMessagesInput>
+    where?: ChatSessionWhereInput
   }
 
-  export type TopicCreateWithoutMessagesInput = {
-    id?: string
-    title: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    session: ChatSessionCreateNestedOneWithoutTopicsInput
+  export type ChatSessionUpdateToOneWithWhereWithoutMessagesInput = {
+    where?: ChatSessionWhereInput
+    data: XOR<ChatSessionUpdateWithoutMessagesInput, ChatSessionUncheckedUpdateWithoutMessagesInput>
   }
 
-  export type TopicUncheckedCreateWithoutMessagesInput = {
-    id?: string
-    title: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    sessionId: string
+  export type ChatSessionUpdateWithoutMessagesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    config?: NullableStringFieldUpdateOperationsInput | string | null
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
+    user?: UserUpdateOneRequiredWithoutChatSessionsNestedInput
+    sshConnection?: SSHConnectionUpdateOneWithoutChatSessionsNestedInput
   }
 
-  export type TopicCreateOrConnectWithoutMessagesInput = {
-    where: TopicWhereUniqueInput
-    create: XOR<TopicCreateWithoutMessagesInput, TopicUncheckedCreateWithoutMessagesInput>
-  }
-
-  export type MessageFileCreateWithoutMessageInput = {
-    id?: string
-    createdAt?: Date | string
-    file: FileCreateNestedOneWithoutMessagesInput
-  }
-
-  export type MessageFileUncheckedCreateWithoutMessageInput = {
-    id?: string
-    fileId: string
-    createdAt?: Date | string
-  }
-
-  export type MessageFileCreateOrConnectWithoutMessageInput = {
-    where: MessageFileWhereUniqueInput
-    create: XOR<MessageFileCreateWithoutMessageInput, MessageFileUncheckedCreateWithoutMessageInput>
-  }
-
-  export type MessageFileCreateManyMessageInputEnvelope = {
-    data: MessageFileCreateManyMessageInput | MessageFileCreateManyMessageInput[]
-    skipDuplicates?: boolean
+  export type ChatSessionUncheckedUpdateWithoutMessagesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    config?: NullableStringFieldUpdateOperationsInput | string | null
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
+    userId?: StringFieldUpdateOperationsInput | string
+    sshConnectionId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UserUpsertWithoutMessagesInput = {
@@ -25328,20 +9876,14 @@ export namespace Prisma {
     username?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    role?: StringFieldUpdateOperationsInput | string
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
+    settings?: NullableStringFieldUpdateOperationsInput | string | null
     sshConnections?: SSHConnectionUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
     commandLogs?: CommandLogUpdateManyWithoutUserNestedInput
-    usageStats?: UsageStatsUpdateManyWithoutUserNestedInput
-    apiKeys?: ApiKeyUpdateManyWithoutUserNestedInput
-    sessionGroups?: SessionGroupUpdateManyWithoutUserNestedInput
-    plugins?: PluginUpdateManyWithoutUserNestedInput
-    knowledgeBases?: KnowledgeBaseUpdateManyWithoutUserNestedInput
-    files?: FileUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutMessagesInput = {
@@ -25351,436 +9893,14 @@ export namespace Prisma {
     username?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    role?: StringFieldUpdateOperationsInput | string
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
+    settings?: NullableStringFieldUpdateOperationsInput | string | null
     sshConnections?: SSHConnectionUncheckedUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
     commandLogs?: CommandLogUncheckedUpdateManyWithoutUserNestedInput
-    usageStats?: UsageStatsUncheckedUpdateManyWithoutUserNestedInput
-    apiKeys?: ApiKeyUncheckedUpdateManyWithoutUserNestedInput
-    sessionGroups?: SessionGroupUncheckedUpdateManyWithoutUserNestedInput
-    plugins?: PluginUncheckedUpdateManyWithoutUserNestedInput
-    knowledgeBases?: KnowledgeBaseUncheckedUpdateManyWithoutUserNestedInput
-    files?: FileUncheckedUpdateManyWithoutUserNestedInput
-  }
-
-  export type ChatSessionUpsertWithoutMessagesInput = {
-    update: XOR<ChatSessionUpdateWithoutMessagesInput, ChatSessionUncheckedUpdateWithoutMessagesInput>
-    create: XOR<ChatSessionCreateWithoutMessagesInput, ChatSessionUncheckedCreateWithoutMessagesInput>
-    where?: ChatSessionWhereInput
-  }
-
-  export type ChatSessionUpdateToOneWithWhereWithoutMessagesInput = {
-    where?: ChatSessionWhereInput
-    data: XOR<ChatSessionUpdateWithoutMessagesInput, ChatSessionUncheckedUpdateWithoutMessagesInput>
-  }
-
-  export type ChatSessionUpdateWithoutMessagesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: NullableStringFieldUpdateOperationsInput | string | null
-    model?: StringFieldUpdateOperationsInput | string
-    type?: EnumSessionTypeFieldUpdateOperationsInput | $Enums.SessionType
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    pinned?: BoolFieldUpdateOperationsInput | boolean
-    group?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    user?: UserUpdateOneRequiredWithoutChatSessionsNestedInput
-    topics?: TopicUpdateManyWithoutSessionNestedInput
-  }
-
-  export type ChatSessionUncheckedUpdateWithoutMessagesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: NullableStringFieldUpdateOperationsInput | string | null
-    model?: StringFieldUpdateOperationsInput | string
-    type?: EnumSessionTypeFieldUpdateOperationsInput | $Enums.SessionType
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    pinned?: BoolFieldUpdateOperationsInput | boolean
-    group?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    userId?: StringFieldUpdateOperationsInput | string
-    topics?: TopicUncheckedUpdateManyWithoutSessionNestedInput
-  }
-
-  export type TopicUpsertWithoutMessagesInput = {
-    update: XOR<TopicUpdateWithoutMessagesInput, TopicUncheckedUpdateWithoutMessagesInput>
-    create: XOR<TopicCreateWithoutMessagesInput, TopicUncheckedCreateWithoutMessagesInput>
-    where?: TopicWhereInput
-  }
-
-  export type TopicUpdateToOneWithWhereWithoutMessagesInput = {
-    where?: TopicWhereInput
-    data: XOR<TopicUpdateWithoutMessagesInput, TopicUncheckedUpdateWithoutMessagesInput>
-  }
-
-  export type TopicUpdateWithoutMessagesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    session?: ChatSessionUpdateOneRequiredWithoutTopicsNestedInput
-  }
-
-  export type TopicUncheckedUpdateWithoutMessagesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    sessionId?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type MessageFileUpsertWithWhereUniqueWithoutMessageInput = {
-    where: MessageFileWhereUniqueInput
-    update: XOR<MessageFileUpdateWithoutMessageInput, MessageFileUncheckedUpdateWithoutMessageInput>
-    create: XOR<MessageFileCreateWithoutMessageInput, MessageFileUncheckedCreateWithoutMessageInput>
-  }
-
-  export type MessageFileUpdateWithWhereUniqueWithoutMessageInput = {
-    where: MessageFileWhereUniqueInput
-    data: XOR<MessageFileUpdateWithoutMessageInput, MessageFileUncheckedUpdateWithoutMessageInput>
-  }
-
-  export type MessageFileUpdateManyWithWhereWithoutMessageInput = {
-    where: MessageFileScalarWhereInput
-    data: XOR<MessageFileUpdateManyMutationInput, MessageFileUncheckedUpdateManyWithoutMessageInput>
-  }
-
-  export type MessageFileScalarWhereInput = {
-    AND?: MessageFileScalarWhereInput | MessageFileScalarWhereInput[]
-    OR?: MessageFileScalarWhereInput[]
-    NOT?: MessageFileScalarWhereInput | MessageFileScalarWhereInput[]
-    id?: StringFilter<"MessageFile"> | string
-    messageId?: StringFilter<"MessageFile"> | string
-    fileId?: StringFilter<"MessageFile"> | string
-    createdAt?: DateTimeFilter<"MessageFile"> | Date | string
-  }
-
-  export type MessageCreateWithoutFilesInput = {
-    id?: string
-    role: $Enums.MessageRole
-    content: string
-    parentId?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
-    tokens?: number | null
-    fromModel?: string | null
-    fromProvider?: string | null
-    plugin?: NullableJsonNullValueInput | InputJsonValue
-    pluginState?: NullableJsonNullValueInput | InputJsonValue
-    translate?: NullableJsonNullValueInput | InputJsonValue
-    tts?: NullableJsonNullValueInput | InputJsonValue
-    user: UserCreateNestedOneWithoutMessagesInput
-    session: ChatSessionCreateNestedOneWithoutMessagesInput
-    topic?: TopicCreateNestedOneWithoutMessagesInput
-  }
-
-  export type MessageUncheckedCreateWithoutFilesInput = {
-    id?: string
-    role: $Enums.MessageRole
-    content: string
-    parentId?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
-    tokens?: number | null
-    fromModel?: string | null
-    fromProvider?: string | null
-    plugin?: NullableJsonNullValueInput | InputJsonValue
-    pluginState?: NullableJsonNullValueInput | InputJsonValue
-    translate?: NullableJsonNullValueInput | InputJsonValue
-    tts?: NullableJsonNullValueInput | InputJsonValue
-    userId: string
-    sessionId: string
-    topicId?: string | null
-  }
-
-  export type MessageCreateOrConnectWithoutFilesInput = {
-    where: MessageWhereUniqueInput
-    create: XOR<MessageCreateWithoutFilesInput, MessageUncheckedCreateWithoutFilesInput>
-  }
-
-  export type FileCreateWithoutMessagesInput = {
-    id?: string
-    name: string
-    type: string
-    size: bigint | number
-    url?: string | null
-    path?: string | null
-    hash?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    user: UserCreateNestedOneWithoutFilesInput
-  }
-
-  export type FileUncheckedCreateWithoutMessagesInput = {
-    id?: string
-    name: string
-    type: string
-    size: bigint | number
-    url?: string | null
-    path?: string | null
-    hash?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    userId: string
-  }
-
-  export type FileCreateOrConnectWithoutMessagesInput = {
-    where: FileWhereUniqueInput
-    create: XOR<FileCreateWithoutMessagesInput, FileUncheckedCreateWithoutMessagesInput>
-  }
-
-  export type MessageUpsertWithoutFilesInput = {
-    update: XOR<MessageUpdateWithoutFilesInput, MessageUncheckedUpdateWithoutFilesInput>
-    create: XOR<MessageCreateWithoutFilesInput, MessageUncheckedCreateWithoutFilesInput>
-    where?: MessageWhereInput
-  }
-
-  export type MessageUpdateToOneWithWhereWithoutFilesInput = {
-    where?: MessageWhereInput
-    data: XOR<MessageUpdateWithoutFilesInput, MessageUncheckedUpdateWithoutFilesInput>
-  }
-
-  export type MessageUpdateWithoutFilesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    role?: EnumMessageRoleFieldUpdateOperationsInput | $Enums.MessageRole
-    content?: StringFieldUpdateOperationsInput | string
-    parentId?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
-    tokens?: NullableIntFieldUpdateOperationsInput | number | null
-    fromModel?: NullableStringFieldUpdateOperationsInput | string | null
-    fromProvider?: NullableStringFieldUpdateOperationsInput | string | null
-    plugin?: NullableJsonNullValueInput | InputJsonValue
-    pluginState?: NullableJsonNullValueInput | InputJsonValue
-    translate?: NullableJsonNullValueInput | InputJsonValue
-    tts?: NullableJsonNullValueInput | InputJsonValue
-    user?: UserUpdateOneRequiredWithoutMessagesNestedInput
-    session?: ChatSessionUpdateOneRequiredWithoutMessagesNestedInput
-    topic?: TopicUpdateOneWithoutMessagesNestedInput
-  }
-
-  export type MessageUncheckedUpdateWithoutFilesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    role?: EnumMessageRoleFieldUpdateOperationsInput | $Enums.MessageRole
-    content?: StringFieldUpdateOperationsInput | string
-    parentId?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
-    tokens?: NullableIntFieldUpdateOperationsInput | number | null
-    fromModel?: NullableStringFieldUpdateOperationsInput | string | null
-    fromProvider?: NullableStringFieldUpdateOperationsInput | string | null
-    plugin?: NullableJsonNullValueInput | InputJsonValue
-    pluginState?: NullableJsonNullValueInput | InputJsonValue
-    translate?: NullableJsonNullValueInput | InputJsonValue
-    tts?: NullableJsonNullValueInput | InputJsonValue
-    userId?: StringFieldUpdateOperationsInput | string
-    sessionId?: StringFieldUpdateOperationsInput | string
-    topicId?: NullableStringFieldUpdateOperationsInput | string | null
-  }
-
-  export type FileUpsertWithoutMessagesInput = {
-    update: XOR<FileUpdateWithoutMessagesInput, FileUncheckedUpdateWithoutMessagesInput>
-    create: XOR<FileCreateWithoutMessagesInput, FileUncheckedCreateWithoutMessagesInput>
-    where?: FileWhereInput
-  }
-
-  export type FileUpdateToOneWithWhereWithoutMessagesInput = {
-    where?: FileWhereInput
-    data: XOR<FileUpdateWithoutMessagesInput, FileUncheckedUpdateWithoutMessagesInput>
-  }
-
-  export type FileUpdateWithoutMessagesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    size?: BigIntFieldUpdateOperationsInput | bigint | number
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    path?: NullableStringFieldUpdateOperationsInput | string | null
-    hash?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    user?: UserUpdateOneRequiredWithoutFilesNestedInput
-  }
-
-  export type FileUncheckedUpdateWithoutMessagesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    size?: BigIntFieldUpdateOperationsInput | bigint | number
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    path?: NullableStringFieldUpdateOperationsInput | string | null
-    hash?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    userId?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type UserCreateWithoutFilesInput = {
-    id?: string
-    uuid?: string
-    email?: string | null
-    username?: string | null
-    password?: string | null
-    avatar?: string | null
-    role?: $Enums.UserRole
-    isActive?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    sshConnections?: SSHConnectionCreateNestedManyWithoutUserInput
-    chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
-    messages?: MessageCreateNestedManyWithoutUserInput
-    commandLogs?: CommandLogCreateNestedManyWithoutUserInput
-    usageStats?: UsageStatsCreateNestedManyWithoutUserInput
-    apiKeys?: ApiKeyCreateNestedManyWithoutUserInput
-    sessionGroups?: SessionGroupCreateNestedManyWithoutUserInput
-    plugins?: PluginCreateNestedManyWithoutUserInput
-    knowledgeBases?: KnowledgeBaseCreateNestedManyWithoutUserInput
-  }
-
-  export type UserUncheckedCreateWithoutFilesInput = {
-    id?: string
-    uuid?: string
-    email?: string | null
-    username?: string | null
-    password?: string | null
-    avatar?: string | null
-    role?: $Enums.UserRole
-    isActive?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    sshConnections?: SSHConnectionUncheckedCreateNestedManyWithoutUserInput
-    chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
-    messages?: MessageUncheckedCreateNestedManyWithoutUserInput
-    commandLogs?: CommandLogUncheckedCreateNestedManyWithoutUserInput
-    usageStats?: UsageStatsUncheckedCreateNestedManyWithoutUserInput
-    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutUserInput
-    sessionGroups?: SessionGroupUncheckedCreateNestedManyWithoutUserInput
-    plugins?: PluginUncheckedCreateNestedManyWithoutUserInput
-    knowledgeBases?: KnowledgeBaseUncheckedCreateNestedManyWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutFilesInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutFilesInput, UserUncheckedCreateWithoutFilesInput>
-  }
-
-  export type MessageFileCreateWithoutFileInput = {
-    id?: string
-    createdAt?: Date | string
-    message: MessageCreateNestedOneWithoutFilesInput
-  }
-
-  export type MessageFileUncheckedCreateWithoutFileInput = {
-    id?: string
-    messageId: string
-    createdAt?: Date | string
-  }
-
-  export type MessageFileCreateOrConnectWithoutFileInput = {
-    where: MessageFileWhereUniqueInput
-    create: XOR<MessageFileCreateWithoutFileInput, MessageFileUncheckedCreateWithoutFileInput>
-  }
-
-  export type MessageFileCreateManyFileInputEnvelope = {
-    data: MessageFileCreateManyFileInput | MessageFileCreateManyFileInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type UserUpsertWithoutFilesInput = {
-    update: XOR<UserUpdateWithoutFilesInput, UserUncheckedUpdateWithoutFilesInput>
-    create: XOR<UserCreateWithoutFilesInput, UserUncheckedCreateWithoutFilesInput>
-    where?: UserWhereInput
-  }
-
-  export type UserUpdateToOneWithWhereWithoutFilesInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutFilesInput, UserUncheckedUpdateWithoutFilesInput>
-  }
-
-  export type UserUpdateWithoutFilesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    uuid?: StringFieldUpdateOperationsInput | string
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    username?: NullableStringFieldUpdateOperationsInput | string | null
-    password?: NullableStringFieldUpdateOperationsInput | string | null
-    avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    sshConnections?: SSHConnectionUpdateManyWithoutUserNestedInput
-    chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
-    messages?: MessageUpdateManyWithoutUserNestedInput
-    commandLogs?: CommandLogUpdateManyWithoutUserNestedInput
-    usageStats?: UsageStatsUpdateManyWithoutUserNestedInput
-    apiKeys?: ApiKeyUpdateManyWithoutUserNestedInput
-    sessionGroups?: SessionGroupUpdateManyWithoutUserNestedInput
-    plugins?: PluginUpdateManyWithoutUserNestedInput
-    knowledgeBases?: KnowledgeBaseUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutFilesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    uuid?: StringFieldUpdateOperationsInput | string
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    username?: NullableStringFieldUpdateOperationsInput | string | null
-    password?: NullableStringFieldUpdateOperationsInput | string | null
-    avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    sshConnections?: SSHConnectionUncheckedUpdateManyWithoutUserNestedInput
-    chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
-    messages?: MessageUncheckedUpdateManyWithoutUserNestedInput
-    commandLogs?: CommandLogUncheckedUpdateManyWithoutUserNestedInput
-    usageStats?: UsageStatsUncheckedUpdateManyWithoutUserNestedInput
-    apiKeys?: ApiKeyUncheckedUpdateManyWithoutUserNestedInput
-    sessionGroups?: SessionGroupUncheckedUpdateManyWithoutUserNestedInput
-    plugins?: PluginUncheckedUpdateManyWithoutUserNestedInput
-    knowledgeBases?: KnowledgeBaseUncheckedUpdateManyWithoutUserNestedInput
-  }
-
-  export type MessageFileUpsertWithWhereUniqueWithoutFileInput = {
-    where: MessageFileWhereUniqueInput
-    update: XOR<MessageFileUpdateWithoutFileInput, MessageFileUncheckedUpdateWithoutFileInput>
-    create: XOR<MessageFileCreateWithoutFileInput, MessageFileUncheckedCreateWithoutFileInput>
-  }
-
-  export type MessageFileUpdateWithWhereUniqueWithoutFileInput = {
-    where: MessageFileWhereUniqueInput
-    data: XOR<MessageFileUpdateWithoutFileInput, MessageFileUncheckedUpdateWithoutFileInput>
-  }
-
-  export type MessageFileUpdateManyWithWhereWithoutFileInput = {
-    where: MessageFileScalarWhereInput
-    data: XOR<MessageFileUpdateManyMutationInput, MessageFileUncheckedUpdateManyWithoutFileInput>
   }
 
   export type UserCreateWithoutCommandLogsInput = {
@@ -25790,20 +9910,14 @@ export namespace Prisma {
     username?: string | null
     password?: string | null
     avatar?: string | null
-    role?: $Enums.UserRole
+    role?: string
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
+    settings?: string | null
     sshConnections?: SSHConnectionCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
     messages?: MessageCreateNestedManyWithoutUserInput
-    usageStats?: UsageStatsCreateNestedManyWithoutUserInput
-    apiKeys?: ApiKeyCreateNestedManyWithoutUserInput
-    sessionGroups?: SessionGroupCreateNestedManyWithoutUserInput
-    plugins?: PluginCreateNestedManyWithoutUserInput
-    knowledgeBases?: KnowledgeBaseCreateNestedManyWithoutUserInput
-    files?: FileCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCommandLogsInput = {
@@ -25813,20 +9927,14 @@ export namespace Prisma {
     username?: string | null
     password?: string | null
     avatar?: string | null
-    role?: $Enums.UserRole
+    role?: string
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
+    settings?: string | null
     sshConnections?: SSHConnectionUncheckedCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
     messages?: MessageUncheckedCreateNestedManyWithoutUserInput
-    usageStats?: UsageStatsUncheckedCreateNestedManyWithoutUserInput
-    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutUserInput
-    sessionGroups?: SessionGroupUncheckedCreateNestedManyWithoutUserInput
-    plugins?: PluginUncheckedCreateNestedManyWithoutUserInput
-    knowledgeBases?: KnowledgeBaseUncheckedCreateNestedManyWithoutUserInput
-    files?: FileUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutCommandLogsInput = {
@@ -25840,16 +9948,19 @@ export namespace Prisma {
     host: string
     port?: number
     username: string
-    authType: $Enums.SSHAuthType
+    authType: string
     password?: string | null
     privateKey?: string | null
+    publicKey?: string | null
     passphrase?: string | null
-    status?: $Enums.ConnectionStatus
+    status?: string
     lastUsed?: Date | string | null
+    isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
+    meta?: string | null
     user: UserCreateNestedOneWithoutSshConnectionsInput
+    chatSessions?: ChatSessionCreateNestedManyWithoutSshConnectionInput
   }
 
   export type SSHConnectionUncheckedCreateWithoutCommandLogsInput = {
@@ -25858,16 +9969,19 @@ export namespace Prisma {
     host: string
     port?: number
     username: string
-    authType: $Enums.SSHAuthType
+    authType: string
     password?: string | null
     privateKey?: string | null
+    publicKey?: string | null
     passphrase?: string | null
-    status?: $Enums.ConnectionStatus
+    status?: string
     lastUsed?: Date | string | null
+    isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
+    meta?: string | null
     userId: string
+    chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutSshConnectionInput
   }
 
   export type SSHConnectionCreateOrConnectWithoutCommandLogsInput = {
@@ -25893,20 +10007,14 @@ export namespace Prisma {
     username?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    role?: StringFieldUpdateOperationsInput | string
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
+    settings?: NullableStringFieldUpdateOperationsInput | string | null
     sshConnections?: SSHConnectionUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
     messages?: MessageUpdateManyWithoutUserNestedInput
-    usageStats?: UsageStatsUpdateManyWithoutUserNestedInput
-    apiKeys?: ApiKeyUpdateManyWithoutUserNestedInput
-    sessionGroups?: SessionGroupUpdateManyWithoutUserNestedInput
-    plugins?: PluginUpdateManyWithoutUserNestedInput
-    knowledgeBases?: KnowledgeBaseUpdateManyWithoutUserNestedInput
-    files?: FileUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCommandLogsInput = {
@@ -25916,20 +10024,14 @@ export namespace Prisma {
     username?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    role?: StringFieldUpdateOperationsInput | string
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
+    settings?: NullableStringFieldUpdateOperationsInput | string | null
     sshConnections?: SSHConnectionUncheckedUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
     messages?: MessageUncheckedUpdateManyWithoutUserNestedInput
-    usageStats?: UsageStatsUncheckedUpdateManyWithoutUserNestedInput
-    apiKeys?: ApiKeyUncheckedUpdateManyWithoutUserNestedInput
-    sessionGroups?: SessionGroupUncheckedUpdateManyWithoutUserNestedInput
-    plugins?: PluginUncheckedUpdateManyWithoutUserNestedInput
-    knowledgeBases?: KnowledgeBaseUncheckedUpdateManyWithoutUserNestedInput
-    files?: FileUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type SSHConnectionUpsertWithoutCommandLogsInput = {
@@ -25949,16 +10051,19 @@ export namespace Prisma {
     host?: StringFieldUpdateOperationsInput | string
     port?: IntFieldUpdateOperationsInput | number
     username?: StringFieldUpdateOperationsInput | string
-    authType?: EnumSSHAuthTypeFieldUpdateOperationsInput | $Enums.SSHAuthType
+    authType?: StringFieldUpdateOperationsInput | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
     privateKey?: NullableStringFieldUpdateOperationsInput | string | null
+    publicKey?: NullableStringFieldUpdateOperationsInput | string | null
     passphrase?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: EnumConnectionStatusFieldUpdateOperationsInput | $Enums.ConnectionStatus
+    status?: StringFieldUpdateOperationsInput | string
     lastUsed?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
     user?: UserUpdateOneRequiredWithoutSshConnectionsNestedInput
+    chatSessions?: ChatSessionUpdateManyWithoutSshConnectionNestedInput
   }
 
   export type SSHConnectionUncheckedUpdateWithoutCommandLogsInput = {
@@ -25967,690 +10072,19 @@ export namespace Prisma {
     host?: StringFieldUpdateOperationsInput | string
     port?: IntFieldUpdateOperationsInput | number
     username?: StringFieldUpdateOperationsInput | string
-    authType?: EnumSSHAuthTypeFieldUpdateOperationsInput | $Enums.SSHAuthType
+    authType?: StringFieldUpdateOperationsInput | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
     privateKey?: NullableStringFieldUpdateOperationsInput | string | null
+    publicKey?: NullableStringFieldUpdateOperationsInput | string | null
     passphrase?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: EnumConnectionStatusFieldUpdateOperationsInput | $Enums.ConnectionStatus
+    status?: StringFieldUpdateOperationsInput | string
     lastUsed?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type UserCreateWithoutUsageStatsInput = {
-    id?: string
-    uuid?: string
-    email?: string | null
-    username?: string | null
-    password?: string | null
-    avatar?: string | null
-    role?: $Enums.UserRole
-    isActive?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    sshConnections?: SSHConnectionCreateNestedManyWithoutUserInput
-    chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
-    messages?: MessageCreateNestedManyWithoutUserInput
-    commandLogs?: CommandLogCreateNestedManyWithoutUserInput
-    apiKeys?: ApiKeyCreateNestedManyWithoutUserInput
-    sessionGroups?: SessionGroupCreateNestedManyWithoutUserInput
-    plugins?: PluginCreateNestedManyWithoutUserInput
-    knowledgeBases?: KnowledgeBaseCreateNestedManyWithoutUserInput
-    files?: FileCreateNestedManyWithoutUserInput
-  }
-
-  export type UserUncheckedCreateWithoutUsageStatsInput = {
-    id?: string
-    uuid?: string
-    email?: string | null
-    username?: string | null
-    password?: string | null
-    avatar?: string | null
-    role?: $Enums.UserRole
-    isActive?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    sshConnections?: SSHConnectionUncheckedCreateNestedManyWithoutUserInput
-    chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
-    messages?: MessageUncheckedCreateNestedManyWithoutUserInput
-    commandLogs?: CommandLogUncheckedCreateNestedManyWithoutUserInput
-    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutUserInput
-    sessionGroups?: SessionGroupUncheckedCreateNestedManyWithoutUserInput
-    plugins?: PluginUncheckedCreateNestedManyWithoutUserInput
-    knowledgeBases?: KnowledgeBaseUncheckedCreateNestedManyWithoutUserInput
-    files?: FileUncheckedCreateNestedManyWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutUsageStatsInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutUsageStatsInput, UserUncheckedCreateWithoutUsageStatsInput>
-  }
-
-  export type UserUpsertWithoutUsageStatsInput = {
-    update: XOR<UserUpdateWithoutUsageStatsInput, UserUncheckedUpdateWithoutUsageStatsInput>
-    create: XOR<UserCreateWithoutUsageStatsInput, UserUncheckedCreateWithoutUsageStatsInput>
-    where?: UserWhereInput
-  }
-
-  export type UserUpdateToOneWithWhereWithoutUsageStatsInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutUsageStatsInput, UserUncheckedUpdateWithoutUsageStatsInput>
-  }
-
-  export type UserUpdateWithoutUsageStatsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    uuid?: StringFieldUpdateOperationsInput | string
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    username?: NullableStringFieldUpdateOperationsInput | string | null
-    password?: NullableStringFieldUpdateOperationsInput | string | null
-    avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    sshConnections?: SSHConnectionUpdateManyWithoutUserNestedInput
-    chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
-    messages?: MessageUpdateManyWithoutUserNestedInput
-    commandLogs?: CommandLogUpdateManyWithoutUserNestedInput
-    apiKeys?: ApiKeyUpdateManyWithoutUserNestedInput
-    sessionGroups?: SessionGroupUpdateManyWithoutUserNestedInput
-    plugins?: PluginUpdateManyWithoutUserNestedInput
-    knowledgeBases?: KnowledgeBaseUpdateManyWithoutUserNestedInput
-    files?: FileUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutUsageStatsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    uuid?: StringFieldUpdateOperationsInput | string
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    username?: NullableStringFieldUpdateOperationsInput | string | null
-    password?: NullableStringFieldUpdateOperationsInput | string | null
-    avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    sshConnections?: SSHConnectionUncheckedUpdateManyWithoutUserNestedInput
-    chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
-    messages?: MessageUncheckedUpdateManyWithoutUserNestedInput
-    commandLogs?: CommandLogUncheckedUpdateManyWithoutUserNestedInput
-    apiKeys?: ApiKeyUncheckedUpdateManyWithoutUserNestedInput
-    sessionGroups?: SessionGroupUncheckedUpdateManyWithoutUserNestedInput
-    plugins?: PluginUncheckedUpdateManyWithoutUserNestedInput
-    knowledgeBases?: KnowledgeBaseUncheckedUpdateManyWithoutUserNestedInput
-    files?: FileUncheckedUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserCreateWithoutApiKeysInput = {
-    id?: string
-    uuid?: string
-    email?: string | null
-    username?: string | null
-    password?: string | null
-    avatar?: string | null
-    role?: $Enums.UserRole
-    isActive?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    sshConnections?: SSHConnectionCreateNestedManyWithoutUserInput
-    chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
-    messages?: MessageCreateNestedManyWithoutUserInput
-    commandLogs?: CommandLogCreateNestedManyWithoutUserInput
-    usageStats?: UsageStatsCreateNestedManyWithoutUserInput
-    sessionGroups?: SessionGroupCreateNestedManyWithoutUserInput
-    plugins?: PluginCreateNestedManyWithoutUserInput
-    knowledgeBases?: KnowledgeBaseCreateNestedManyWithoutUserInput
-    files?: FileCreateNestedManyWithoutUserInput
-  }
-
-  export type UserUncheckedCreateWithoutApiKeysInput = {
-    id?: string
-    uuid?: string
-    email?: string | null
-    username?: string | null
-    password?: string | null
-    avatar?: string | null
-    role?: $Enums.UserRole
-    isActive?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    sshConnections?: SSHConnectionUncheckedCreateNestedManyWithoutUserInput
-    chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
-    messages?: MessageUncheckedCreateNestedManyWithoutUserInput
-    commandLogs?: CommandLogUncheckedCreateNestedManyWithoutUserInput
-    usageStats?: UsageStatsUncheckedCreateNestedManyWithoutUserInput
-    sessionGroups?: SessionGroupUncheckedCreateNestedManyWithoutUserInput
-    plugins?: PluginUncheckedCreateNestedManyWithoutUserInput
-    knowledgeBases?: KnowledgeBaseUncheckedCreateNestedManyWithoutUserInput
-    files?: FileUncheckedCreateNestedManyWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutApiKeysInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutApiKeysInput, UserUncheckedCreateWithoutApiKeysInput>
-  }
-
-  export type UserUpsertWithoutApiKeysInput = {
-    update: XOR<UserUpdateWithoutApiKeysInput, UserUncheckedUpdateWithoutApiKeysInput>
-    create: XOR<UserCreateWithoutApiKeysInput, UserUncheckedCreateWithoutApiKeysInput>
-    where?: UserWhereInput
-  }
-
-  export type UserUpdateToOneWithWhereWithoutApiKeysInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutApiKeysInput, UserUncheckedUpdateWithoutApiKeysInput>
-  }
-
-  export type UserUpdateWithoutApiKeysInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    uuid?: StringFieldUpdateOperationsInput | string
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    username?: NullableStringFieldUpdateOperationsInput | string | null
-    password?: NullableStringFieldUpdateOperationsInput | string | null
-    avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    sshConnections?: SSHConnectionUpdateManyWithoutUserNestedInput
-    chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
-    messages?: MessageUpdateManyWithoutUserNestedInput
-    commandLogs?: CommandLogUpdateManyWithoutUserNestedInput
-    usageStats?: UsageStatsUpdateManyWithoutUserNestedInput
-    sessionGroups?: SessionGroupUpdateManyWithoutUserNestedInput
-    plugins?: PluginUpdateManyWithoutUserNestedInput
-    knowledgeBases?: KnowledgeBaseUpdateManyWithoutUserNestedInput
-    files?: FileUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutApiKeysInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    uuid?: StringFieldUpdateOperationsInput | string
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    username?: NullableStringFieldUpdateOperationsInput | string | null
-    password?: NullableStringFieldUpdateOperationsInput | string | null
-    avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    sshConnections?: SSHConnectionUncheckedUpdateManyWithoutUserNestedInput
-    chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
-    messages?: MessageUncheckedUpdateManyWithoutUserNestedInput
-    commandLogs?: CommandLogUncheckedUpdateManyWithoutUserNestedInput
-    usageStats?: UsageStatsUncheckedUpdateManyWithoutUserNestedInput
-    sessionGroups?: SessionGroupUncheckedUpdateManyWithoutUserNestedInput
-    plugins?: PluginUncheckedUpdateManyWithoutUserNestedInput
-    knowledgeBases?: KnowledgeBaseUncheckedUpdateManyWithoutUserNestedInput
-    files?: FileUncheckedUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserCreateWithoutSessionGroupsInput = {
-    id?: string
-    uuid?: string
-    email?: string | null
-    username?: string | null
-    password?: string | null
-    avatar?: string | null
-    role?: $Enums.UserRole
-    isActive?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    sshConnections?: SSHConnectionCreateNestedManyWithoutUserInput
-    chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
-    messages?: MessageCreateNestedManyWithoutUserInput
-    commandLogs?: CommandLogCreateNestedManyWithoutUserInput
-    usageStats?: UsageStatsCreateNestedManyWithoutUserInput
-    apiKeys?: ApiKeyCreateNestedManyWithoutUserInput
-    plugins?: PluginCreateNestedManyWithoutUserInput
-    knowledgeBases?: KnowledgeBaseCreateNestedManyWithoutUserInput
-    files?: FileCreateNestedManyWithoutUserInput
-  }
-
-  export type UserUncheckedCreateWithoutSessionGroupsInput = {
-    id?: string
-    uuid?: string
-    email?: string | null
-    username?: string | null
-    password?: string | null
-    avatar?: string | null
-    role?: $Enums.UserRole
-    isActive?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    sshConnections?: SSHConnectionUncheckedCreateNestedManyWithoutUserInput
-    chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
-    messages?: MessageUncheckedCreateNestedManyWithoutUserInput
-    commandLogs?: CommandLogUncheckedCreateNestedManyWithoutUserInput
-    usageStats?: UsageStatsUncheckedCreateNestedManyWithoutUserInput
-    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutUserInput
-    plugins?: PluginUncheckedCreateNestedManyWithoutUserInput
-    knowledgeBases?: KnowledgeBaseUncheckedCreateNestedManyWithoutUserInput
-    files?: FileUncheckedCreateNestedManyWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutSessionGroupsInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutSessionGroupsInput, UserUncheckedCreateWithoutSessionGroupsInput>
-  }
-
-  export type UserUpsertWithoutSessionGroupsInput = {
-    update: XOR<UserUpdateWithoutSessionGroupsInput, UserUncheckedUpdateWithoutSessionGroupsInput>
-    create: XOR<UserCreateWithoutSessionGroupsInput, UserUncheckedCreateWithoutSessionGroupsInput>
-    where?: UserWhereInput
-  }
-
-  export type UserUpdateToOneWithWhereWithoutSessionGroupsInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutSessionGroupsInput, UserUncheckedUpdateWithoutSessionGroupsInput>
-  }
-
-  export type UserUpdateWithoutSessionGroupsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    uuid?: StringFieldUpdateOperationsInput | string
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    username?: NullableStringFieldUpdateOperationsInput | string | null
-    password?: NullableStringFieldUpdateOperationsInput | string | null
-    avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    sshConnections?: SSHConnectionUpdateManyWithoutUserNestedInput
-    chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
-    messages?: MessageUpdateManyWithoutUserNestedInput
-    commandLogs?: CommandLogUpdateManyWithoutUserNestedInput
-    usageStats?: UsageStatsUpdateManyWithoutUserNestedInput
-    apiKeys?: ApiKeyUpdateManyWithoutUserNestedInput
-    plugins?: PluginUpdateManyWithoutUserNestedInput
-    knowledgeBases?: KnowledgeBaseUpdateManyWithoutUserNestedInput
-    files?: FileUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutSessionGroupsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    uuid?: StringFieldUpdateOperationsInput | string
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    username?: NullableStringFieldUpdateOperationsInput | string | null
-    password?: NullableStringFieldUpdateOperationsInput | string | null
-    avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    sshConnections?: SSHConnectionUncheckedUpdateManyWithoutUserNestedInput
-    chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
-    messages?: MessageUncheckedUpdateManyWithoutUserNestedInput
-    commandLogs?: CommandLogUncheckedUpdateManyWithoutUserNestedInput
-    usageStats?: UsageStatsUncheckedUpdateManyWithoutUserNestedInput
-    apiKeys?: ApiKeyUncheckedUpdateManyWithoutUserNestedInput
-    plugins?: PluginUncheckedUpdateManyWithoutUserNestedInput
-    knowledgeBases?: KnowledgeBaseUncheckedUpdateManyWithoutUserNestedInput
-    files?: FileUncheckedUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserCreateWithoutPluginsInput = {
-    id?: string
-    uuid?: string
-    email?: string | null
-    username?: string | null
-    password?: string | null
-    avatar?: string | null
-    role?: $Enums.UserRole
-    isActive?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    sshConnections?: SSHConnectionCreateNestedManyWithoutUserInput
-    chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
-    messages?: MessageCreateNestedManyWithoutUserInput
-    commandLogs?: CommandLogCreateNestedManyWithoutUserInput
-    usageStats?: UsageStatsCreateNestedManyWithoutUserInput
-    apiKeys?: ApiKeyCreateNestedManyWithoutUserInput
-    sessionGroups?: SessionGroupCreateNestedManyWithoutUserInput
-    knowledgeBases?: KnowledgeBaseCreateNestedManyWithoutUserInput
-    files?: FileCreateNestedManyWithoutUserInput
-  }
-
-  export type UserUncheckedCreateWithoutPluginsInput = {
-    id?: string
-    uuid?: string
-    email?: string | null
-    username?: string | null
-    password?: string | null
-    avatar?: string | null
-    role?: $Enums.UserRole
-    isActive?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    sshConnections?: SSHConnectionUncheckedCreateNestedManyWithoutUserInput
-    chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
-    messages?: MessageUncheckedCreateNestedManyWithoutUserInput
-    commandLogs?: CommandLogUncheckedCreateNestedManyWithoutUserInput
-    usageStats?: UsageStatsUncheckedCreateNestedManyWithoutUserInput
-    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutUserInput
-    sessionGroups?: SessionGroupUncheckedCreateNestedManyWithoutUserInput
-    knowledgeBases?: KnowledgeBaseUncheckedCreateNestedManyWithoutUserInput
-    files?: FileUncheckedCreateNestedManyWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutPluginsInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutPluginsInput, UserUncheckedCreateWithoutPluginsInput>
-  }
-
-  export type UserUpsertWithoutPluginsInput = {
-    update: XOR<UserUpdateWithoutPluginsInput, UserUncheckedUpdateWithoutPluginsInput>
-    create: XOR<UserCreateWithoutPluginsInput, UserUncheckedCreateWithoutPluginsInput>
-    where?: UserWhereInput
-  }
-
-  export type UserUpdateToOneWithWhereWithoutPluginsInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutPluginsInput, UserUncheckedUpdateWithoutPluginsInput>
-  }
-
-  export type UserUpdateWithoutPluginsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    uuid?: StringFieldUpdateOperationsInput | string
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    username?: NullableStringFieldUpdateOperationsInput | string | null
-    password?: NullableStringFieldUpdateOperationsInput | string | null
-    avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    sshConnections?: SSHConnectionUpdateManyWithoutUserNestedInput
-    chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
-    messages?: MessageUpdateManyWithoutUserNestedInput
-    commandLogs?: CommandLogUpdateManyWithoutUserNestedInput
-    usageStats?: UsageStatsUpdateManyWithoutUserNestedInput
-    apiKeys?: ApiKeyUpdateManyWithoutUserNestedInput
-    sessionGroups?: SessionGroupUpdateManyWithoutUserNestedInput
-    knowledgeBases?: KnowledgeBaseUpdateManyWithoutUserNestedInput
-    files?: FileUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutPluginsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    uuid?: StringFieldUpdateOperationsInput | string
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    username?: NullableStringFieldUpdateOperationsInput | string | null
-    password?: NullableStringFieldUpdateOperationsInput | string | null
-    avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    sshConnections?: SSHConnectionUncheckedUpdateManyWithoutUserNestedInput
-    chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
-    messages?: MessageUncheckedUpdateManyWithoutUserNestedInput
-    commandLogs?: CommandLogUncheckedUpdateManyWithoutUserNestedInput
-    usageStats?: UsageStatsUncheckedUpdateManyWithoutUserNestedInput
-    apiKeys?: ApiKeyUncheckedUpdateManyWithoutUserNestedInput
-    sessionGroups?: SessionGroupUncheckedUpdateManyWithoutUserNestedInput
-    knowledgeBases?: KnowledgeBaseUncheckedUpdateManyWithoutUserNestedInput
-    files?: FileUncheckedUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserCreateWithoutKnowledgeBasesInput = {
-    id?: string
-    uuid?: string
-    email?: string | null
-    username?: string | null
-    password?: string | null
-    avatar?: string | null
-    role?: $Enums.UserRole
-    isActive?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    sshConnections?: SSHConnectionCreateNestedManyWithoutUserInput
-    chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
-    messages?: MessageCreateNestedManyWithoutUserInput
-    commandLogs?: CommandLogCreateNestedManyWithoutUserInput
-    usageStats?: UsageStatsCreateNestedManyWithoutUserInput
-    apiKeys?: ApiKeyCreateNestedManyWithoutUserInput
-    sessionGroups?: SessionGroupCreateNestedManyWithoutUserInput
-    plugins?: PluginCreateNestedManyWithoutUserInput
-    files?: FileCreateNestedManyWithoutUserInput
-  }
-
-  export type UserUncheckedCreateWithoutKnowledgeBasesInput = {
-    id?: string
-    uuid?: string
-    email?: string | null
-    username?: string | null
-    password?: string | null
-    avatar?: string | null
-    role?: $Enums.UserRole
-    isActive?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    sshConnections?: SSHConnectionUncheckedCreateNestedManyWithoutUserInput
-    chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
-    messages?: MessageUncheckedCreateNestedManyWithoutUserInput
-    commandLogs?: CommandLogUncheckedCreateNestedManyWithoutUserInput
-    usageStats?: UsageStatsUncheckedCreateNestedManyWithoutUserInput
-    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutUserInput
-    sessionGroups?: SessionGroupUncheckedCreateNestedManyWithoutUserInput
-    plugins?: PluginUncheckedCreateNestedManyWithoutUserInput
-    files?: FileUncheckedCreateNestedManyWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutKnowledgeBasesInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutKnowledgeBasesInput, UserUncheckedCreateWithoutKnowledgeBasesInput>
-  }
-
-  export type KnowledgeDocumentCreateWithoutKnowledgeBaseInput = {
-    id?: string
-    title: string
-    content: string
-    type: string
-    status?: $Enums.DocumentStatus
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    embedding?: NullableJsonNullValueInput | InputJsonValue
-  }
-
-  export type KnowledgeDocumentUncheckedCreateWithoutKnowledgeBaseInput = {
-    id?: string
-    title: string
-    content: string
-    type: string
-    status?: $Enums.DocumentStatus
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    embedding?: NullableJsonNullValueInput | InputJsonValue
-  }
-
-  export type KnowledgeDocumentCreateOrConnectWithoutKnowledgeBaseInput = {
-    where: KnowledgeDocumentWhereUniqueInput
-    create: XOR<KnowledgeDocumentCreateWithoutKnowledgeBaseInput, KnowledgeDocumentUncheckedCreateWithoutKnowledgeBaseInput>
-  }
-
-  export type KnowledgeDocumentCreateManyKnowledgeBaseInputEnvelope = {
-    data: KnowledgeDocumentCreateManyKnowledgeBaseInput | KnowledgeDocumentCreateManyKnowledgeBaseInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type UserUpsertWithoutKnowledgeBasesInput = {
-    update: XOR<UserUpdateWithoutKnowledgeBasesInput, UserUncheckedUpdateWithoutKnowledgeBasesInput>
-    create: XOR<UserCreateWithoutKnowledgeBasesInput, UserUncheckedCreateWithoutKnowledgeBasesInput>
-    where?: UserWhereInput
-  }
-
-  export type UserUpdateToOneWithWhereWithoutKnowledgeBasesInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutKnowledgeBasesInput, UserUncheckedUpdateWithoutKnowledgeBasesInput>
-  }
-
-  export type UserUpdateWithoutKnowledgeBasesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    uuid?: StringFieldUpdateOperationsInput | string
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    username?: NullableStringFieldUpdateOperationsInput | string | null
-    password?: NullableStringFieldUpdateOperationsInput | string | null
-    avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    sshConnections?: SSHConnectionUpdateManyWithoutUserNestedInput
-    chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
-    messages?: MessageUpdateManyWithoutUserNestedInput
-    commandLogs?: CommandLogUpdateManyWithoutUserNestedInput
-    usageStats?: UsageStatsUpdateManyWithoutUserNestedInput
-    apiKeys?: ApiKeyUpdateManyWithoutUserNestedInput
-    sessionGroups?: SessionGroupUpdateManyWithoutUserNestedInput
-    plugins?: PluginUpdateManyWithoutUserNestedInput
-    files?: FileUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutKnowledgeBasesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    uuid?: StringFieldUpdateOperationsInput | string
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    username?: NullableStringFieldUpdateOperationsInput | string | null
-    password?: NullableStringFieldUpdateOperationsInput | string | null
-    avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    sshConnections?: SSHConnectionUncheckedUpdateManyWithoutUserNestedInput
-    chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
-    messages?: MessageUncheckedUpdateManyWithoutUserNestedInput
-    commandLogs?: CommandLogUncheckedUpdateManyWithoutUserNestedInput
-    usageStats?: UsageStatsUncheckedUpdateManyWithoutUserNestedInput
-    apiKeys?: ApiKeyUncheckedUpdateManyWithoutUserNestedInput
-    sessionGroups?: SessionGroupUncheckedUpdateManyWithoutUserNestedInput
-    plugins?: PluginUncheckedUpdateManyWithoutUserNestedInput
-    files?: FileUncheckedUpdateManyWithoutUserNestedInput
-  }
-
-  export type KnowledgeDocumentUpsertWithWhereUniqueWithoutKnowledgeBaseInput = {
-    where: KnowledgeDocumentWhereUniqueInput
-    update: XOR<KnowledgeDocumentUpdateWithoutKnowledgeBaseInput, KnowledgeDocumentUncheckedUpdateWithoutKnowledgeBaseInput>
-    create: XOR<KnowledgeDocumentCreateWithoutKnowledgeBaseInput, KnowledgeDocumentUncheckedCreateWithoutKnowledgeBaseInput>
-  }
-
-  export type KnowledgeDocumentUpdateWithWhereUniqueWithoutKnowledgeBaseInput = {
-    where: KnowledgeDocumentWhereUniqueInput
-    data: XOR<KnowledgeDocumentUpdateWithoutKnowledgeBaseInput, KnowledgeDocumentUncheckedUpdateWithoutKnowledgeBaseInput>
-  }
-
-  export type KnowledgeDocumentUpdateManyWithWhereWithoutKnowledgeBaseInput = {
-    where: KnowledgeDocumentScalarWhereInput
-    data: XOR<KnowledgeDocumentUpdateManyMutationInput, KnowledgeDocumentUncheckedUpdateManyWithoutKnowledgeBaseInput>
-  }
-
-  export type KnowledgeDocumentScalarWhereInput = {
-    AND?: KnowledgeDocumentScalarWhereInput | KnowledgeDocumentScalarWhereInput[]
-    OR?: KnowledgeDocumentScalarWhereInput[]
-    NOT?: KnowledgeDocumentScalarWhereInput | KnowledgeDocumentScalarWhereInput[]
-    id?: StringFilter<"KnowledgeDocument"> | string
-    title?: StringFilter<"KnowledgeDocument"> | string
-    content?: StringFilter<"KnowledgeDocument"> | string
-    type?: StringFilter<"KnowledgeDocument"> | string
-    status?: EnumDocumentStatusFilter<"KnowledgeDocument"> | $Enums.DocumentStatus
-    createdAt?: DateTimeFilter<"KnowledgeDocument"> | Date | string
-    updatedAt?: DateTimeFilter<"KnowledgeDocument"> | Date | string
-    metadata?: JsonNullableFilter<"KnowledgeDocument">
-    embedding?: JsonNullableFilter<"KnowledgeDocument">
-    knowledgeBaseId?: StringFilter<"KnowledgeDocument"> | string
-  }
-
-  export type KnowledgeBaseCreateWithoutDocumentsInput = {
-    id?: string
-    name: string
-    description?: string | null
-    type?: $Enums.KnowledgeType
-    isActive?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    user: UserCreateNestedOneWithoutKnowledgeBasesInput
-  }
-
-  export type KnowledgeBaseUncheckedCreateWithoutDocumentsInput = {
-    id?: string
-    name: string
-    description?: string | null
-    type?: $Enums.KnowledgeType
-    isActive?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    userId: string
-  }
-
-  export type KnowledgeBaseCreateOrConnectWithoutDocumentsInput = {
-    where: KnowledgeBaseWhereUniqueInput
-    create: XOR<KnowledgeBaseCreateWithoutDocumentsInput, KnowledgeBaseUncheckedCreateWithoutDocumentsInput>
-  }
-
-  export type KnowledgeBaseUpsertWithoutDocumentsInput = {
-    update: XOR<KnowledgeBaseUpdateWithoutDocumentsInput, KnowledgeBaseUncheckedUpdateWithoutDocumentsInput>
-    create: XOR<KnowledgeBaseCreateWithoutDocumentsInput, KnowledgeBaseUncheckedCreateWithoutDocumentsInput>
-    where?: KnowledgeBaseWhereInput
-  }
-
-  export type KnowledgeBaseUpdateToOneWithWhereWithoutDocumentsInput = {
-    where?: KnowledgeBaseWhereInput
-    data: XOR<KnowledgeBaseUpdateWithoutDocumentsInput, KnowledgeBaseUncheckedUpdateWithoutDocumentsInput>
-  }
-
-  export type KnowledgeBaseUpdateWithoutDocumentsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumKnowledgeTypeFieldUpdateOperationsInput | $Enums.KnowledgeType
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    user?: UserUpdateOneRequiredWithoutKnowledgeBasesNestedInput
-  }
-
-  export type KnowledgeBaseUncheckedUpdateWithoutDocumentsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumKnowledgeTypeFieldUpdateOperationsInput | $Enums.KnowledgeType
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    userId?: StringFieldUpdateOperationsInput | string
+    chatSessions?: ChatSessionUncheckedUpdateManyWithoutSshConnectionNestedInput
   }
 
   export type SSHConnectionCreateManyUserInput = {
@@ -26659,132 +10093,57 @@ export namespace Prisma {
     host: string
     port?: number
     username: string
-    authType: $Enums.SSHAuthType
+    authType: string
     password?: string | null
     privateKey?: string | null
+    publicKey?: string | null
     passphrase?: string | null
-    status?: $Enums.ConnectionStatus
+    status?: string
     lastUsed?: Date | string | null
+    isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
+    meta?: string | null
   }
 
   export type ChatSessionCreateManyUserInput = {
     id?: string
-    title?: string | null
-    model?: string
-    type?: $Enums.SessionType
-    isActive?: boolean
-    pinned?: boolean
-    group?: string
+    title: string
+    type?: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
+    config?: string | null
+    meta?: string | null
+    sshConnectionId?: string | null
   }
 
   export type MessageCreateManyUserInput = {
     id?: string
-    role: $Enums.MessageRole
     content: string
-    parentId?: string | null
+    role: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
-    tokens?: number | null
-    fromModel?: string | null
-    fromProvider?: string | null
-    plugin?: NullableJsonNullValueInput | InputJsonValue
-    pluginState?: NullableJsonNullValueInput | InputJsonValue
-    translate?: NullableJsonNullValueInput | InputJsonValue
-    tts?: NullableJsonNullValueInput | InputJsonValue
+    meta?: string | null
+    extra?: string | null
+    isDeleted?: boolean
+    isEdited?: boolean
+    plugin?: string | null
+    pluginState?: string | null
+    translate?: string | null
+    tts?: string | null
     sessionId: string
-    topicId?: string | null
   }
 
   export type CommandLogCreateManyUserInput = {
     id?: string
     command: string
     output?: string | null
-    error?: string | null
     exitCode?: number | null
-    duration: number
-    isSuccess: boolean
-    safetyLevel?: $Enums.SafetyLevel
-    executedAt?: Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    connectionId: string
-  }
-
-  export type UsageStatsCreateManyUserInput = {
-    id?: string
-    date: Date | string
-    commandsCount?: number
-    aiRequestsCount?: number
-    tokensUsed?: number
-    connectionsUsed?: number
+    duration?: number | null
     createdAt?: Date | string
-  }
-
-  export type ApiKeyCreateManyUserInput = {
-    id?: string
-    name: string
-    key: string
-    type?: $Enums.ApiKeyType
-    isActive?: boolean
-    expiresAt?: Date | string | null
-    lastUsed?: Date | string | null
-    createdAt?: Date | string
-    scopes?: ApiKeyCreatescopesInput | string[]
-  }
-
-  export type SessionGroupCreateManyUserInput = {
-    id?: string
-    name: string
-    sort?: number
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-  }
-
-  export type PluginCreateManyUserInput = {
-    id?: string
-    identifier: string
-    name: string
-    version: string
-    enabled?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    settings?: NullableJsonNullValueInput | InputJsonValue
-  }
-
-  export type KnowledgeBaseCreateManyUserInput = {
-    id?: string
-    name: string
-    description?: string | null
-    type?: $Enums.KnowledgeType
-    isActive?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
-  }
-
-  export type FileCreateManyUserInput = {
-    id?: string
-    name: string
-    type: string
-    size: bigint | number
-    url?: string | null
-    path?: string | null
-    hash?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
+    safetyLevel?: string
+    metadata?: string | null
+    sshConnectionId?: string | null
   }
 
   export type SSHConnectionUpdateWithoutUserInput = {
@@ -26793,16 +10152,19 @@ export namespace Prisma {
     host?: StringFieldUpdateOperationsInput | string
     port?: IntFieldUpdateOperationsInput | number
     username?: StringFieldUpdateOperationsInput | string
-    authType?: EnumSSHAuthTypeFieldUpdateOperationsInput | $Enums.SSHAuthType
+    authType?: StringFieldUpdateOperationsInput | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
     privateKey?: NullableStringFieldUpdateOperationsInput | string | null
+    publicKey?: NullableStringFieldUpdateOperationsInput | string | null
     passphrase?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: EnumConnectionStatusFieldUpdateOperationsInput | $Enums.ConnectionStatus
+    status?: StringFieldUpdateOperationsInput | string
     lastUsed?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    commandLogs?: CommandLogUpdateManyWithoutConnectionNestedInput
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
+    chatSessions?: ChatSessionUpdateManyWithoutSshConnectionNestedInput
+    commandLogs?: CommandLogUpdateManyWithoutSshConnectionNestedInput
   }
 
   export type SSHConnectionUncheckedUpdateWithoutUserInput = {
@@ -26811,16 +10173,19 @@ export namespace Prisma {
     host?: StringFieldUpdateOperationsInput | string
     port?: IntFieldUpdateOperationsInput | number
     username?: StringFieldUpdateOperationsInput | string
-    authType?: EnumSSHAuthTypeFieldUpdateOperationsInput | $Enums.SSHAuthType
+    authType?: StringFieldUpdateOperationsInput | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
     privateKey?: NullableStringFieldUpdateOperationsInput | string | null
+    publicKey?: NullableStringFieldUpdateOperationsInput | string | null
     passphrase?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: EnumConnectionStatusFieldUpdateOperationsInput | $Enums.ConnectionStatus
+    status?: StringFieldUpdateOperationsInput | string
     lastUsed?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    commandLogs?: CommandLogUncheckedUpdateManyWithoutConnectionNestedInput
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
+    chatSessions?: ChatSessionUncheckedUpdateManyWithoutSshConnectionNestedInput
+    commandLogs?: CommandLogUncheckedUpdateManyWithoutSshConnectionNestedInput
   }
 
   export type SSHConnectionUncheckedUpdateManyWithoutUserInput = {
@@ -26829,726 +10194,301 @@ export namespace Prisma {
     host?: StringFieldUpdateOperationsInput | string
     port?: IntFieldUpdateOperationsInput | number
     username?: StringFieldUpdateOperationsInput | string
-    authType?: EnumSSHAuthTypeFieldUpdateOperationsInput | $Enums.SSHAuthType
+    authType?: StringFieldUpdateOperationsInput | string
     password?: NullableStringFieldUpdateOperationsInput | string | null
     privateKey?: NullableStringFieldUpdateOperationsInput | string | null
+    publicKey?: NullableStringFieldUpdateOperationsInput | string | null
     passphrase?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: EnumConnectionStatusFieldUpdateOperationsInput | $Enums.ConnectionStatus
+    status?: StringFieldUpdateOperationsInput | string
     lastUsed?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ChatSessionUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    title?: NullableStringFieldUpdateOperationsInput | string | null
-    model?: StringFieldUpdateOperationsInput | string
-    type?: EnumSessionTypeFieldUpdateOperationsInput | $Enums.SessionType
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    pinned?: BoolFieldUpdateOperationsInput | boolean
-    group?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
+    config?: NullableStringFieldUpdateOperationsInput | string | null
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
+    sshConnection?: SSHConnectionUpdateOneWithoutChatSessionsNestedInput
     messages?: MessageUpdateManyWithoutSessionNestedInput
-    topics?: TopicUpdateManyWithoutSessionNestedInput
   }
 
   export type ChatSessionUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    title?: NullableStringFieldUpdateOperationsInput | string | null
-    model?: StringFieldUpdateOperationsInput | string
-    type?: EnumSessionTypeFieldUpdateOperationsInput | $Enums.SessionType
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    pinned?: BoolFieldUpdateOperationsInput | boolean
-    group?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
+    config?: NullableStringFieldUpdateOperationsInput | string | null
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
+    sshConnectionId?: NullableStringFieldUpdateOperationsInput | string | null
     messages?: MessageUncheckedUpdateManyWithoutSessionNestedInput
-    topics?: TopicUncheckedUpdateManyWithoutSessionNestedInput
   }
 
   export type ChatSessionUncheckedUpdateManyWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    title?: NullableStringFieldUpdateOperationsInput | string | null
-    model?: StringFieldUpdateOperationsInput | string
-    type?: EnumSessionTypeFieldUpdateOperationsInput | $Enums.SessionType
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    pinned?: BoolFieldUpdateOperationsInput | boolean
-    group?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
+    config?: NullableStringFieldUpdateOperationsInput | string | null
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
+    sshConnectionId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type MessageUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    role?: EnumMessageRoleFieldUpdateOperationsInput | $Enums.MessageRole
     content?: StringFieldUpdateOperationsInput | string
-    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
-    tokens?: NullableIntFieldUpdateOperationsInput | number | null
-    fromModel?: NullableStringFieldUpdateOperationsInput | string | null
-    fromProvider?: NullableStringFieldUpdateOperationsInput | string | null
-    plugin?: NullableJsonNullValueInput | InputJsonValue
-    pluginState?: NullableJsonNullValueInput | InputJsonValue
-    translate?: NullableJsonNullValueInput | InputJsonValue
-    tts?: NullableJsonNullValueInput | InputJsonValue
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
+    extra?: NullableStringFieldUpdateOperationsInput | string | null
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    isEdited?: BoolFieldUpdateOperationsInput | boolean
+    plugin?: NullableStringFieldUpdateOperationsInput | string | null
+    pluginState?: NullableStringFieldUpdateOperationsInput | string | null
+    translate?: NullableStringFieldUpdateOperationsInput | string | null
+    tts?: NullableStringFieldUpdateOperationsInput | string | null
     session?: ChatSessionUpdateOneRequiredWithoutMessagesNestedInput
-    topic?: TopicUpdateOneWithoutMessagesNestedInput
-    files?: MessageFileUpdateManyWithoutMessageNestedInput
   }
 
   export type MessageUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    role?: EnumMessageRoleFieldUpdateOperationsInput | $Enums.MessageRole
     content?: StringFieldUpdateOperationsInput | string
-    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
-    tokens?: NullableIntFieldUpdateOperationsInput | number | null
-    fromModel?: NullableStringFieldUpdateOperationsInput | string | null
-    fromProvider?: NullableStringFieldUpdateOperationsInput | string | null
-    plugin?: NullableJsonNullValueInput | InputJsonValue
-    pluginState?: NullableJsonNullValueInput | InputJsonValue
-    translate?: NullableJsonNullValueInput | InputJsonValue
-    tts?: NullableJsonNullValueInput | InputJsonValue
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
+    extra?: NullableStringFieldUpdateOperationsInput | string | null
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    isEdited?: BoolFieldUpdateOperationsInput | boolean
+    plugin?: NullableStringFieldUpdateOperationsInput | string | null
+    pluginState?: NullableStringFieldUpdateOperationsInput | string | null
+    translate?: NullableStringFieldUpdateOperationsInput | string | null
+    tts?: NullableStringFieldUpdateOperationsInput | string | null
     sessionId?: StringFieldUpdateOperationsInput | string
-    topicId?: NullableStringFieldUpdateOperationsInput | string | null
-    files?: MessageFileUncheckedUpdateManyWithoutMessageNestedInput
   }
 
   export type MessageUncheckedUpdateManyWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    role?: EnumMessageRoleFieldUpdateOperationsInput | $Enums.MessageRole
     content?: StringFieldUpdateOperationsInput | string
-    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
-    tokens?: NullableIntFieldUpdateOperationsInput | number | null
-    fromModel?: NullableStringFieldUpdateOperationsInput | string | null
-    fromProvider?: NullableStringFieldUpdateOperationsInput | string | null
-    plugin?: NullableJsonNullValueInput | InputJsonValue
-    pluginState?: NullableJsonNullValueInput | InputJsonValue
-    translate?: NullableJsonNullValueInput | InputJsonValue
-    tts?: NullableJsonNullValueInput | InputJsonValue
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
+    extra?: NullableStringFieldUpdateOperationsInput | string | null
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    isEdited?: BoolFieldUpdateOperationsInput | boolean
+    plugin?: NullableStringFieldUpdateOperationsInput | string | null
+    pluginState?: NullableStringFieldUpdateOperationsInput | string | null
+    translate?: NullableStringFieldUpdateOperationsInput | string | null
+    tts?: NullableStringFieldUpdateOperationsInput | string | null
     sessionId?: StringFieldUpdateOperationsInput | string
-    topicId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CommandLogUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     command?: StringFieldUpdateOperationsInput | string
     output?: NullableStringFieldUpdateOperationsInput | string | null
-    error?: NullableStringFieldUpdateOperationsInput | string | null
     exitCode?: NullableIntFieldUpdateOperationsInput | number | null
-    duration?: IntFieldUpdateOperationsInput | number
-    isSuccess?: BoolFieldUpdateOperationsInput | boolean
-    safetyLevel?: EnumSafetyLevelFieldUpdateOperationsInput | $Enums.SafetyLevel
-    executedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    connection?: SSHConnectionUpdateOneRequiredWithoutCommandLogsNestedInput
+    duration?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    safetyLevel?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableStringFieldUpdateOperationsInput | string | null
+    sshConnection?: SSHConnectionUpdateOneWithoutCommandLogsNestedInput
   }
 
   export type CommandLogUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     command?: StringFieldUpdateOperationsInput | string
     output?: NullableStringFieldUpdateOperationsInput | string | null
-    error?: NullableStringFieldUpdateOperationsInput | string | null
     exitCode?: NullableIntFieldUpdateOperationsInput | number | null
-    duration?: IntFieldUpdateOperationsInput | number
-    isSuccess?: BoolFieldUpdateOperationsInput | boolean
-    safetyLevel?: EnumSafetyLevelFieldUpdateOperationsInput | $Enums.SafetyLevel
-    executedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    connectionId?: StringFieldUpdateOperationsInput | string
+    duration?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    safetyLevel?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableStringFieldUpdateOperationsInput | string | null
+    sshConnectionId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CommandLogUncheckedUpdateManyWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     command?: StringFieldUpdateOperationsInput | string
     output?: NullableStringFieldUpdateOperationsInput | string | null
-    error?: NullableStringFieldUpdateOperationsInput | string | null
     exitCode?: NullableIntFieldUpdateOperationsInput | number | null
-    duration?: IntFieldUpdateOperationsInput | number
-    isSuccess?: BoolFieldUpdateOperationsInput | boolean
-    safetyLevel?: EnumSafetyLevelFieldUpdateOperationsInput | $Enums.SafetyLevel
-    executedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    connectionId?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type UsageStatsUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    date?: DateTimeFieldUpdateOperationsInput | Date | string
-    commandsCount?: IntFieldUpdateOperationsInput | number
-    aiRequestsCount?: IntFieldUpdateOperationsInput | number
-    tokensUsed?: IntFieldUpdateOperationsInput | number
-    connectionsUsed?: IntFieldUpdateOperationsInput | number
+    duration?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    safetyLevel?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableStringFieldUpdateOperationsInput | string | null
+    sshConnectionId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
-  export type UsageStatsUncheckedUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    date?: DateTimeFieldUpdateOperationsInput | Date | string
-    commandsCount?: IntFieldUpdateOperationsInput | number
-    aiRequestsCount?: IntFieldUpdateOperationsInput | number
-    tokensUsed?: IntFieldUpdateOperationsInput | number
-    connectionsUsed?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type UsageStatsUncheckedUpdateManyWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    date?: DateTimeFieldUpdateOperationsInput | Date | string
-    commandsCount?: IntFieldUpdateOperationsInput | number
-    aiRequestsCount?: IntFieldUpdateOperationsInput | number
-    tokensUsed?: IntFieldUpdateOperationsInput | number
-    connectionsUsed?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type ApiKeyUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    key?: StringFieldUpdateOperationsInput | string
-    type?: EnumApiKeyTypeFieldUpdateOperationsInput | $Enums.ApiKeyType
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    lastUsed?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    scopes?: ApiKeyUpdatescopesInput | string[]
-  }
-
-  export type ApiKeyUncheckedUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    key?: StringFieldUpdateOperationsInput | string
-    type?: EnumApiKeyTypeFieldUpdateOperationsInput | $Enums.ApiKeyType
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    lastUsed?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    scopes?: ApiKeyUpdatescopesInput | string[]
-  }
-
-  export type ApiKeyUncheckedUpdateManyWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    key?: StringFieldUpdateOperationsInput | string
-    type?: EnumApiKeyTypeFieldUpdateOperationsInput | $Enums.ApiKeyType
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    lastUsed?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    scopes?: ApiKeyUpdatescopesInput | string[]
-  }
-
-  export type SessionGroupUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    sort?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-  }
-
-  export type SessionGroupUncheckedUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    sort?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-  }
-
-  export type SessionGroupUncheckedUpdateManyWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    sort?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-  }
-
-  export type PluginUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    identifier?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    version?: StringFieldUpdateOperationsInput | string
-    enabled?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    settings?: NullableJsonNullValueInput | InputJsonValue
-  }
-
-  export type PluginUncheckedUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    identifier?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    version?: StringFieldUpdateOperationsInput | string
-    enabled?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    settings?: NullableJsonNullValueInput | InputJsonValue
-  }
-
-  export type PluginUncheckedUpdateManyWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    identifier?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    version?: StringFieldUpdateOperationsInput | string
-    enabled?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    settings?: NullableJsonNullValueInput | InputJsonValue
-  }
-
-  export type KnowledgeBaseUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumKnowledgeTypeFieldUpdateOperationsInput | $Enums.KnowledgeType
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    documents?: KnowledgeDocumentUpdateManyWithoutKnowledgeBaseNestedInput
-  }
-
-  export type KnowledgeBaseUncheckedUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumKnowledgeTypeFieldUpdateOperationsInput | $Enums.KnowledgeType
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    documents?: KnowledgeDocumentUncheckedUpdateManyWithoutKnowledgeBaseNestedInput
-  }
-
-  export type KnowledgeBaseUncheckedUpdateManyWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumKnowledgeTypeFieldUpdateOperationsInput | $Enums.KnowledgeType
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    config?: NullableJsonNullValueInput | InputJsonValue
-    meta?: NullableJsonNullValueInput | InputJsonValue
-  }
-
-  export type FileUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    size?: BigIntFieldUpdateOperationsInput | bigint | number
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    path?: NullableStringFieldUpdateOperationsInput | string | null
-    hash?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    messages?: MessageFileUpdateManyWithoutFileNestedInput
-  }
-
-  export type FileUncheckedUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    size?: BigIntFieldUpdateOperationsInput | bigint | number
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    path?: NullableStringFieldUpdateOperationsInput | string | null
-    hash?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    messages?: MessageFileUncheckedUpdateManyWithoutFileNestedInput
-  }
-
-  export type FileUncheckedUpdateManyWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    size?: BigIntFieldUpdateOperationsInput | bigint | number
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    path?: NullableStringFieldUpdateOperationsInput | string | null
-    hash?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-  }
-
-  export type CommandLogCreateManyConnectionInput = {
+  export type ChatSessionCreateManySshConnectionInput = {
     id?: string
-    command: string
-    output?: string | null
-    error?: string | null
-    exitCode?: number | null
-    duration: number
-    isSuccess: boolean
-    safetyLevel?: $Enums.SafetyLevel
-    executedAt?: Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
+    title: string
+    type?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    config?: string | null
+    meta?: string | null
     userId: string
   }
 
-  export type CommandLogUpdateWithoutConnectionInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    command?: StringFieldUpdateOperationsInput | string
-    output?: NullableStringFieldUpdateOperationsInput | string | null
-    error?: NullableStringFieldUpdateOperationsInput | string | null
-    exitCode?: NullableIntFieldUpdateOperationsInput | number | null
-    duration?: IntFieldUpdateOperationsInput | number
-    isSuccess?: BoolFieldUpdateOperationsInput | boolean
-    safetyLevel?: EnumSafetyLevelFieldUpdateOperationsInput | $Enums.SafetyLevel
-    executedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    user?: UserUpdateOneRequiredWithoutCommandLogsNestedInput
+  export type CommandLogCreateManySshConnectionInput = {
+    id?: string
+    command: string
+    output?: string | null
+    exitCode?: number | null
+    duration?: number | null
+    createdAt?: Date | string
+    safetyLevel?: string
+    metadata?: string | null
+    userId: string
   }
 
-  export type CommandLogUncheckedUpdateWithoutConnectionInput = {
+  export type ChatSessionUpdateWithoutSshConnectionInput = {
     id?: StringFieldUpdateOperationsInput | string
-    command?: StringFieldUpdateOperationsInput | string
-    output?: NullableStringFieldUpdateOperationsInput | string | null
-    error?: NullableStringFieldUpdateOperationsInput | string | null
-    exitCode?: NullableIntFieldUpdateOperationsInput | number | null
-    duration?: IntFieldUpdateOperationsInput | number
-    isSuccess?: BoolFieldUpdateOperationsInput | boolean
-    safetyLevel?: EnumSafetyLevelFieldUpdateOperationsInput | $Enums.SafetyLevel
-    executedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
+    title?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    config?: NullableStringFieldUpdateOperationsInput | string | null
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
+    user?: UserUpdateOneRequiredWithoutChatSessionsNestedInput
+    messages?: MessageUpdateManyWithoutSessionNestedInput
+  }
+
+  export type ChatSessionUncheckedUpdateWithoutSshConnectionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    config?: NullableStringFieldUpdateOperationsInput | string | null
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
+    userId?: StringFieldUpdateOperationsInput | string
+    messages?: MessageUncheckedUpdateManyWithoutSessionNestedInput
+  }
+
+  export type ChatSessionUncheckedUpdateManyWithoutSshConnectionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    config?: NullableStringFieldUpdateOperationsInput | string | null
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
   }
 
-  export type CommandLogUncheckedUpdateManyWithoutConnectionInput = {
+  export type CommandLogUpdateWithoutSshConnectionInput = {
     id?: StringFieldUpdateOperationsInput | string
     command?: StringFieldUpdateOperationsInput | string
     output?: NullableStringFieldUpdateOperationsInput | string | null
-    error?: NullableStringFieldUpdateOperationsInput | string | null
     exitCode?: NullableIntFieldUpdateOperationsInput | number | null
-    duration?: IntFieldUpdateOperationsInput | number
-    isSuccess?: BoolFieldUpdateOperationsInput | boolean
-    safetyLevel?: EnumSafetyLevelFieldUpdateOperationsInput | $Enums.SafetyLevel
-    executedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
+    duration?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    safetyLevel?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableStringFieldUpdateOperationsInput | string | null
+    user?: UserUpdateOneRequiredWithoutCommandLogsNestedInput
+  }
+
+  export type CommandLogUncheckedUpdateWithoutSshConnectionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    command?: StringFieldUpdateOperationsInput | string
+    output?: NullableStringFieldUpdateOperationsInput | string | null
+    exitCode?: NullableIntFieldUpdateOperationsInput | number | null
+    duration?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    safetyLevel?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableStringFieldUpdateOperationsInput | string | null
+    userId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type CommandLogUncheckedUpdateManyWithoutSshConnectionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    command?: StringFieldUpdateOperationsInput | string
+    output?: NullableStringFieldUpdateOperationsInput | string | null
+    exitCode?: NullableIntFieldUpdateOperationsInput | number | null
+    duration?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    safetyLevel?: StringFieldUpdateOperationsInput | string
+    metadata?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
   }
 
   export type MessageCreateManySessionInput = {
     id?: string
-    role: $Enums.MessageRole
     content: string
-    parentId?: string | null
+    role: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
-    tokens?: number | null
-    fromModel?: string | null
-    fromProvider?: string | null
-    plugin?: NullableJsonNullValueInput | InputJsonValue
-    pluginState?: NullableJsonNullValueInput | InputJsonValue
-    translate?: NullableJsonNullValueInput | InputJsonValue
-    tts?: NullableJsonNullValueInput | InputJsonValue
+    meta?: string | null
+    extra?: string | null
+    isDeleted?: boolean
+    isEdited?: boolean
+    plugin?: string | null
+    pluginState?: string | null
+    translate?: string | null
+    tts?: string | null
     userId: string
-    topicId?: string | null
-  }
-
-  export type TopicCreateManySessionInput = {
-    id?: string
-    title: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type MessageUpdateWithoutSessionInput = {
     id?: StringFieldUpdateOperationsInput | string
-    role?: EnumMessageRoleFieldUpdateOperationsInput | $Enums.MessageRole
     content?: StringFieldUpdateOperationsInput | string
-    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
-    tokens?: NullableIntFieldUpdateOperationsInput | number | null
-    fromModel?: NullableStringFieldUpdateOperationsInput | string | null
-    fromProvider?: NullableStringFieldUpdateOperationsInput | string | null
-    plugin?: NullableJsonNullValueInput | InputJsonValue
-    pluginState?: NullableJsonNullValueInput | InputJsonValue
-    translate?: NullableJsonNullValueInput | InputJsonValue
-    tts?: NullableJsonNullValueInput | InputJsonValue
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
+    extra?: NullableStringFieldUpdateOperationsInput | string | null
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    isEdited?: BoolFieldUpdateOperationsInput | boolean
+    plugin?: NullableStringFieldUpdateOperationsInput | string | null
+    pluginState?: NullableStringFieldUpdateOperationsInput | string | null
+    translate?: NullableStringFieldUpdateOperationsInput | string | null
+    tts?: NullableStringFieldUpdateOperationsInput | string | null
     user?: UserUpdateOneRequiredWithoutMessagesNestedInput
-    topic?: TopicUpdateOneWithoutMessagesNestedInput
-    files?: MessageFileUpdateManyWithoutMessageNestedInput
   }
 
   export type MessageUncheckedUpdateWithoutSessionInput = {
     id?: StringFieldUpdateOperationsInput | string
-    role?: EnumMessageRoleFieldUpdateOperationsInput | $Enums.MessageRole
     content?: StringFieldUpdateOperationsInput | string
-    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
-    tokens?: NullableIntFieldUpdateOperationsInput | number | null
-    fromModel?: NullableStringFieldUpdateOperationsInput | string | null
-    fromProvider?: NullableStringFieldUpdateOperationsInput | string | null
-    plugin?: NullableJsonNullValueInput | InputJsonValue
-    pluginState?: NullableJsonNullValueInput | InputJsonValue
-    translate?: NullableJsonNullValueInput | InputJsonValue
-    tts?: NullableJsonNullValueInput | InputJsonValue
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
+    extra?: NullableStringFieldUpdateOperationsInput | string | null
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    isEdited?: BoolFieldUpdateOperationsInput | boolean
+    plugin?: NullableStringFieldUpdateOperationsInput | string | null
+    pluginState?: NullableStringFieldUpdateOperationsInput | string | null
+    translate?: NullableStringFieldUpdateOperationsInput | string | null
+    tts?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
-    topicId?: NullableStringFieldUpdateOperationsInput | string | null
-    files?: MessageFileUncheckedUpdateManyWithoutMessageNestedInput
   }
 
   export type MessageUncheckedUpdateManyWithoutSessionInput = {
     id?: StringFieldUpdateOperationsInput | string
-    role?: EnumMessageRoleFieldUpdateOperationsInput | $Enums.MessageRole
     content?: StringFieldUpdateOperationsInput | string
-    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
-    tokens?: NullableIntFieldUpdateOperationsInput | number | null
-    fromModel?: NullableStringFieldUpdateOperationsInput | string | null
-    fromProvider?: NullableStringFieldUpdateOperationsInput | string | null
-    plugin?: NullableJsonNullValueInput | InputJsonValue
-    pluginState?: NullableJsonNullValueInput | InputJsonValue
-    translate?: NullableJsonNullValueInput | InputJsonValue
-    tts?: NullableJsonNullValueInput | InputJsonValue
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
+    extra?: NullableStringFieldUpdateOperationsInput | string | null
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    isEdited?: BoolFieldUpdateOperationsInput | boolean
+    plugin?: NullableStringFieldUpdateOperationsInput | string | null
+    pluginState?: NullableStringFieldUpdateOperationsInput | string | null
+    translate?: NullableStringFieldUpdateOperationsInput | string | null
+    tts?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
-    topicId?: NullableStringFieldUpdateOperationsInput | string | null
-  }
-
-  export type TopicUpdateWithoutSessionInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    messages?: MessageUpdateManyWithoutTopicNestedInput
-  }
-
-  export type TopicUncheckedUpdateWithoutSessionInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    messages?: MessageUncheckedUpdateManyWithoutTopicNestedInput
-  }
-
-  export type TopicUncheckedUpdateManyWithoutSessionInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-  }
-
-  export type MessageCreateManyTopicInput = {
-    id?: string
-    role: $Enums.MessageRole
-    content: string
-    parentId?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
-    tokens?: number | null
-    fromModel?: string | null
-    fromProvider?: string | null
-    plugin?: NullableJsonNullValueInput | InputJsonValue
-    pluginState?: NullableJsonNullValueInput | InputJsonValue
-    translate?: NullableJsonNullValueInput | InputJsonValue
-    tts?: NullableJsonNullValueInput | InputJsonValue
-    userId: string
-    sessionId: string
-  }
-
-  export type MessageUpdateWithoutTopicInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    role?: EnumMessageRoleFieldUpdateOperationsInput | $Enums.MessageRole
-    content?: StringFieldUpdateOperationsInput | string
-    parentId?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
-    tokens?: NullableIntFieldUpdateOperationsInput | number | null
-    fromModel?: NullableStringFieldUpdateOperationsInput | string | null
-    fromProvider?: NullableStringFieldUpdateOperationsInput | string | null
-    plugin?: NullableJsonNullValueInput | InputJsonValue
-    pluginState?: NullableJsonNullValueInput | InputJsonValue
-    translate?: NullableJsonNullValueInput | InputJsonValue
-    tts?: NullableJsonNullValueInput | InputJsonValue
-    user?: UserUpdateOneRequiredWithoutMessagesNestedInput
-    session?: ChatSessionUpdateOneRequiredWithoutMessagesNestedInput
-    files?: MessageFileUpdateManyWithoutMessageNestedInput
-  }
-
-  export type MessageUncheckedUpdateWithoutTopicInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    role?: EnumMessageRoleFieldUpdateOperationsInput | $Enums.MessageRole
-    content?: StringFieldUpdateOperationsInput | string
-    parentId?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
-    tokens?: NullableIntFieldUpdateOperationsInput | number | null
-    fromModel?: NullableStringFieldUpdateOperationsInput | string | null
-    fromProvider?: NullableStringFieldUpdateOperationsInput | string | null
-    plugin?: NullableJsonNullValueInput | InputJsonValue
-    pluginState?: NullableJsonNullValueInput | InputJsonValue
-    translate?: NullableJsonNullValueInput | InputJsonValue
-    tts?: NullableJsonNullValueInput | InputJsonValue
-    userId?: StringFieldUpdateOperationsInput | string
-    sessionId?: StringFieldUpdateOperationsInput | string
-    files?: MessageFileUncheckedUpdateManyWithoutMessageNestedInput
-  }
-
-  export type MessageUncheckedUpdateManyWithoutTopicInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    role?: EnumMessageRoleFieldUpdateOperationsInput | $Enums.MessageRole
-    content?: StringFieldUpdateOperationsInput | string
-    parentId?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    meta?: NullableJsonNullValueInput | InputJsonValue
-    extra?: NullableJsonNullValueInput | InputJsonValue
-    tokens?: NullableIntFieldUpdateOperationsInput | number | null
-    fromModel?: NullableStringFieldUpdateOperationsInput | string | null
-    fromProvider?: NullableStringFieldUpdateOperationsInput | string | null
-    plugin?: NullableJsonNullValueInput | InputJsonValue
-    pluginState?: NullableJsonNullValueInput | InputJsonValue
-    translate?: NullableJsonNullValueInput | InputJsonValue
-    tts?: NullableJsonNullValueInput | InputJsonValue
-    userId?: StringFieldUpdateOperationsInput | string
-    sessionId?: StringFieldUpdateOperationsInput | string
-  }
-
-  export type MessageFileCreateManyMessageInput = {
-    id?: string
-    fileId: string
-    createdAt?: Date | string
-  }
-
-  export type MessageFileUpdateWithoutMessageInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    file?: FileUpdateOneRequiredWithoutMessagesNestedInput
-  }
-
-  export type MessageFileUncheckedUpdateWithoutMessageInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    fileId?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type MessageFileUncheckedUpdateManyWithoutMessageInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    fileId?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type MessageFileCreateManyFileInput = {
-    id?: string
-    messageId: string
-    createdAt?: Date | string
-  }
-
-  export type MessageFileUpdateWithoutFileInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    message?: MessageUpdateOneRequiredWithoutFilesNestedInput
-  }
-
-  export type MessageFileUncheckedUpdateWithoutFileInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    messageId?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type MessageFileUncheckedUpdateManyWithoutFileInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    messageId?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type KnowledgeDocumentCreateManyKnowledgeBaseInput = {
-    id?: string
-    title: string
-    content: string
-    type: string
-    status?: $Enums.DocumentStatus
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    embedding?: NullableJsonNullValueInput | InputJsonValue
-  }
-
-  export type KnowledgeDocumentUpdateWithoutKnowledgeBaseInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    content?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    status?: EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    embedding?: NullableJsonNullValueInput | InputJsonValue
-  }
-
-  export type KnowledgeDocumentUncheckedUpdateWithoutKnowledgeBaseInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    content?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    status?: EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    embedding?: NullableJsonNullValueInput | InputJsonValue
-  }
-
-  export type KnowledgeDocumentUncheckedUpdateManyWithoutKnowledgeBaseInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    content?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    status?: EnumDocumentStatusFieldUpdateOperationsInput | $Enums.DocumentStatus
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    metadata?: NullableJsonNullValueInput | InputJsonValue
-    embedding?: NullableJsonNullValueInput | InputJsonValue
   }
 
 
@@ -27569,22 +10509,6 @@ export namespace Prisma {
      */
     export type ChatSessionCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ChatSessionCountOutputTypeDefaultArgs<ExtArgs>
     /**
-     * @deprecated Use TopicCountOutputTypeDefaultArgs instead
-     */
-    export type TopicCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = TopicCountOutputTypeDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use MessageCountOutputTypeDefaultArgs instead
-     */
-    export type MessageCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = MessageCountOutputTypeDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use FileCountOutputTypeDefaultArgs instead
-     */
-    export type FileCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = FileCountOutputTypeDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use KnowledgeBaseCountOutputTypeDefaultArgs instead
-     */
-    export type KnowledgeBaseCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = KnowledgeBaseCountOutputTypeDefaultArgs<ExtArgs>
-    /**
      * @deprecated Use UserDefaultArgs instead
      */
     export type UserArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = UserDefaultArgs<ExtArgs>
@@ -27597,53 +10521,13 @@ export namespace Prisma {
      */
     export type ChatSessionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ChatSessionDefaultArgs<ExtArgs>
     /**
-     * @deprecated Use TopicDefaultArgs instead
-     */
-    export type TopicArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = TopicDefaultArgs<ExtArgs>
-    /**
      * @deprecated Use MessageDefaultArgs instead
      */
     export type MessageArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = MessageDefaultArgs<ExtArgs>
     /**
-     * @deprecated Use MessageFileDefaultArgs instead
-     */
-    export type MessageFileArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = MessageFileDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use FileDefaultArgs instead
-     */
-    export type FileArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = FileDefaultArgs<ExtArgs>
-    /**
      * @deprecated Use CommandLogDefaultArgs instead
      */
     export type CommandLogArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = CommandLogDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use UsageStatsDefaultArgs instead
-     */
-    export type UsageStatsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = UsageStatsDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use ApiKeyDefaultArgs instead
-     */
-    export type ApiKeyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ApiKeyDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use SystemConfigDefaultArgs instead
-     */
-    export type SystemConfigArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = SystemConfigDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use SessionGroupDefaultArgs instead
-     */
-    export type SessionGroupArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = SessionGroupDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use PluginDefaultArgs instead
-     */
-    export type PluginArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = PluginDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use KnowledgeBaseDefaultArgs instead
-     */
-    export type KnowledgeBaseArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = KnowledgeBaseDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use KnowledgeDocumentDefaultArgs instead
-     */
-    export type KnowledgeDocumentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = KnowledgeDocumentDefaultArgs<ExtArgs>
 
   /**
    * Batch Payload for updateMany & deleteMany & createMany

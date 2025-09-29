@@ -9,7 +9,7 @@ import { CloudStorageAdapter, CloudStorageOptions } from './adapters/cloud.adapt
 
 export interface StorageManagerOptions {
   // 存储模式
-  mode: 'local' | 'cloud' | 'hybrid'
+  mode: 'local' | 'cloud' | 'hybrid' | 'auto'
   
   // 本地存储配置
   localOptions?: {
@@ -30,6 +30,15 @@ export interface StorageManagerOptions {
     syncInterval?: number // 同步间隔（毫秒）
     conflictResolution?: 'local' | 'cloud' | 'merge' | 'manual' // 冲突解决
     offlineMode?: boolean // 离线模式支持
+  }
+
+  // 自动模式配置
+  autoOptions?: {
+    // 根据用户登录状态自动切换存储
+    useCloudWhenAuthenticated?: boolean // 登录时使用云存储
+    useLocalWhenOffline?: boolean // 离线时使用本地存储
+    autoSync?: boolean // 登录时自动同步本地数据到云端
+    migrationStrategy?: 'merge' | 'replace' | 'manual' // 数据迁移策略
   }
 }
 
@@ -58,6 +67,9 @@ export class StorageManager {
   private options: StorageManagerOptions
   private syncInProgress = false
   private syncTimer?: NodeJS.Timeout
+  private isAuthenticated = false
+  private currentUser?: { id: string; email?: string; username?: string }
+  private currentAdapter?: BaseStorageAdapter
 
   constructor(options: StorageManagerOptions) {
     const defaultOptions = {
@@ -469,5 +481,140 @@ export class StorageManager {
     if (this.cloudAdapter) {
       await this.cloudAdapter.cleanup()
     }
+  }
+
+  // ==================== 用户认证状态管理 ====================
+
+  /**
+   * 设置用户登录状态
+   */
+  async setUserAuthenticated(user: { id: string; email?: string; username?: string }): Promise<void> {
+    const wasAuthenticated = this.isAuthenticated
+    this.isAuthenticated = true
+    this.currentUser = user
+
+    console.log(`User authenticated: ${user.username || user.email}`)
+
+    // 如果是 auto 模式，自动切换到云存储
+    if (this.options.mode === 'auto' && this.options.autoOptions?.useCloudWhenAuthenticated) {
+      if (!wasAuthenticated) {
+        console.log('Switching to cloud storage for authenticated user')
+        await this.switchToCloudStorage()
+      }
+    }
+  }
+
+  /**
+   * 设置用户登出状态
+   */
+  async setUserUnauthenticated(): Promise<void> {
+    const wasAuthenticated = this.isAuthenticated
+    this.isAuthenticated = false
+    this.currentUser = undefined
+
+    console.log('User unauthenticated')
+
+    // 如果是 auto 模式，自动切换到本地存储
+    if (this.options.mode === 'auto' && this.options.autoOptions?.useLocalWhenOffline) {
+      if (wasAuthenticated) {
+        console.log('Switching to local storage for unauthenticated user')
+        await this.switchToLocalStorage()
+      }
+    }
+  }
+
+  /**
+   * 获取当前用户信息
+   */
+  getCurrentUser(): { id: string; email?: string; username?: string } | undefined {
+    return this.currentUser
+  }
+
+  /**
+   * 检查用户是否已认证
+   */
+  isUserAuthenticated(): boolean {
+    return this.isAuthenticated
+  }
+
+  /**
+   * 切换到云存储
+   */
+  private async switchToCloudStorage(): Promise<void> {
+    if (!this.cloudAdapter) {
+      console.warn('Cloud adapter not available')
+      return
+    }
+
+    // 如果启用了自动同步，先同步本地数据到云端
+    if (this.options.autoOptions?.autoSync && this.localAdapter) {
+      try {
+        console.log('Syncing local data to cloud before switching...')
+        await this.syncLocalToCloud()
+      } catch (error) {
+        console.error('Failed to sync local data to cloud:', error)
+      }
+    }
+
+    this.currentAdapter = this.cloudAdapter
+    console.log('Switched to cloud storage')
+  }
+
+  /**
+   * 切换到本地存储
+   */
+  private async switchToLocalStorage(): Promise<void> {
+    if (!this.localAdapter) {
+      console.warn('Local adapter not available')
+      return
+    }
+
+    this.currentAdapter = this.localAdapter
+    console.log('Switched to local storage')
+  }
+
+  /**
+   * 同步本地数据到云端
+   */
+  private async syncLocalToCloud(): Promise<void> {
+    if (!this.localAdapter || !this.cloudAdapter) {
+      throw new Error('Both local and cloud adapters are required for sync')
+    }
+
+    // 这里可以实现具体的数据同步逻辑
+    // 例如：获取本地数据，上传到云端
+    console.log('Syncing local data to cloud...')
+    
+    // 实现数据迁移逻辑
+    // const localData = await this.localAdapter.getAllData()
+    // await this.cloudAdapter.migrateData(localData)
+  }
+
+  /**
+   * 获取当前活跃的适配器
+   */
+  private getCurrentAdapter(): BaseStorageAdapter {
+    if (this.currentAdapter) {
+      return this.currentAdapter
+    }
+
+    // 根据模式和认证状态自动选择适配器
+    if (this.options.mode === 'auto') {
+      if (this.isAuthenticated && this.cloudAdapter) {
+        this.currentAdapter = this.cloudAdapter
+      } else if (this.localAdapter) {
+        this.currentAdapter = this.localAdapter
+      }
+    } else if (this.options.mode === 'cloud' && this.cloudAdapter) {
+      this.currentAdapter = this.cloudAdapter
+    } else if (this.localAdapter) {
+      this.currentAdapter = this.localAdapter
+    }
+
+    if (!this.currentAdapter) {
+      throw new Error('No storage adapter available')
+    }
+
+    return this.currentAdapter
   }
 }

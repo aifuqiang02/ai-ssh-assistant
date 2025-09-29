@@ -131,7 +131,7 @@ const storageStore = useStorageStore()
 const isFullscreen = ref(false)
 const showSidebar = ref(true)
 const showRightPanel = ref(true)
-const activeView = ref('ssh')
+const activeView = ref('welcome')
 const activeTab = ref('welcome')
 
 // 面板尺寸
@@ -146,6 +146,7 @@ const startWidth = ref(0)
 
 // 活动栏项目
 const activityBarItems = ref([
+  { id: 'welcome', icon: 'bi bi-house', tooltip: '欢迎' },
   { id: 'ssh', icon: 'bi bi-hdd-network', tooltip: 'SSH 连接' },
   { id: 'chat', icon: 'bi bi-chat-dots', tooltip: 'AI 聊天' },
   { id: 'files', icon: 'bi bi-folder', tooltip: '文件管理' },
@@ -155,31 +156,37 @@ const activityBarItems = ref([
 
 // 打开的标签
 const openTabs = ref([
-  { id: 'welcome', name: '欢迎', icon: 'bi bi-house', path: '/' },
-  { id: 'ssh', name: 'SSH 连接', icon: 'bi bi-hdd-network', path: '/ssh' }
+  { id: 'welcome', name: '欢迎', icon: 'bi bi-house', path: '/' }
 ])
 
 // 方法
 const setActiveView = (viewId: string) => {
   activeView.value = viewId
-  // 根据视图切换路由
-  const routes: Record<string, string> = {
-    ssh: '/ssh',
-    chat: '/chat',
-    files: '/files',
-    terminal: '/terminal',
-    history: '/history'
+  
+  // 定义路由和标签信息映射
+  const viewConfigs: Record<string, { path: string; name: string; icon: string }> = {
+    welcome: { path: '/', name: '欢迎', icon: 'bi bi-house' },
+    ssh: { path: '/ssh', name: 'SSH 连接', icon: 'bi bi-hdd-network' },
+    chat: { path: '/chat', name: 'AI 对话', icon: 'bi bi-chat-dots' },
+    files: { path: '/files', name: '文件管理', icon: 'bi bi-folder' },
+    terminal: { path: '/terminal', name: '终端', icon: 'bi bi-terminal' },
+    history: { path: '/history', name: '历史记录', icon: 'bi bi-clock-history' }
   }
-  if (routes[viewId]) {
-    // 这里可以添加路由跳转逻辑
+  
+  const config = viewConfigs[viewId]
+  if (config) {
+    // 在新标签中打开或切换到已存在的标签
+    openNewTab(viewId, config.name, config.icon, config.path)
   }
 }
 
 const setActiveTab = (tabId: string) => {
   activeTab.value = tabId
   const tab = openTabs.value.find(t => t.id === tabId)
-  if (tab) {
-    // 路由跳转逻辑
+  if (tab && tab.path) {
+    // 路由跳转到对应页面
+    router.push(tab.path)
+    console.log(`Switched to tab: ${tab.name}`)
   }
 }
 
@@ -195,10 +202,32 @@ const closeTab = (tabId: string) => {
   }
 }
 
+// 打开新标签的方法
+const openNewTab = (id: string, name: string, icon: string, path: string) => {
+  // 检查标签是否已经存在
+  const existingTab = openTabs.value.find(t => t.id === id)
+  if (existingTab) {
+    // 如果标签已存在，直接激活它
+    activeTab.value = id
+    router.push(path)
+    return
+  }
+  
+  // 创建新标签
+  const newTab = { id, name, icon, path }
+  openTabs.value.push(newTab)
+  
+  // 激活新标签
+  activeTab.value = id
+  router.push(path)
+  
+  console.log(`Opened new tab: ${name}`)
+}
+
 const openSettings = () => {
-  // 打开设置页面 - 直接在这里处理路由跳转
-  console.log('Navigating to settings...')
-  router.push('/settings')
+  // 打开设置页面 - 在新标签中打开
+  console.log('Opening settings in new tab...')
+  openNewTab('settings', '设置', 'bi bi-gear', '/settings')
 }
 
 const toggleRightPanel = () => {

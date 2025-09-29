@@ -116,9 +116,6 @@ Prisma.NullTypes = {
  */
 
 exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
-  ReadUncommitted: 'ReadUncommitted',
-  ReadCommitted: 'ReadCommitted',
-  RepeatableRead: 'RepeatableRead',
   Serializable: 'Serializable'
 });
 
@@ -145,9 +142,11 @@ exports.Prisma.SSHConnectionScalarFieldEnum = {
   authType: 'authType',
   password: 'password',
   privateKey: 'privateKey',
+  publicKey: 'publicKey',
   passphrase: 'passphrase',
   status: 'status',
   lastUsed: 'lastUsed',
+  isActive: 'isActive',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   meta: 'meta',
@@ -157,66 +156,30 @@ exports.Prisma.SSHConnectionScalarFieldEnum = {
 exports.Prisma.ChatSessionScalarFieldEnum = {
   id: 'id',
   title: 'title',
-  model: 'model',
   type: 'type',
-  isActive: 'isActive',
-  pinned: 'pinned',
-  group: 'group',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   config: 'config',
   meta: 'meta',
-  userId: 'userId'
-};
-
-exports.Prisma.TopicScalarFieldEnum = {
-  id: 'id',
-  title: 'title',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  meta: 'meta',
-  sessionId: 'sessionId'
+  userId: 'userId',
+  sshConnectionId: 'sshConnectionId'
 };
 
 exports.Prisma.MessageScalarFieldEnum = {
   id: 'id',
-  role: 'role',
   content: 'content',
-  parentId: 'parentId',
+  role: 'role',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   meta: 'meta',
   extra: 'extra',
-  tokens: 'tokens',
-  fromModel: 'fromModel',
-  fromProvider: 'fromProvider',
+  isDeleted: 'isDeleted',
+  isEdited: 'isEdited',
   plugin: 'plugin',
   pluginState: 'pluginState',
   translate: 'translate',
   tts: 'tts',
-  userId: 'userId',
   sessionId: 'sessionId',
-  topicId: 'topicId'
-};
-
-exports.Prisma.MessageFileScalarFieldEnum = {
-  id: 'id',
-  messageId: 'messageId',
-  fileId: 'fileId',
-  createdAt: 'createdAt'
-};
-
-exports.Prisma.FileScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  type: 'type',
-  size: 'size',
-  url: 'url',
-  path: 'path',
-  hash: 'hash',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  metadata: 'metadata',
   userId: 'userId'
 };
 
@@ -224,101 +187,13 @@ exports.Prisma.CommandLogScalarFieldEnum = {
   id: 'id',
   command: 'command',
   output: 'output',
-  error: 'error',
   exitCode: 'exitCode',
   duration: 'duration',
-  isSuccess: 'isSuccess',
+  createdAt: 'createdAt',
   safetyLevel: 'safetyLevel',
-  executedAt: 'executedAt',
   metadata: 'metadata',
   userId: 'userId',
-  connectionId: 'connectionId'
-};
-
-exports.Prisma.UsageStatsScalarFieldEnum = {
-  id: 'id',
-  date: 'date',
-  commandsCount: 'commandsCount',
-  aiRequestsCount: 'aiRequestsCount',
-  tokensUsed: 'tokensUsed',
-  connectionsUsed: 'connectionsUsed',
-  createdAt: 'createdAt',
-  userId: 'userId'
-};
-
-exports.Prisma.ApiKeyScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  key: 'key',
-  type: 'type',
-  isActive: 'isActive',
-  expiresAt: 'expiresAt',
-  lastUsed: 'lastUsed',
-  createdAt: 'createdAt',
-  scopes: 'scopes',
-  userId: 'userId'
-};
-
-exports.Prisma.SystemConfigScalarFieldEnum = {
-  id: 'id',
-  key: 'key',
-  value: 'value',
-  type: 'type',
-  description: 'description',
-  category: 'category',
-  isPublic: 'isPublic',
-  updatedAt: 'updatedAt',
-  createdAt: 'createdAt'
-};
-
-exports.Prisma.SessionGroupScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  sort: 'sort',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  meta: 'meta',
-  userId: 'userId'
-};
-
-exports.Prisma.PluginScalarFieldEnum = {
-  id: 'id',
-  identifier: 'identifier',
-  name: 'name',
-  version: 'version',
-  enabled: 'enabled',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  config: 'config',
-  meta: 'meta',
-  settings: 'settings',
-  userId: 'userId'
-};
-
-exports.Prisma.KnowledgeBaseScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  description: 'description',
-  type: 'type',
-  isActive: 'isActive',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  config: 'config',
-  meta: 'meta',
-  userId: 'userId'
-};
-
-exports.Prisma.KnowledgeDocumentScalarFieldEnum = {
-  id: 'id',
-  title: 'title',
-  content: 'content',
-  type: 'type',
-  status: 'status',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  metadata: 'metadata',
-  embedding: 'embedding',
-  knowledgeBaseId: 'knowledgeBaseId'
+  sshConnectionId: 'sshConnectionId'
 };
 
 exports.Prisma.SortOrder = {
@@ -326,108 +201,18 @@ exports.Prisma.SortOrder = {
   desc: 'desc'
 };
 
-exports.Prisma.NullableJsonNullValueInput = {
-  DbNull: Prisma.DbNull,
-  JsonNull: Prisma.JsonNull
-};
-
-exports.Prisma.QueryMode = {
-  default: 'default',
-  insensitive: 'insensitive'
-};
-
-exports.Prisma.JsonNullValueFilter = {
-  DbNull: Prisma.DbNull,
-  JsonNull: Prisma.JsonNull,
-  AnyNull: Prisma.AnyNull
-};
-
 exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
-exports.UserRole = exports.$Enums.UserRole = {
-  USER: 'USER',
-  ADMIN: 'ADMIN',
-  PREMIUM: 'PREMIUM'
-};
 
-exports.SSHAuthType = exports.$Enums.SSHAuthType = {
-  PASSWORD: 'PASSWORD',
-  PRIVATE_KEY: 'PRIVATE_KEY',
-  SSH_AGENT: 'SSH_AGENT'
-};
-
-exports.ConnectionStatus = exports.$Enums.ConnectionStatus = {
-  CONNECTED: 'CONNECTED',
-  DISCONNECTED: 'DISCONNECTED',
-  CONNECTING: 'CONNECTING',
-  ERROR: 'ERROR'
-};
-
-exports.SessionType = exports.$Enums.SessionType = {
-  CHAT: 'CHAT',
-  SSH: 'SSH',
-  MIXED: 'MIXED'
-};
-
-exports.MessageRole = exports.$Enums.MessageRole = {
-  USER: 'USER',
-  ASSISTANT: 'ASSISTANT',
-  SYSTEM: 'SYSTEM',
-  FUNCTION: 'FUNCTION',
-  TOOL: 'TOOL'
-};
-
-exports.SafetyLevel = exports.$Enums.SafetyLevel = {
-  SAFE: 'SAFE',
-  CAUTION: 'CAUTION',
-  DANGEROUS: 'DANGEROUS'
-};
-
-exports.ApiKeyType = exports.$Enums.ApiKeyType = {
-  PERSONAL: 'PERSONAL',
-  SERVICE: 'SERVICE',
-  TEMPORARY: 'TEMPORARY'
-};
-
-exports.ConfigType = exports.$Enums.ConfigType = {
-  STRING: 'STRING',
-  NUMBER: 'NUMBER',
-  BOOLEAN: 'BOOLEAN',
-  JSON: 'JSON',
-  ARRAY: 'ARRAY'
-};
-
-exports.KnowledgeType = exports.$Enums.KnowledgeType = {
-  DOCUMENT: 'DOCUMENT',
-  FAQ: 'FAQ',
-  COMMAND: 'COMMAND',
-  SCRIPT: 'SCRIPT'
-};
-
-exports.DocumentStatus = exports.$Enums.DocumentStatus = {
-  ACTIVE: 'ACTIVE',
-  ARCHIVED: 'ARCHIVED',
-  DELETED: 'DELETED'
-};
 
 exports.Prisma.ModelName = {
   User: 'User',
   SSHConnection: 'SSHConnection',
   ChatSession: 'ChatSession',
-  Topic: 'Topic',
   Message: 'Message',
-  MessageFile: 'MessageFile',
-  File: 'File',
-  CommandLog: 'CommandLog',
-  UsageStats: 'UsageStats',
-  ApiKey: 'ApiKey',
-  SystemConfig: 'SystemConfig',
-  SessionGroup: 'SessionGroup',
-  Plugin: 'Plugin',
-  KnowledgeBase: 'KnowledgeBase',
-  KnowledgeDocument: 'KnowledgeDocument'
+  CommandLog: 'CommandLog'
 };
 
 /**

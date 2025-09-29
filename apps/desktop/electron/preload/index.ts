@@ -20,6 +20,24 @@ const api = {
   // 开发者工具
   toggleDevTools: () => ipcRenderer.invoke('devtools:toggle'),
 
+  // API 相关
+  api: {
+    // 通用API请求
+    request: (endpoint: string, method: 'GET' | 'POST' | 'PUT' | 'DELETE', data?: any, headers?: Record<string, string>) =>
+      ipcRenderer.invoke('api:request', { endpoint, method, data, headers }),
+    
+    // 认证相关
+    auth: {
+      login: (credentials: { email: string; password: string; rememberMe?: boolean }) =>
+        ipcRenderer.invoke('api:auth:login', credentials),
+      register: (userData: { email: string; username: string; password: string }) =>
+        ipcRenderer.invoke('api:auth:register', userData),
+      logout: (token?: string) => ipcRenderer.invoke('api:auth:logout', token),
+      refresh: (refreshToken: string) => ipcRenderer.invoke('api:auth:refresh', refreshToken),
+      verify: (token: string) => ipcRenderer.invoke('api:auth:verify', token)
+    }
+  },
+
   // SSH 相关
   ssh: {
     connect: (config: any) => ipcRenderer.invoke('ssh:connect', config),

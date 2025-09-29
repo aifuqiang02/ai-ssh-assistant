@@ -1,36 +1,19 @@
-// import { PrismaClient } from '@ai-ssh/database'
 import { logger } from '../utils/logger.js'
-
-// 模拟的数据库客户端，用于开发阶段
-class MockPrismaClient {
-  async $connect() {
-    logger.info('Mock database connected')
-  }
-
-  async $disconnect() {
-    logger.info('Mock database disconnected')
-  }
-
-  async $queryRaw(query: any) {
-    logger.debug('Mock query executed:', query)
-    return [{ result: 1 }]
-  }
-
-  $on(event: string, callback: Function) {
-    // 模拟事件监听器
-  }
-}
+// 直接导入 Prisma 客户端，避免浏览器兼容层的问题
+import { PrismaClient } from '../../../database/src/generated/client-postgresql/index.js'
 
 class Database {
-  private static instance: MockPrismaClient | null = null
+  private static instance: PrismaClient | null = null
   private static isConnected = false
 
   /**
    * 获取数据库实例
    */
-  static getInstance(): MockPrismaClient {
+  static getInstance(): PrismaClient {
     if (!Database.instance) {
-      Database.instance = new MockPrismaClient()
+      Database.instance = new PrismaClient({
+        log: process.env.NODE_ENV === 'development' ? ['query', 'info', 'warn', 'error'] : ['error'],
+      })
     }
 
     return Database.instance

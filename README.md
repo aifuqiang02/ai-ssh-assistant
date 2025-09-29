@@ -33,7 +33,7 @@ ai-ssh-assistant/
 - **运行时**: Node.js 20+
 - **框架**: Fastify
 - **语言**: TypeScript
-- **数据库**: PostgreSQL + Redis
+- **数据库**: SQLite (开发) / PostgreSQL (生产) + Redis
 - **ORM**: Prisma
 - **认证**: JWT
 - **SSH**: ssh2
@@ -43,9 +43,10 @@ ai-ssh-assistant/
 
 ### 环境要求
 - Node.js 20+
-- PostgreSQL 14+
+- SQLite 3+ (开发环境) / PostgreSQL 14+ (生产环境)
 - Redis 6+
 - pnpm 8+
+- Docker & Docker Compose (可选，用于生产部署)
 
 ### 安装依赖
 ```bash
@@ -58,16 +59,52 @@ cp .env.example .env
 # 编辑 .env 文件，填入必要的配置
 ```
 
+#### 数据库配置
+- **开发环境**: 使用 SQLite 数据库 (`file:./packages/database/dev.db`)
+- **生产环境**: 推荐使用 PostgreSQL
+
+#### 主要配置项
+```bash
+# 数据库
+DATABASE_URL="file:./packages/database/dev.db"  # SQLite (开发)
+# DATABASE_URL="postgresql://ai_ssh_user:ai_ssh_password@localhost:5432/ai_ssh_assistant"  # PostgreSQL (生产)
+
+# 服务器
+PORT=3000
+HOST=0.0.0.0
+
+# JWT 安全
+JWT_SECRET="your-jwt-secret-32-chars-minimum"
+ENCRYPTION_KEY="your-32-char-encryption-key-here"
+SESSION_SECRET="your-session-secret-32-chars-min"
+
+# AI 服务
+OPENAI_API_KEY="your-openai-api-key"
+ANTHROPIC_API_KEY="your-anthropic-api-key"
+```
+
+### 数据库初始化
+```bash
+# 生成 Prisma 客户端
+cd packages/database
+pnpm prisma generate
+
+# 创建数据库并运行迁移
+pnpm prisma migrate dev --name init
+
+# 插入种子数据
+pnpm prisma db seed
+```
+
 ### 启动开发环境
 ```bash
-# 启动后端服务
-pnpm dev:server
+# 同时启动后端服务和桌面应用
+pnpm dev
 
-# 启动桌面应用
-pnpm dev:desktop
-
-# 启动 Web 应用
-pnpm dev:web
+# 或者分别启动
+pnpm dev:server    # 启动后端服务
+pnpm dev:desktop   # 启动桌面应用
+pnpm dev:web       # 启动 Web 应用
 ```
 
 ### 构建生产版本
@@ -85,6 +122,69 @@ pnpm build:web
 pnpm build:server
 ```
 
+### Docker 部署（生产环境）
+
+#### 云数据库配置
+Docker Compose 包含完整的生产环境配置：
+
+- **PostgreSQL 数据库**:
+  - 数据库名: `ai_ssh_assistant`
+  - 用户名: `ai_ssh_user`
+  - 密码: `ai_ssh_password`
+  - 端口: `5432`
+
+- **Redis 缓存**:
+  - 端口: `6379`
+  - 持久化存储启用
+
+- **监控系统**:
+  - Grafana: http://localhost:3001 (admin/admin123)
+  - Prometheus: http://localhost:9090
+
+#### 启动生产环境
+```bash
+# 启动完整的生产环境
+docker-compose up -d
+
+# 查看服务状态
+docker-compose ps
+
+# 查看日志
+docker-compose logs -f
+
+# 停止服务
+docker-compose down
+```
+
+#### 服务端口
+- **API 服务**: http://localhost:3000
+- **Web 前端**: http://localhost:5173
+- **Grafana 监控**: http://localhost:3001
+- **Prometheus**: http://localhost:9090
+- **PostgreSQL**: localhost:5432
+- **Redis**: localhost:6379
+
+## 测试账户
+
+数据库种子数据包含以下测试账户：
+
+### 管理员账户
+- **邮箱**: `admin@ai-ssh-assistant.com`
+- **密码**: `admin123`
+- **角色**: ADMIN
+
+### 普通用户账户
+- **邮箱**: `user@ai-ssh-assistant.com`
+- **密码**: `user123`
+- **角色**: USER
+
+### 当前注册用户
+- **邮箱**: `635104032@qq.com`
+- **用户名**: `aifuqiang`
+- **角色**: USER
+
+> 注意：以上账户仅用于开发和测试，生产环境请创建新的安全账户。
+
 ## 功能特性
 
 - 🤖 **AI 对话**: 自然语言交互，智能理解用户意图
@@ -94,6 +194,8 @@ pnpm build:server
 - 🎨 **现代 UI**: 直观友好的用户界面
 - 🔒 **安全审计**: 命令安全检查和执行日志
 - 📱 **跨平台**: 支持 Windows、macOS、Linux
+- 👥 **用户管理**: 用户注册、登录、角色管理
+- 🗄️ **数据存储**: 本地 SQLite 数据库，支持数据持久化
 
 ## 开发指南
 

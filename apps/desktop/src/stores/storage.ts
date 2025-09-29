@@ -38,14 +38,15 @@ export const useStorageStore = defineStore('storage', () => {
   const canSync = computed(() => state.value.mode === 'hybrid' && isLoggedIn.value)
 
   // Actions
-  const initializeStorage = async (mode: StorageMode = 'local') => {
+  const initializeStorage = async (mode: StorageMode = 'auto') => {
     try {
       console.log('Initializing storage with mode:', mode)
       
       const config = createStorageConfig(process.env.NODE_ENV || 'development', {
-        allowCloudStorage: mode !== 'local',
+        allowCloudStorage: true,
         allowOfflineMode: true,
-        syncFrequency: 'moderate'
+        syncFrequency: 'moderate',
+        autoSwitchStorage: true // 启用自动切换存储
       })
 
       // 更新配置模式
@@ -231,6 +232,35 @@ export const useStorageStore = defineStore('storage', () => {
     }
   }
 
+  // 用户认证状态管理
+  const setUserAuthenticated = async (user: { id: string; email?: string; username?: string }) => {
+    if (storageManager.value) {
+      await storageManager.value.setUserAuthenticated(user)
+      
+      // 更新前端状态
+      state.value.user = {
+        id: parseInt(user.id),
+        email: user.email || '',
+        name: user.username || user.email || '',
+        avatar: undefined,
+        cloudStorageEnabled: true
+      }
+      
+      console.log('User authenticated, storage may have switched to cloud')
+    }
+  }
+
+  const setUserUnauthenticated = async () => {
+    if (storageManager.value) {
+      await storageManager.value.setUserUnauthenticated()
+      
+      // 清除前端状态
+      state.value.user = null
+      
+      console.log('User unauthenticated, storage may have switched to local')
+    }
+  }
+
   return {
     // State
     state: computed(() => state.value),
@@ -246,6 +276,8 @@ export const useStorageStore = defineStore('storage', () => {
     login,
     logout,
     checkAuthStatus,
+    setUserAuthenticated,
+    setUserUnauthenticated,
     syncData,
     disconnect,
     

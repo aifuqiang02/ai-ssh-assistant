@@ -30,7 +30,7 @@ function getEnv(key: string, defaultValue?: string): string | undefined {
 
 export interface StorageConfig {
   // 默认存储模式
-  defaultMode: 'local' | 'cloud' | 'hybrid'
+  defaultMode: 'local' | 'cloud' | 'hybrid' | 'auto'
   
   // 环境特定配置
   development: StorageManagerOptions
@@ -43,6 +43,7 @@ export interface StorageConfig {
     allowOfflineMode?: boolean
     syncFrequency?: 'realtime' | 'frequent' | 'moderate' | 'rare'
     dataPrivacy?: 'strict' | 'moderate' | 'relaxed'
+    autoSwitchStorage?: boolean // 是否允许根据登录状态自动切换存储
   }
 }
 
@@ -59,22 +60,28 @@ function getSyncInterval(frequency: string): number {
 
 // 默认存储配置
 export const defaultStorageConfig: StorageConfig = {
-  defaultMode: 'hybrid',
+  defaultMode: 'auto',
   
-  // 开发环境：优先本地存储，支持云同步
+  // 开发环境：自动模式 - 未登录用本地，登录用云端
   development: {
-    mode: 'hybrid',
+    mode: 'auto',
     localOptions: {
-      connectionString: getEnv('LOCAL_DATABASE_URL', 'file:./dev.db'),
+      connectionString: getEnv('LOCAL_DATABASE_URL', 'file:./packages/database/dev.db'),
       enabled: true
     },
     cloudOptions: {
-      connectionString: getEnv('DATABASE_URL'),
-      enabled: !!getEnv('DATABASE_URL'),
+      connectionString: getEnv('CLOUD_DATABASE_URL', 'postgresql://ai_ssh_user:ai_ssh_password@localhost:5432/ai_ssh_assistant'),
+      enabled: true,
       provider: 'postgresql',
       ssl: false,
       retryAttempts: 2,
       timeout: 10000
+    },
+    autoOptions: {
+      useCloudWhenAuthenticated: true,
+      useLocalWhenOffline: true,
+      autoSync: true,
+      migrationStrategy: 'merge'
     },
     hybridOptions: {
       primaryStorage: 'local',

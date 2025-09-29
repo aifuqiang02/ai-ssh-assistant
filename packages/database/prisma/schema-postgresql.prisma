@@ -1,0 +1,202 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/client-postgresql"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("CLOUD_DATABASE_URL")
+}
+
+// ==================== 用户相关表 ====================
+
+// 用户表 - PostgreSQL 版本，支持完整功能
+model User {
+  id        String   @id @default(cuid())
+  uuid      String   @unique @default(cuid()) // 兼容 lobe-chat 的 uuid 设计
+  email     String?  @unique
+  username  String?  @unique
+  password  String?  // 可选，支持第三方登录
+  avatar    String?
+  role      UserRole @default(USER) // 使用枚举
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 用户设置 - JSON 格式存储
+  settings  Json?    // 存储用户偏好设置
+
+  // 关联关系
+  sshConnections SSHConnection[]
+  chatSessions   ChatSession[]
+  messages       Message[]
+  commandLogs    CommandLog[]
+
+  @@map("users")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  PREMIUM
+}
+
+// SSH 连接配置表
+model SSHConnection {
+  id       String @id @default(cuid())
+  name     String // 连接名称
+  host     String // 主机地址
+  port     Int    @default(22) // 端口
+  username String // 用户名
+
+  // 认证信息
+  authType    SSHAuthType  // 认证类型枚举
+  password    String? // 密码（加密存储）
+  privateKey  String? // 私钥路径或内容
+  publicKey   String? // 公钥内容
+  passphrase  String? // 私钥密码（加密存储）
+
+  // 连接状态
+  status       ConnectionStatus   @default(DISCONNECTED) // 连接状态枚举
+  lastUsed     DateTime?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // 连接元数据 - JSON 格式
+  meta        Json?             // 存储额外的元数据信息
+
+  // 关联用户
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // 关联关系
+  chatSessions ChatSession[]
+  commandLogs  CommandLog[]
+
+  @@map("ssh_connections")
+}
+
+enum SSHAuthType {
+  PASSWORD
+  PRIVATE_KEY
+  SSH_AGENT
+}
+
+enum ConnectionStatus {
+  CONNECTED
+  DISCONNECTED
+  CONNECTING
+  ERROR
+}
+
+// 聊天会话表
+model ChatSession {
+  id          String   @id @default(cuid())
+  title       String   // 会话标题
+  type        SessionType   @default(CHAT) // 会话类型枚举
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // 会话配置 - JSON 格式
+  config      Json?       // AI 配置信息（模型参数、系统角色等）
+
+  // 会话元数据 - JSON 格式
+  meta        Json?       // 存储会话的元数据（描述、标签等）
+
+  // 关联用户和 SSH 连接
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  sshConnectionId String?
+  sshConnection   SSHConnection? @relation(fields: [sshConnectionId], references: [id])
+
+  // 关联关系
+  messages Message[]
+
+  @@map("chat_sessions")
+}
+
+enum SessionType {
+  CHAT      // 普通聊天
+  SSH       // SSH 操作会话
+  MIXED     // 混合模式
+}
+
+// 消息表
+model Message {
+  id        String   @id @default(cuid())
+  content   String   // 消息内容
+  role      MessageRole   // 消息角色枚举
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 消息元数据 - JSON 格式
+  meta        Json?       // 消息元数据
+  extra       Json?       // 额外信息（AI模型、token数等）
+
+  // 消息状态
+  isDeleted   Boolean @default(false)
+  isEdited    Boolean @default(false)
+
+  // 插件相关 - JSON 格式
+  plugin      Json?       // 插件信息
+  pluginState Json?       // 插件状态
+
+  // 翻译相关
+  translate   Json?       // 翻译信息
+
+  // TTS 相关
+  tts         Json?       // 语音合成信息
+
+  // 关联会话和用户
+  sessionId String
+  session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("messages")
+}
+
+enum MessageRole {
+  USER
+  ASSISTANT
+  SYSTEM
+  FUNCTION
+  TOOL
+}
+
+// 命令日志表
+model CommandLog {
+  id        String   @id @default(cuid())
+  command   String   // 执行的命令
+  output    String?  // 命令输出
+  exitCode  Int?     // 退出码
+  duration  Int?     // 执行时间（毫秒）
+  createdAt DateTime @default(now())
+
+  // 安全级别
+  safetyLevel SafetyLevel @default(SAFE) // 安全级别枚举
+
+  // 命令元数据
+  metadata      Json?       // 额外的元数据信息
+
+  // 关联用户和 SSH 连接
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  sshConnectionId String?
+  sshConnection   SSHConnection? @relation(fields: [sshConnectionId], references: [id])
+
+  @@map("command_logs")
+}
+
+enum SafetyLevel {
+  SAFE
+  CAUTION
+  DANGEROUS
+}

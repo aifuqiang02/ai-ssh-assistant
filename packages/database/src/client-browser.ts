@@ -75,22 +75,15 @@ if (typeof window !== 'undefined' || typeof document !== 'undefined') {
   PrismaClient = BrowserPrismaClient
   prisma = new BrowserPrismaClient()
 } else {
-  // Node.js 环境
+  // Node.js 环境 - 使用同步方式避免顶层 await 问题
   try {
     console.log('🖥️ Using Node.js Prisma Client')
-    const { PrismaClient: NodePrismaClient } = require('./generated/client')
-    PrismaClient = NodePrismaClient
-
-    if (process.env.NODE_ENV === 'production') {
-      prisma = new PrismaClient()
-    } else {
-      if (!(globalThis as any).__prisma) {
-        (globalThis as any).__prisma = new PrismaClient({
-          log: ['query', 'error', 'warn'],
-        })
-      }
-      prisma = (globalThis as any).__prisma
-    }
+    // 对于服务器端，建议直接导入生成的客户端，而不是通过这个包装层
+    console.log('⚠️ Warning: For server-side usage, consider importing directly from generated/client')
+    
+    // 提供一个基本的 mock 实现
+    PrismaClient = BrowserPrismaClient
+    prisma = new BrowserPrismaClient()
   } catch (error) {
     console.warn('⚠️ Failed to load Node.js Prisma Client, falling back to mock:', error)
     PrismaClient = BrowserPrismaClient

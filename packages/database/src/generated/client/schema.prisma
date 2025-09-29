@@ -7,13 +7,13 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
 // ==================== 用户相关表 ====================
 
-// 用户表 - 参考 lobe-chat user model
+// 用户表 - 简化版本，适用于 SQLite
 model User {
   id        String   @id @default(cuid())
   uuid      String   @unique @default(cuid()) // 兼容 lobe-chat 的 uuid 设计
@@ -21,438 +21,143 @@ model User {
   username  String?  @unique
   password  String? // 可选，支持第三方登录
   avatar    String?
-  role      UserRole @default(USER)
+  role      String   @default("USER") // 使用字符串而不是枚举
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // 用户设置 - JSON 格式存储，参考 lobe-chat
-  settings Json? // 存储用户偏好设置
+  // 用户设置 - 使用文本存储 JSON
+  settings String? // 存储用户偏好设置（JSON 字符串）
 
   // 关联关系
   sshConnections SSHConnection[]
   chatSessions   ChatSession[]
   messages       Message[]
   commandLogs    CommandLog[]
-  usageStats     UsageStats[]
-  apiKeys        ApiKey[]
-  sessionGroups  SessionGroup[]
-  plugins        Plugin[]
-  knowledgeBases KnowledgeBase[]
-  files          File[]
 
   @@map("users")
 }
 
-enum UserRole {
-  USER
-  ADMIN
-  PREMIUM
-}
-
-// ==================== SSH 连接相关表 ====================
-
 // SSH 连接配置表
 model SSHConnection {
-  id         String           @id @default(cuid())
-  name       String // 连接名称
-  host       String // 服务器地址
-  port       Int              @default(22)
-  username   String // SSH 用户名
-  authType   SSHAuthType // 认证方式
-  password   String? // 加密存储的密码
-  privateKey String? // 加密存储的私钥
-  passphrase String? // 加密存储的私钥密码
-  status     ConnectionStatus @default(DISCONNECTED)
-  lastUsed   DateTime? // 最后使用时间
-  createdAt  DateTime         @default(now())
-  updatedAt  DateTime         @updatedAt
+  id       String @id @default(cuid())
+  name     String // 连接名称
+  host     String // 主机地址
+  port     Int    @default(22) // 端口
+  username String // 用户名
 
-  // 连接元数据 - JSON 格式，参考 lobe-chat meta 设计
-  meta Json? // 存储额外的元数据信息
+  // 认证信息
+  authType   String // 认证类型：PASSWORD, KEY, AGENT
+  password   String? // 密码（加密存储）
+  privateKey String? // 私钥路径或内容
+  publicKey  String? // 公钥内容
+  passphrase String? // 私钥密码（加密存储）
+
+  // 连接状态
+  status    String    @default("DISCONNECTED") // CONNECTED, DISCONNECTED, CONNECTING, ERROR
+  lastUsed  DateTime?
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // 连接元数据 - 使用文本存储
+  meta String? // 存储额外的元数据信息（JSON 字符串）
 
   // 关联用户
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // 关联关系
-  commandLogs CommandLog[]
+  chatSessions ChatSession[]
+  commandLogs  CommandLog[]
 
   @@map("ssh_connections")
 }
 
-enum SSHAuthType {
-  PASSWORD
-  PRIVATE_KEY
-  SSH_AGENT
-}
-
-enum ConnectionStatus {
-  CONNECTED
-  DISCONNECTED
-  CONNECTING
-  ERROR
-}
-
-// ==================== 聊天会话相关表 - 参考 lobe-chat session model ====================
-
 // 聊天会话表
 model ChatSession {
-  id        String      @id @default(cuid())
-  title     String? // 会话标题
-  model     String      @default("gpt-4") // AI 模型
-  type      SessionType @default(CHAT) // 会话类型
-  isActive  Boolean     @default(true)
-  pinned    Boolean     @default(false) // 是否置顶
-  group     String      @default("default") // 会话分组
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
+  id        String   @id @default(cuid())
+  title     String // 会话标题
+  type      String   @default("CHAT") // 会话类型：CHAT, SSH, MIXED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  // 会话配置 - JSON 格式，参考 lobe-chat config 设计
-  config Json? // AI 配置信息（模型参数、系统角色等）
+  // 会话配置 - 使用文本存储
+  config String? // AI 配置信息（模型参数、系统角色等）JSON 字符串
 
-  // 会话元数据 - JSON 格式，参考 lobe-chat meta 设计  
-  meta Json? // 存储会话的元数据（描述、标签等）
+  // 会话元数据 - 使用文本存储
+  meta String? // 存储会话的元数据（描述、标签等）JSON 字符串
 
-  // 关联用户
+  // 关联用户和 SSH 连接
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  sshConnectionId String?
+  sshConnection   SSHConnection? @relation(fields: [sshConnectionId], references: [id])
+
   // 关联关系
   messages Message[]
-  topics   Topic[]
 
   @@map("chat_sessions")
 }
 
-enum SessionType {
-  CHAT // 普通聊天
-  SSH // SSH 操作会话
-  MIXED // 混合模式
-}
-
-// 话题表 - 参考 lobe-chat topic model
-model Topic {
+// 消息表
+model Message {
   id        String   @id @default(cuid())
-  title     String // 话题标题
+  content   String // 消息内容
+  role      String // 消息角色：USER, ASSISTANT, SYSTEM, FUNCTION, TOOL
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // 话题元数据
-  meta Json? // 存储话题相关元数据
+  // 消息元数据 - 使用文本存储
+  meta  String? // 消息元数据 JSON 字符串
+  extra String? // 额外信息（AI模型、token数等）JSON 字符串
 
-  // 关联会话
-  sessionId String
-  session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  // 消息状态
+  isDeleted Boolean @default(false)
+  isEdited  Boolean @default(false)
 
-  // 关联消息
-  messages Message[]
-
-  @@map("topics")
-}
-
-// ==================== 消息相关表 - 参考 lobe-chat message model ====================
-
-// 消息表
-model Message {
-  id        String      @id @default(cuid())
-  role      MessageRole // 消息角色
-  content   String // 消息内容
-  parentId  String? // 父消息ID，用于构建对话树
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-
-  // 消息元数据 - JSON 格式，参考 lobe-chat 设计
-  meta  Json? // 消息元数据
-  extra Json? // 额外信息（AI模型、token数等）
-
-  // AI 相关字段
-  tokens       Int? // token 使用量
-  fromModel    String? // 来源模型
-  fromProvider String? // 来源提供商
-
-  // 插件相关 - 参考 lobe-chat plugin 设计
-  plugin      Json? // 插件信息
-  pluginState Json? // 插件状态
+  // 插件相关 - 使用文本存储
+  plugin      String? // 插件信息 JSON 字符串
+  pluginState String? // 插件状态 JSON 字符串
 
   // 翻译相关
-  translate Json? // 翻译信息
+  translate String? // 翻译信息 JSON 字符串
 
   // TTS 相关
-  tts Json? // 语音合成信息
+  tts String? // 语音合成信息 JSON 字符串
 
-  // 关联关系
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
+  // 关联会话和用户
   sessionId String
   session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 
-  topicId String?
-  topic   Topic?  @relation(fields: [topicId], references: [id], onDelete: Cascade)
-
-  // 文件关联
-  files MessageFile[]
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("messages")
 }
 
-enum MessageRole {
-  USER
-  ASSISTANT
-  SYSTEM
-  FUNCTION
-  TOOL
-}
-
-// 消息文件关联表
-model MessageFile {
-  id        String   @id @default(cuid())
-  messageId String
-  fileId    String
-  createdAt DateTime @default(now())
-
-  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
-  file    File    @relation(fields: [fileId], references: [id], onDelete: Cascade)
-
-  @@unique([messageId, fileId])
-  @@map("message_files")
-}
-
-// ==================== 文件相关表 - 参考 lobe-chat file model ====================
-
-// 文件表
-model File {
-  id        String   @id @default(cuid())
-  name      String // 文件名
-  type      String // 文件类型
-  size      BigInt // 文件大小
-  url       String? // 文件URL
-  path      String? // 本地路径
-  hash      String? // 文件哈希
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // 文件元数据
-  metadata Json? // 文件元数据
-
-  // 关联用户
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  // 关联关系
-  messages MessageFile[]
-
-  @@map("files")
-}
-
-// ==================== 命令执行相关表 ====================
-
-// 命令执行日志表
+// 命令日志表
 model CommandLog {
-  id          String      @id @default(cuid())
-  command     String // 执行的命令
-  output      String? // 命令输出
-  error       String? // 错误信息
-  exitCode    Int? // 退出代码
-  duration    Int // 执行时间（毫秒）
-  isSuccess   Boolean // 是否成功
-  safetyLevel SafetyLevel @default(SAFE) // 安全等级
-  executedAt  DateTime    @default(now()) // 执行时间
+  id        String   @id @default(cuid())
+  command   String // 执行的命令
+  output    String? // 命令输出
+  exitCode  Int? // 退出码
+  duration  Int? // 执行时间（毫秒）
+  createdAt DateTime @default(now())
+
+  // 安全级别
+  safetyLevel String @default("SAFE") // SAFE, CAUTION, DANGEROUS
 
   // 命令元数据
-  metadata Json? // 额外的元数据信息
+  metadata String? // 额外的元数据信息 JSON 字符串
 
-  // 关联关系
+  // 关联用户和 SSH 连接
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  connectionId String
-  connection   SSHConnection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+  sshConnectionId String?
+  sshConnection   SSHConnection? @relation(fields: [sshConnectionId], references: [id])
 
   @@map("command_logs")
-}
-
-enum SafetyLevel {
-  SAFE
-  CAUTION
-  DANGEROUS
-}
-
-// ==================== 使用统计表 ====================
-
-// 用户使用统计表
-model UsageStats {
-  id              String   @id @default(cuid())
-  date            DateTime @db.Date
-  commandsCount   Int      @default(0)
-  aiRequestsCount Int      @default(0)
-  tokensUsed      Int      @default(0)
-  connectionsUsed Int      @default(0)
-  createdAt       DateTime @default(now())
-
-  // 关联用户
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, date])
-  @@map("usage_stats")
-}
-
-// ==================== API 密钥表 ====================
-
-// API 密钥表
-model ApiKey {
-  id        String     @id @default(cuid())
-  name      String // 密钥名称
-  key       String     @unique // API 密钥
-  type      ApiKeyType @default(PERSONAL) // 密钥类型
-  isActive  Boolean    @default(true)
-  expiresAt DateTime? // 过期时间
-  lastUsed  DateTime? // 最后使用时间
-  createdAt DateTime   @default(now())
-
-  // 权限范围
-  scopes String[] // 权限范围数组
-
-  // 关联用户
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("api_keys")
-}
-
-enum ApiKeyType {
-  PERSONAL
-  SERVICE
-  TEMPORARY
-}
-
-// ==================== 系统配置表 ====================
-
-// 系统配置表
-model SystemConfig {
-  id          String     @id @default(cuid())
-  key         String     @unique
-  value       String
-  type        ConfigType @default(STRING)
-  description String? // 配置描述
-  category    String? // 配置分类
-  isPublic    Boolean    @default(false) // 是否为公开配置
-  updatedAt   DateTime   @updatedAt
-  createdAt   DateTime   @default(now())
-
-  @@map("system_config")
-}
-
-enum ConfigType {
-  STRING
-  NUMBER
-  BOOLEAN
-  JSON
-  ARRAY
-}
-
-// ==================== 会话组表 - 参考 lobe-chat sessionGroup ====================
-
-// 会话组表
-model SessionGroup {
-  id        String   @id @default(cuid())
-  name      String // 组名
-  sort      Int      @default(0) // 排序
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // 组元数据
-  meta Json? // 存储组的元数据
-
-  // 关联用户
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("session_groups")
-}
-
-// ==================== 插件相关表 - 参考 lobe-chat plugin ====================
-
-// 插件表
-model Plugin {
-  id         String   @id @default(cuid())
-  identifier String   @unique // 插件标识符
-  name       String // 插件名称
-  version    String // 插件版本
-  enabled    Boolean  @default(true)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  // 插件配置和元数据
-  config   Json? // 插件配置
-  meta     Json? // 插件元数据
-  settings Json? // 插件设置
-
-  // 关联用户
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("plugins")
-}
-
-// ==================== 知识库相关表 ====================
-
-// 知识库表
-model KnowledgeBase {
-  id          String        @id @default(cuid())
-  name        String // 知识库名称
-  description String? // 描述
-  type        KnowledgeType @default(DOCUMENT) // 知识库类型
-  isActive    Boolean       @default(true)
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-
-  // 知识库配置
-  config Json? // 配置信息
-  meta   Json? // 元数据
-
-  // 关联用户
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  // 关联文档
-  documents KnowledgeDocument[]
-
-  @@map("knowledge_bases")
-}
-
-enum KnowledgeType {
-  DOCUMENT
-  FAQ
-  COMMAND
-  SCRIPT
-}
-
-// 知识库文档表
-model KnowledgeDocument {
-  id        String         @id @default(cuid())
-  title     String // 文档标题
-  content   String // 文档内容
-  type      String // 文档类型
-  status    DocumentStatus @default(ACTIVE)
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
-
-  // 文档元数据
-  metadata  Json? // 文档元数据
-  embedding Json? // 向量嵌入
-
-  // 关联知识库
-  knowledgeBaseId String
-  knowledgeBase   KnowledgeBase @relation(fields: [knowledgeBaseId], references: [id], onDelete: Cascade)
-
-  @@map("knowledge_documents")
-}
-
-enum DocumentStatus {
-  ACTIVE
-  ARCHIVED
-  DELETED
 }

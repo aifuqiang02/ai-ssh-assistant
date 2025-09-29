@@ -50,6 +50,7 @@ class Application {
 
       // 动态导入 IPC 处理器
       try {
+        await import('../ipc/api-handlers')  // API处理器
         await import('../ipc/ssh-handlers')
         await import('../ipc/ai-handlers')
         await import('../ipc/file-handlers')
@@ -61,11 +62,23 @@ class Application {
 
     // 安全设置
     app.on('web-contents-created', (_, contents) => {
-      // 阻止导航到外部URL
+      // 阻止导航到外部URL (但允许API调用)
       contents.on('will-navigate', (event, navigationUrl) => {
         const parsedUrl = new URL(navigationUrl)
         
-        if (parsedUrl.origin !== 'http://localhost:5173' && parsedUrl.origin !== 'file://') {
+        // 允许开发服务器、本地文件和API服务器
+        const allowedOrigins = [
+          'http://localhost:5173',  // Vite开发服务器
+          'http://localhost:3000',  // API服务器
+          'http://127.0.0.1:3000',  // API服务器 (IPv4)
+          'file://'                 // 本地文件
+        ]
+        
+        const isAllowed = allowedOrigins.some(origin => 
+          parsedUrl.origin === origin || parsedUrl.protocol === 'file:'
+        )
+        
+        if (!isAllowed) {
           event.preventDefault()
           shell.openExternal(navigationUrl)
         }
@@ -95,8 +108,8 @@ class Application {
         sandbox: false,
         contextIsolation: true,
         nodeIntegration: false,
-        webSecurity: true,
-        allowRunningInsecureContent: false
+        webSecurity: this.isDev ? false : true, // 开发模式下禁用webSecurity以允许API调用
+        allowRunningInsecureContent: this.isDev ? true : false
       }
     })
 
