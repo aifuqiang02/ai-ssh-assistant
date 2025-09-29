@@ -13,7 +13,7 @@ class CloudDatabase {
    */
   static getInstance(): PrismaClient {
     if (!CloudDatabase.instance) {
-      const cloudDatabaseUrl = process.env.CLOUD_DATABASE_URL || 
+      const cloudDatabaseUrl = process.env.DATABASE_URL || 
                               'postgresql://ai_ssh_user:ai_ssh_password@localhost:5432/ai_ssh_assistant'
       
       CloudDatabase.instance = new PrismaClient({
