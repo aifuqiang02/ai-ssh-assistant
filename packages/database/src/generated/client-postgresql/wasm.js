@@ -136,12 +136,24 @@ exports.Prisma.UserScalarFieldEnum = {
   settings: 'settings'
 };
 
+exports.Prisma.SSHFolderScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  order: 'order',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  parentId: 'parentId',
+  userId: 'userId'
+};
+
 exports.Prisma.SSHConnectionScalarFieldEnum = {
   id: 'id',
   name: 'name',
   host: 'host',
   port: 'port',
   username: 'username',
+  order: 'order',
   authType: 'authType',
   password: 'password',
   privateKey: 'privateKey',
@@ -153,6 +165,7 @@ exports.Prisma.SSHConnectionScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   meta: 'meta',
+  folderId: 'folderId',
   userId: 'userId'
 };
 
@@ -265,6 +278,7 @@ exports.SafetyLevel = exports.$Enums.SafetyLevel = {
 
 exports.Prisma.ModelName = {
   User: 'User',
+  SSHFolder: 'SSHFolder',
   SSHConnection: 'SSHConnection',
   ChatSession: 'ChatSession',
   Message: 'Message',

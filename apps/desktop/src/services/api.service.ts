@@ -237,6 +237,34 @@ class ApiService {
   // ==================== SSH连接相关API ====================
 
   /**
+   * 获取SSH树形结构
+   */
+  async getSSHTree(): Promise<ApiResponse<any[]>> {
+    return this.get('/ssh/tree')
+  }
+
+  /**
+   * 创建SSH文件夹
+   */
+  async createSSHFolder(folderData: any): Promise<ApiResponse<any>> {
+    return this.post('/ssh/folders', folderData)
+  }
+
+  /**
+   * 更新SSH文件夹
+   */
+  async updateSSHFolder(id: string, folderData: any): Promise<ApiResponse<any>> {
+    return this.put(`/ssh/folders/${id}`, folderData)
+  }
+
+  /**
+   * 删除SSH文件夹
+   */
+  async deleteSSHFolder(id: string): Promise<ApiResponse> {
+    return this.delete(`/ssh/folders/${id}`)
+  }
+
+  /**
    * 获取SSH连接列表
    */
   async getSSHConnections(): Promise<ApiResponse<any[]>> {
@@ -262,6 +290,13 @@ class ApiService {
    */
   async deleteSSHConnection(id: string): Promise<ApiResponse> {
     return this.delete(`/ssh/connections/${id}`)
+  }
+
+  /**
+   * 移动节点（文件夹或连接）
+   */
+  async moveSSHNode(moveData: any): Promise<ApiResponse> {
+    return this.post('/ssh/move', moveData)
   }
 
   /**

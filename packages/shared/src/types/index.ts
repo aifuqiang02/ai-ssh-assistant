@@ -50,3 +50,6 @@ export interface CommandResult {
   timestamp: Date
   success: boolean
 }
+
+// Export SSH types
+export * from './ssh.types'

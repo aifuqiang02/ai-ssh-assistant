@@ -10,7 +10,10 @@
       <!-- SSH 连接视图 -->
       <div v-if="activeView === 'ssh'" class="p-4">
         <div class="mb-4">
-          <button class="vscode-button primary w-full mb-2">
+          <button class="vscode-button primary w-full mb-2" @click="createRootFolder">
+            新建文件夹
+          </button>
+          <button class="vscode-button w-full" @click="createRootConnection">
             新建连接
           </button>
         </div>
@@ -19,21 +22,21 @@
           <div class="vscode-tree-title text-xs font-medium text-vscode-fg-muted mb-2">
             连接列表
           </div>
-          <div 
-            v-for="connection in connections" 
-            :key="connection.id"
-            class="vscode-tree-item"
-          >
-            <i class="bi bi-hdd-network text-vscode-accent mr-2"></i>
-            <span>{{ connection.name }}</span>
-            <div class="vscode-tree-actions">
-              <button class="vscode-icon-button" title="连接">
-                <i class="bi bi-play"></i>
-              </button>
-              <button class="vscode-icon-button" title="编辑">
-                <i class="bi bi-pencil"></i>
-              </button>
-            </div>
+          <div class="ssh-tree-container">
+            <SSHTreeNode
+              v-for="node in sshTreeData"
+              :key="node.id"
+              :node="node"
+              :selected-id="selectedNodeId"
+              @select="handleNodeSelect"
+              @update="handleNodeUpdate"
+              @delete="handleNodeDelete"
+              @connect="handleNodeConnect"
+              @drag-node="handleDragNode"
+              @drop-node="handleDropNode"
+              @create-folder="handleCreateSubFolder"
+              @create-connection="handleCreateSubConnection"
+            />
           </div>
         </div>
       </div>
@@ -124,7 +127,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted, watch } from 'vue'
+import SSHTreeNode, { type SSHTreeNodeData } from '../ssh/SSHTreeNode.vue'
+import { useSSHStore } from '../../stores/ssh'
 
 interface Props {
   activeView: string
@@ -132,12 +137,29 @@ interface Props {
 
 const props = defineProps<Props>()
 
-// 模拟数据
-const connections = ref([
-  { id: '1', name: '生产服务器', host: '192.168.1.100' },
-  { id: '2', name: '开发环境', host: '192.168.1.101' },
-  { id: '3', name: '测试服务器', host: '192.168.1.102' }
-])
+// 使用 SSH Store
+const sshStore = useSSHStore()
+
+// 从 store 获取数据
+const sshTreeData = computed(() => sshStore.sshTree as any)
+const selectedNodeId = computed(() => sshStore.selectedNodeId)
+
+// 拖拽的节点
+const dragNode = ref<SSHTreeNodeData | null>(null)
+
+// 初始化时加载数据
+onMounted(() => {
+  if (props.activeView === 'ssh') {
+    sshStore.loadSSHTree()
+  }
+})
+
+// 监听视图切换，当切换到 SSH 视图时加载数据
+watch(() => props.activeView, (newView) => {
+  if (newView === 'ssh' && sshStore.sshTree.length === 0) {
+    sshStore.loadSSHTree()
+  }
+})
 
 const chatHistory = ref([
   { id: '1', title: '如何优化数据库查询？' },
@@ -167,6 +189,140 @@ const sidebarTitle = computed(() => {
   }
   return titles[props.activeView] || 'SSH 连接'
 })
+
+// 创建根文件夹
+const createRootFolder = async () => {
+  try {
+    await sshStore.createFolder({
+      name: '新建文件夹',
+      order: 0
+    })
+  } catch (err) {
+    console.error('创建文件夹失败:', err)
+  }
+}
+
+// 创建根连接
+const createRootConnection = async () => {
+  try {
+    await sshStore.createConnection({
+      name: '新建连接',
+      host: '',
+      port: 22,
+      username: '',
+      authType: 'PASSWORD' as any,
+      order: 0
+    })
+  } catch (err) {
+    console.error('创建连接失败:', err)
+  }
+}
+
+// 选中节点
+const handleNodeSelect = (node: SSHTreeNodeData) => {
+  sshStore.selectNode(node.id)
+}
+
+// 更新节点
+const handleNodeUpdate = async (node: SSHTreeNodeData) => {
+  try {
+    if (node.type === 'folder') {
+      await sshStore.updateFolder(node.id, {
+        name: node.name,
+        parentId: node.parentId,
+        order: node.order
+      })
+    } else {
+      await sshStore.updateConnection(node.id, {
+        name: node.name,
+        host: node.host,
+        port: node.port,
+        username: node.username,
+        password: node.password,
+        authType: node.authType,
+        folderId: node.folderId,
+        order: node.order
+      })
+    }
+  } catch (err) {
+    console.error('更新节点失败:', err)
+  }
+}
+
+// 删除节点
+const handleNodeDelete = async (node: SSHTreeNodeData) => {
+  try {
+    if (node.type === 'folder') {
+      await sshStore.deleteFolder(node.id)
+    } else {
+      await sshStore.deleteConnection(node.id)
+    }
+  } catch (err) {
+    console.error('删除节点失败:', err)
+  }
+}
+
+// 连接节点
+const handleNodeConnect = (node: SSHTreeNodeData) => {
+  console.log('连接到:', node)
+  // TODO: 实现实际的 SSH 连接逻辑
+}
+
+// 拖拽节点
+const handleDragNode = (node: SSHTreeNodeData) => {
+  dragNode.value = node
+}
+
+// 放置节点
+const handleDropNode = async (data: { dragNode: SSHTreeNodeData; dropNode: SSHTreeNodeData }) => {
+  const { dragNode, dropNode } = data
+  
+  // 防止拖到自己或自己的子节点
+  if (dragNode.id === dropNode.id) {
+    return
+  }
+  
+  try {
+    await sshStore.moveNode({
+      nodeId: dragNode.id,
+      nodeType: dragNode.type,
+      targetFolderId: dropNode.type === 'folder' ? dropNode.id : dropNode.folderId,
+      order: 0
+    })
+  } catch (err) {
+    console.error('移动节点失败:', err)
+  }
+}
+
+// 创建子文件夹
+const handleCreateSubFolder = async (data: { parentId: string; name: string }) => {
+  try {
+    await sshStore.createFolder({
+      name: data.name,
+      parentId: data.parentId,
+      order: 0
+    })
+  } catch (err) {
+    console.error('创建子文件夹失败:', err)
+  }
+}
+
+// 创建子连接
+const handleCreateSubConnection = async (data: { folderId: string; name: string }) => {
+  try {
+    await sshStore.createConnection({
+      name: data.name,
+      host: '',
+      port: 22,
+      username: '',
+      authType: 'PASSWORD' as any,
+      folderId: data.folderId,
+      order: 0
+    })
+  } catch (err) {
+    console.error('创建子连接失败:', err)
+  }
+}
 </script>
 
 <style scoped>

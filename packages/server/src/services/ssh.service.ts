@@ -1,0 +1,302 @@
+import { PrismaClient } from '../../../database/src/generated/client-postgresql/index.js'
+import type {
+  SSHFolder,
+  SSHConnection,
+  CreateSSHFolderDto,
+  UpdateSSHFolderDto,
+  CreateSSHConnectionDto,
+  UpdateSSHConnectionDto,
+  MoveNodeDto,
+  SSHTreeNode
+} from '@ai-ssh/shared'
+
+export class SSHService {
+  private prisma: PrismaClient
+
+  constructor(prisma: PrismaClient) {
+    this.prisma = prisma
+  }
+
+  /**
+   * 获取用户的 SSH 树形结构
+   */
+  async getUserSSHTree(userId: string): Promise<SSHTreeNode[]> {
+    // 获取所有文件夹
+    const folders = await this.prisma.sSHFolder.findMany({
+      where: { userId, isActive: true },
+      orderBy: { order: 'asc' },
+      include: {
+        connections: {
+          where: { isActive: true },
+          orderBy: { order: 'asc' }
+        }
+      }
+    })
+
+    // 获取根级别的连接（没有文件夹的）
+    const rootConnections = await this.prisma.sSHConnection.findMany({
+      where: {
+        userId,
+        isActive: true,
+        folderId: null
+      },
+      orderBy: { order: 'asc' }
+    })
+
+    // 构建树形结构
+    const tree: SSHTreeNode[] = []
+
+    // 添加根级别文件夹
+    const rootFolders = folders.filter(f => !f.parentId)
+    for (const folder of rootFolders) {
+      tree.push(this.buildFolderNode(folder, folders))
+    }
+
+    // 添加根级别连接
+    for (const conn of rootConnections) {
+      tree.push(this.buildConnectionNode(conn))
+    }
+
+    return tree.sort((a, b) => a.order - b.order)
+  }
+
+  /**
+   * 构建文件夹节点
+   */
+  private buildFolderNode(folder: any, allFolders: any[]): SSHTreeNode {
+    const children: SSHTreeNode[] = []
+
+    // 添加子文件夹
+    const subFolders = allFolders.filter(f => f.parentId === folder.id)
+    for (const subFolder of subFolders) {
+      children.push(this.buildFolderNode(subFolder, allFolders))
+    }
+
+    // 添加该文件夹下的连接
+    if (folder.connections) {
+      for (const conn of folder.connections) {
+        children.push(this.buildConnectionNode(conn))
+      }
+    }
+
+    return {
+      id: folder.id,
+      name: folder.name,
+      type: 'folder',
+      order: folder.order,
+      parentId: folder.parentId,
+      children: children.sort((a, b) => a.order - b.order)
+    }
+  }
+
+  /**
+   * 构建连接节点
+   */
+  private buildConnectionNode(conn: any): SSHTreeNode {
+    return {
+      id: conn.id,
+      name: conn.name,
+      type: 'connection',
+      order: conn.order,
+      host: conn.host,
+      port: conn.port,
+      username: conn.username,
+      password: conn.password,
+      authType: conn.authType,
+      status: conn.status,
+      folderId: conn.folderId
+    }
+  }
+
+  /**
+   * 创建文件夹
+   */
+  async createFolder(userId: string, data: CreateSSHFolderDto): Promise<SSHFolder> {
+    // 验证父文件夹所有权（如果有）
+    if (data.parentId) {
+      await this.validateFolderOwnership(data.parentId, userId)
+    }
+
+    return this.prisma.sSHFolder.create({
+      data: {
+        name: data.name,
+        parentId: data.parentId,
+        order: data.order ?? 0,
+        userId
+      }
+    }) as any
+  }
+
+  /**
+   * 更新文件夹
+   */
+  async updateFolder(folderId: string, userId: string, data: UpdateSSHFolderDto): Promise<SSHFolder> {
+    await this.validateFolderOwnership(folderId, userId)
+
+    // 如果要移动到新父文件夹，验证新父文件夹所有权
+    if (data.parentId) {
+      await this.validateFolderOwnership(data.parentId, userId)
+    }
+
+    return this.prisma.sSHFolder.update({
+      where: { id: folderId },
+      data: {
+        name: data.name,
+        parentId: data.parentId,
+        order: data.order
+      }
+    }) as any
+  }
+
+  /**
+   * 删除文件夹（及其所有子项）
+   */
+  async deleteFolder(folderId: string, userId: string): Promise<void> {
+    await this.validateFolderOwnership(folderId, userId)
+
+    // Prisma 会自动级联删除子文件夹和连接（通过 onDelete: Cascade）
+    await this.prisma.sSHFolder.update({
+      where: { id: folderId },
+      data: { isActive: false }
+    })
+  }
+
+  /**
+   * 创建 SSH 连接
+   */
+  async createConnection(userId: string, data: CreateSSHConnectionDto): Promise<SSHConnection> {
+    // 验证文件夹所有权（如果有）
+    if (data.folderId) {
+      await this.validateFolderOwnership(data.folderId, userId)
+    }
+
+    return this.prisma.sSHConnection.create({
+      data: {
+        name: data.name,
+        host: data.host,
+        port: data.port ?? 22,
+        username: data.username,
+        authType: data.authType,
+        password: data.password,
+        privateKey: data.privateKey,
+        publicKey: data.publicKey,
+        passphrase: data.passphrase,
+        folderId: data.folderId,
+        order: data.order ?? 0,
+        meta: data.meta,
+        userId
+      }
+    }) as any
+  }
+
+  /**
+   * 更新 SSH 连接
+   */
+  async updateConnection(connectionId: string, userId: string, data: UpdateSSHConnectionDto): Promise<SSHConnection> {
+    await this.validateConnectionOwnership(connectionId, userId)
+
+    // 如果要移动到新文件夹，验证新文件夹所有权
+    if (data.folderId) {
+      await this.validateFolderOwnership(data.folderId, userId)
+    }
+
+    return this.prisma.sSHConnection.update({
+      where: { id: connectionId },
+      data: {
+        name: data.name,
+        host: data.host,
+        port: data.port,
+        username: data.username,
+        authType: data.authType,
+        password: data.password,
+        privateKey: data.privateKey,
+        publicKey: data.publicKey,
+        passphrase: data.passphrase,
+        folderId: data.folderId,
+        order: data.order,
+        meta: data.meta
+      }
+    }) as any
+  }
+
+  /**
+   * 删除 SSH 连接
+   */
+  async deleteConnection(connectionId: string, userId: string): Promise<void> {
+    await this.validateConnectionOwnership(connectionId, userId)
+
+    await this.prisma.sSHConnection.update({
+      where: { id: connectionId },
+      data: { isActive: false }
+    })
+  }
+
+  /**
+   * 移动节点（文件夹或连接）
+   */
+  async moveNode(userId: string, data: MoveNodeDto): Promise<void> {
+    if (data.nodeType === 'folder') {
+      await this.validateFolderOwnership(data.nodeId, userId)
+      
+      if (data.targetFolderId) {
+        await this.validateFolderOwnership(data.targetFolderId, userId)
+      }
+
+      await this.prisma.sSHFolder.update({
+        where: { id: data.nodeId },
+        data: {
+          parentId: data.targetFolderId,
+          order: data.order ?? 0
+        }
+      })
+    } else {
+      await this.validateConnectionOwnership(data.nodeId, userId)
+      
+      if (data.targetFolderId) {
+        await this.validateFolderOwnership(data.targetFolderId, userId)
+      }
+
+      await this.prisma.sSHConnection.update({
+        where: { id: data.nodeId },
+        data: {
+          folderId: data.targetFolderId,
+          order: data.order ?? 0
+        }
+      })
+    }
+  }
+
+  /**
+   * 验证文件夹所有权
+   */
+  private async validateFolderOwnership(folderId: string, userId: string): Promise<void> {
+    const folder = await this.prisma.sSHFolder.findUnique({
+      where: { id: folderId }
+    })
+
+    if (!folder) {
+      throw new Error('文件夹不存在')
+    }
+
+    if (folder.userId !== userId) {
+      throw new Error('无权操作此文件夹')
+    }
+  }
+
+  /**
+   * 验证连接所有权
+   */
+  private async validateConnectionOwnership(connectionId: string, userId: string): Promise<void> {
+    const connection = await this.prisma.sSHConnection.findUnique({
+      where: { id: connectionId }
+    })
+
+    if (!connection) {
+      throw new Error('连接不存在')
+    }
+
+    if (connection.userId !== userId) {
+      throw new Error('无权操作此连接')
+    }
+  }
+}

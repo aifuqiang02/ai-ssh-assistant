@@ -30,6 +30,7 @@ model User {
   settings  Json?    // 存储用户偏好设置
 
   // 关联关系
+  sshFolders     SSHFolder[]
   sshConnections SSHConnection[]
   chatSessions   ChatSession[]
   messages       Message[]
@@ -44,6 +45,30 @@ enum UserRole {
   PREMIUM
 }
 
+// SSH 文件夹表（用于组织 SSH 连接）
+model SSHFolder {
+  id        String   @id @default(cuid())
+  name      String   // 文件夹名称
+  order     Int      @default(0) // 排序顺序
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 树形结构支持
+  parentId  String?
+  parent    SSHFolder?  @relation("FolderHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
+  children  SSHFolder[] @relation("FolderHierarchy")
+
+  // 关联用户
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // 该文件夹下的 SSH 连接
+  connections SSHConnection[]
+
+  @@map("ssh_folders")
+}
+
 // SSH 连接配置表
 model SSHConnection {
   id       String @id @default(cuid())
@@ -51,6 +76,7 @@ model SSHConnection {
   host     String // 主机地址
   port     Int    @default(22) // 端口
   username String // 用户名
+  order    Int    @default(0) // 排序顺序
 
   // 认证信息
   authType    SSHAuthType  // 认证类型枚举
@@ -68,6 +94,10 @@ model SSHConnection {
 
   // 连接元数据 - JSON 格式
   meta        Json?             // 存储额外的元数据信息
+
+  // 所属文件夹
+  folderId  String?
+  folder    SSHFolder? @relation(fields: [folderId], references: [id], onDelete: SetNull)
 
   // 关联用户
   userId String
