@@ -1,5 +1,5 @@
 <template>
-  <div class="settings-view p-6 bg-vscode-bg-light h-full">
+  <div class="settings-view p-6 bg-vscode-bg h-full">
     <div class="settings-header mb-6">
       <h2 class="text-2xl font-bold text-vscode-fg">设置</h2>
       <p class="text-vscode-fg-muted">配置应用程序选项</p>
@@ -7,36 +7,101 @@
     
     <div class="settings-content space-y-6">
       <!-- 主题设置 -->
-      <div class="setting-group bg-vscode-bg rounded-lg p-4 border border-vscode-border">
-        <h3 class="text-lg font-semibold mb-3 text-vscode-fg">外观</h3>
+      <div class="setting-group bg-vscode-bg p-6">
+        <h3 class="text-lg font-semibold mb-4 text-vscode-fg">外观</h3>
         
+        <!-- 主题模式 -->
         <div class="setting-item flex items-center justify-between mb-4">
-          <label class="text-vscode-fg-muted">主题模式</label>
+          <div class="flex-1">
+            <label class="text-vscode-fg font-medium">主题模式</label>
+            <p class="text-xs text-vscode-fg-muted mt-1">
+              选择应用的外观主题
+            </p>
+          </div>
           <select 
             v-model="theme" 
-            class="px-3 py-2 border rounded-md bg-vscode-bg-light border-vscode-border text-vscode-fg"
+            @change="onThemeChange"
+            class="form-input-md"
           >
-            <option value="light">浅色</option>
-            <option value="dark">深色</option>
-            <option value="auto">跟随系统</option>
+            <option value="light">☀️ 浅色</option>
+            <option value="dark">🌙 深色</option>
+            <option value="auto">🔄 跟随系统</option>
           </select>
         </div>
         
-        <div class="setting-item flex items-center justify-between">
-          <label class="text-vscode-fg-muted">字体大小</label>
+        <!-- 颜色方案 -->
+        <div class="setting-item mb-4">
+          <label class="block text-vscode-fg font-medium mb-2">颜色方案</label>
+          <p class="text-xs text-vscode-fg-muted mb-3">
+            自定义应用的主色调
+          </p>
+          <div class="grid grid-cols-5 gap-2">
+            <div 
+              v-for="scheme in availableColorSchemes" 
+              :key="scheme.value"
+              @click="onColorSchemeChange(scheme.value)"
+              :class="[
+                'flex flex-col items-center justify-center p-3 rounded-lg cursor-pointer transition-all border-2',
+                selectedColorScheme === scheme.value 
+                  ? 'border-vscode-accent bg-vscode-bg-lighter' 
+                  : 'border-vscode-border hover:border-vscode-fg-muted'
+              ]"
+            >
+              <div 
+                :style="{ backgroundColor: scheme.color }" 
+                class="w-8 h-8 rounded-full mb-2 shadow-lg"
+              ></div>
+              <span class="text-xs text-vscode-fg">{{ scheme.label }}</span>
+              <span v-if="selectedColorScheme === scheme.value" class="text-xs text-vscode-accent mt-1">✓</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 字体大小 -->
+        <div class="setting-item flex items-center justify-between mb-4">
+          <div class="flex-1">
+            <label class="text-vscode-fg font-medium">字体大小</label>
+            <p class="text-xs text-vscode-fg-muted mt-1">
+              调整界面文字大小
+            </p>
+          </div>
           <select 
             v-model="fontSize" 
-            class="px-3 py-2 border rounded-md bg-vscode-bg-light border-vscode-border text-vscode-fg"
+            @change="onFontSizeChange"
+            class="form-input-md"
           >
-            <option value="small">小</option>
-            <option value="medium">中</option>
-            <option value="large">大</option>
+            <option value="small">小 (14px)</option>
+            <option value="medium">中 (16px)</option>
+            <option value="large">大 (18px)</option>
           </select>
+        </div>
+
+        <!-- 主题预览 -->
+        <div class="setting-item">
+          <label class="block text-vscode-fg font-medium mb-2">预览</label>
+          <div class="theme-preview p-4 bg-vscode-bg-lighter">
+            <div class="flex items-center space-x-3 mb-3">
+              <div class="w-10 h-10 rounded-full" :style="{ backgroundColor: availableColorSchemes.find(s => s.value === selectedColorScheme)?.color }"></div>
+              <div>
+                <p class="text-vscode-fg font-medium">示例标题</p>
+                <p class="text-vscode-fg-muted text-sm">这是一段示例文字</p>
+              </div>
+            </div>
+            <button 
+              class="px-4 py-2 rounded text-white transition-colors hover:opacity-100"
+              :style="{ 
+                backgroundColor: availableColorSchemes.find(s => s.value === selectedColorScheme)?.color,
+                opacity: 0.9
+              }"
+            >
+              示例按钮
+            </button>
+          </div>
         </div>
       </div>
       
       <!-- 数据存储设置 -->
-      <div class="setting-group bg-vscode-bg rounded-lg p-4 border border-vscode-border">
+      <div class="setting-group bg-vscode-bg p-6 border-t border-vscode-border-subtle">
         <h3 class="text-lg font-semibold mb-3 text-vscode-fg">数据存储</h3>
         
         <div class="setting-item mb-4">
@@ -44,7 +109,7 @@
           <select 
             v-model="storageMode" 
             @change="onStorageModeChange"
-            class="w-full px-3 py-2 border rounded-md bg-vscode-bg-light border-vscode-border text-vscode-fg"
+            class="form-input-lg"
           >
             <option value="local">仅本地存储</option>
             <option value="cloud">仅云端存储</option>
@@ -70,7 +135,7 @@
               </span>
             </div>
             
-            <div v-if="userInfo" class="user-info bg-vscode-bg p-3 rounded border border-vscode-border">
+            <div v-if="userInfo" class="user-info bg-vscode-bg-lighter p-3">
               <div class="flex items-center space-x-3">
                 <div class="w-8 h-8 bg-vscode-accent rounded-full flex items-center justify-center text-white text-sm">
                   {{ userInfo.name?.charAt(0) || 'U' }}
@@ -96,7 +161,7 @@
             <label class="block text-vscode-fg-muted mb-2">同步频率</label>
             <select 
               v-model="syncFrequency" 
-              class="w-full px-3 py-2 border rounded-md bg-vscode-bg-light border-vscode-border text-vscode-fg"
+              class="form-input-lg"
             >
               <option value="realtime">实时同步</option>
               <option value="high">高频 (15秒)</option>
@@ -121,7 +186,7 @@
       </div>
 
       <!-- SSH 设置 -->
-      <div class="setting-group bg-vscode-bg rounded-lg p-4 border border-vscode-border">
+      <div class="setting-group bg-vscode-bg p-6 border-t border-vscode-border-subtle">
         <h3 class="text-lg font-semibold mb-3 text-vscode-fg">SSH 配置</h3>
         
         <div class="setting-item mb-4">
@@ -129,7 +194,7 @@
           <input 
             v-model="sshTimeout" 
             type="number" 
-            class="w-full px-3 py-2 border rounded-md bg-vscode-bg-light border-vscode-border text-vscode-fg"
+            class="form-input-sm"
             min="10"
             max="300"
           />
@@ -166,14 +231,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
+import { storeToRefs } from 'pinia'
 import LoginModal from '../components/auth/LoginModal.vue'
+import { useThemeStore } from '../stores/theme'
+
+// 主题 Store
+const themeStore = useThemeStore()
+const { mode, colorScheme, fontSize: themeFontSize } = storeToRefs(themeStore)
 
 // 基础设置
-const theme = ref('light')
-const fontSize = ref('medium')
+const theme = ref<'light' | 'dark' | 'auto'>('auto')
+const fontSize = ref<'small' | 'medium' | 'large'>('medium')
+const selectedColorScheme = ref<'blue' | 'green' | 'purple' | 'orange' | 'red'>('blue')
 const sshTimeout = ref(30)
 const keepAlive = ref(true)
+
+// 可用的颜色方案
+const availableColorSchemes = computed(() => themeStore.getAvailableColorSchemes())
 
 // 存储设置
 const storageMode = ref<'local' | 'cloud' | 'hybrid'>('local')
@@ -250,6 +325,51 @@ const manualSync = async () => {
   }
 }
 
+// 主题变化处理
+const onThemeChange = () => {
+  themeStore.setMode(theme.value)
+  console.log('Theme mode changed to:', theme.value)
+  showSuccessNotification('主题模式已更新')
+}
+
+const onColorSchemeChange = (scheme: 'blue' | 'green' | 'purple' | 'orange' | 'red') => {
+  selectedColorScheme.value = scheme
+  themeStore.setColorScheme(scheme)
+  console.log('Color scheme changed to:', scheme)
+  showSuccessNotification('颜色方案已更新')
+}
+
+const onFontSizeChange = () => {
+  themeStore.setFontSize(fontSize.value)
+  console.log('Font size changed to:', fontSize.value)
+  showSuccessNotification('字体大小已更新')
+}
+
+// 显示成功通知
+const showSuccessNotification = (message: string) => {
+  const notification = document.createElement('div')
+  notification.textContent = message
+  notification.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded shadow-lg z-50 transition-all'
+  document.body.appendChild(notification)
+  
+  // 添加进入动画
+  setTimeout(() => {
+    notification.style.opacity = '1'
+    notification.style.transform = 'translateY(0)'
+  }, 10)
+  
+  // 3秒后淡出并移除
+  setTimeout(() => {
+    notification.style.opacity = '0'
+    notification.style.transform = 'translateY(-10px)'
+    setTimeout(() => {
+      if (notification.parentNode) {
+        document.body.removeChild(notification)
+      }
+    }, 300)
+  }, 3000)
+}
+
 // 初始化存储管理器
 const initializeStorageManager = async () => {
   try {
@@ -265,6 +385,7 @@ const saveSettings = () => {
   const settings = {
     theme: theme.value,
     fontSize: fontSize.value,
+    colorScheme: selectedColorScheme.value,
     sshTimeout: sshTimeout.value,
     keepAlive: keepAlive.value,
     storageMode: storageMode.value,
@@ -277,25 +398,28 @@ const saveSettings = () => {
   
   console.log('Settings saved:', settings)
   
-  // 显示保存成功消息
-  // 可以用更好的通知组件替换alert
-  const notification = document.createElement('div')
-  notification.textContent = '设置已保存！'
-  notification.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded shadow-lg z-50'
-  document.body.appendChild(notification)
-  setTimeout(() => {
-    document.body.removeChild(notification)
-  }, 3000)
+  // 应用主题设置
+  themeStore.setMode(theme.value)
+  themeStore.setColorScheme(selectedColorScheme.value)
+  themeStore.setFontSize(fontSize.value)
+  
+  showSuccessNotification('设置已保存！')
 }
 
 // 加载设置
 const loadSettings = () => {
   try {
+    // 从 themeStore 加载主题设置
+    theme.value = mode.value
+    fontSize.value = themeFontSize.value
+    selectedColorScheme.value = colorScheme.value
+    
+    // 从 localStorage 加载其他设置
     const savedSettings = localStorage.getItem('appSettings')
     if (savedSettings) {
       const settings = JSON.parse(savedSettings)
-      theme.value = settings.theme || 'light'
-      fontSize.value = settings.fontSize || 'medium'
+      
+      // SSH 和其他设置
       sshTimeout.value = settings.sshTimeout || 30
       keepAlive.value = settings.keepAlive !== undefined ? settings.keepAlive : true
       storageMode.value = settings.storageMode || 'local'
@@ -309,9 +433,21 @@ const loadSettings = () => {
   }
 }
 
+// 监听主题 Store 变化
+watch([mode, colorScheme, themeFontSize], () => {
+  theme.value = mode.value
+  fontSize.value = themeFontSize.value
+  selectedColorScheme.value = colorScheme.value
+})
+
 onMounted(() => {
   loadSettings()
   console.log('SettingsView mounted')
+  console.log('Current theme:', {
+    mode: mode.value,
+    colorScheme: colorScheme.value,
+    fontSize: themeFontSize.value
+  })
 })
 </script>
 
@@ -319,5 +455,35 @@ onMounted(() => {
 .settings-view {
   max-height: 100vh;
   overflow-y: auto;
+}
+
+/* 主题预览样式 */
+.theme-preview {
+  transition: all 0.3s ease;
+}
+
+.theme-preview button {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.theme-preview button:active {
+  transform: scale(0.98);
+}
+
+/* 颜色方案选择器样式 */
+.setting-item > div[class*="grid"] > div {
+  user-select: none;
+}
+
+.setting-item > div[class*="grid"] > div:active {
+  transform: scale(0.95);
+}
+
+/* 成功通知动画初始状态 */
+.fixed.bg-green-600 {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
 }
 </style>

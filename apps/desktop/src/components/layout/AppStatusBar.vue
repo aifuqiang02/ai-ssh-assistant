@@ -296,7 +296,7 @@ defineExpose({
   font-size: 12px;
   user-select: none;
   border-top: 1px solid var(--vscode-border);
-  background-color: #252526 !important;
+  background-color: var(--vscode-bg-light) !important;
   color: var(--vscode-fg);
 }
 
@@ -311,11 +311,11 @@ defineExpose({
 }
 
 .statusbar-item:hover {
-  background-color: var(--vscode-statusBarItem-hoverBackground);
+  background-color: var(--vscode-bg-lighter);
 }
 
 .statusbar-item:active {
-  background-color: var(--vscode-statusBarItem-activeBackground);
+  background-color: var(--vscode-bg-lighter);
 }
 
 /* 状态指示器动画 */

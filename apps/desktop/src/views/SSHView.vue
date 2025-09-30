@@ -10,63 +10,63 @@
       
       <div class="grid grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label class="block text-sm font-medium text-vscode-fg mb-2">
             主机地址
           </label>
           <input
             v-model="connectionForm.host"
             type="text"
             placeholder="192.168.1.100"
-            class="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200"
+            class="w-full"
           />
         </div>
         
         <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label class="block text-sm font-medium text-vscode-fg mb-2">
             端口
           </label>
           <input
             v-model="connectionForm.port"
             type="number"
             placeholder="22"
-            class="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200"
+            class="w-full"
           />
         </div>
         
         <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label class="block text-sm font-medium text-vscode-fg mb-2">
             用户名
           </label>
           <input
             v-model="connectionForm.username"
             type="text"
             placeholder="root"
-            class="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200"
+            class="w-full"
           />
         </div>
         
         <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label class="block text-sm font-medium text-vscode-fg mb-2">
             密码
           </label>
           <input
             v-model="connectionForm.password"
             type="password"
             placeholder="••••••••"
-            class="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200"
+            class="w-full"
           />
         </div>
       </div>
       
       <div class="mt-4">
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label class="block text-sm font-medium text-vscode-fg mb-2">
           连接名称
         </label>
         <input
           v-model="connectionForm.name"
           type="text"
           placeholder="我的服务器"
-          class="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200"
+          class="form-input-full"
         />
       </div>
       

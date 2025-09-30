@@ -32,8 +32,28 @@
       </div>
     </div>
     
-    <!-- 右侧：窗口控制按钮 -->
+    <!-- 右侧：主题切换和窗口控制按钮 -->
     <div class="flex items-center ml-auto">
+      <!-- 快捷主题切换按钮 -->
+      <button 
+        @click="toggleTheme"
+        class="vscode-window-control"
+        :title="`当前主题: ${currentThemeLabel}`"
+      >
+        <svg v-if="mode === 'light'" width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+          <!-- 太阳图标 -->
+          <path d="M8 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"/>
+        </svg>
+        <svg v-else-if="mode === 'dark'" width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+          <!-- 月亮图标 -->
+          <path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"/>
+        </svg>
+        <svg v-else width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+          <!-- 自动图标 -->
+          <path d="M8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zM3.732 1.732a.5.5 0 0 1 .707 0l1.415 1.415a.5.5 0 1 1-.708.707L3.732 2.439a.5.5 0 0 1 0-.707zM0 8a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2A.5.5 0 0 1 0 8zm13 0a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z"/>
+          <path d="M8 16a.5.5 0 0 1-.5-.5v-1.5a.5.5 0 0 1 1 0v1.5a.5.5 0 0 1-.5.5z"/>
+        </svg>
+      </button>
       <button 
         @click="minimizeWindow"
         class="vscode-window-control"
@@ -84,11 +104,31 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useThemeStore } from '../../stores/theme'
+
+// 主题 Store
+const themeStore = useThemeStore()
+const { mode, currentTheme } = storeToRefs(themeStore)
 
 // 响应式数据
 const activeMenu = ref<string | null>(null)
 const menuPosition = ref(0)
 const currentFilePath = ref('AI SSH Assistant - 欢迎')
+
+// 当前主题标签
+const currentThemeLabel = computed(() => {
+  switch (mode.value) {
+    case 'light':
+      return '☀️ 浅色'
+    case 'dark':
+      return '🌙 深色'
+    case 'auto':
+      return '🔄 跟随系统'
+    default:
+      return mode.value
+  }
+})
 
 // 菜单配置
 const menus = ref([
@@ -198,6 +238,12 @@ const closeWindow = () => {
   }
 }
 
+// 主题切换
+const toggleTheme = () => {
+  themeStore.toggleMode()
+  console.log('Theme toggled to:', mode.value)
+}
+
 // 点击外部关闭菜单
 const handleClickOutside = () => {
   activeMenu.value = null
@@ -209,8 +255,8 @@ document.addEventListener('click', handleClickOutside)
 
 <style scoped>
 .vscode-titlebar {
-  background-color: #252526 !important;
-  border-bottom: 1px solid #3c3c3c;
+  background-color: var(--vscode-bg-light) !important;
+  border-bottom: 1px solid var(--vscode-border);
   -webkit-app-region: drag;
   position: relative;
 }
@@ -229,11 +275,11 @@ document.addEventListener('click', handleClickOutside)
 }
 
 .vscode-menu-item:hover {
-  background-color: #374151;
+  background-color: var(--vscode-bg-lighter);
 }
 
 .vscode-menu-item.active {
-  background-color: #374151;
+  background-color: var(--vscode-bg-lighter);
 }
 
 .vscode-window-control {
@@ -242,16 +288,17 @@ document.addEventListener('click', handleClickOutside)
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #cccccc;
+  color: var(--vscode-fg);
   background: transparent;
   border: none;
   cursor: pointer;
-  transition: background-color 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease;
   -webkit-app-region: no-drag;
 }
 
 .vscode-window-control:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: var(--vscode-bg-lighter);
+  color: var(--vscode-fg);
 }
 
 .vscode-window-control-close:hover {
@@ -270,6 +317,8 @@ document.addEventListener('click', handleClickOutside)
 .vscode-dropdown {
   min-width: 200px;
   padding: 4px 0;
+  background-color: var(--vscode-bg-light);
+  border-color: var(--vscode-border);
 }
 
 .vscode-dropdown-item {
@@ -280,14 +329,15 @@ document.addEventListener('click', handleClickOutside)
   font-size: 0.875rem;
   cursor: pointer;
   transition: background-color 0.15s ease;
+  color: var(--vscode-fg);
 }
 
 .vscode-dropdown-item:hover {
-  background-color: #374151;
+  background-color: var(--vscode-bg-lighter);
 }
 
 .vscode-dropdown-item[data-type="separator"] {
-  border-top: 1px solid #4b5563;
+  border-top: 1px solid var(--vscode-border);
   margin: 0.25rem 0;
   height: 1px;
   padding: 0;

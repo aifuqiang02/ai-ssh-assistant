@@ -8,22 +8,24 @@ export default {
   theme: {
     extend: {
       colors: {
-        // VSCode 主题色
+        // VSCode 主题色 - 使用 CSS 变量以支持主题切换
         'vscode': {
-          'bg': '#1e1e1e',
-          'bg-light': '#252526',
-          'bg-lighter': '#2d2d30',
-          'fg': '#cccccc',
-          'fg-muted': '#969696',
-          'accent': '#007acc',
-          'accent-hover': '#005a9e',
-          'border': '#3c3c3c',
-          'success': '#4ec9b0',
-          'warning': '#ffcc02',
-          'error': '#f44747',
-          'statusbar': '#252526',
-          'statusbar-text': '#cccccc',
-          'statusbar-text-dim': '#969696'
+          'bg': 'var(--vscode-bg)',
+          'bg-light': 'var(--vscode-bg-light)',
+          'bg-lighter': 'var(--vscode-bg-lighter)',
+          'bg-input': 'var(--vscode-bg-input)',
+          'fg': 'var(--vscode-fg)',
+          'fg-muted': 'var(--vscode-fg-muted)',
+          'accent': 'var(--vscode-accent)',
+          'accent-hover': 'var(--vscode-accent-hover)',
+          'border': 'var(--vscode-border)',
+          'border-subtle': 'var(--vscode-border-subtle)',
+          'success': 'var(--vscode-success)',
+          'warning': 'var(--vscode-warning)',
+          'error': 'var(--vscode-error)',
+          'statusbar': 'var(--vscode-bg-light)',
+          'statusbar-text': 'var(--vscode-fg)',
+          'statusbar-text-dim': 'var(--vscode-fg-muted)'
         },
         // Bootstrap 兼容色
         'primary': '#007acc',

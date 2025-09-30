@@ -171,8 +171,8 @@ const sidebarTitle = computed(() => {
 
 <style scoped>
 .vscode-sidebar-container {
-  background: #252526;
-  color: #cccccc;
+  background: var(--vscode-bg-light);
+  color: var(--vscode-fg);
 }
 
 .vscode-sidebar-header {
@@ -222,13 +222,13 @@ const sidebarTitle = computed(() => {
 }
 
 .vscode-button.primary:active {
-  background: #004578;
+  background: var(--vscode-accent-hover);
 }
 
 .vscode-tree-title {
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: #969696;
+  color: var(--vscode-fg-muted);
 }
 
 .vscode-tree-item {
@@ -242,7 +242,7 @@ const sidebarTitle = computed(() => {
 }
 
 .vscode-tree-item:hover {
-  background: #2a2d2e;
+  background: var(--vscode-bg-lighter);
 }
 
 .vscode-tree-actions {
@@ -265,12 +265,12 @@ const sidebarTitle = computed(() => {
   justify-content: center;
   border-radius: 0.25rem;
   transition: color 0.15s ease;
-  color: #969696;
+  color: var(--vscode-fg-muted);
 }
 
 .vscode-icon-button:hover {
-  color: #cccccc;
-  background: #4f4f4f;
+  color: var(--vscode-fg);
+  background: var(--vscode-bg-lighter);
 }
 
 .vscode-icon-button i {
@@ -298,22 +298,22 @@ const sidebarTitle = computed(() => {
 
 /* 颜色变量 */
 .text-vscode-accent {
-  color: #007acc;
+  color: var(--vscode-accent);
 }
 
 .text-vscode-success {
-  color: #4ec9b0;
+  color: var(--vscode-success);
 }
 
 .text-vscode-warning {
-  color: #ffcc02;
+  color: var(--vscode-warning);
 }
 
 .text-vscode-info {
-  color: #75beff;
+  color: var(--vscode-accent);
 }
 
 .text-vscode-fg-muted {
-  color: #969696;
+  color: var(--vscode-fg-muted);
 }
 </style>

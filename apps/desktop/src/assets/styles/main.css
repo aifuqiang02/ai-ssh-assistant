@@ -4,15 +4,67 @@
 
 /* CSS 变量定义 */
 :root {
-  /* VSCode 主题色 */
-  --vscode-bg: #1e1e1e;
+  /* 默认深色主题 - 精确匹配 VSCode */
+  --vscode-bg: #252526;
+  /* VSCode 主背景色 */
   --vscode-bg-light: #252526;
+  /* 与主背景一致 */
   --vscode-bg-lighter: #2d2d30;
-  --vscode-fg: #cccccc;
-  --vscode-fg-muted: #969696;
+  /* 稍浅的背景 */
+  --vscode-bg-input: #3c3c3c;
+  /* 输入框背景 - VSCode 标准 */
+  --vscode-fg: #e0e0e0;
+  /* 主文字颜色 - 更亮 */
+  --vscode-fg-muted: #9d9d9d;
+  /* 次要文字 */
   --vscode-accent: #007acc;
   --vscode-accent-hover: #005a9e;
   --vscode-border: #3c3c3c;
+  --vscode-border-subtle: #2b2b2b;
+  --vscode-success: #4ec9b0;
+  --vscode-warning: #ffcc02;
+  --vscode-error: #f44747;
+}
+
+/* 浅色主题 */
+:root.light {
+  --vscode-bg: #ffffff;
+  --vscode-bg-light: #ffffff;
+  /* 与主背景一致 */
+  --vscode-bg-lighter: #f3f3f3;
+  /* 用于输入框等表单控件 */
+  --vscode-bg-input: #f3f3f3;
+  /* 输入框专用背景 */
+  --vscode-fg: #3c3c3c;
+  --vscode-fg-muted: #6c6c6c;
+  --vscode-accent: #007acc;
+  --vscode-accent-hover: #005a9e;
+  --vscode-border: #d4d4d4;
+  --vscode-border-subtle: #e5e5e5;
+  /* 更微妙的边框色 */
+  --vscode-success: #107c10;
+  --vscode-warning: #c19c00;
+  --vscode-error: #e51400;
+}
+
+/* 深色主题（显式定义）- 精确匹配 VSCode */
+:root.dark {
+  --vscode-bg: #252526;
+  /* VSCode 主背景色 */
+  --vscode-bg-light: #252526;
+  /* 与主背景一致 */
+  --vscode-bg-lighter: #2d2d30;
+  /* 稍浅的背景 */
+  --vscode-bg-input: #3c3c3c;
+  /* 输入框背景 - VSCode 标准 */
+  --vscode-fg: #e0e0e0;
+  /* 主文字颜色 - 更亮 */
+  --vscode-fg-muted: #9d9d9d;
+  /* 次要文字 */
+  --vscode-accent: #007acc;
+  --vscode-accent-hover: #005a9e;
+  --vscode-border: #3c3c3c;
+  --vscode-border-subtle: #2b2b2b;
   --vscode-success: #4ec9b0;
   --vscode-warning: #ffcc02;
   --vscode-error: #f44747;
@@ -77,13 +129,13 @@ pre,
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #424242;
+  background: var(--vscode-bg-lighter);
   border-radius: 6px;
   border: 2px solid var(--vscode-bg);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #4f4f4f;
+  background: var(--vscode-border);
 }
 
 ::-webkit-scrollbar-corner {
@@ -113,21 +165,114 @@ pre,
   border-color: var(--vscode-accent-hover);
 }
 
-.form-control {
-  background-color: var(--vscode-bg-light);
-  border-color: var(--vscode-border);
+/* VSCode 风格表单控件 - 全局样式 */
+.form-control,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="search"],
+input[type="url"],
+input[type="tel"],
+select,
+textarea {
+  background-color: var(--vscode-bg-input);
+  border: 1px solid transparent;
   color: var(--vscode-fg);
+  font-size: 13px;
+  height: 26px;
+  padding: 2px 8px;
+  border-radius: 0;
+  transition: all 0.15s ease;
 }
 
-.form-control:focus {
-  background-color: var(--vscode-bg-light);
+/* Textarea 特殊处理 - 允许多行 */
+textarea {
+  height: auto;
+  min-height: 60px;
+  padding: 6px 8px;
+  resize: vertical;
+}
+
+/* 聚焦状态 */
+.form-control:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  background-color: var(--vscode-bg-input);
   border-color: var(--vscode-accent);
   color: var(--vscode-fg);
-  box-shadow: 0 0 0 0.2rem rgba(0, 122, 204, 0.25);
+  box-shadow: none;
+  outline: none;
 }
 
-.form-control::placeholder {
+/* 占位符 */
+.form-control::placeholder,
+input::placeholder,
+textarea::placeholder {
   color: var(--vscode-fg-muted);
+}
+
+/* 禁用状态 */
+.form-control:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled {
+  background-color: var(--vscode-bg-lighter);
+  color: var(--vscode-fg-muted);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* 表单尺寸工具类 - VSCode 标准 */
+.form-input-sm {
+  width: 120px;
+}
+
+.form-input-md {
+  width: 200px;
+}
+
+.form-input-lg {
+  width: 280px;
+}
+
+.form-input-xl {
+  width: 400px;
+}
+
+.form-input-full {
+  width: 100%;
+}
+
+/* 表单错误状态 */
+.form-control.error,
+input.error,
+select.error,
+textarea.error {
+  border-color: var(--vscode-error);
+}
+
+.form-control.error:focus,
+input.error:focus,
+select.error:focus,
+textarea.error:focus {
+  border-color: var(--vscode-error);
+}
+
+/* 表单成功状态 */
+.form-control.success,
+input.success,
+select.success,
+textarea.success {
+  border-color: var(--vscode-success);
+}
+
+.form-control.success:focus,
+input.success:focus,
+select.success:focus,
+textarea.success:focus {
+  border-color: var(--vscode-success);
 }
 
 .modal-content {
@@ -207,6 +352,18 @@ pre,
   color: var(--vscode-accent) !important;
 }
 
+.text-vscode-fg {
+  color: var(--vscode-fg) !important;
+}
+
+.text-vscode-fg-muted {
+  color: var(--vscode-fg-muted) !important;
+}
+
+.border-vscode-border {
+  border-color: var(--vscode-border) !important;
+}
+
 /* 动画效果 */
 .fade-enter-active,
 .fade-leave-active {
@@ -216,6 +373,22 @@ pre,
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+/* 通知动画 */
+.notification-enter-active,
+.notification-leave-active {
+  transition: all 0.3s ease;
+}
+
+.notification-enter-from {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+.notification-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
 }
 
 .slide-up-enter-active,

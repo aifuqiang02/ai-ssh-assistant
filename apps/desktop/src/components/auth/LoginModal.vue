@@ -19,7 +19,7 @@
             v-model="email"
             type="email"
             required
-            class="w-full px-3 py-2 border rounded-md bg-vscode-bg border-vscode-border text-vscode-fg focus:outline-none focus:border-vscode-accent"
+            class="form-input-full"
             placeholder="请输入邮箱地址"
           />
         </div>
@@ -32,7 +32,7 @@
             v-model="password"
             type="password"
             required
-            class="w-full px-3 py-2 border rounded-md bg-vscode-bg border-vscode-border text-vscode-fg focus:outline-none focus:border-vscode-accent"
+            class="form-input-full"
             :placeholder="isLoginMode ? '请输入密码' : '请设置密码（至少6位）'"
             :minlength="isLoginMode ? undefined : 6"
           />
@@ -46,7 +46,7 @@
             v-model="confirmPassword"
             type="password"
             required
-            class="w-full px-3 py-2 border rounded-md bg-vscode-bg border-vscode-border text-vscode-fg focus:outline-none focus:border-vscode-accent"
+            class="form-input-full"
             placeholder="请再次输入密码"
             minlength="6"
           />
@@ -60,7 +60,7 @@
             v-model="username"
             type="text"
             required
-            class="w-full px-3 py-2 border rounded-md bg-vscode-bg border-vscode-border text-vscode-fg focus:outline-none focus:border-vscode-accent"
+            class="form-input-full"
             placeholder="请输入用户名"
             minlength="2"
           />

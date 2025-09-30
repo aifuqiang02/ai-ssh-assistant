@@ -25,7 +25,7 @@
               'p-3 rounded-lg max-w-full',
               message.role === 'user' 
                 ? 'bg-vscode-accent text-white ml-4' 
-                : 'bg-vscode-bg border border-vscode-border text-vscode-fg mr-4'
+                : 'bg-vscode-bg-light border border-vscode-border text-vscode-fg mr-4'
             ]"
           >
             <div class="text-xs font-medium mb-1 opacity-70">
@@ -58,7 +58,7 @@
           @keydown.ctrl.enter="sendMessage"
           @keydown.meta.enter="sendMessage"
           placeholder="输入消息... (Ctrl+Enter 发送)"
-          class="w-full px-3 py-2 bg-vscode-bg border border-vscode-border rounded text-vscode-fg text-sm resize-none"
+          class="form-input-full resize-none"
           rows="3"
         ></textarea>
         <div class="flex items-center justify-between">

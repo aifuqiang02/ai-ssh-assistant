@@ -1,5 +1,5 @@
 <template>
-  <div class="vscode-app h-screen flex flex-col bg-vscode-bg-light text-vscode-fg select-none">
+  <div class="vscode-app h-screen flex flex-col bg-vscode-bg text-vscode-fg select-none">
     <!-- 标题栏 -->
     <AppTitleBar v-if="!isFullscreen" class="vscode-titlebar" />
     
@@ -60,7 +60,7 @@
         </div>
         
         <!-- 主内容 -->
-        <main class="flex-1 overflow-hidden bg-vscode-bg-light">
+        <main class="flex-1 overflow-hidden bg-vscode-bg">
           <router-view />
         </main>
       </div>
@@ -197,7 +197,11 @@ const closeTab = (tabId: string) => {
     if (activeTab.value === tabId) {
       // 切换到相邻标签
       const newIndex = Math.min(index, openTabs.value.length - 1)
-      activeTab.value = openTabs.value[newIndex].id
+      const newTab = openTabs.value[newIndex]
+      activeTab.value = newTab.id
+      // 路由跳转到新激活的标签页面
+      router.push(newTab.path)
+      console.log(`Tab closed, switched to: ${newTab.name}`)
     }
   }
 }
@@ -420,17 +424,17 @@ onUnmounted(async () => {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: #9ca3af;
+  color: var(--vscode-fg-muted);
   transition: color 0.15s ease;
   position: relative;
 }
 
 .vscode-activity-item:hover {
-  color: white;
+  color: var(--vscode-fg);
 }
 
 .vscode-activity-item.active {
-  color: white;
+  color: var(--vscode-accent);
 }
 
 .vscode-activity-item.active::before {
@@ -458,7 +462,7 @@ onUnmounted(async () => {
   display: flex;
   align-items: center;
   font-size: 0.875rem;
-  color: #9ca3af;
+  color: var(--vscode-fg-muted);
   cursor: pointer;
   border-top: 2px solid transparent;
   position: relative;
@@ -469,17 +473,17 @@ onUnmounted(async () => {
 }
 
 .vscode-tab:hover {
-  color: white;
+  color: var(--vscode-fg);
 }
 
 .vscode-tab.active {
-  color: white;
-  border-top-color: #3b82f6;
+  color: var(--vscode-fg);
+  border-top-color: var(--vscode-accent);
   background: var(--vscode-bg);
 }
 
 .vscode-tab:not(.active):hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--vscode-bg-lighter);
 }
 
 .vscode-tab span {
@@ -497,14 +501,14 @@ onUnmounted(async () => {
   align-items: center;
   justify-content: center;
   border-radius: 0.25rem;
-  color: #6b7280;
+  color: var(--vscode-fg-muted);
   opacity: 0;
   transition: opacity 0.15s ease, color 0.15s ease, background-color 0.15s ease;
 }
 
 .vscode-tab-close:hover {
-  color: white;
-  background-color: #4b5563;
+  color: var(--vscode-fg);
+  background-color: var(--vscode-bg-lighter);
 }
 
 .vscode-tab:hover .vscode-tab-close {
@@ -517,7 +521,7 @@ onUnmounted(async () => {
 
 /* 侧边栏样式 */
 .vscode-sidebar {
-  background: #252526;
+  background: var(--vscode-bg-light);
 }
 
 /* 状态栏样式 */
@@ -528,7 +532,7 @@ onUnmounted(async () => {
 
 /* 标题栏样式 */
 .vscode-titlebar {
-  background: #3c3c3c;
+  background: var(--vscode-bg-light);
   height: 30px;
   -webkit-app-region: drag;
 }
@@ -541,14 +545,14 @@ onUnmounted(async () => {
     top: 0;
     bottom: 0;
     z-index: 100;
-    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
   }
 }
 
 /* 自定义滚动条 */
 :deep(.scrollbar-thin) {
   scrollbar-width: thin;
-  scrollbar-color: #424242 #1e1e1e;
+  scrollbar-color: var(--vscode-bg-lighter) var(--vscode-bg);
 }
 
 :deep(.scrollbar-thin::-webkit-scrollbar) {
@@ -557,21 +561,21 @@ onUnmounted(async () => {
 }
 
 :deep(.scrollbar-thin::-webkit-scrollbar-track) {
-  background: #1e1e1e;
+  background: var(--vscode-bg);
 }
 
 :deep(.scrollbar-thin::-webkit-scrollbar-thumb) {
-  background: #424242;
+  background: var(--vscode-bg-lighter);
   border-radius: 0;
 }
 
 :deep(.scrollbar-thin::-webkit-scrollbar-thumb:hover) {
-  background: #4f4f4f;
+  background: var(--vscode-border);
 }
 
 /* 拖拽分割条样式 */
 .vscode-splitter {
-  background: transparent;
+  background: var(--vscode-bg-light);
   position: relative;
   z-index: 10;
 }
