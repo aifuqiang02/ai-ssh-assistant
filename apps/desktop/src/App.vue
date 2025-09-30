@@ -1,7 +1,7 @@
 <template>
   <div class="vscode-app h-screen flex flex-col bg-vscode-bg text-vscode-fg select-none">
     <!-- 标题栏 -->
-    <AppTitleBar v-if="!isFullscreen" class="vscode-titlebar" />
+    <AppTitleBar v-if="!isFullscreen" class="vscode-titlebar" @open-settings="openSettings" />
     
     <!-- 主内容区 -->
     <div class="flex flex-1 overflow-hidden">
