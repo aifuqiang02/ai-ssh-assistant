@@ -35,6 +35,7 @@ export interface ElectronAPI {
     connect: (config: any) => Promise<any>
     disconnect: (id: string) => Promise<any>
     execute: (id: string, command: string) => Promise<any>
+    getInitialOutput: (id: string) => Promise<string>
     getConnections: () => Promise<any>
     saveConnection: (config: any) => Promise<any>
     deleteConnection: (id: string) => Promise<any>

@@ -161,6 +161,8 @@ export interface SSHTreeNodeData {
   port?: number
   username?: string
   password?: string
+  privateKey?: string
+  passphrase?: string
   authType?: string
   folderId?: string | null
   status?: string

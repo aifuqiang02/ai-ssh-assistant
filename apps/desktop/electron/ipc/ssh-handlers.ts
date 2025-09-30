@@ -12,9 +12,14 @@ interface SSHConnection {
   username: string
   password?: string
   privateKey?: string
+  passphrase?: string
+  authType?: 'password' | 'privateKey' | 'agent'
   client?: Client
+  shell?: any // Shell stream
   isConnected: boolean
   lastUsed: Date
+  initialOutputBuffer?: string[] // 缓存初始输出
+  isInitialOutputClaimed?: boolean // 初始输出是否已被获取
 }
 
 class SSHManager {
@@ -68,24 +73,64 @@ class SSHManager {
 
     return new Promise((resolve, reject) => {
       client.on('ready', () => {
-        const connection: SSHConnection = {
-          ...config,
-          id,
-          client,
-          isConnected: true,
-          lastUsed: new Date()
-        }
-        
-        this.connections.set(id, connection)
-        
-        // 通知前端连接状态变化
-        windowEvents.sendToRenderer('ssh:connection-status-changed', {
-          id,
-          status: 'connected',
-          config
+        // 创建 shell 会话
+        client.shell((err, stream) => {
+          if (err) {
+            reject(err)
+            return
+          }
+
+          const connection: SSHConnection = {
+            ...config,
+            id,
+            client,
+            shell: stream,
+            isConnected: true,
+            lastUsed: new Date(),
+            initialOutputBuffer: [], // 初始化输出缓冲数组
+            isInitialOutputClaimed: false // 初始输出未被获取
+          }
+          
+          this.connections.set(id, connection)
+
+          // 监听 shell 输出
+          stream.on('data', (data: Buffer) => {
+            const output = data.toString()
+            
+            // 如果初始输出还未被获取，缓存它
+            if (!connection.isInitialOutputClaimed) {
+              connection.initialOutputBuffer = connection.initialOutputBuffer || []
+              connection.initialOutputBuffer.push(output)
+              console.log(`[SSH ${id}] Buffering initial output, buffer size:`, connection.initialOutputBuffer.length)
+            } else {
+              // 正常发送输出
+              console.log(`[SSH ${id}] Sending output to renderer, length:`, output.length)
+              windowEvents.sendToRenderer(`ssh:output:${id}`, output)
+            }
+          })
+
+          stream.stderr.on('data', (data: Buffer) => {
+            windowEvents.sendToRenderer(`ssh:output:${id}`, data.toString())
+          })
+
+          stream.on('close', () => {
+            connection.isConnected = false
+            connection.shell = undefined
+            windowEvents.sendToRenderer('ssh:connection-status-changed', {
+              id,
+              status: 'disconnected'
+            })
+          })
+          
+          // 通知前端连接状态变化
+          windowEvents.sendToRenderer('ssh:connection-status-changed', {
+            id,
+            status: 'connected',
+            config
+          })
+          
+          resolve(id)
         })
-        
-        resolve(id)
       })
 
       client.on('error', (error) => {
@@ -120,6 +165,9 @@ class SSHManager {
 
       if (config.privateKey) {
         connectConfig.privateKey = config.privateKey
+        if (config.passphrase) {
+          connectConfig.passphrase = config.passphrase
+        }
       }
 
       client.connect(connectConfig)
@@ -128,64 +176,64 @@ class SSHManager {
 
   async disconnect(id: string): Promise<void> {
     const connection = this.connections.get(id)
-    if (!connection || !connection.client) {
-      throw new Error('Connection not found or not connected')
+    if (!connection) {
+      console.warn(`Connection ${id} not found`)
+      return
     }
 
-    connection.client.end()
+    // 关闭 shell 会话
+    if (connection.shell) {
+      try {
+        connection.shell.end()
+        connection.shell = undefined
+      } catch (err) {
+        console.error('Failed to close shell:', err)
+      }
+    }
+
+    // 关闭 SSH 客户端
+    if (connection.client) {
+      try {
+        connection.client.end()
+        connection.client = undefined
+      } catch (err) {
+        console.error('Failed to close client:', err)
+      }
+    }
+
     connection.isConnected = false
-    connection.client = undefined
+    
+    // 从连接池中移除
+    this.connections.delete(id)
+    
+    console.log(`Disconnected: ${id}`)
   }
 
-  async execute(id: string, command: string): Promise<string> {
+  async execute(id: string, data: string): Promise<void> {
     const connection = this.connections.get(id)
-    if (!connection || !connection.client || !connection.isConnected) {
+    if (!connection || !connection.shell || !connection.isConnected) {
       throw new Error('Connection not found or not connected')
     }
 
-    return new Promise((resolve, reject) => {
-      connection.client!.exec(command, (err, stream) => {
-        if (err) {
-          reject(err)
-          return
-        }
+    // 写入数据到 shell
+    connection.shell.write(data)
+  }
 
-        let output = ''
-        let errorOutput = ''
+  async getInitialOutput(id: string): Promise<string> {
+    const connection = this.connections.get(id)
+    if (!connection) {
+      throw new Error('Connection not found')
+    }
 
-        stream.on('close', (code: number) => {
-          if (code !== 0 && errorOutput) {
-            reject(new Error(errorOutput))
-          } else {
-            resolve(output)
-          }
-        })
-
-        stream.on('data', (data: Buffer) => {
-          const chunk = data.toString()
-          output += chunk
-          
-          // 实时发送输出到前端
-          windowEvents.sendToRenderer('ssh:terminal-output', {
-            id,
-            output: chunk,
-            type: 'stdout'
-          })
-        })
-
-        stream.stderr.on('data', (data: Buffer) => {
-          const chunk = data.toString()
-          errorOutput += chunk
-          
-          // 实时发送错误输出到前端
-          windowEvents.sendToRenderer('ssh:terminal-output', {
-            id,
-            output: chunk,
-            type: 'stderr'
-          })
-        })
-      })
-    })
+    // 返回缓冲的输出并清空
+    const output = (connection.initialOutputBuffer || []).join('')
+    console.log(`[SSH ${id}] Getting initial output, length:`, output.length, 'buffer size:', connection.initialOutputBuffer?.length)
+    
+    // 标记初始输出已被获取（之后的输出直接发送）
+    connection.isInitialOutputClaimed = true
+    connection.initialOutputBuffer = []
+    
+    return output
   }
 
   getConnections(): SSHConnection[] {
@@ -264,10 +312,18 @@ const sshManager = new SSHManager()
 // 注册 IPC 处理器
 ipcMain.handle('ssh:connect', async (_, config) => {
   try {
-    return await sshManager.connect(config)
-  } catch (error) {
+    const id = await sshManager.connect(config)
+    return {
+      status: 'connected',
+      id,
+      message: 'Connection successful'
+    }
+  } catch (error: any) {
     console.error('SSH connect error:', error)
-    throw error
+    return {
+      status: 'error',
+      message: error.message || 'Connection failed'
+    }
   }
 })
 
@@ -286,6 +342,15 @@ ipcMain.handle('ssh:execute', async (_, id: string, command: string) => {
     return await sshManager.execute(id, command)
   } catch (error) {
     console.error('SSH execute error:', error)
+    throw error
+  }
+})
+
+ipcMain.handle('ssh:get-initial-output', async (_, id: string) => {
+  try {
+    return await sshManager.getInitialOutput(id)
+  } catch (error) {
+    console.error('SSH get initial output error:', error)
     throw error
   }
 })

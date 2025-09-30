@@ -68,6 +68,9 @@ importers:
       '@xterm/addon-web-links':
         specifier: ^0.11.0
         version: 0.11.0(@xterm/xterm@5.5.0)
+      '@xterm/xterm':
+        specifier: ^5.5.0
+        version: 5.5.0
       axios:
         specifier: ^1.6.2
         version: 1.12.2
@@ -107,9 +110,6 @@ importers:
       vue-router:
         specifier: ^4.2.5
         version: 4.5.1(vue@3.5.22)
-      xterm:
-        specifier: ^5.3.0
-        version: 5.3.0
     devDependencies:
       '@types/lodash-es':
         specifier: ^4.17.12
@@ -6691,11 +6691,6 @@ packages:
   /xtend@4.0.2:
     resolution: {integrity: sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==}
     engines: {node: '>=0.4'}
-    dev: false
-
-  /xterm@5.3.0:
-    resolution: {integrity: sha512-8QqjlekLUFTrU6x7xck1MsPzPA571K5zNqWm0M0oroYEWVOptZ0+ubQSkQ3uxIEhcIHRujJy6emDWX4A7qyFzg==}
-    deprecated: This package is now deprecated. Move to @xterm/xterm instead.
     dev: false
 
   /y18n@5.0.8:

@@ -6,6 +6,7 @@
 - [API 响应序列化问题](#api-响应序列化问题)
 - [认证 Token 存储](#认证-token-存储)
 - [Prisma 数据返回](#prisma-数据返回)
+- [SSH 连接事件监听清理](#ssh-连接事件监听清理)
 
 ---
 
@@ -266,6 +267,320 @@ response: {
   }
 }
 ```
+
+---
+
+## SSH 连接事件监听清理
+
+### 问题描述
+在 SSH 终端组件中，重新连接时如果不清理旧的事件监听器，会导致多个监听器叠加，造成输出重复显示（如多个 shell 提示符）。
+
+### 错误示例
+```typescript
+// ❌ 错误：重新连接时没有清理旧监听器
+const handleReconnect = () => {
+  terminal.value.clear()
+  connectToSSH() // 这会注册新的监听器，但旧的还在
+}
+
+const connectToSSH = () => {
+  // 注册监听器
+  window.electronAPI.on(`ssh:output:${connId}`, (data) => {
+    terminal.value.write(data) // 每次重连都会添加新的监听器
+  })
+}
+```
+
+### 正确做法
+
+**1. 保存监听器清理函数**
+```typescript
+// 保存监听器的清理函数
+const outputListener = ref<(() => void) | null>(null)
+const statusListener = ref<(() => void) | null>(null)
+
+const connectToSSH = () => {
+  // 清理旧监听器
+  cleanupListeners()
+  
+  // 注册新监听器并保存清理函数
+  outputListener.value = window.electronAPI.on(`ssh:output:${connId}`, (data) => {
+    terminal.value.write(data)
+  })
+  
+  statusListener.value = window.electronAPI.onConnectionStatusChange(({ id, status }) => {
+    // 处理状态变化
+  })
+}
+```
+
+**2. 实现清理函数**
+```typescript
+const cleanupListeners = () => {
+  if (outputListener.value) {
+    outputListener.value() // 调用清理函数移除监听器
+    outputListener.value = null
+  }
+  if (statusListener.value) {
+    statusListener.value()
+    statusListener.value = null
+  }
+}
+```
+
+**3. 重新连接时先断开并清理**
+```typescript
+const handleReconnect = async () => {
+  // 如果已连接，不执行任何操作
+  if (connectionStatus.value === 'connected') {
+    return
+  }
+  
+  // 1. 断开旧的 SSH 连接
+  if (currentConnectionId.value && window.electronAPI) {
+    await window.electronAPI.ssh.disconnect(currentConnectionId.value)
+  }
+  
+  // 2. 清理监听器
+  cleanupListeners()
+  
+  // 3. 清空终端
+  terminal.value?.clear()
+  
+  // 4. 获取配置并自动重连
+  const config = getNodeConfig()
+  if (config && window.electronAPI) {
+    connectionStatus.value = 'connecting'
+    const result = await window.electronAPI.ssh.connect(config)
+    
+    if (result?.status === 'connected') {
+      currentConnectionId.value = result.id
+      connectToSSH()
+    }
+  }
+}
+
+// 断开连接（仅在已连接时可用）
+const handleDisconnect = async () => {
+  if (connectionStatus.value !== 'connected') {
+    return
+  }
+  
+  if (currentConnectionId.value && window.electronAPI) {
+    await window.electronAPI.ssh.disconnect(currentConnectionId.value)
+    cleanupListeners()
+    connectionStatus.value = 'disconnected'
+  }
+}
+```
+
+**4. 后端正确清理连接**
+```typescript
+// packages/desktop/electron/ipc/ssh-handlers.ts
+async disconnect(id: string): Promise<void> {
+  const connection = this.connections.get(id)
+  if (!connection) return
+
+  // 关闭 shell 会话
+  if (connection.shell) {
+    connection.shell.end()
+    connection.shell = undefined
+  }
+
+  // 关闭 SSH 客户端
+  if (connection.client) {
+    connection.client.end()
+    connection.client = undefined
+  }
+
+  // 从连接池中移除
+  this.connections.delete(id)
+}
+```
+
+**5. 组件卸载时清理**
+```typescript
+onBeforeUnmount(() => {
+  // 清理监听器
+  cleanupListeners()
+  
+  // 释放终端资源
+  if (terminal.value) {
+    terminal.value.dispose()
+  }
+  
+  // 断开 SSH 连接
+  if (actualConnectionId.value && window.electronAPI) {
+    window.electronAPI.ssh.disconnect(actualConnectionId.value)
+  }
+})
+```
+
+### 最佳实践
+
+1. **始终保存清理函数**：事件监听器注册时应返回清理函数
+2. **重连前先清理**：重新连接前必须清理旧监听器和连接
+3. **按钮状态管理**：根据连接状态显示正确的按钮
+   - 已连接：只显示"断开连接"按钮
+   - 已断开：只显示"重新连接"按钮
+   - 连接中：显示禁用的加载按钮
+4. **保存连接配置**：通过 URL 参数传递节点ID，从 store 获取配置用于重连
+5. **组件卸载清理**：组件销毁时清理所有资源
+6. **后端完全断开**：后端断开时应关闭所有相关资源并从连接池移除
+
+### UI/UX 优化
+
+**按钮根据状态显示：**
+```vue
+<template>
+  <!-- 已连接时显示断开按钮 -->
+  <button 
+    v-if="connectionStatus === 'connected'" 
+    @click="handleDisconnect"
+  >
+    <i class="bi bi-x-circle"></i>
+  </button>
+  
+  <!-- 已断开时显示重新连接按钮 -->
+  <button 
+    v-else-if="connectionStatus === 'disconnected'" 
+    @click="handleReconnect"
+  >
+    <i class="bi bi-arrow-clockwise"></i>
+  </button>
+  
+  <!-- 连接中时禁用 -->
+  <button v-else disabled class="btn-disabled">
+    <i class="bi bi-hourglass-split"></i>
+  </button>
+</template>
+```
+
+**传递节点配置用于重连：**
+```typescript
+// AppSidebar.vue - 打开终端时传递节点ID
+openNewTab(
+  terminalId,
+  name,
+  icon,
+  `/terminal?connectionId=${result.id}&nodeId=${node.id}&name=${name}`
+)
+
+// TerminalView.vue - 从 store 获取配置
+const getNodeConfig = () => {
+  if (!nodeId.value) return null
+  const node = sshStore.findNode(nodeId.value, sshStore.sshTree)
+  if (!node || node.type !== 'connection') return null
+  
+  return {
+    id: node.id,
+    name: node.name,
+    host: node.host,
+    port: node.port || 22,
+    username: node.username,
+    authType: node.authType,
+    password: node.password,
+    privateKey: node.privateKey,
+    passphrase: node.passphrase
+  }
+}
+```
+
+### 常见错误
+
+**错误：重连后输入命令提示 "Connection not found or not connected"**
+
+原因：终端输入处理器使用了错误的连接ID
+
+```typescript
+// ❌ 错误：使用固定的 actualConnectionId（从 URL 获取）
+terminal.value.onData((data) => {
+  const connId = actualConnectionId.value  // 这个值不会变
+  window.electronAPI.ssh.execute(connId, data)
+})
+
+// ✅ 正确：使用动态的 currentConnectionId
+terminal.value.onData((data) => {
+  const connId = currentConnectionId.value  // 这个值会随重连更新
+  window.electronAPI.ssh.execute(connId, data)
+})
+```
+
+### 常见错误 2
+
+**错误：组件卸载时 "Could not dispose an addon that has not been loaded"**
+
+原因：Terminal 实例可能未完全初始化就被卸载，或者 addons 未完全加载
+
+```typescript
+// ❌ 错误：直接 dispose，可能抛出异常
+const fitAddon = ref<FitAddon | null>(null)
+
+onBeforeUnmount(() => {
+  if (terminal.value) {
+    terminal.value.dispose()  // 如果 addon 未加载完成会报错
+  }
+})
+
+// ✅ 正确：保存所有 addon 引用，清理时先置空再 dispose
+const fitAddon = ref<FitAddon | null>(null)
+const webLinksAddon = ref<WebLinksAddon | null>(null)
+
+const initTerminal = () => {
+  terminal.value = new Terminal({ /* ... */ })
+  
+  // 保存 addon 引用
+  fitAddon.value = new FitAddon()
+  webLinksAddon.value = new WebLinksAddon()
+  
+  terminal.value.loadAddon(fitAddon.value)
+  terminal.value.loadAddon(webLinksAddon.value)
+}
+
+onBeforeUnmount(() => {
+  if (terminal.value) {
+    try {
+      // 先清理 addons 引用
+      if (fitAddon.value) {
+        fitAddon.value = null
+      }
+      if (webLinksAddon.value) {
+        webLinksAddon.value = null
+      }
+      
+      // 再清理 terminal
+      terminal.value.dispose()
+      terminal.value = null
+    } catch (err) {
+      // 静默处理 xterm.js addon 生命周期问题
+    }
+  }
+})
+
+// ✅ 同时确保初始化完成后再使用
+onMounted(() => {
+  nextTick(() => {
+    if (terminalContainer.value) {
+      initTerminal()
+    }
+  })
+})
+```
+
+### 检查清单
+- [ ] 事件监听器保存了清理函数
+- [ ] 重连前调用了 `cleanupListeners()`
+- [ ] 重连前调用了 `disconnect()`
+- [ ] 按钮根据 `connectionStatus` 正确显示
+- [ ] 断开/重连按钮根据状态禁用
+- [ ] 重连时自动获取配置并建立新连接
+- [ ] **终端输入使用 `currentConnectionId` 而非 `actualConnectionId`**
+- [ ] **组件初始化使用 `nextTick` 确保 DOM 准备就绪**
+- [ ] **所有 xterm addons 都保存了引用（不要直接 new）**
+- [ ] **dispose 时先清空 addon 引用，再 dispose terminal**
+- [ ] **Terminal dispose 包含 try-catch 错误处理**
+- [ ] 后端 `disconnect()` 清理了 shell 和 client
+- [ ] 组件卸载时清理了所有资源
 
 ---
 

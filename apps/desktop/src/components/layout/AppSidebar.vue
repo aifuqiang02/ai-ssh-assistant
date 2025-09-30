@@ -136,7 +136,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted, watch, nextTick } from 'vue'
+import { computed, ref, onMounted, watch, nextTick, inject } from 'vue'
 import SSHTreeNode, { type SSHTreeNodeData } from '../ssh/SSHTreeNode.vue'
 import SSHConnectionDialog from '../ssh/SSHConnectionDialog.vue'
 import { useSSHStore } from '../../stores/ssh'
@@ -149,6 +149,9 @@ const props = defineProps<Props>()
 
 // 使用 SSH Store
 const sshStore = useSSHStore()
+
+// 注入 openNewTab 方法
+const openNewTab = inject<(id: string, name: string, icon: string, path: string) => void>('openNewTab')
 
 // 从 store 获取数据
 const sshTreeData = computed(() => sshStore.sshTree as any)
@@ -363,9 +366,60 @@ const handleNodeDelete = async (node: SSHTreeNodeData) => {
 }
 
 // 连接节点
-const handleNodeConnect = (node: SSHTreeNodeData) => {
+const handleNodeConnect = async (node: SSHTreeNodeData) => {
   console.log('连接到:', node)
-  // TODO: 实现实际的 SSH 连接逻辑
+  
+  if (node.type !== 'connection') {
+    return
+  }
+  
+  try {
+    // 检查是否在 Electron 环境
+    if (!window.electronAPI) {
+      console.error('Not running in Electron environment')
+      alert('SSH 连接功能仅在桌面应用中可用')
+      return
+    }
+    
+    // 构建连接配置
+    const connectionConfig = {
+      id: node.id,
+      name: node.name,
+      host: node.host,
+      port: node.port || 22,
+      username: node.username,
+      authType: node.authType,
+      password: node.password,
+      privateKey: node.privateKey,
+      passphrase: node.passphrase
+    }
+    
+    console.log('Connecting with config:', { ...connectionConfig, password: '***', privateKey: '***' })
+    
+    // 调用 Electron IPC 建立 SSH 连接
+    const result = await window.electronAPI.ssh.connect(connectionConfig)
+    
+    console.log('Connection result:', result)
+    
+    if (result && result.status === 'connected') {
+      // 连接成功，打开终端标签页
+      if (openNewTab) {
+        const terminalId = `terminal-${result.id || node.id}`
+        openNewTab(
+          terminalId,
+          `${node.name} (${node.host})`,
+          'bi bi-terminal',
+          `/terminal?connectionId=${result.id || node.id}&nodeId=${node.id}&name=${encodeURIComponent(node.name)}`
+        )
+        console.log(`Opened terminal tab for connection: ${node.name}`)
+      }
+    } else {
+      alert(`连接失败: ${result?.message || '未知错误'}`)
+    }
+  } catch (err: any) {
+    console.error('SSH connection error:', err)
+    alert(`连接失败: ${err.message || '未知错误'}`)
+  }
 }
 
 // 拖拽节点

@@ -110,7 +110,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, provide } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAppStore } from '@/stores/app'
 import { useThemeStore } from '@/stores/theme'
@@ -150,7 +150,6 @@ const activityBarItems = ref([
   { id: 'ssh', icon: 'bi bi-hdd-network', tooltip: 'SSH 连接' },
   { id: 'chat', icon: 'bi bi-chat-dots', tooltip: 'AI 聊天' },
   { id: 'files', icon: 'bi bi-folder', tooltip: '文件管理' },
-  { id: 'terminal', icon: 'bi bi-terminal', tooltip: '终端' },
   { id: 'history', icon: 'bi bi-clock-history', tooltip: '历史记录' }
 ])
 
@@ -163,12 +162,16 @@ const openTabs = ref([
 const setActiveView = (viewId: string) => {
   activeView.value = viewId
   
+  // SSH 视图只切换侧边栏，不打开新 tab
+  if (viewId === 'ssh') {
+    return
+  }
+  
   // 定义路由和标签信息映射
   const viewConfigs: Record<string, { path: string; name: string; icon: string }> = {
     welcome: { path: '/', name: '欢迎', icon: 'bi bi-house' },
     chat: { path: '/chat', name: 'AI 对话', icon: 'bi bi-chat-dots' },
     files: { path: '/files', name: '文件管理', icon: 'bi bi-folder' },
-    terminal: { path: '/terminal', name: '终端', icon: 'bi bi-terminal' },
     history: { path: '/history', name: '历史记录', icon: 'bi bi-clock-history' }
   }
   
@@ -191,17 +194,30 @@ const setActiveTab = (tabId: string) => {
 
 const closeTab = (tabId: string) => {
   const index = openTabs.value.findIndex(t => t.id === tabId)
-  if (index > -1 && openTabs.value.length > 1) {
-    openTabs.value.splice(index, 1)
-    if (activeTab.value === tabId) {
-      // 切换到相邻标签
-      const newIndex = Math.min(index, openTabs.value.length - 1)
-      const newTab = openTabs.value[newIndex]
-      activeTab.value = newTab.id
-      // 路由跳转到新激活的标签页面
-      router.push(newTab.path)
-      console.log(`Tab closed, switched to: ${newTab.name}`)
+  if (index === -1) return
+  
+  // 如果只剩一个 tab，不允许关闭，而是切换到 welcome
+  if (openTabs.value.length === 1) {
+    if (tabId !== 'welcome') {
+      // 关闭当前 tab，打开 welcome tab
+      openTabs.value = [{ id: 'welcome', name: '欢迎', icon: 'bi bi-house', path: '/' }]
+      activeTab.value = 'welcome'
+      router.push('/')
+      console.log('Last tab closed, switched to welcome')
     }
+    return
+  }
+  
+  // 正常关闭 tab
+  openTabs.value.splice(index, 1)
+  if (activeTab.value === tabId) {
+    // 切换到相邻标签
+    const newIndex = Math.min(index, openTabs.value.length - 1)
+    const newTab = openTabs.value[newIndex]
+    activeTab.value = newTab.id
+    // 路由跳转到新激活的标签页面
+    router.push(newTab.path)
+    console.log(`Tab closed, switched to: ${newTab.name}`)
   }
 }
 
@@ -232,6 +248,9 @@ const openSettings = () => {
   console.log('Opening settings in new tab...')
   openNewTab('settings', '设置', 'bi bi-gear', '/settings')
 }
+
+// 提供打开新标签的方法给子组件
+provide('openNewTab', openNewTab)
 
 const toggleRightPanel = () => {
   showRightPanel.value = !showRightPanel.value
