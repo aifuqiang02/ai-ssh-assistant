@@ -1,0 +1,470 @@
+{
+  "confirm": "تأكيد",
+  "debug": {
+    "arguments": "معلمات الاستدعاء",
+    "function_call": "استدعاء الدالة",
+    "off": "إيقاف التصحيح",
+    "on": "عرض معلومات استدعاء الإضافة",
+    "payload": "حمولة الإضافة",
+    "pluginState": "حالة الإضافة",
+    "response": "النتيجة المرجعة",
+    "title": "تفاصيل الإضافة",
+    "tool_call": "طلب استدعاء الأداة"
+  },
+  "detailModal": {
+    "customPlugin": {
+      "description": "يرجى الانتقال إلى صفحة التحرير لمشاهدة التفاصيل",
+      "editBtn": "تحرير الآن",
+      "title": "هذه إضافة مخصصة"
+    },
+    "emptyState": {
+      "description": "يرجى تثبيت هذه الإضافة أولاً لعرض قدرات الإضافة وخيارات التكوين",
+      "title": "عرض تفاصيل الإضافة بعد التثبيت"
+    },
+    "info": {
+      "description": "وصف API",
+      "name": "اسم API"
+    },
+    "tabs": {
+      "info": "قدرات الإضافة",
+      "manifest": "ملف التثبيت",
+      "settings": "الإعدادات"
+    },
+    "title": "تفاصيل الإضافة"
+  },
+  "dev": {
+    "confirmDeleteDevPlugin": "سيتم حذف هذه الإضافة المحلية ولن يمكن استعادتها، هل تريد حذف هذه الإضافة؟",
+    "customParams": {
+      "useProxy": {
+        "label": "التثبيت عبر الوكيل (إذا واجهت خطأ وصول عبر النطاق، جرب تفعيل هذا الخيار ثم أعد التثبيت)"
+      }
+    },
+    "deleteSuccess": "تم حذف الإضافة بنجاح",
+    "manifest": {
+      "identifier": {
+        "desc": "المعرف الفريد للإضافة",
+        "label": "المعرف"
+      },
+      "mode": {
+        "mcp": "إضافة MCP",
+        "mcpExp": "تجريبي",
+        "url": "رابط مباشر"
+      },
+      "name": {
+        "desc": "عنوان الإضافة",
+        "label": "العنوان",
+        "placeholder": "محرك البحث"
+      }
+    },
+    "mcp": {
+      "advanced": {
+        "title": "إعدادات متقدمة"
+      },
+      "args": {
+        "desc": "قائمة المعلمات الممررة لأمر التنفيذ، عادةً هنا يتم إدخال اسم خادم MCP أو مسار سكريبت التشغيل",
+        "label": "معلمات الأمر",
+        "placeholder": "مثال: mcp-hello-world",
+        "required": "يرجى إدخال معلمات التشغيل"
+      },
+      "auth": {
+        "bear": "مفتاح API",
+        "desc": "اختر طريقة التوثيق لخادم MCP",
+        "label": "نوع التوثيق",
+        "none": "لا حاجة للتوثيق",
+        "placeholder": "يرجى اختيار نوع التوثيق",
+        "token": {
+          "desc": "أدخل مفتاح API أو رمز الحامل الخاص بك",
+          "label": "مفتاح API",
+          "placeholder": "sk-xxxxx",
+          "required": "يرجى إدخال رمز التوثيق"
+        }
+      },
+      "avatar": {
+        "label": "أيقونة الإضافة"
+      },
+      "command": {
+        "desc": "الملف التنفيذي أو السكريبت المستخدم لتشغيل خادم MCP STDIO",
+        "label": "الأمر",
+        "placeholder": "مثال: npx / uv / docker إلخ",
+        "required": "يرجى إدخال أمر التشغيل"
+      },
+      "desc": {
+        "desc": "أضف وصفًا للإضافة",
+        "label": "وصف الإضافة",
+        "placeholder": "أضف معلومات عن استخدام الإضافة وسيناريوهاتها"
+      },
+      "endpoint": {
+        "desc": "أدخل عنوان خادم MCP Streamable HTTP الخاص بك",
+        "label": "رابط نقطة نهاية MCP"
+      },
+      "env": {
+        "add": "أضف سطرًا جديدًا",
+        "desc": "أدخل متغيرات البيئة المطلوبة لخادم MCP",
+        "duplicateKeyError": "مفتاح الحقل يجب أن يكون فريدًا",
+        "formValidationFailed": "فشل التحقق من النموذج، يرجى مراجعة تنسيق المعلمات",
+        "keyRequired": "مفتاح الحقل لا يمكن أن يكون فارغًا",
+        "label": "متغيرات بيئة خادم MCP",
+        "stringifyError": "تعذر تسلسل المعلمات، يرجى مراجعة التنسيق"
+      },
+      "headers": {
+        "add": "أضف سطرًا جديدًا",
+        "desc": "أدخل رؤوس الطلب",
+        "label": "رؤوس HTTP"
+      },
+      "identifier": {
+        "desc": "حدد اسمًا لإضافة MCP الخاصة بك، يجب أن يكون بالأحرف الإنجليزية",
+        "invalid": "المعرف يمكن أن يحتوي فقط على أحرف، أرقام، شرطات وشرطات سفلية",
+        "label": "اسم إضافة MCP",
+        "placeholder": "مثال: my-mcp-plugin",
+        "required": "يرجى إدخال معرف خدمة MCP"
+      },
+      "previewManifest": "معاينة ملف وصف الإضافة",
+      "quickImport": "استيراد سريع لتكوين JSON",
+      "quickImportError": {
+        "empty": "لا يمكن أن يكون المحتوى فارغًا",
+        "invalidJson": "تنسيق JSON غير صالح",
+        "invalidStructure": "هيكل JSON غير صالح"
+      },
+      "stdioNotSupported": "البيئة الحالية لا تدعم إضافات MCP من نوع stdio",
+      "testConnection": "اختبار الاتصال",
+      "testConnectionTip": "يجب أن ينجح اختبار الاتصال لكي تعمل إضافة MCP بشكل صحيح",
+      "type": {
+        "desc": "اختر طريقة اتصال إضافة MCP، النسخة الويب تدعم فقط Streamable HTTP",
+        "httpFeature1": "متوافق مع الويب وسطح المكتب",
+        "httpFeature2": "اتصال بخادم MCP عن بعد، لا حاجة لتثبيت إضافي",
+        "httpShortDesc": "بروتوكول اتصال HTTP متدفق",
+        "label": "نوع إضافة MCP",
+        "stdioFeature1": "تأخير اتصال أقل، مناسب للتنفيذ المحلي",
+        "stdioFeature2": "يجب تثبيت وتشغيل خادم MCP محليًا",
+        "stdioNotAvailable": "وضع STDIO متاح فقط في نسخة سطح المكتب",
+        "stdioShortDesc": "بروتوكول اتصال يعتمد على الإدخال والإخراج القياسي",
+        "title": "نوع إضافة MCP"
+      },
+      "url": {
+        "desc": "أدخل عنوان MCP Server Streamable HTTP الخاص بك، لا يدعم وضع SSE",
+        "invalid": "يرجى إدخال عنوان URL صالح",
+        "label": "رابط نقطة نهاية HTTP المتدفق",
+        "required": "يرجى إدخال عنوان URL لخدمة MCP"
+      }
+    },
+    "meta": {
+      "author": {
+        "desc": "مؤلف الإضافة",
+        "label": "المؤلف"
+      },
+      "avatar": {
+        "desc": "أيقونة الإضافة، يمكن استخدام إيموجي أو رابط URL",
+        "label": "الأيقونة"
+      },
+      "description": {
+        "desc": "وصف الإضافة",
+        "label": "الوصف",
+        "placeholder": "ابحث في محرك البحث للحصول على معلومات"
+      },
+      "formFieldRequired": "هذا الحقل مطلوب",
+      "homepage": {
+        "desc": "الصفحة الرئيسية للإضافة",
+        "label": "الصفحة الرئيسية"
+      },
+      "identifier": {
+        "desc": "المعرف الفريد للإضافة، سيتم التعرف عليه تلقائيًا من ملف manifest",
+        "errorDuplicate": "المعرف مكرر مع إضافة موجودة، يرجى تغييره",
+        "label": "المعرف",
+        "pattenErrorMessage": "يمكن إدخال أحرف إنجليزية، أرقام، - و _ فقط"
+      },
+      "lobe": "إضافة {{appName}}",
+      "manifest": {
+        "desc": "سيتم تثبيت {{appName}} عبر هذا الرابط",
+        "label": "رابط ملف وصف الإضافة (Manifest)",
+        "preview": "معاينة Manifest",
+        "refresh": "تحديث"
+      },
+      "openai": "إضافة OpenAI",
+      "title": {
+        "desc": "عنوان الإضافة",
+        "label": "العنوان",
+        "placeholder": "محرك البحث"
+      }
+    },
+    "metaConfig": "تكوين معلومات الإضافة الأساسية",
+    "modalDesc": "بعد إضافة إضافة مخصصة، يمكن استخدامها للتحقق من تطوير الإضافة أو استخدامها مباشرة في المحادثة. يرجى الرجوع إلى <1>وثائق التطوير↗</> لتطوير الإضافات.",
+    "openai": {
+      "importUrl": "استيراد من رابط URL",
+      "schema": "المخطط"
+    },
+    "preview": {
+      "api": {
+        "noParams": "هذه الأداة لا تحتوي على معلمات",
+        "noResults": "لم يتم العثور على API تطابق شروط البحث",
+        "params": "المعلمات:",
+        "searchPlaceholder": "ابحث عن أداة..."
+      },
+      "card": "معاينة عرض الإضافة",
+      "desc": "معاينة وصف الإضافة",
+      "empty": {
+        "desc": "بعد إكمال التكوين، يمكنك معاينة قدرات الأدوات المدعومة هنا",
+        "title": "ابدأ المعاينة بعد تكوين الإضافة"
+      },
+      "title": "معاينة اسم الإضافة"
+    },
+    "save": "تثبيت الإضافة",
+    "saveSuccess": "تم حفظ إعدادات الإضافة بنجاح",
+    "tabs": {
+      "manifest": "قائمة وصف الوظائف (Manifest)",
+      "meta": "معلومات الإضافة الأساسية"
+    },
+    "title": {
+      "create": "إضافة إضافة مخصصة",
+      "edit": "تحرير إضافة مخصصة"
+    },
+    "type": {
+      "lobe": "إضافة {{appName}}",
+      "openai": "إضافة OpenAI"
+    },
+    "update": "تحديث",
+    "updateSuccess": "تم تحديث إعدادات الإضافة بنجاح"
+  },
+  "error": {
+    "fetchError": "فشل طلب رابط manifest، يرجى التأكد من صلاحية الرابط وفحص ما إذا كان يسمح بالوصول عبر النطاق",
+    "installError": "فشل تثبيت الإضافة {{name}}",
+    "manifestInvalid": "الملف manifest غير مطابق للمواصفات، نتيجة التحقق: \n\n {{error}}",
+    "noManifest": "ملف الوصف غير موجود",
+    "openAPIInvalid": "فشل تحليل OpenAPI، الخطأ: \n\n {{error}}",
+    "reinstallError": "فشل تحديث الإضافة {{name}}",
+    "testConnectionFailed": "فشل الحصول على Manifest: {{error}}",
+    "urlError": "الرابط لم يرجع محتوى بصيغة JSON، يرجى التأكد من صحة الرابط"
+  },
+  "inspector": {
+    "args": "عرض قائمة المعلمات",
+    "pluginRender": "عرض واجهة الإضافة"
+  },
+  "list": {
+    "item": {
+      "deprecated.title": "تم الحذف",
+      "local.config": "الإعدادات",
+      "local.title": "مخصص"
+    }
+  },
+  "loading": {
+    "content": "جارٍ استدعاء الإضافة...",
+    "plugin": "تشغيل الإضافة..."
+  },
+  "localSystem": {
+    "apiName": {
+      "listLocalFiles": "عرض قائمة الملفات",
+      "moveLocalFiles": "نقل الملفات",
+      "readLocalFile": "قراءة محتوى الملف",
+      "renameLocalFile": "إعادة تسمية",
+      "searchLocalFiles": "بحث في الملفات",
+      "writeLocalFile": "كتابة في الملف"
+    },
+    "title": "الملفات المحلية"
+  },
+  "mcpInstall": {
+    "CHECKING_INSTALLATION": "جارٍ فحص بيئة التثبيت...",
+    "COMPLETED": "اكتمل التثبيت",
+    "CONFIGURATION_REQUIRED": "يرجى إكمال التكوين المطلوب للمتابعة بالتثبيت",
+    "ERROR": "خطأ في التثبيت",
+    "FETCHING_MANIFEST": "جارٍ الحصول على ملف وصف الإضافة...",
+    "GETTING_SERVER_MANIFEST": "جارٍ تهيئة خادم MCP...",
+    "INSTALLING_PLUGIN": "جارٍ تثبيت الإضافة...",
+    "configurationDescription": "تتطلب هذه الإضافة MCP إعداد معلمات لتعمل بشكل صحيح، يرجى ملء المعلومات اللازمة",
+    "configurationRequired": "تكوين معلمات الإضافة",
+    "continueInstall": "متابعة التثبيت",
+    "dependenciesDescription": "تتطلب هذه الإضافة تثبيت تبعيات نظامية لتعمل بشكل صحيح، يرجى تثبيت التبعيات المفقودة حسب التعليمات ثم اضغط إعادة الفحص للمتابعة بالتثبيت.",
+    "dependenciesRequired": "يرجى تثبيت تبعيات النظام للإضافة",
+    "dependencyStatus": {
+      "installed": "مثبت",
+      "notInstalled": "غير مثبت",
+      "requiredVersion": "الإصدار المطلوب: {{version}}"
+    },
+    "errorDetails": {
+      "args": "المعلمات",
+      "command": "الأمر",
+      "connectionParams": "معلمات الاتصال",
+      "env": "متغيرات البيئة",
+      "errorOutput": "سجل الأخطاء",
+      "exitCode": "رمز الخروج",
+      "hideDetails": "إخفاء التفاصيل",
+      "originalError": "الخطأ الأصلي",
+      "showDetails": "عرض التفاصيل"
+    },
+    "errorTypes": {
+      "AUTHORIZATION_ERROR": "خطأ في التحقق من التفويض",
+      "CONNECTION_FAILED": "فشل الاتصال",
+      "INITIALIZATION_TIMEOUT": "انتهت مهلة التهيئة",
+      "PROCESS_SPAWN_ERROR": "فشل بدء العملية",
+      "UNKNOWN_ERROR": "خطأ غير معروف",
+      "VALIDATION_ERROR": "فشل التحقق من المعلمات"
+    },
+    "installError": "فشل تثبيت إضافة MCP، السبب: {{detail}}",
+    "installMethods": {
+      "manual": "تثبيت يدوي:",
+      "recommended": "طريقة التثبيت الموصى بها:"
+    },
+    "recheckDependencies": "إعادة فحص",
+    "skipDependencies": "تخطي الفحص"
+  },
+  "pluginList": "قائمة الإضافات",
+  "protocolInstall": {
+    "actions": {
+      "install": "تثبيت",
+      "installAnyway": "تثبيت على أي حال",
+      "installed": "مثبت"
+    },
+    "config": {
+      "args": "المعلمات",
+      "command": "الأمر",
+      "env": "متغيرات البيئة",
+      "headers": "رؤوس الطلب",
+      "title": "معلومات التكوين",
+      "type": {
+        "http": "النوع: HTTP",
+        "label": "النوع",
+        "stdio": "النوع: Stdio"
+      },
+      "url": "عنوان الخدمة"
+    },
+    "custom": {
+      "badge": "إضافة مخصصة",
+      "security": {
+        "description": "هذه الإضافة لم يتم التحقق منها رسميًا، قد تحمل مخاطر أمنية! يرجى التأكد من ثقتك بمصدر الإضافة.",
+        "title": "⚠️ تحذير أمني"
+      },
+      "title": "تثبيت إضافة مخصصة"
+    },
+    "marketplace": {
+      "title": "تثبيت إضافات الطرف الثالث",
+      "trustedBy": "مقدم من {{name}}",
+      "unverified": {
+        "title": "إضافات طرف ثالث غير موثوقة",
+        "warning": "هذه الإضافة من سوق طرف ثالث غير موثوق، يرجى التأكد من ثقتك بالمصدر قبل التثبيت."
+      },
+      "verified": "موثوقة"
+    },
+    "messages": {
+      "connectionTestFailed": "فشل اختبار الاتصال",
+      "installError": "فشل تثبيت الإضافة، يرجى المحاولة مجددًا",
+      "installSuccess": "تم تثبيت الإضافة {{name}} بنجاح!",
+      "manifestError": "فشل الحصول على تفاصيل الإضافة، يرجى التحقق من الاتصال بالشبكة والمحاولة مجددًا",
+      "manifestNotFound": "تعذر الحصول على ملف وصف الإضافة"
+    },
+    "meta": {
+      "author": "المؤلف",
+      "homepage": "الصفحة الرئيسية",
+      "identifier": "المعرف",
+      "source": "المصدر",
+      "version": "الإصدار"
+    },
+    "official": {
+      "badge": "إضافة رسمية من LobeHub",
+      "description": "تم تطوير هذه الإضافة وصيانتها رسميًا من قبل LobeHub، وتمت مراجعتها أمنيًا بدقة، يمكن استخدامها بأمان.",
+      "loadingMessage": "جارٍ الحصول على تفاصيل الإضافة...",
+      "loadingTitle": "جارٍ التحميل",
+      "title": "تثبيت إضافة رسمية"
+    },
+    "title": "تثبيت إضافة MCP",
+    "warning": "⚠️ يرجى التأكد من ثقتك بمصدر هذه الإضافة، الإضافات الخبيثة قد تضر بأمان نظامك."
+  },
+  "search": {
+    "apiName": {
+      "crawlMultiPages": "قراءة محتوى عدة صفحات",
+      "crawlSinglePage": "قراءة محتوى الصفحة",
+      "search": "البحث في الصفحة"
+    },
+    "config": {
+      "addKey": "إضافة مفتاح",
+      "close": "حذف",
+      "confirm": "تم إكمال التكوين وأعيد المحاولة"
+    },
+    "crawPages": {
+      "crawling": "جارٍ التعرف على الروابط",
+      "detail": {
+        "preview": "معاينة",
+        "raw": "نص خام",
+        "tooLong": "النص طويل جدًا، يحتفظ سياق المحادثة فقط بأول {{characters}} حرفًا، الجزء الزائد غير مدرج في السياق"
+      },
+      "meta": {
+        "crawler": "وضع الزحف",
+        "words": "عدد الأحرف"
+      }
+    },
+    "searchxng": {
+      "baseURL": "يرجى الإدخال",
+      "description": "يرجى إدخال عنوان SearchXNG للبدء في البحث عبر الإنترنت",
+      "keyPlaceholder": "يرجى إدخال المفتاح",
+      "title": "تكوين محرك البحث SearchXNG",
+      "unconfiguredDesc": "يرجى الاتصال بالمسؤول لإكمال تكوين محرك البحث SearchXNG للبدء في البحث عبر الإنترنت",
+      "unconfiguredTitle": "لم يتم تكوين محرك البحث SearchXNG بعد"
+    },
+    "title": "البحث عبر الإنترنت"
+  },
+  "setting": "إعدادات الإضافة",
+  "settings": {
+    "capabilities": {
+      "prompts": "عبارات التوجيه",
+      "resources": "الموارد",
+      "title": "قدرات الإضافة",
+      "tools": "الأدوات"
+    },
+    "configuration": {
+      "title": "تكوين الإضافة"
+    },
+    "connection": {
+      "args": "معلمات التشغيل",
+      "command": "أمر التشغيل",
+      "title": "معلومات الاتصال",
+      "type": "نوع الاتصال",
+      "url": "عنوان الخدمة"
+    },
+    "edit": "تحرير",
+    "envConfigDescription": "سيتم تمرير هذه الإعدادات كمتغيرات بيئة عند بدء تشغيل خادم MCP",
+    "httpTypeNotice": "إضافات MCP من نوع HTTP لا تحتاج إلى متغيرات بيئة للتكوين حاليًا",
+    "indexUrl": {
+      "title": "فهرس السوق",
+      "tooltip": "لا يدعم التحرير عبر الإنترنت حاليًا، يرجى التكوين عبر متغيرات البيئة عند النشر"
+    },
+    "messages": {
+      "connectionUpdateFailed": "فشل تحديث معلومات الاتصال",
+      "connectionUpdateSuccess": "تم تحديث معلومات الاتصال بنجاح",
+      "envUpdateFailed": "فشل حفظ متغيرات البيئة",
+      "envUpdateSuccess": "تم حفظ متغيرات البيئة بنجاح"
+    },
+    "modalDesc": "بعد تكوين عنوان سوق الإضافات، يمكنك استخدام سوق إضافات مخصص",
+    "rules": {
+      "argsRequired": "يرجى إدخال معلمات التشغيل",
+      "commandRequired": "يرجى إدخال أمر التشغيل",
+      "urlRequired": "يرجى إدخال عنوان الخدمة"
+    },
+    "saveSettings": "حفظ الإعدادات",
+    "title": "إعدادات سوق الإضافات"
+  },
+  "showInPortal": "يرجى عرض التفاصيل في مساحة العمل",
+  "store": {
+    "actions": {
+      "cancel": "إلغاء التثبيت",
+      "confirmUninstall": "سيتم إلغاء تثبيت هذه الإضافة وسيتم حذف إعداداتها، يرجى تأكيد العملية",
+      "detail": "التفاصيل",
+      "install": "تثبيت",
+      "manifest": "تحرير ملف التثبيت",
+      "settings": "الإعدادات",
+      "uninstall": "إلغاء التثبيت"
+    },
+    "communityPlugin": "مجتمع الطرف الثالث",
+    "customPlugin": "مخصص",
+    "empty": "لا توجد إضافات مثبتة",
+    "emptySelectHint": "اختر إضافة لمعاينة التفاصيل",
+    "installAllPlugins": "تثبيت الكل",
+    "networkError": "فشل الحصول على متجر الإضافات، يرجى التحقق من الاتصال بالشبكة والمحاولة مجددًا",
+    "placeholder": "ابحث عن اسم الإضافة أو الوصف أو الكلمات المفتاحية...",
+    "releasedAt": "نُشر في {{createdAt}}",
+    "tabs": {
+      "installed": "مثبت",
+      "mcp": "إضافات MCP",
+      "old": "إضافات LobeChat"
+    },
+    "title": "متجر الإضافات"
+  },
+  "unknownError": "خطأ غير معروف",
+  "unknownPlugin": "إضافة غير معروفة"
+}
