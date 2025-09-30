@@ -1,4 +1,5 @@
 import { PrismaClient } from '../../../database/src/generated/client-postgresql/index.js'
+import { Client as SSHClient } from 'ssh2'
 import type {
   SSHFolder,
   SSHConnection,
@@ -23,11 +24,10 @@ export class SSHService {
   async getUserSSHTree(userId: string): Promise<SSHTreeNode[]> {
     // 获取所有文件夹
     const folders = await this.prisma.sSHFolder.findMany({
-      where: { userId, isActive: true },
+      where: { userId },
       orderBy: { order: 'asc' },
       include: {
         connections: {
-          where: { isActive: true },
           orderBy: { order: 'asc' }
         }
       }
@@ -37,7 +37,6 @@ export class SSHService {
     const rootConnections = await this.prisma.sSHConnection.findMany({
       where: {
         userId,
-        isActive: true,
         folderId: null
       },
       orderBy: { order: 'asc' }
@@ -149,15 +148,14 @@ export class SSHService {
   }
 
   /**
-   * 删除文件夹（及其所有子项）
+   * 删除文件夹（及其所有子项）- 物理删除
    */
   async deleteFolder(folderId: string, userId: string): Promise<void> {
     await this.validateFolderOwnership(folderId, userId)
 
     // Prisma 会自动级联删除子文件夹和连接（通过 onDelete: Cascade）
-    await this.prisma.sSHFolder.update({
-      where: { id: folderId },
-      data: { isActive: false }
+    await this.prisma.sSHFolder.delete({
+      where: { id: folderId }
     })
   }
 
@@ -220,14 +218,13 @@ export class SSHService {
   }
 
   /**
-   * 删除 SSH 连接
+   * 删除 SSH 连接 - 物理删除
    */
   async deleteConnection(connectionId: string, userId: string): Promise<void> {
     await this.validateConnectionOwnership(connectionId, userId)
 
-    await this.prisma.sSHConnection.update({
-      where: { id: connectionId },
-      data: { isActive: false }
+    await this.prisma.sSHConnection.delete({
+      where: { id: connectionId }
     })
   }
 
@@ -298,5 +295,125 @@ export class SSHService {
     if (connection.userId !== userId) {
       throw new Error('无权操作此连接')
     }
+  }
+
+  /**
+   * 测试 SSH 连接
+   */
+  async testConnection(config: {
+    host: string
+    port?: number
+    username: string
+    authType: 'PASSWORD' | 'PRIVATE_KEY' | 'SSH_AGENT'
+    password?: string | null
+    privateKey?: string | null
+    passphrase?: string | null
+  }): Promise<{ connected: boolean; error?: string }> {
+    const client = new SSHClient()
+
+    console.log('Testing SSH connection:', {
+      host: config.host,
+      port: config.port || 22,
+      username: config.username,
+      authType: config.authType
+    })
+
+    return new Promise((resolve) => {
+      // 设置 15 秒超时
+      const timeout = setTimeout(() => {
+        console.log('SSH connection timeout')
+        client.end()
+        resolve({
+          connected: false,
+          error: '连接超时（15秒）'
+        })
+      }, 15000)
+
+      client.on('ready', () => {
+        console.log('SSH connection successful')
+        clearTimeout(timeout)
+        client.end()
+        resolve({
+          connected: true
+        })
+      })
+
+      client.on('error', (err: any) => {
+        console.error('SSH connection error:', err.message, err.level)
+        clearTimeout(timeout)
+        client.end()
+        
+        // 提供更友好的错误信息
+        let errorMessage = err.message || '连接失败'
+        
+        if (err.level === 'client-authentication') {
+          errorMessage = '认证失败：用户名、密码或密钥不正确'
+        } else if (err.code === 'ENOTFOUND') {
+          errorMessage = '主机地址无法解析，请检查主机地址'
+        } else if (err.code === 'ECONNREFUSED') {
+          errorMessage = '连接被拒绝，请检查主机地址和端口是否正确'
+        } else if (err.code === 'ETIMEDOUT') {
+          errorMessage = '连接超时，请检查网络连接和防火墙设置'
+        }
+        
+        resolve({
+          connected: false,
+          error: errorMessage
+        })
+      })
+
+      // 构建连接配置
+      const connectConfig: any = {
+        host: config.host,
+        port: config.port || 22,
+        username: config.username,
+        readyTimeout: 15000,
+        tryKeyboard: false // 禁用键盘交互式认证
+      }
+
+      // 根据认证类型设置认证信息
+      if (config.authType === 'PASSWORD') {
+        if (!config.password) {
+          clearTimeout(timeout)
+          resolve({
+            connected: false,
+            error: '密码认证需要提供密码'
+          })
+          return
+        }
+        connectConfig.password = config.password
+        console.log('Using password authentication')
+      } else if (config.authType === 'PRIVATE_KEY') {
+        if (!config.privateKey) {
+          clearTimeout(timeout)
+          resolve({
+            connected: false,
+            error: '私钥认证需要提供私钥'
+          })
+          return
+        }
+        connectConfig.privateKey = config.privateKey
+        if (config.passphrase) {
+          connectConfig.passphrase = config.passphrase
+        }
+        console.log('Using private key authentication')
+      } else if (config.authType === 'SSH_AGENT') {
+        // SSH Agent 认证需要特殊处理
+        connectConfig.agent = process.env.SSH_AUTH_SOCK
+        console.log('Using SSH agent authentication')
+      }
+
+      try {
+        console.log('Attempting to connect...')
+        client.connect(connectConfig)
+      } catch (err: any) {
+        console.error('Connection attempt failed:', err)
+        clearTimeout(timeout)
+        resolve({
+          connected: false,
+          error: err.message || '连接配置错误'
+        })
+      }
+    })
   }
 }

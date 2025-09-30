@@ -53,7 +53,10 @@ export const sshRoutes: FastifyPluginAsync = async (fastify) => {
           properties: {
             success: { type: 'boolean' },
             message: { type: 'string' },
-            data: { type: 'object' }
+            data: {
+              type: 'object',
+              additionalProperties: true
+            }
           }
         }
       }
@@ -64,10 +67,22 @@ export const sshRoutes: FastifyPluginAsync = async (fastify) => {
     
     const folder = await sshService.createFolder(userId, data)
     
+    // 手动构造返回对象，确保所有字段都被正确序列化
+    const folderData = {
+      id: folder.id,
+      name: folder.name,
+      order: folder.order,
+      isActive: folder.isActive,
+      parentId: folder.parentId,
+      userId: folder.userId,
+      createdAt: folder.createdAt,
+      updatedAt: folder.updatedAt
+    }
+    
     return reply.status(201).send({
       success: true,
       message: '文件夹创建成功',
-      data: folder
+      data: folderData
     })
   })
 
@@ -274,6 +289,54 @@ export const sshRoutes: FastifyPluginAsync = async (fastify) => {
     return reply.send({
       success: true,
       message: '移动成功'
+    })
+  })
+
+  // 测试 SSH 连接
+  fastify.post('/test-connection', {
+    onRequest: [fastify.authenticate],
+    schema: {
+      tags: ['SSH'],
+      summary: '测试 SSH 连接',
+      body: {
+        type: 'object',
+        required: ['host', 'username', 'authType'],
+        properties: {
+          host: { type: 'string' },
+          port: { type: 'number' },
+          username: { type: 'string' },
+          authType: { type: 'string', enum: ['PASSWORD', 'PRIVATE_KEY', 'SSH_AGENT'] },
+          password: { type: 'string', nullable: true },
+          privateKey: { type: 'string', nullable: true },
+          passphrase: { type: 'string', nullable: true }
+        }
+      },
+      response: {
+        200: {
+          type: 'object',
+          properties: {
+            success: { type: 'boolean' },
+            message: { type: 'string' },
+            data: {
+              type: 'object',
+              properties: {
+                connected: { type: 'boolean' },
+                error: { type: 'string', nullable: true }
+              }
+            }
+          }
+        }
+      }
+    }
+  }, async (request, reply) => {
+    const data = request.body as any
+    
+    const result = await sshService.testConnection(data)
+    
+    return reply.send({
+      success: true,
+      message: result.connected ? '连接测试成功' : '连接测试失败',
+      data: result
     })
   })
 }

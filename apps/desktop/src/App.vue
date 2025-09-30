@@ -166,7 +166,6 @@ const setActiveView = (viewId: string) => {
   // 定义路由和标签信息映射
   const viewConfigs: Record<string, { path: string; name: string; icon: string }> = {
     welcome: { path: '/', name: '欢迎', icon: 'bi bi-house' },
-    ssh: { path: '/ssh', name: 'SSH 连接', icon: 'bi bi-hdd-network' },
     chat: { path: '/chat', name: 'AI 对话', icon: 'bi bi-chat-dots' },
     files: { path: '/files', name: '文件管理', icon: 'bi bi-folder' },
     terminal: { path: '/terminal', name: '终端', icon: 'bi bi-terminal' },

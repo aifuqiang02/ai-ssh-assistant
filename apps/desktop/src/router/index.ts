@@ -16,24 +16,6 @@ const routes: RouteRecordRaw[] = [
     }
   },
   {
-    path: '/ssh',
-    name: 'SSH',
-    component: () => import('@/views/SSHView.vue'),
-    meta: {
-      title: 'SSH 连接',
-      icon: 'bi-terminal'
-    }
-  },
-  {
-    path: '/connections',
-    name: 'Connections',
-    component: () => import('@/views/ConnectionsView.vue'),
-    meta: {
-      title: '连接管理',
-      icon: 'bi-server'
-    }
-  },
-  {
     path: '/terminal',
     name: 'Terminal',
     component: () => import('@/views/TerminalView.vue'),

@@ -10,11 +10,8 @@
       <!-- SSH 连接视图 -->
       <div v-if="activeView === 'ssh'" class="p-4">
         <div class="mb-4">
-          <button class="vscode-button primary w-full mb-2" @click="createRootFolder">
+          <button class="vscode-button primary w-full" @click="createRootFolder">
             新建文件夹
-          </button>
-          <button class="vscode-button w-full" @click="createRootConnection">
-            新建连接
           </button>
         </div>
         
@@ -28,6 +25,8 @@
               :key="node.id"
               :node="node"
               :selected-id="selectedNodeId"
+              :auto-edit-id="autoEditNodeId"
+              :edit-trigger="editTrigger"
               @select="handleNodeSelect"
               @update="handleNodeUpdate"
               @delete="handleNodeDelete"
@@ -36,9 +35,19 @@
               @drop-node="handleDropNode"
               @create-folder="handleCreateSubFolder"
               @create-connection="handleCreateSubConnection"
+              @edit-connection="openEditConnectionDialog"
             />
           </div>
         </div>
+
+        <!-- SSH 连接配置对话框 -->
+        <SSHConnectionDialog
+          v-model="showConnectionDialog"
+          :folder-id="currentFolderId"
+          :connection="editingConnection"
+          @submit="handleConnectionSubmit"
+          @test="handleConnectionTest"
+        />
       </div>
       
       <!-- AI 聊天视图 -->
@@ -127,8 +136,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted, watch } from 'vue'
+import { computed, ref, onMounted, watch, nextTick } from 'vue'
 import SSHTreeNode, { type SSHTreeNodeData } from '../ssh/SSHTreeNode.vue'
+import SSHConnectionDialog from '../ssh/SSHConnectionDialog.vue'
 import { useSSHStore } from '../../stores/ssh'
 
 interface Props {
@@ -146,6 +156,16 @@ const selectedNodeId = computed(() => sshStore.selectedNodeId)
 
 // 拖拽的节点
 const dragNode = ref<SSHTreeNodeData | null>(null)
+
+// 连接对话框
+const showConnectionDialog = ref(false)
+const currentFolderId = ref<string | null>(null)
+const editingConnection = ref<any>(null)
+
+// 自动编辑的节点 ID
+const autoEditNodeId = ref<string | null>(null)
+// 编辑触发计数器（用于强制触发 watch）
+const editTrigger = ref(0)
 
 // 初始化时加载数据
 onMounted(() => {
@@ -193,28 +213,108 @@ const sidebarTitle = computed(() => {
 // 创建根文件夹
 const createRootFolder = async () => {
   try {
-    await sshStore.createFolder({
+    const newFolder = await sshStore.createFolder({
       name: '新建文件夹',
       order: 0
     })
+    
+    // 创建成功后，等待树重新加载完成，然后标记为自动编辑
+    if (newFolder && newFolder.id) {
+      // 等待树加载和 DOM 更新完成
+      await nextTick()
+      await new Promise(resolve => setTimeout(resolve, 150))
+      
+      autoEditNodeId.value = newFolder.id
+      editTrigger.value++ // 增加触发计数器
+      
+      // 清除标记
+      setTimeout(() => {
+        autoEditNodeId.value = null
+      }, 500)
+    }
   } catch (err) {
     console.error('创建文件夹失败:', err)
   }
 }
 
-// 创建根连接
-const createRootConnection = async () => {
+// 打开连接对话框（新建）
+const openConnectionDialog = (folderId: string | null = null) => {
+  editingConnection.value = null
+  currentFolderId.value = folderId
+  showConnectionDialog.value = true
+}
+
+// 打开编辑连接对话框
+const openEditConnectionDialog = (connection: any) => {
+  editingConnection.value = connection
+  currentFolderId.value = connection.folderId
+  showConnectionDialog.value = true
+}
+
+// 处理连接提交
+const handleConnectionSubmit = async (data: any) => {
   try {
-    await sshStore.createConnection({
-      name: '新建连接',
-      host: '',
-      port: 22,
-      username: '',
-      authType: 'PASSWORD' as any,
-      order: 0
-    })
+    if (editingConnection.value) {
+      // 编辑模式
+      await sshStore.updateConnection(editingConnection.value.id, {
+        ...data,
+        authType: data.authType as any
+      })
+    } else {
+      // 新建模式
+      await sshStore.createConnection({
+        ...data,
+        authType: data.authType as any
+      })
+    }
+    // 关闭对话框后重置编辑状态
+    editingConnection.value = null
   } catch (err) {
-    console.error('创建连接失败:', err)
+    console.error('保存连接失败:', err)
+  }
+}
+
+// 处理连接测试
+const handleConnectionTest = async (data: any) => {
+  try {
+    const token = localStorage.getItem('userToken') || sessionStorage.getItem('userToken')
+    if (!token) {
+      throw new Error('未登录')
+    }
+
+    const response = await fetch('http://localhost:3000/api/v1/ssh/test-connection', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        host: data.host,
+        port: data.port || 22,
+        username: data.username,
+        authType: data.authType,
+        password: data.password,
+        privateKey: data.privateKey,
+        passphrase: data.passphrase
+      })
+    })
+
+    const result = await response.json()
+    
+    if (result.success && result.data.connected) {
+      return { success: true, message: '连接测试成功！' }
+    } else {
+      return { 
+        success: false, 
+        message: result.data.error || '连接测试失败' 
+      }
+    }
+  } catch (err: any) {
+    console.error('测试连接失败:', err)
+    return { 
+      success: false, 
+      message: err.message || '测试连接时发生错误' 
+    }
   }
 }
 
@@ -297,31 +397,34 @@ const handleDropNode = async (data: { dragNode: SSHTreeNodeData; dropNode: SSHTr
 // 创建子文件夹
 const handleCreateSubFolder = async (data: { parentId: string; name: string }) => {
   try {
-    await sshStore.createFolder({
+    const newFolder = await sshStore.createFolder({
       name: data.name,
       parentId: data.parentId,
       order: 0
     })
+    // 创建成功后，等待树重新加载完成，然后标记为自动编辑
+    if (newFolder && newFolder.id) {
+      // 等待树加载和 DOM 更新完成
+      await nextTick()
+      await new Promise(resolve => setTimeout(resolve, 150))
+      
+      autoEditNodeId.value = newFolder.id
+      editTrigger.value++ // 增加触发计数器
+      
+      // 清除标记
+      setTimeout(() => {
+        autoEditNodeId.value = null
+      }, 500)
+    }
   } catch (err) {
     console.error('创建子文件夹失败:', err)
   }
 }
 
-// 创建子连接
-const handleCreateSubConnection = async (data: { folderId: string; name: string }) => {
-  try {
-    await sshStore.createConnection({
-      name: data.name,
-      host: '',
-      port: 22,
-      username: '',
-      authType: 'PASSWORD' as any,
-      folderId: data.folderId,
-      order: 0
-    })
-  } catch (err) {
-    console.error('创建子连接失败:', err)
-  }
+// 创建子连接（从右键菜单触发）
+const handleCreateSubConnection = (data: { folderId: string; name: string }) => {
+  // 打开对话框，并传入 folderId
+  openConnectionDialog(data.folderId)
 }
 </script>
 

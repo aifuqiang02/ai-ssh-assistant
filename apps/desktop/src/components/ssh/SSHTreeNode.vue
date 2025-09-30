@@ -13,7 +13,6 @@
       :style="{ paddingLeft: `${depth * 16}px` }"
       draggable="true"
       @click="handleNodeClick"
-      @contextmenu.prevent="handleContextMenu"
       @dragstart="handleDragStart"
       @dragend="handleDragEnd"
       @dragover.prevent="handleDragOver"
@@ -76,22 +75,46 @@
             @mouseenter="cancelHideActionMenu"
             @mouseleave="scheduleHideActionMenu"
           >
-            <div
-              v-if="node.type === 'connection'"
-              class="action-item"
-              @click="handleConnect"
-            >
-              <i class="bi bi-play"></i>
-              <span>连接</span>
-            </div>
-            <div class="action-item" @click="startEdit">
-              <i class="bi bi-pencil"></i>
-              <span>重命名</span>
-            </div>
-            <div class="action-item danger" @click="handleDelete">
-              <i class="bi bi-trash"></i>
-              <span>删除</span>
-            </div>
+            <!-- 连接节点菜单 -->
+            <template v-if="node.type === 'connection'">
+              <div class="action-item" @click="handleConnect">
+                <i class="bi bi-play"></i>
+                <span>连接</span>
+              </div>
+              <div class="action-item" @click="handleEditConnection">
+                <i class="bi bi-gear"></i>
+                <span>编辑</span>
+              </div>
+              <div class="action-item" @click="startEdit">
+                <i class="bi bi-pencil"></i>
+                <span>重命名</span>
+              </div>
+              <div class="action-item danger" @click="handleDelete">
+                <i class="bi bi-trash"></i>
+                <span>删除</span>
+              </div>
+            </template>
+            
+            <!-- 文件夹节点菜单 -->
+            <template v-else>
+              <div class="action-item" @click="handleCreateFolder">
+                <i class="bi bi-folder-plus"></i>
+                <span>新建文件夹</span>
+              </div>
+              <div class="action-item" @click="handleCreateConnection">
+                <i class="bi bi-hdd-network"></i>
+                <span>新建连接</span>
+              </div>
+              <div class="action-divider"></div>
+              <div class="action-item" @click="startEdit">
+                <i class="bi bi-pencil"></i>
+                <span>重命名</span>
+              </div>
+              <div class="action-item danger" @click="handleDelete">
+                <i class="bi bi-trash"></i>
+                <span>删除</span>
+              </div>
+            </template>
           </div>
         </div>
       </div>
@@ -105,51 +128,25 @@
         :node="child"
         :depth="depth + 1"
         :selected-id="selectedId"
+        :auto-edit-id="autoEditId"
+        :edit-trigger="editTrigger"
         @select="$emit('select', $event)"
         @update="$emit('update', $event)"
         @delete="$emit('delete', $event)"
         @connect="$emit('connect', $event)"
-        @context-menu="$emit('context-menu', $event)"
         @drag-node="$emit('drag-node', $event)"
         @drop-node="$emit('drop-node', $event)"
         @create-folder="$emit('create-folder', $event)"
         @create-connection="$emit('create-connection', $event)"
+        @edit-connection="$emit('edit-connection', $event)"
       />
     </div>
 
-    <!-- 右键菜单 -->
-    <teleport to="body">
-      <div
-        v-if="showContextMenu"
-        ref="contextMenu"
-        class="ssh-context-menu"
-        :style="{ top: `${contextMenuPosition.y}px`, left: `${contextMenuPosition.x}px` }"
-        @click.stop
-      >
-        <div v-if="node.type === 'folder'" class="context-menu-item" @click="createFolder">
-          <i class="bi bi-folder-plus"></i>
-          <span>新建文件夹</span>
-        </div>
-        <div v-if="node.type === 'folder'" class="context-menu-item" @click="createConnection">
-          <i class="bi bi-hdd-network"></i>
-          <span>新建连接</span>
-        </div>
-        <div class="context-menu-divider"></div>
-        <div class="context-menu-item" @click="startEdit">
-          <i class="bi bi-pencil"></i>
-          <span>重命名</span>
-        </div>
-        <div class="context-menu-item danger" @click="deleteNode">
-          <i class="bi bi-trash"></i>
-          <span>删除</span>
-        </div>
-      </div>
-    </teleport>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue'
+import { ref, computed, nextTick, watch } from 'vue'
 
 export interface SSHTreeNodeData {
   id: string
@@ -173,11 +170,15 @@ interface Props {
   node: SSHTreeNodeData
   depth?: number
   selectedId?: string | null
+  autoEditId?: string | null
+  editTrigger?: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
   depth: 0,
-  selectedId: null
+  selectedId: null,
+  autoEditId: null,
+  editTrigger: 0
 })
 
 const emit = defineEmits<{
@@ -185,15 +186,15 @@ const emit = defineEmits<{
   update: [node: SSHTreeNodeData]
   delete: [node: SSHTreeNodeData]
   connect: [node: SSHTreeNodeData]
-  'context-menu': [data: { node: SSHTreeNodeData; event: MouseEvent }]
   'drag-node': [node: SSHTreeNodeData]
   'drop-node': [data: { dragNode: SSHTreeNodeData; dropNode: SSHTreeNodeData }]
   'create-folder': [data: { parentId: string; name: string }]
   'create-connection': [data: { folderId: string; name: string }]
+  'edit-connection': [connection: SSHTreeNodeData]
 }>()
 
-// 展开/折叠状态
-const isExpanded = ref(false)
+// 展开/折叠状态（文件夹默认展开）
+const isExpanded = ref(props.node.type === 'folder')
 
 // 选中状态
 const isSelected = computed(() => props.selectedId === props.node.id)
@@ -207,14 +208,18 @@ const editInput = ref<HTMLInputElement | null>(null)
 const isDragging = ref(false)
 const isDragOver = ref(false)
 
-// 右键菜单
-const showContextMenu = ref(false)
-const contextMenuPosition = ref({ x: 0, y: 0 })
-const contextMenu = ref<HTMLElement | null>(null)
-
 // 操作菜单
 const showActions = ref(false)
 let hideTimer: number | null = null
+
+// 监听 editTrigger 和 autoEditId，如果匹配当前节点则自动进入编辑模式
+watch([() => props.editTrigger, () => props.autoEditId], ([trigger, editId]) => {
+  if (editId && editId === props.node.id && trigger > 0) {
+    nextTick(() => {
+      startEdit()
+    })
+  }
+})
 
 // 切换展开/折叠
 const toggleExpand = () => {
@@ -273,20 +278,14 @@ const handleDelete = () => {
   showActions.value = false
 }
 
-// 右键菜单
-const handleContextMenu = (event: MouseEvent) => {
-  contextMenuPosition.value = { x: event.clientX, y: event.clientY }
-  showContextMenu.value = true
-  emit('context-menu', { node: props.node, event })
+// 处理编辑连接
+const handleEditConnection = () => {
+  emit('edit-connection', props.node)
+  showActions.value = false
 }
 
-// 关闭右键菜单
-const closeContextMenu = () => {
-  showContextMenu.value = false
-}
-
-// 创建文件夹
-const createFolder = () => {
+// 处理创建文件夹
+const handleCreateFolder = () => {
   if (props.node.type === 'folder') {
     emit('create-folder', {
       parentId: props.node.id,
@@ -294,11 +293,11 @@ const createFolder = () => {
     })
     isExpanded.value = true
   }
-  closeContextMenu()
+  showActions.value = false
 }
 
-// 创建连接
-const createConnection = () => {
+// 处理创建连接
+const handleCreateConnection = () => {
   if (props.node.type === 'folder') {
     emit('create-connection', {
       folderId: props.node.id,
@@ -306,14 +305,14 @@ const createConnection = () => {
     })
     isExpanded.value = true
   }
-  closeContextMenu()
+  showActions.value = false
 }
 
 // 开始编辑
 const startEdit = () => {
   editName.value = props.node.name
   isEditing.value = true
-  closeContextMenu()
+  showActions.value = false
   nextTick(() => {
     editInput.value?.focus()
     editInput.value?.select()
@@ -340,11 +339,6 @@ const handleEditBlur = () => {
   handleEditConfirm()
 }
 
-// 删除节点
-const deleteNode = () => {
-  emit('delete', props.node)
-  closeContextMenu()
-}
 
 // 拖拽开始
 const handleDragStart = (event: DragEvent) => {
@@ -385,20 +379,6 @@ const handleDrop = (event: DragEvent) => {
   }
 }
 
-// 点击外部关闭右键菜单
-const handleClickOutside = (event: MouseEvent) => {
-  if (contextMenu.value && !contextMenu.value.contains(event.target as Node)) {
-    closeContextMenu()
-  }
-}
-
-onMounted(() => {
-  document.addEventListener('click', handleClickOutside)
-})
-
-onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside)
-})
 </script>
 
 <style scoped>
@@ -499,57 +479,13 @@ onUnmounted(() => {
   margin-left: 0;
 }
 
-/* 右键菜单 */
-.ssh-context-menu {
-  position: fixed;
-  z-index: 10000;
-  background: var(--vscode-bg-lighter);
-  border: 1px solid var(--vscode-border);
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  min-width: 180px;
-  padding: 4px 0;
-}
-
-.context-menu-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
-  font-size: 13px;
-  color: var(--vscode-fg);
-  cursor: pointer;
-  transition: all 0.15s ease;
-  border-radius: 2px;
-  margin: 0 4px;
-}
-
-.context-menu-item:hover {
-  background: var(--vscode-accent);
-  color: #ffffff;
-}
-
-.context-menu-item.danger {
-  color: var(--vscode-error);
-}
-
-.context-menu-item.danger:hover {
-  background: var(--vscode-error);
-  color: #ffffff;
-}
-
-.context-menu-divider {
-  height: 1px;
-  background: var(--vscode-border);
-  margin: 4px 0;
-}
 
 /* 图标样式 */
 .bi-chevron-right::before { content: "›"; font-size: 16px; }
 .bi-chevron-down::before { content: "⌄"; font-size: 16px; }
 .bi-folder::before { content: "📁"; }
 .bi-folder-open::before { content: "📂"; }
-.bi-folder-plus::before { content: "📁➕"; }
+.bi-folder-plus::before { content: "📁"; }
 .bi-hdd-network::before { content: "🖥️"; }
 .bi-play::before { content: "▶️"; }
 .bi-pencil::before { content: "✏️"; }
@@ -632,6 +568,12 @@ onUnmounted(() => {
   color: #ffffff;
 }
 
+.action-divider {
+  height: 1px;
+  background: var(--vscode-border);
+  margin: 4px 0;
+}
+
 .action-item i {
   font-size: 12px;
   width: 16px;
@@ -643,5 +585,11 @@ onUnmounted(() => {
   content: "⋮"; 
   font-size: 16px;
   font-weight: bold;
+}
+
+/* 齿轮图标 */
+.bi-gear::before {
+  content: "⚙";
+  font-size: 14px;
 }
 </style>
