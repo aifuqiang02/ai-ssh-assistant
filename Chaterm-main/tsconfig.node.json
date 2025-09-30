@@ -1,0 +1,26 @@
+{
+  "extends": "@electron-toolkit/tsconfig/tsconfig.node.json",
+  "include": ["electron.vite.config.*", "src/main/**/*", "src/preload/**/*", "package.json"],
+  "exclude": ["node_modules","dist"],
+  "compilerOptions": {
+    "composite": true,
+    "types": ["electron-vite/node"],
+    "baseUrl": ".",
+    "outDir": "dist/main",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "sourceMap": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "paths": {
+      "@services/*": ["src/main/agent/services/*"],
+      "@api/*": ["src/main/agent/api/*"],
+      "@integrations/*": ["src/main/agent/integrations/*"],
+      "@utils/*": ["src/main/agent/utils/*"],
+      "@shared/*": ["src/main/agent/shared/*"],
+      "@core/*": ["src/main/agent/core/*"],
+      "vscode": ["src/main/agent/vscode-mock.ts"]
+    }
+  }
+}
