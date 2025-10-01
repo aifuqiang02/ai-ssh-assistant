@@ -47,6 +47,28 @@
     
     <!-- 终端容器 -->
     <div ref="terminalContainer" class="terminal-container"></div>
+    
+    <!-- 右键菜单 -->
+    <div 
+      v-if="showContextMenu" 
+      class="context-menu"
+      :style="{ top: contextMenuY + 'px', left: contextMenuX + 'px' }"
+      @click="handleContextMenuClick"
+    >
+      <div class="context-menu-item" @click="handleCopy">
+        <i class="bi bi-clipboard"></i>
+        <span>复制</span>
+      </div>
+      <div class="context-menu-item" @click="handlePaste">
+        <i class="bi bi-clipboard-check"></i>
+        <span>粘贴</span>
+      </div>
+      <div class="context-menu-divider"></div>
+      <div class="context-menu-item" @click="handleClear">
+        <i class="bi bi-trash"></i>
+        <span>清屏</span>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -112,6 +134,11 @@ const outputListener = ref<(() => void) | null>(null)
 const statusListener = ref<(() => void) | null>(null)
 const currentConnectionId = ref<string>('') // 当前活动的连接ID
 
+// 右键菜单状态
+const showContextMenu = ref(false)
+const contextMenuX = ref(0)
+const contextMenuY = ref(0)
+
 // 初始化终端
 const initTerminal = () => {
   if (!terminalContainer.value) return
@@ -166,6 +193,21 @@ const initTerminal = () => {
     }
   })
 
+  // 添加右键菜单功能
+  terminalContainer.value.addEventListener('contextmenu', (e: MouseEvent) => {
+    e.preventDefault()
+    
+    // 显示右键菜单
+    contextMenuX.value = e.clientX
+    contextMenuY.value = e.clientY
+    showContextMenu.value = true
+  })
+
+  // 点击其他地方关闭菜单
+  document.addEventListener('click', () => {
+    showContextMenu.value = false
+  })
+
   // 监听窗口大小变化
   window.addEventListener('resize', handleResize)
 }
@@ -192,12 +234,7 @@ const cleanupListeners = () => {
 // 建立 SSH 连接
 const connectToSSH = async () => {
   const connId = currentConnectionId.value
-  if (!connId || !terminal.value) {
-    console.warn('connectToSSH: missing connId or terminal')
-    return
-  }
-
-  console.log('connectToSSH: connId =', connId)
+  if (!connId || !terminal.value) return
 
   // 清理旧的监听器
   cleanupListeners()
@@ -209,13 +246,11 @@ const connectToSSH = async () => {
     if (window.electronAPI) {
       // 注册输出监听器并保存清理函数
       outputListener.value = window.electronAPI.on(`ssh:output:${connId}`, (data: string) => {
-        console.log('Received SSH output, length:', data.length)
         terminal.value?.write(data)
       })
 
       // 连接状态变化监听（用于处理重连等情况）
       statusListener.value = window.electronAPI.onConnectionStatusChange(({ id, status }) => {
-        console.log('Connection status change:', id, status, 'current connId:', connId)
         if (id === connId) {
           if (status === 'connected') {
             connectionStatus.value = 'connected'
@@ -232,13 +267,9 @@ const connectToSSH = async () => {
       setTimeout(async () => {
         if (window.electronAPI && terminal.value) {
           try {
-            console.log('Getting initial output for connId:', connId)
             const initialOutput = await window.electronAPI.ssh.getInitialOutput(connId)
-            console.log('Initial output received, length:', initialOutput?.length)
             if (initialOutput) {
               terminal.value.write(initialOutput)
-            } else {
-              console.warn('Initial output is empty')
             }
           } catch (err) {
             console.error('Failed to get initial output:', err)
@@ -318,6 +349,40 @@ const handleDisconnect = async () => {
       console.error('Disconnect error:', err)
     }
   }
+}
+
+// 右键菜单处理
+const handleContextMenuClick = (e: Event) => {
+  e.stopPropagation()
+}
+
+const handleCopy = async () => {
+  const selection = terminal.value?.getSelection()
+  if (selection) {
+    try {
+      await navigator.clipboard.writeText(selection)
+      showContextMenu.value = false
+    } catch (err) {
+      console.error('复制失败:', err)
+    }
+  }
+}
+
+const handlePaste = async () => {
+  try {
+    const text = await navigator.clipboard.readText()
+    if (text && currentConnectionId.value && window.electronAPI) {
+      await window.electronAPI.ssh.execute(currentConnectionId.value, text)
+    }
+    showContextMenu.value = false
+  } catch (err) {
+    console.error('粘贴失败:', err)
+  }
+}
+
+const handleClear = () => {
+  terminal.value?.clear()
+  showContextMenu.value = false
 }
 
 // 监听 connectionId 变化
@@ -475,6 +540,52 @@ onBeforeUnmount(() => {
   padding: 8px;
   overflow: hidden;
   background-color: #1e1e1e;
+}
+
+/* 右键菜单样式 */
+.context-menu {
+  position: fixed;
+  background-color: var(--vscode-bg-lighter);
+  border: 1px solid var(--vscode-border);
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  z-index: 9999;
+  min-width: 160px;
+  padding: 4px 0;
+}
+
+.context-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  color: var(--vscode-fg);
+  font-size: 13px;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.context-menu-item:hover {
+  background: var(--vscode-accent);
+  color: #ffffff;
+}
+
+.context-menu-item:hover i {
+  color: #ffffff;
+}
+
+.context-menu-item i {
+  width: 16px;
+  font-size: 14px;
+  color: var(--vscode-fg-muted);
+  transition: color 0.15s ease;
+}
+
+.context-menu-divider {
+  height: 1px;
+  background-color: var(--vscode-border);
+  margin: 4px 0;
 }
 
 /* 确保 xterm 容器填满父容器 */

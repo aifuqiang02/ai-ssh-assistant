@@ -554,7 +554,8 @@ document.addEventListener('click', handleClickOutside)
 }
 
 .model-dropdown-item:hover {
-  background-color: var(--vscode-bg-lighter);
+  background: var(--vscode-accent);
+  color: #ffffff;
 }
 
 .model-settings-btn {

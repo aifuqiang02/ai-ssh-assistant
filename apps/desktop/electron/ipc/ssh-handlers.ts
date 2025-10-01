@@ -101,10 +101,8 @@ class SSHManager {
             if (!connection.isInitialOutputClaimed) {
               connection.initialOutputBuffer = connection.initialOutputBuffer || []
               connection.initialOutputBuffer.push(output)
-              console.log(`[SSH ${id}] Buffering initial output, buffer size:`, connection.initialOutputBuffer.length)
             } else {
               // 正常发送输出
-              console.log(`[SSH ${id}] Sending output to renderer, length:`, output.length)
               windowEvents.sendToRenderer(`ssh:output:${id}`, output)
             }
           })
@@ -227,7 +225,6 @@ class SSHManager {
 
     // 返回缓冲的输出并清空
     const output = (connection.initialOutputBuffer || []).join('')
-    console.log(`[SSH ${id}] Getting initial output, length:`, output.length, 'buffer size:', connection.initialOutputBuffer?.length)
     
     // 标记初始输出已被获取（之后的输出直接发送）
     connection.isInitialOutputClaimed = true

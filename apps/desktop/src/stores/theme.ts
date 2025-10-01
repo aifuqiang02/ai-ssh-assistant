@@ -31,22 +31,32 @@ export const useThemeStore = defineStore('theme', () => {
       case 'blue':
         vars['--primary-color'] = '#3b82f6'
         vars['--primary-hover'] = '#2563eb'
+        vars['--vscode-accent'] = '#007acc'
+        vars['--vscode-accent-hover'] = '#005a9e'
         break
       case 'green':
         vars['--primary-color'] = '#10b981'
         vars['--primary-hover'] = '#059669'
+        vars['--vscode-accent'] = '#10b981'
+        vars['--vscode-accent-hover'] = '#059669'
         break
       case 'purple':
         vars['--primary-color'] = '#8b5cf6'
         vars['--primary-hover'] = '#7c3aed'
+        vars['--vscode-accent'] = '#8b5cf6'
+        vars['--vscode-accent-hover'] = '#7c3aed'
         break
       case 'orange':
         vars['--primary-color'] = '#f59e0b'
         vars['--primary-hover'] = '#d97706'
+        vars['--vscode-accent'] = '#f59e0b'
+        vars['--vscode-accent-hover'] = '#d97706'
         break
       case 'red':
         vars['--primary-color'] = '#ef4444'
         vars['--primary-hover'] = '#dc2626'
+        vars['--vscode-accent'] = '#ef4444'
+        vars['--vscode-accent-hover'] = '#dc2626'
         break
     }
     
