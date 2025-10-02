@@ -196,6 +196,36 @@
       </div>
     </div>
 
+    <!-- 新建文件夹弹窗 -->
+    <div v-if="showCreateFolderDialog" class="create-folder-overlay" @click.self="cancelCreateFolder">
+      <div class="create-folder-dialog">
+        <div class="modal-header">
+          <h3>新建文件夹</h3>
+          <button class="close-btn" @click="cancelCreateFolder">
+            <i class="bi bi-x"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <input 
+            ref="folderNameInput"
+            v-model="newFolderName" 
+            type="text" 
+            class="folder-name-input"
+            placeholder="请输入文件夹名称"
+            @keydown.enter="confirmCreateFolder"
+            @keydown.esc="cancelCreateFolder"
+          />
+        </div>
+        <div class="modal-footer">
+          <button class="btn-cancel" @click="cancelCreateFolder">取消</button>
+          <button class="btn-confirm" @click="confirmCreateFolder" :disabled="!newFolderName.trim()">
+            <i class="bi bi-check"></i>
+            确定
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- 下载管理器弹窗 -->
     <div v-if="showDownloadManager" class="download-manager-overlay" @click.self="showDownloadManager = false">
       <div class="download-manager-modal">
@@ -276,7 +306,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import { useSSHStore } from '@/stores/ssh'
 
@@ -359,6 +389,11 @@ const createdDirectories = new Set<string>() // 缓存已创建的目录，避�
 const directoryCreationPromises = new Map<string, Promise<void>>() // 目录创建Promise队列，确保串行
 let autoCleanupTimer: NodeJS.Timeout | null = null // 自动清理定时器
 let isDownloadCancelled = false // 全局取消标志，用于停止文件夹扫描和新任务创建
+
+// 新建文件夹对话框
+const showCreateFolderDialog = ref(false)
+const newFolderName = ref('')
+const folderNameInput = ref<HTMLInputElement | null>(null)
 
 // 计算属性
 const isAllSelected = computed(() => {
@@ -549,7 +584,7 @@ const handleUpload = async () => {
   try {
     const filePaths = await window.electronAPI.fs.showOpenDialog({
       title: '选择要上传的文件',
-      properties: ['openFile', 'multiSelection']
+      properties: ['openFile', 'multiSelections']
     })
 
     if (filePaths && filePaths.length > 0) {
@@ -1096,9 +1131,19 @@ const handleBulkDelete = async () => {
   }
 }
 
-// 新建文件夹
-const createFolder = async () => {
-  const folderName = prompt('请输入文件夹名称:')
+// 新建文件夹 - 显示对话框
+const createFolder = () => {
+  newFolderName.value = ''
+  showCreateFolderDialog.value = true
+  // 延迟聚焦输入框
+  nextTick(() => {
+    folderNameInput.value?.focus()
+  })
+}
+
+// 确认创建文件夹
+const confirmCreateFolder = async () => {
+  const folderName = newFolderName.value.trim()
   if (!folderName) return
 
   if (!currentConnectionId.value || !window.electronAPI) return
@@ -1109,6 +1154,8 @@ const createFolder = async () => {
       : `${currentPath.value}/${folderName}`
     
     loading.value = true
+    showCreateFolderDialog.value = false
+    
     await window.electronAPI.ssh.createDirectory(
       currentConnectionId.value,
       remotePath
@@ -1121,6 +1168,12 @@ const createFolder = async () => {
   } finally {
     loading.value = false
   }
+}
+
+// 取消创建文件夹
+const cancelCreateFolder = () => {
+  showCreateFolderDialog.value = false
+  newFolderName.value = ''
 }
 
 // 工具函数
@@ -1364,7 +1417,7 @@ onBeforeUnmount(() => {
 
 .file-list-header {
   display: grid;
-  grid-template-columns: 40px 1fr 120px 180px 120px;
+  grid-template-columns: 40px 1fr 100px 150px 100px;
   gap: 12px;
   padding: 6px 12px;
   background: var(--vscode-bg-lighter);
@@ -1427,7 +1480,7 @@ onBeforeUnmount(() => {
 
 .file-item {
   display: grid;
-  grid-template-columns: 40px 1fr 120px 180px 120px;
+  grid-template-columns: 40px 1fr 100px 150px 100px;
   gap: 12px;
   padding: 4px 12px;
   cursor: pointer;
@@ -1644,6 +1697,119 @@ onBeforeUnmount(() => {
 
 .host-info {
   color: var(--vscode-fg-muted);
+}
+
+/* 新建文件夹对话框 */
+.create-folder-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+  animation: fadeIn 0.2s ease;
+}
+
+.create-folder-dialog {
+  background: var(--vscode-bg);
+  border: 1px solid var(--vscode-border);
+  border-radius: 8px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease;
+}
+
+.create-folder-dialog .modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--vscode-border);
+  background: var(--vscode-bg-lighter);
+}
+
+.create-folder-dialog .modal-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--vscode-fg);
+}
+
+.create-folder-dialog .modal-body {
+  padding: 24px 20px;
+}
+
+.folder-name-input {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--vscode-input-bg);
+  border: 1px solid var(--vscode-border);
+  border-radius: 4px;
+  color: var(--vscode-fg);
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.folder-name-input:focus {
+  border-color: var(--vscode-focus-border);
+}
+
+.folder-name-input::placeholder {
+  color: var(--vscode-fg-muted);
+}
+
+.create-folder-dialog .modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 20px;
+  border-top: 1px solid var(--vscode-border);
+  background: var(--vscode-bg-lighter);
+}
+
+.btn-cancel,
+.btn-confirm {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cancel {
+  background: transparent;
+  color: var(--vscode-fg);
+  border: 1px solid var(--vscode-border);
+}
+
+.btn-cancel:hover {
+  background: var(--vscode-bg-lighter);
+}
+
+.btn-confirm {
+  background: var(--vscode-button-bg);
+  color: var(--vscode-button-fg);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-confirm:hover:not(:disabled) {
+  background: var(--vscode-button-hover-bg);
+}
+
+.btn-confirm:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* 下载管理器弹窗 */

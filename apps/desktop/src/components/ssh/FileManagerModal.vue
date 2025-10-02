@@ -321,7 +321,7 @@ const handleUpload = async () => {
   try {
     const filePaths = await window.electronAPI.fs.showOpenDialog({
       title: '选择要上传的文件',
-      properties: ['openFile', 'multiSelection']
+      properties: ['openFile', 'multiSelections']
     })
 
     if (filePaths && filePaths.length > 0) {
@@ -753,7 +753,7 @@ const handleClose = () => {
 
 .file-list-header {
   display: grid;
-  grid-template-columns: 40px 1fr 120px 180px 120px;
+  grid-template-columns: 40px 1fr 100px 150px 100px;
   gap: 12px;
   padding: 10px 20px;
   background: var(--vscode-bg-lighter);
@@ -816,7 +816,7 @@ const handleClose = () => {
 
 .file-item {
   display: grid;
-  grid-template-columns: 40px 1fr 120px 180px 120px;
+  grid-template-columns: 40px 1fr 100px 150px 100px;
   gap: 12px;
   padding: 10px 20px;
   border-bottom: 1px solid var(--vscode-border);
