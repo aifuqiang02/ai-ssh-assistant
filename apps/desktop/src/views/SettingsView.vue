@@ -112,6 +112,360 @@
         </div>
       </div>
         </section>
+
+        <!-- AI 服务商设置 -->
+        <section :id="'section-ai-providers'" class="setting-section">
+          <h2 class="section-title">
+            <i class="bi bi-robot"></i>
+            AI 服务商
+            <span class="provider-count-badge">{{ PROVIDER_STATS.total }} 个服务商</span>
+          </h2>
+          <p class="section-description">配置 AI 模型的服务提供商和 API 密钥</p>
+
+          <!-- 过滤和搜索工具栏 -->
+          <div class="providers-toolbar">
+            <!-- 搜索框 -->
+            <div class="search-box">
+              <i class="bi bi-search search-icon"></i>
+              <input 
+                v-model="providerSearchQuery"
+                type="text"
+                placeholder="搜索服务商名称、描述或模型..."
+                class="search-input"
+              />
+              <button 
+                v-if="providerSearchQuery" 
+                @click="providerSearchQuery = ''"
+                class="clear-search-btn"
+                title="清除搜索"
+              >
+                <i class="bi bi-x-lg"></i>
+              </button>
+            </div>
+
+            <!-- 快捷分类筛选 -->
+            <div class="filter-chips">
+              <button 
+                v-for="category in providerCategories" 
+                :key="category.id"
+                @click="selectedCategory = category.id"
+                :class="['filter-chip', { active: selectedCategory === category.id }]"
+                :title="category.description"
+              >
+                <i :class="category.icon"></i>
+                {{ category.label }}
+                <span class="chip-count">{{ category.count }}</span>
+              </button>
+            </div>
+
+            <!-- 高级过滤 -->
+            <div class="advanced-filters">
+              <!-- 状态筛选 -->
+              <div class="filter-group">
+                <label class="filter-label">
+                  <i class="bi bi-funnel"></i>
+                  状态
+                </label>
+                <select v-model="statusFilter" class="filter-select">
+                  <option value="all">全部</option>
+                  <option value="enabled">已启用</option>
+                  <option value="configured">已配置</option>
+                  <option value="verified">已验证</option>
+                  <option value="unconfigured">未配置</option>
+                </select>
+              </div>
+
+              <!-- 能力筛选 -->
+              <div class="filter-group">
+                <label class="filter-label">
+                  <i class="bi bi-stars"></i>
+                  能力
+                </label>
+                <select v-model="capabilityFilter" class="filter-select">
+                  <option value="all">全部</option>
+                  <option value="vision">视觉理解</option>
+                  <option value="image">图像生成</option>
+                  <option value="functionCall">函数调用</option>
+                </select>
+              </div>
+
+              <!-- 排序方式 -->
+              <div class="filter-group">
+                <label class="filter-label">
+                  <i class="bi bi-sort-down"></i>
+                  排序
+                </label>
+                <select v-model="sortBy" class="filter-select">
+                  <option value="default">默认顺序</option>
+                  <option value="name">名称 A-Z</option>
+                  <option value="status">状态优先</option>
+                  <option value="models">模型数量</option>
+                </select>
+              </div>
+
+              <!-- 重置按钮 -->
+              <button 
+                @click="resetFilters"
+                class="reset-filters-btn"
+                title="重置所有筛选"
+                :disabled="isFiltersDefault"
+              >
+                <i class="bi bi-arrow-counterclockwise"></i>
+                重置
+              </button>
+            </div>
+          </div>
+
+          <!-- 过滤结果统计 -->
+          <div v-if="!isFiltersDefault" class="filter-result-info">
+            <i class="bi bi-info-circle"></i>
+            找到 <strong>{{ filteredProviders.length }}</strong> 个服务商
+            <span v-if="providerSearchQuery">（搜索: "{{ providerSearchQuery }}"）</span>
+          </div>
+
+          <!-- 服务商列表 -->
+          <div class="providers-container">
+            <div 
+              v-if="filteredProviders.length === 0"
+              class="no-results"
+            >
+              <i class="bi bi-inbox"></i>
+              <p>未找到匹配的服务商</p>
+              <button @click="resetFilters" class="btn-reset">
+                <i class="bi bi-arrow-counterclockwise"></i>
+                重置筛选条件
+              </button>
+            </div>
+            <div 
+              v-for="provider in filteredProviders" 
+              :key="provider.id"
+              class="provider-card"
+            >
+              <!-- 服务商头部 -->
+              <div class="provider-header" @click="toggleProvider(provider.id)">
+                <div class="provider-info">
+                  <div class="provider-icon-wrapper">
+                    <i :class="provider.icon"></i>
+                  </div>
+                  <div class="provider-details">
+                    <h4 class="provider-name">{{ provider.name }}</h4>
+                    <p class="provider-description">{{ provider.description }}</p>
+                  </div>
+                </div>
+                <div class="provider-actions">
+                  <!-- 测试状态指示器 -->
+                  <span 
+                    v-if="testResults[provider.id]?.success" 
+                    class="status-badge success"
+                    :title="`测试成功: ${testResults[provider.id]?.message}`"
+                  >
+                    <i class="bi bi-check-circle-fill"></i>
+                    已验证
+                  </span>
+                  <span 
+                    v-else-if="testResults[provider.id] && !testResults[provider.id].success" 
+                    class="status-badge error"
+                    :title="`测试失败: ${testResults[provider.id]?.error}`"
+                  >
+                    <i class="bi bi-x-circle-fill"></i>
+                    验证失败
+                  </span>
+                  <span 
+                    v-else-if="provider.apiKey" 
+                    class="status-badge configured"
+                    title="已配置但未测试"
+                  >
+                    <i class="bi bi-check-circle-fill"></i>
+                    已配置
+                  </span>
+                  <label class="toggle-switch" @click.stop>
+                    <input v-model="provider.enabled" type="checkbox" />
+                    <span class="toggle-slider"></span>
+                  </label>
+                  <i :class="['bi', expandedProviders.includes(provider.id) ? 'bi-chevron-up' : 'bi-chevron-down', 'expand-icon']"></i>
+                </div>
+              </div>
+
+              <!-- 服务商配置区域（展开时显示） -->
+              <div v-if="expandedProviders.includes(provider.id)" class="provider-config">
+                <!-- API Key 输入 -->
+                <div class="config-row">
+                  <label class="config-label">
+                    <i class="bi bi-key"></i>
+                    API Key
+                  </label>
+                  <div class="input-with-action">
+                    <input 
+                      v-model="provider.apiKey"
+                      :type="showApiKey[provider.id] ? 'text' : 'password'"
+                      class="config-input"
+                      :placeholder="`输入 ${provider.name} 的 API Key`"
+                    />
+                    <button 
+                      class="input-action-btn"
+                      @click="toggleApiKeyVisibility(provider.id)"
+                      :title="showApiKey[provider.id] ? '隐藏' : '显示'"
+                    >
+                      <i :class="['bi', showApiKey[provider.id] ? 'bi-eye-slash' : 'bi-eye']"></i>
+                    </button>
+                  </div>
+                  <a :href="provider.website" target="_blank" class="config-hint">
+                    <i class="bi bi-box-arrow-up-right"></i>
+                    获取 API Key
+                  </a>
+                </div>
+
+                <!-- 端点 URL（可选） -->
+                <div class="config-row">
+                  <label class="config-label">
+                    <i class="bi bi-link-45deg"></i>
+                    端点 URL（可选）
+                  </label>
+                  <input 
+                    v-model="provider.endpoint"
+                    type="url"
+                    class="config-input"
+                    :placeholder="provider.endpoint"
+                  />
+                  <p class="config-hint">
+                    <i class="bi bi-info-circle"></i>
+                    使用自定义端点或代理地址，留空使用默认值
+                  </p>
+                </div>
+
+                <!-- 支持的模型 -->
+                <div class="config-row">
+                  <div class="config-label-with-action">
+                    <label class="config-label">
+                      <i class="bi bi-cpu"></i>
+                      支持的模型（{{ provider.models.length }}）
+                    </label>
+                    <button 
+                      class="btn-link"
+                      @click="toggleModelDetails(provider.id)"
+                    >
+                      <i :class="['bi', expandedModels[provider.id] ? 'bi-chevron-up' : 'bi-chevron-down']"></i>
+                      {{ expandedModels[provider.id] ? '收起' : '展开' }}详情
+                    </button>
+                  </div>
+                  
+                  <!-- 简要模型列表 -->
+                  <div v-if="!expandedModels[provider.id]" class="models-list">
+                    <span 
+                      v-for="model in provider.models.slice(0, 3)" 
+                      :key="model.id"
+                      class="model-badge"
+                      :class="{ recommended: model.recommended }"
+                    >
+                      {{ model.name }}
+                      <i v-if="model.recommended" class="bi bi-star-fill"></i>
+                    </span>
+                    <span v-if="provider.models.length > 3" class="model-badge more">
+                      +{{ provider.models.length - 3 }} 更多
+                    </span>
+                  </div>
+
+                  <!-- 详细模型列表 -->
+                  <div v-else class="models-detail-list">
+                    <div 
+                      v-for="model in provider.models" 
+                      :key="model.id"
+                      class="model-detail-card"
+                    >
+                      <div class="model-header">
+                        <h5 class="model-name">
+                          {{ model.name }}
+                          <span v-if="model.recommended" class="recommended-tag">
+                            <i class="bi bi-star-fill"></i>
+                            推荐
+                          </span>
+                        </h5>
+                        <p v-if="model.description" class="model-description">{{ model.description }}</p>
+                      </div>
+                      
+                      <div class="model-specs">
+                        <div class="spec-item">
+                          <i class="bi bi-window-stack"></i>
+                          <span class="spec-label">上下文窗口:</span>
+                          <span class="spec-value">{{ formatContextWindow(model.contextWindow) }}</span>
+                        </div>
+                        
+                        <div class="spec-item">
+                          <i class="bi bi-lightning-charge"></i>
+                          <span class="spec-label">能力:</span>
+                          <div class="capabilities">
+                            <span v-if="model.capabilities.text" class="capability-badge">
+                              <i class="bi bi-chat-text"></i>
+                              文本
+                            </span>
+                            <span v-if="model.capabilities.image" class="capability-badge">
+                              <i class="bi bi-image"></i>
+                              图片
+                            </span>
+                            <span v-if="model.capabilities.vision" class="capability-badge">
+                              <i class="bi bi-eye"></i>
+                              视觉
+                            </span>
+                            <span v-if="model.capabilities.functionCall" class="capability-badge">
+                              <i class="bi bi-code-square"></i>
+                              函数调用
+                            </span>
+                          </div>
+                        </div>
+                        
+                        <div v-if="model.price" class="spec-item">
+                          <i class="bi bi-currency-dollar"></i>
+                          <span class="spec-label">价格:</span>
+                          <span class="spec-value">
+                            输入 ${{ model.price.input }}/1M · 输出 ${{ model.price.output }}/1M
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 测试结果显示 -->
+                <div 
+                  v-if="testResults[provider.id]" 
+                  class="test-result"
+                  :class="{ success: testResults[provider.id].success, error: !testResults[provider.id].success }"
+                >
+                  <i :class="['bi', testResults[provider.id].success ? 'bi-check-circle-fill' : 'bi-x-circle-fill']"></i>
+                  <div class="test-result-content">
+                    <p class="test-message">{{ testResults[provider.id].message }}</p>
+                    <p v-if="testResults[provider.id].error" class="test-error">{{ testResults[provider.id].error }}</p>
+                  </div>
+                </div>
+
+                <!-- 操作按钮 -->
+                <div class="config-actions">
+                  <button 
+                    class="btn-test"
+                    :disabled="(!provider.apiKey && provider.id !== 'ollama') || testingProviders[provider.id]"
+                    @click="testProviderConnection(provider)"
+                  >
+                    <i :class="['bi', testingProviders[provider.id] ? 'bi-hourglass-split spin' : 'bi-lightning']"></i>
+                    {{ testingProviders[provider.id] ? '测试中...' : '测试连接' }}
+                  </button>
+                  <button 
+                    class="btn-clear"
+                    @click="clearProviderConfig(provider.id)"
+                  >
+                    <i class="bi bi-trash"></i>
+                    清除配置
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 空状态提示 -->
+            <div v-if="aiProviders.length === 0" class="empty-state">
+              <i class="bi bi-inbox"></i>
+              <p>暂无可用的 AI 服务商</p>
+            </div>
+          </div>
+        </section>
       
       <!-- 数据存储设置 -->
         <section :id="'section-storage'" class="setting-section">
@@ -422,10 +776,25 @@ import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { storeToRefs } from 'pinia'
 import LoginModal from '../components/auth/LoginModal.vue'
 import { useThemeStore } from '../stores/theme'
+import { 
+  DEFAULT_PROVIDERS, 
+  PROVIDER_STATS,
+  INTERNATIONAL_PROVIDERS,
+  CHINESE_PROVIDERS,
+  CHINESE_EXTENDED_PROVIDERS,
+  PLATFORM_PROVIDERS,
+  CLOUD_PROVIDERS,
+  OPENSOURCE_PROVIDERS,
+  SPECIALIZED_PROVIDERS,
+  type AIProvider 
+} from '../types/ai-providers'
+import { encryptApiKey, decryptApiKey } from '../utils/encryption'
+import { testProviderConnection as testProviderAPI, type TestResult } from '../services/ai-test.service'
 
 // 设置分类
 const settingsSections = [
   { id: 'appearance', label: '外观', icon: 'bi bi-palette' },
+  { id: 'ai-providers', label: 'AI 服务商', icon: 'bi bi-robot' },
   { id: 'storage', label: '数据存储', icon: 'bi bi-database' },
   { id: 'ssh', label: 'SSH 配置', icon: 'bi bi-terminal' },
   { id: 'terminal', label: '终端', icon: 'bi bi-terminal-fill' },
@@ -462,8 +831,201 @@ const autoConnect = ref(false)
 const saveCommandHistory = ref(true)
 const developerMode = ref(false)
 
+// AI 服务商设置
+const aiProviders = ref<AIProvider[]>([])
+const expandedProviders = ref<string[]>([])
+const showApiKey = ref<Record<string, boolean>>({})
+const testingProviders = ref<Record<string, boolean>>({})
+const testResults = ref<Record<string, TestResult>>({})
+const expandedModels = ref<Record<string, boolean>>({})
+
+// 过滤和搜索
+const providerSearchQuery = ref('')
+const selectedCategory = ref<'all' | 'international' | 'chinese' | 'platforms' | 'cloud' | 'opensource' | 'specialized'>('all')
+const statusFilter = ref<'all' | 'enabled' | 'configured' | 'verified' | 'unconfigured'>('all')
+const capabilityFilter = ref<'all' | 'vision' | 'image' | 'functionCall'>('all')
+const sortBy = ref<'default' | 'name' | 'status' | 'models'>('default')
+
 // 可用的颜色方案
 const availableColorSchemes = computed(() => themeStore.getAvailableColorSchemes())
+
+// 服务商分类配置
+const providerCategories = computed(() => [
+  { 
+    id: 'all' as const, 
+    label: '全部', 
+    icon: 'bi bi-grid-3x3-gap',
+    description: '显示所有服务商',
+    count: aiProviders.value.length 
+  },
+  { 
+    id: 'international' as const, 
+    label: '国际', 
+    icon: 'bi bi-globe',
+    description: '国际主流服务商',
+    count: INTERNATIONAL_PROVIDERS.length 
+  },
+  { 
+    id: 'chinese' as const, 
+    label: '中国', 
+    icon: 'bi bi-translate',
+    description: '中国服务商',
+    count: CHINESE_PROVIDERS.length + CHINESE_EXTENDED_PROVIDERS.length 
+  },
+  { 
+    id: 'platforms' as const, 
+    label: '平台', 
+    icon: 'bi bi-hdd-stack',
+    description: '开发者平台',
+    count: PLATFORM_PROVIDERS.length 
+  },
+  { 
+    id: 'cloud' as const, 
+    label: '云服务', 
+    icon: 'bi bi-cloud',
+    description: '云服务平台',
+    count: CLOUD_PROVIDERS.length 
+  },
+  { 
+    id: 'opensource' as const, 
+    label: '开源', 
+    icon: 'bi bi-github',
+    description: '开源和小型服务商',
+    count: OPENSOURCE_PROVIDERS.length 
+  },
+  { 
+    id: 'specialized' as const, 
+    label: '专业', 
+    icon: 'bi bi-palette',
+    description: '专业服务（图像、音乐等）',
+    count: SPECIALIZED_PROVIDERS.length 
+  }
+])
+
+// 过滤后的服务商列表
+const filteredProviders = computed(() => {
+  let result = [...aiProviders.value]
+  
+  // 按分类过滤
+  if (selectedCategory.value !== 'all') {
+    const categoryProviderIds = (() => {
+      switch (selectedCategory.value) {
+        case 'international':
+          return new Set(INTERNATIONAL_PROVIDERS.map(p => p.id))
+        case 'chinese':
+          return new Set([...CHINESE_PROVIDERS, ...CHINESE_EXTENDED_PROVIDERS].map(p => p.id))
+        case 'platforms':
+          return new Set(PLATFORM_PROVIDERS.map(p => p.id))
+        case 'cloud':
+          return new Set(CLOUD_PROVIDERS.map(p => p.id))
+        case 'opensource':
+          return new Set(OPENSOURCE_PROVIDERS.map(p => p.id))
+        case 'specialized':
+          return new Set(SPECIALIZED_PROVIDERS.map(p => p.id))
+        default:
+          return new Set<string>()
+      }
+    })()
+    result = result.filter(p => categoryProviderIds.has(p.id))
+  }
+  
+  // 按搜索词过滤
+  if (providerSearchQuery.value.trim()) {
+    const query = providerSearchQuery.value.toLowerCase().trim()
+    result = result.filter(provider => {
+      // 搜索名称、描述
+      const matchesName = provider.name.toLowerCase().includes(query)
+      const matchesDescription = provider.description.toLowerCase().includes(query)
+      // 搜索模型名称
+      const matchesModel = provider.models.some(m => 
+        m.name.toLowerCase().includes(query) || 
+        m.id.toLowerCase().includes(query)
+      )
+      return matchesName || matchesDescription || matchesModel
+    })
+  }
+  
+  // 按状态过滤
+  if (statusFilter.value !== 'all') {
+    result = result.filter(provider => {
+      switch (statusFilter.value) {
+        case 'enabled':
+          return provider.enabled
+        case 'configured':
+          return provider.apiKey && provider.apiKey.length > 0
+        case 'verified':
+          return testResults.value[provider.id]?.success === true
+        case 'unconfigured':
+          return !provider.apiKey || provider.apiKey.length === 0
+        default:
+          return true
+      }
+    })
+  }
+  
+  // 按能力过滤
+  if (capabilityFilter.value !== 'all') {
+    result = result.filter(provider => {
+      return provider.models.some(model => {
+        switch (capabilityFilter.value) {
+          case 'vision':
+            return model.capabilities.vision
+          case 'image':
+            return model.capabilities.image
+          case 'functionCall':
+            return model.capabilities.functionCall
+          default:
+            return true
+        }
+      })
+    })
+  }
+  
+  // 排序
+  switch (sortBy.value) {
+    case 'name':
+      result.sort((a, b) => a.name.localeCompare(b.name, 'zh-CN'))
+      break
+    case 'status':
+      result.sort((a, b) => {
+        // 优先级: 已验证 > 已启用 > 已配置 > 未配置
+        const getStatusPriority = (p: AIProvider) => {
+          if (testResults.value[p.id]?.success) return 4
+          if (p.enabled) return 3
+          if (p.apiKey) return 2
+          return 1
+        }
+        return getStatusPriority(b) - getStatusPriority(a)
+      })
+      break
+    case 'models':
+      result.sort((a, b) => b.models.length - a.models.length)
+      break
+    default:
+      // 保持默认顺序
+      break
+  }
+  
+  return result
+})
+
+// 检查是否为默认筛选状态
+const isFiltersDefault = computed(() => {
+  return providerSearchQuery.value === '' &&
+         selectedCategory.value === 'all' &&
+         statusFilter.value === 'all' &&
+         capabilityFilter.value === 'all' &&
+         sortBy.value === 'default'
+})
+
+// 重置所有筛选条件
+const resetFilters = () => {
+  providerSearchQuery.value = ''
+  selectedCategory.value = 'all'
+  statusFilter.value = 'all'
+  capabilityFilter.value = 'all'
+  sortBy.value = 'default'
+}
 
 // 存储设置
 const storageMode = ref<'local' | 'cloud' | 'hybrid'>('local')
@@ -701,6 +1263,127 @@ watch([
   saveSettings()
 }, { deep: true })
 
+// AI 服务商相关函数
+const initializeAIProviders = () => {
+  // 从默认配置初始化
+  aiProviders.value = DEFAULT_PROVIDERS.map(provider => ({
+    ...provider,
+    apiKey: '',
+    enabled: false,
+    isDefault: false
+  }))
+  
+  // 从 localStorage 加载已保存的配置
+  try {
+    const saved = localStorage.getItem('aiProviderConfigs')
+    if (saved) {
+      const savedConfigs = JSON.parse(saved)
+      aiProviders.value = aiProviders.value.map(provider => {
+        const savedConfig = savedConfigs.find((c: AIProvider) => c.id === provider.id)
+        if (savedConfig) {
+          // 解密 API Key
+          return {
+            ...provider,
+            ...savedConfig,
+            apiKey: savedConfig.apiKey ? decryptApiKey(savedConfig.apiKey) : ''
+          }
+        }
+        return provider
+      })
+    }
+  } catch (error) {
+    console.error('Failed to load AI provider configs:', error)
+  }
+}
+
+const toggleProvider = (providerId: string) => {
+  const index = expandedProviders.value.indexOf(providerId)
+  if (index > -1) {
+    expandedProviders.value.splice(index, 1)
+  } else {
+    expandedProviders.value.push(providerId)
+  }
+}
+
+const toggleApiKeyVisibility = (providerId: string) => {
+  showApiKey.value[providerId] = !showApiKey.value[providerId]
+}
+
+const testProviderConnection = async (provider: AIProvider) => {
+  if (!provider.apiKey && provider.id !== 'ollama') {
+    showNotification('请先输入 API Key', 'error')
+    return
+  }
+  
+  testingProviders.value[provider.id] = true
+  testResults.value[provider.id] = {
+    success: false,
+    message: '测试中...'
+  }
+  
+  try {
+    const result = await testProviderAPI(provider)
+    testResults.value[provider.id] = result
+    
+    if (result.success) {
+      showNotification(result.message, 'success')
+    } else {
+      showNotification(`${result.message}: ${result.error}`, 'error')
+    }
+  } catch (error: any) {
+    testResults.value[provider.id] = {
+      success: false,
+      message: '测试失败',
+      error: error.message
+    }
+    showNotification('测试连接失败', 'error')
+  } finally {
+    testingProviders.value[provider.id] = false
+  }
+}
+
+const clearProviderConfig = (providerId: string) => {
+  const provider = aiProviders.value.find(p => p.id === providerId)
+  if (provider) {
+    provider.apiKey = ''
+    provider.enabled = false
+    testResults.value[providerId] = undefined as any
+    saveAIProviderConfigs()
+    showNotification('配置已清除', 'success')
+  }
+}
+
+const toggleModelDetails = (providerId: string) => {
+  expandedModels.value[providerId] = !expandedModels.value[providerId]
+}
+
+const formatContextWindow = (tokens: number): string => {
+  if (tokens >= 1000000) {
+    return `${(tokens / 1000000).toFixed(1)}M tokens`
+  } else if (tokens >= 1000) {
+    return `${(tokens / 1000).toFixed(0)}K tokens`
+  }
+  return `${tokens} tokens`
+}
+
+const saveAIProviderConfigs = () => {
+  try {
+    // 加密 API Key 后保存
+    const configsToSave = aiProviders.value.map(provider => ({
+      ...provider,
+      apiKey: provider.apiKey ? encryptApiKey(provider.apiKey) : ''
+    }))
+    localStorage.setItem('aiProviderConfigs', JSON.stringify(configsToSave))
+  } catch (error) {
+    console.error('Failed to save AI provider configs:', error)
+  }
+}
+
+// 监听 AI 服务商配置变化
+watch(aiProviders, () => {
+  saveAIProviderConfigs()
+}, { deep: true })
+
 // 监听主题 Store 变化
 watch([mode, colorScheme, themeFontSize], () => {
   theme.value = mode.value
@@ -710,6 +1393,7 @@ watch([mode, colorScheme, themeFontSize], () => {
 
 onMounted(() => {
   loadSettings()
+  initializeAIProviders()
   console.log('SettingsView mounted')
 })
 </script>
@@ -868,21 +1552,24 @@ onMounted(() => {
   margin-top: 8px;
   padding: 8px 12px;
   background: var(--vscode-bg-lighter);
-  border-radius: 4px;
+  border-radius: 2px;
 }
 
 /* ========== 表单控件 ========== */
 .form-select,
 .form-input {
   width: 100%;
-  padding: 8px 12px;
   background: var(--vscode-input-bg);
   border: 1px solid var(--vscode-border);
-  border-radius: 4px;
+  border-radius: 2px;
   color: var(--vscode-fg);
   font-size: 14px;
   outline: none;
   transition: border-color 0.2s;
+}
+
+.form-input {
+  padding: 0 12px;
 }
 
 .form-select:focus,
@@ -955,7 +1642,7 @@ onMounted(() => {
   gap: 8px;
   padding: 12px;
   border: 2px solid var(--vscode-border);
-  border-radius: 8px;
+  border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s;
   position: relative;
@@ -997,7 +1684,7 @@ onMounted(() => {
   padding: 16px;
   background: var(--vscode-bg-lighter);
   border: 1px solid var(--vscode-border);
-  border-radius: 8px;
+  border-radius: 4px;
 }
 
 .preview-header {
@@ -1041,7 +1728,7 @@ onMounted(() => {
   gap: 8px;
   padding: 8px 16px;
   border: none;
-  border-radius: 6px;
+  border-radius: 4px;
   color: white;
   font-size: 14px;
   font-weight: 500;
@@ -1066,7 +1753,7 @@ onMounted(() => {
   padding: 12px;
   background: var(--vscode-bg-lighter);
   border: 1px solid var(--vscode-border);
-  border-radius: 8px;
+  border-radius: 4px;
 }
 
 .user-avatar {
@@ -1138,7 +1825,7 @@ onMounted(() => {
   padding: 10px 16px;
   background: var(--vscode-accent);
   border: none;
-  border-radius: 6px;
+  border-radius: 4px;
   color: white;
   font-size: 14px;
   font-weight: 500;
@@ -1211,7 +1898,7 @@ onMounted(() => {
   padding: 32px 24px;
   background: var(--vscode-bg-lighter);
   border: 1px solid var(--vscode-border);
-  border-radius: 12px;
+  border-radius: 6px;
 }
 
 .app-logo {
@@ -1254,7 +1941,7 @@ onMounted(() => {
   padding: 8px 16px;
   background: transparent;
   border: 1px solid var(--vscode-border);
-  border-radius: 6px;
+  border-radius: 4px;
   color: var(--vscode-accent);
   text-decoration: none;
   font-size: 13px;
@@ -1297,6 +1984,810 @@ onMounted(() => {
 .notification-error {
   background: #e74c3c;
   color: white;
+}
+
+/* ========== AI 服务商 ========== */
+/* 服务商过滤工具栏 */
+.provider-count-badge {
+  display: inline-block;
+  margin-left: 12px;
+  padding: 4px 12px;
+  background: var(--vscode-accent);
+  color: white;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  vertical-align: middle;
+}
+
+.providers-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding: 20px;
+  background: var(--vscode-bg-lighter);
+  border: 1px solid var(--vscode-border);
+  border-radius: 8px;
+}
+
+/* 搜索框 */
+.search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.search-icon {
+  position: absolute;
+  left: 14px;
+  color: var(--vscode-fg-muted);
+  font-size: 16px;
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 44px 12px 44px;
+  background: var(--vscode-bg);
+  border: 1px solid var(--vscode-border);
+  border-radius: 6px;
+  color: var(--vscode-fg);
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--vscode-accent);
+  box-shadow: 0 0 0 3px rgba(var(--vscode-accent-rgb), 0.1);
+}
+
+.search-input::placeholder {
+  color: var(--vscode-fg-muted);
+}
+
+.clear-search-btn {
+  position: absolute;
+  right: 10px;
+  padding: 6px;
+  background: transparent;
+  border: none;
+  color: var(--vscode-fg-muted);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.clear-search-btn:hover {
+  background: var(--vscode-bg);
+  color: var(--vscode-fg);
+}
+
+/* 分类筛选按钮 */
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.filter-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--vscode-bg);
+  border: 1px solid var(--vscode-border);
+  border-radius: 20px;
+  color: var(--vscode-fg);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.filter-chip i {
+  font-size: 14px;
+}
+
+.filter-chip:hover {
+  background: var(--vscode-accent);
+  color: white;
+  border-color: var(--vscode-accent);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.filter-chip.active {
+  background: var(--vscode-accent);
+  color: white;
+  border-color: var(--vscode-accent);
+  box-shadow: 0 2px 8px rgba(var(--vscode-accent-rgb), 0.3);
+}
+
+.chip-count {
+  display: inline-block;
+  padding: 2px 6px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.filter-chip.active .chip-count {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* 高级过滤 */
+.advanced-filters {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 150px;
+}
+
+.filter-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--vscode-fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.filter-label i {
+  font-size: 13px;
+}
+
+.filter-select {
+  background: var(--vscode-bg);
+  border: 1px solid var(--vscode-border);
+  border-radius: 2px;
+  color: var(--vscode-fg);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: var(--vscode-accent);
+  box-shadow: 0 0 0 3px rgba(var(--vscode-accent-rgb), 0.1);
+}
+
+.reset-filters-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--vscode-bg);
+  border: 1px solid var(--vscode-border);
+  border-radius: 6px;
+  color: var(--vscode-fg);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  height: fit-content;
+}
+
+.reset-filters-btn:hover:not(:disabled) {
+  background: var(--vscode-accent);
+  color: white;
+  border-color: var(--vscode-accent);
+}
+
+.reset-filters-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.reset-filters-btn i {
+  font-size: 14px;
+}
+
+/* 过滤结果信息 */
+.filter-result-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--vscode-accent-bg);
+  border: 1px solid var(--vscode-accent);
+  border-radius: 6px;
+  color: var(--vscode-accent);
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.filter-result-info i {
+  font-size: 16px;
+}
+
+.filter-result-info strong {
+  font-weight: 700;
+}
+
+/* 无结果状态 */
+.no-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  color: var(--vscode-fg-muted);
+}
+
+.no-results i {
+  font-size: 64px;
+  margin-bottom: 16px;
+  opacity: 0.3;
+}
+
+.no-results p {
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.btn-reset {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: var(--vscode-accent);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-reset:hover {
+  background: var(--vscode-accent-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(var(--vscode-accent-rgb), 0.3);
+}
+
+.btn-reset i {
+  font-size: 16px;
+}
+
+.providers-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.provider-card {
+  background: var(--vscode-bg-lighter);
+  border: 1px solid var(--vscode-border);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+
+.provider-card:hover {
+  border-color: var(--vscode-fg-muted);
+}
+
+.provider-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  cursor: pointer;
+  transition: background 0.2s;
+  user-select: none;
+}
+
+.provider-header:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.provider-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+}
+
+.provider-icon-wrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--vscode-accent), rgba(var(--vscode-accent-rgb), 0.6));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.provider-icon-wrapper i {
+  font-size: 24px;
+  color: white;
+}
+
+.provider-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.provider-name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--vscode-fg);
+}
+
+.provider-description {
+  margin: 4px 0 0 0;
+  font-size: 13px;
+  color: var(--vscode-fg-muted);
+}
+
+.provider-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.status-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-badge.configured {
+  background: rgba(52, 152, 219, 0.2);
+  color: #3498db;
+}
+
+.status-badge.success {
+  background: rgba(39, 174, 96, 0.2);
+  color: #27ae60;
+}
+
+.status-badge.error {
+  background: rgba(231, 76, 60, 0.2);
+  color: #e74c3c;
+}
+
+.expand-icon {
+  font-size: 16px;
+  color: var(--vscode-fg-muted);
+  transition: transform 0.2s;
+}
+
+.provider-config {
+  padding: 0 20px 20px 20px;
+  border-top: 1px solid var(--vscode-border);
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 1000px;
+  }
+}
+
+.config-row {
+  margin-bottom: 20px;
+}
+
+.config-row:last-child {
+  margin-bottom: 0;
+}
+
+.config-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--vscode-fg);
+  margin-bottom: 8px;
+}
+
+.config-label i {
+  font-size: 16px;
+  color: var(--vscode-accent);
+}
+
+.config-input {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--vscode-input-bg);
+  border: 1px solid var(--vscode-border);
+  border-radius: 4px;
+  color: var(--vscode-fg);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.config-input:focus {
+  border-color: var(--vscode-accent);
+}
+
+.input-with-action {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-with-action .config-input {
+  padding-right: 44px;
+}
+
+.input-action-btn {
+  position: absolute;
+  right: 4px;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: var(--vscode-fg-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.input-action-btn:hover {
+  background: var(--vscode-bg);
+  color: var(--vscode-fg);
+}
+
+.config-hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--vscode-fg-muted);
+  margin-top: 6px;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.config-hint:hover {
+  color: var(--vscode-accent);
+}
+
+.models-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.model-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  background: var(--vscode-bg);
+  border: 1px solid var(--vscode-border);
+  border-radius: 16px;
+  font-size: 12px;
+  color: var(--vscode-fg);
+}
+
+.model-badge.recommended {
+  background: rgba(var(--vscode-accent-rgb), 0.1);
+  border-color: var(--vscode-accent);
+  color: var(--vscode-accent);
+}
+
+.model-badge.more {
+  background: transparent;
+  color: var(--vscode-fg-muted);
+}
+
+.model-badge i {
+  font-size: 10px;
+}
+
+/* 模型详情 */
+.config-label-with-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.btn-link {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: var(--vscode-accent);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-link:hover {
+  background: rgba(var(--vscode-accent-rgb), 0.1);
+}
+
+.models-detail-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.model-detail-card {
+  padding: 16px;
+  background: var(--vscode-bg);
+  border: 1px solid var(--vscode-border);
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.model-detail-card:hover {
+  border-color: var(--vscode-fg-muted);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.model-header {
+  margin-bottom: 12px;
+}
+
+.model-name {
+  margin: 0 0 4px 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--vscode-fg);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.recommended-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+  color: white;
+}
+
+.recommended-tag i {
+  font-size: 10px;
+}
+
+.model-description {
+  margin: 0;
+  font-size: 13px;
+  color: var(--vscode-fg-muted);
+  line-height: 1.5;
+}
+
+.model-specs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.spec-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.spec-item > i {
+  margin-top: 2px;
+  color: var(--vscode-accent);
+  flex-shrink: 0;
+}
+
+.spec-label {
+  color: var(--vscode-fg-muted);
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.spec-value {
+  color: var(--vscode-fg);
+}
+
+.capabilities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.capability-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  background: rgba(var(--vscode-accent-rgb), 0.1);
+  border: 1px solid rgba(var(--vscode-accent-rgb), 0.3);
+  border-radius: 12px;
+  font-size: 11px;
+  color: var(--vscode-accent);
+}
+
+.capability-badge i {
+  font-size: 10px;
+}
+
+.config-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--vscode-border);
+}
+
+.btn-test,
+.btn-clear {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-test {
+  background: var(--vscode-accent);
+  color: white;
+}
+
+.btn-test:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.btn-test:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-clear {
+  background: transparent;
+  border: 1px solid var(--vscode-border);
+  color: var(--vscode-fg-muted);
+}
+
+.btn-clear:hover {
+  background: rgba(231, 76, 60, 0.1);
+  border-color: #e74c3c;
+  color: #e74c3c;
+}
+
+/* 测试结果显示 */
+.test-result {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.test-result.success {
+  background: rgba(39, 174, 96, 0.1);
+  border: 1px solid rgba(39, 174, 96, 0.3);
+}
+
+.test-result.error {
+  background: rgba(231, 76, 60, 0.1);
+  border: 1px solid rgba(231, 76, 60, 0.3);
+}
+
+.test-result > i {
+  font-size: 20px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.test-result.success > i {
+  color: #27ae60;
+}
+
+.test-result.error > i {
+  color: #e74c3c;
+}
+
+.test-result-content {
+  flex: 1;
+}
+
+.test-message {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--vscode-fg);
+}
+
+.test-error {
+  margin: 4px 0 0 0;
+  font-size: 12px;
+  color: var(--vscode-fg-muted);
+}
+
+/* 加载动画 */
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--vscode-fg-muted);
+}
+
+.empty-state i {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 14px;
 }
 
 /* ========== 滚动条 ========== */

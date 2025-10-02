@@ -47,6 +47,11 @@
   --vscode-error: #e51400;
 }
 
+/* 浅色主题 Select - 移除背景箭头 */
+:root.light select {
+  background-image: none;
+}
+
 /* 深色主题（显式定义）- 精确匹配 VSCode */
 :root.dark {
   --vscode-bg: #252526;
@@ -150,7 +155,7 @@ pre,
 
 /* Bootstrap 组件暗色主题适配 */
 .btn {
-  border-radius: 4px;
+  border-radius: 2px;
   font-weight: 500;
   transition: all 0.15s ease-in-out;
 }
@@ -174,16 +179,67 @@ input[type="number"],
 input[type="search"],
 input[type="url"],
 input[type="tel"],
-select,
 textarea {
   background-color: var(--vscode-bg-input);
   border: 1px solid transparent;
   color: var(--vscode-fg);
   font-size: 13px;
   height: 26px;
-  padding: 2px 8px;
-  border-radius: 0;
+  padding: 3px 8px;
+  border-radius: 2px;
   transition: all 0.15s ease;
+}
+
+/* Select 元素单独处理 - 避免内容显示不全 */
+select {
+  background-color: var(--vscode-bg-input);
+  border: 1px solid transparent;
+  color: var(--vscode-fg);
+  font-size: 13px;
+  min-height: 26px;
+  height: 26px;
+  padding: 0 8px;
+  line-height: normal;
+  border-radius: 2px;
+  transition: all 0.15s ease;
+  cursor: pointer;
+  /* 使用浏览器原生下拉箭头 */
+}
+
+/* Select 下拉选项样式 */
+select option {
+  background-color: var(--vscode-bg-input);
+  color: var(--vscode-fg);
+  padding: 4px 8px;
+  min-height: 22px;
+  line-height: 1.3;
+}
+
+/* 表单控件类 - 统一样式 */
+.form-input,
+.form-textarea,
+.form-select,
+.form-multiselect {
+  padding: 0 12px;
+  background-color: var(--vscode-bg-input);
+  border: 1px solid transparent;
+  color: var(--vscode-fg);
+  font-size: 13px;
+  border-radius: 2px;
+  transition: all 0.15s ease;
+}
+
+.form-input,
+.form-select,
+.form-multiselect {
+  height: 26px;
+}
+
+.form-textarea {
+  min-height: 60px;
+  padding: 6px 12px;
+  resize: vertical;
+  line-height: 1.4;
 }
 
 /* Textarea 特殊处理 - 允许多行 */
@@ -192,18 +248,27 @@ textarea {
   min-height: 60px;
   padding: 6px 8px;
   resize: vertical;
+  line-height: 1.4;
 }
 
 /* 聚焦状态 */
 .form-control:focus,
 input:focus,
-select:focus,
 textarea:focus {
   background-color: var(--vscode-bg-input);
   border-color: var(--vscode-accent);
   color: var(--vscode-fg);
   box-shadow: none;
   outline: none;
+}
+
+select:focus {
+  background-color: var(--vscode-bg-input);
+  border-color: var(--vscode-accent);
+  color: var(--vscode-fg);
+  box-shadow: none;
+  outline: 1px solid var(--vscode-accent);
+  outline-offset: -1px;
 }
 
 /* 占位符 */
@@ -216,12 +281,19 @@ textarea::placeholder {
 /* 禁用状态 */
 .form-control:disabled,
 input:disabled,
-select:disabled,
 textarea:disabled {
   background-color: var(--vscode-bg-lighter);
   color: var(--vscode-fg-muted);
   cursor: not-allowed;
   opacity: 0.6;
+}
+
+select:disabled {
+  background-color: var(--vscode-bg-lighter);
+  color: var(--vscode-fg-muted);
+  cursor: not-allowed;
+  opacity: 0.6;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='%236c6c6c' opacity='0.5' d='M8 11L3 6h10z'/%3e%3c/svg%3e");
 }
 
 /* 表单尺寸工具类 - VSCode 标准 */
@@ -248,31 +320,47 @@ textarea:disabled {
 /* 表单错误状态 */
 .form-control.error,
 input.error,
-select.error,
 textarea.error {
   border-color: var(--vscode-error);
 }
 
 .form-control.error:focus,
 input.error:focus,
-select.error:focus,
 textarea.error:focus {
   border-color: var(--vscode-error);
+}
+
+select.error {
+  border-color: var(--vscode-error);
+  outline-color: var(--vscode-error);
+}
+
+select.error:focus {
+  border-color: var(--vscode-error);
+  outline-color: var(--vscode-error);
 }
 
 /* 表单成功状态 */
 .form-control.success,
 input.success,
-select.success,
 textarea.success {
   border-color: var(--vscode-success);
 }
 
 .form-control.success:focus,
 input.success:focus,
-select.success:focus,
 textarea.success:focus {
   border-color: var(--vscode-success);
+}
+
+select.success {
+  border-color: var(--vscode-success);
+  outline-color: var(--vscode-success);
+}
+
+select.success:focus {
+  border-color: var(--vscode-success);
+  outline-color: var(--vscode-success);
 }
 
 .modal-content {
@@ -427,7 +515,7 @@ textarea.success:focus {
 .code-block {
   background: var(--vscode-bg-lighter);
   border: 1px solid var(--vscode-border);
-  border-radius: 4px;
+  border-radius: 2px;
   padding: 12px;
   font-family: 'Menlo', 'Monaco', 'Consolas', monospace;
   font-size: 13px;
@@ -438,7 +526,7 @@ textarea.success:focus {
 .code-inline {
   background: var(--vscode-bg-lighter);
   border: 1px solid var(--vscode-border);
-  border-radius: 3px;
+  border-radius: 2px;
   padding: 2px 4px;
   font-family: 'Menlo', 'Monaco', 'Consolas', monospace;
   font-size: 0.9em;
