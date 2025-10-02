@@ -30,6 +30,9 @@
 - **[最佳实践](development/best-practices.md)**  
   编码规范、项目结构、Git 工作流等开发最佳实践。
 
+- **[数据库表结构](development/database-schema.md)**  
+  完整的数据库表结构说明、字段定义、关系图和索引策略。
+
 - **[数据库存储](development/database-storage.md)**  
   数据库架构、存储机制和数据管理说明。
 
