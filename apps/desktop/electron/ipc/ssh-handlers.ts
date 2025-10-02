@@ -1,5 +1,5 @@
 import { ipcMain } from 'electron'
-import { Client } from 'ssh2'
+import { Client, SFTPWrapper } from 'ssh2'
 import fs from 'fs/promises'
 import path from 'path'
 import { windowEvents } from '../shared/events'
@@ -16,6 +16,7 @@ interface SSHConnection {
   authType?: 'password' | 'privateKey' | 'agent'
   client?: Client
   shell?: any // Shell stream
+  sftp?: SFTPWrapper // SFTP session
   isConnected: boolean
   lastUsed: Date
   initialOutputBuffer?: string[] // 缓存初始输出
@@ -301,6 +302,205 @@ class SSHManager {
       client.connect(connectConfig)
     })
   }
+
+  // 获取或创建 SFTP 会话
+  private async getSFTP(id: string): Promise<SFTPWrapper> {
+    const connection = this.connections.get(id)
+    if (!connection || !connection.client || !connection.isConnected) {
+      throw new Error('Connection not found or not connected')
+    }
+
+    // 如果已有 SFTP 会话，直接返回
+    if (connection.sftp) {
+      return connection.sftp
+    }
+
+    // 创建新的 SFTP 会话
+    return new Promise((resolve, reject) => {
+      connection.client!.sftp((err, sftp) => {
+        if (err) {
+          reject(err)
+          return
+        }
+        connection.sftp = sftp
+        resolve(sftp)
+      })
+    })
+  }
+
+  // 列出远程目录文件
+  async listFiles(id: string, remotePath: string): Promise<any[]> {
+    const sftp = await this.getSFTP(id)
+
+    return new Promise((resolve, reject) => {
+      sftp.readdir(remotePath, (err, list) => {
+        if (err) {
+          reject(err)
+          return
+        }
+
+        const files = list.map(item => ({
+          name: item.filename,
+          type: item.attrs.isDirectory() ? 'directory' : 'file',
+          size: item.attrs.size,
+          modifiedTime: new Date(item.attrs.mtime * 1000).toISOString(),
+          permissions: item.attrs.mode
+        }))
+
+        // 排序：目录在前，然后按名称排序
+        files.sort((a, b) => {
+          if (a.type === 'directory' && b.type !== 'directory') return -1
+          if (a.type !== 'directory' && b.type === 'directory') return 1
+          return a.name.localeCompare(b.name)
+        })
+
+        resolve(files)
+      })
+    })
+  }
+
+  // 上传文件
+  async uploadFile(id: string, localPath: string, remotePath: string): Promise<void> {
+    const sftp = await this.getSFTP(id)
+
+    return new Promise((resolve, reject) => {
+      sftp.fastPut(localPath, remotePath, {
+        step: (transferred, chunk, total) => {
+          const progress = Math.round((transferred / total) * 100)
+          windowEvents.sendToRenderer('ssh:upload-progress', {
+            id,
+            localPath,
+            remotePath,
+            progress,
+            transferred,
+            total
+          })
+        }
+      }, (err) => {
+        if (err) {
+          reject(err)
+          return
+        }
+        resolve()
+      })
+    })
+  }
+
+  // 下载文件
+  async downloadFile(id: string, remotePath: string, localPath: string): Promise<void> {
+    const sftp = await this.getSFTP(id)
+
+    // 确保本地目录存在
+    const path = await import('path')
+    const fs = await import('fs/promises')
+    const localDir = path.dirname(localPath)
+    
+    try {
+      await fs.mkdir(localDir, { recursive: true })
+    } catch (error: any) {
+      // 忽略目录已存在的错误
+      if (error.code !== 'EEXIST') {
+        console.error('Failed to create directory:', localDir, error)
+      }
+    }
+
+    return new Promise((resolve, reject) => {
+      sftp.fastGet(remotePath, localPath, {
+        step: (transferred, chunk, total) => {
+          const progress = Math.round((transferred / total) * 100)
+          windowEvents.sendToRenderer('ssh:download-progress', {
+            id,
+            remotePath,
+            localPath,
+            progress,
+            transferred,
+            total
+          })
+        }
+      }, (err) => {
+        if (err) {
+          reject(err)
+          return
+        }
+        resolve()
+      })
+    })
+  }
+
+  // 删除文件或目录
+  async deleteFile(id: string, remotePath: string, isDirectory: boolean): Promise<void> {
+    const sftp = await this.getSFTP(id)
+
+    return new Promise((resolve, reject) => {
+      if (isDirectory) {
+        // 递归删除目录
+        this.deleteDirectory(sftp, remotePath)
+          .then(() => resolve())
+          .catch(reject)
+      } else {
+        sftp.unlink(remotePath, (err) => {
+          if (err) {
+            reject(err)
+            return
+          }
+          resolve()
+        })
+      }
+    })
+  }
+
+  // 递归删除目录
+  private async deleteDirectory(sftp: SFTPWrapper, remotePath: string): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      // 先列出目录内容
+      sftp.readdir(remotePath, async (err, list) => {
+        if (err) {
+          reject(err)
+          return
+        }
+
+        try {
+          // 删除所有子项
+          for (const item of list) {
+            const itemPath = `${remotePath}/${item.filename}`
+            if (item.attrs.isDirectory()) {
+              await this.deleteDirectory(sftp, itemPath)
+            } else {
+              await new Promise<void>((res, rej) => {
+                sftp.unlink(itemPath, (e) => {
+                  if (e) rej(e)
+                  else res()
+                })
+              })
+            }
+          }
+
+          // 删除空目录
+          sftp.rmdir(remotePath, (e) => {
+            if (e) reject(e)
+            else resolve()
+          })
+        } catch (error) {
+          reject(error)
+        }
+      })
+    })
+  }
+
+  // 创建目录
+  async createDirectory(id: string, remotePath: string): Promise<void> {
+    const sftp = await this.getSFTP(id)
+
+    return new Promise((resolve, reject) => {
+      sftp.mkdir(remotePath, (err) => {
+        if (err) {
+          reject(err)
+          return
+        }
+        resolve()
+      })
+    })
+  }
 }
 
 // 创建 SSH 管理器实例
@@ -381,6 +581,57 @@ ipcMain.handle('ssh:test-connection', async (_, config) => {
   } catch (error) {
     console.error('SSH test connection error:', error)
     return false
+  }
+})
+
+// SFTP 相关处理器
+ipcMain.handle('ssh:list-files', async (_, id: string, remotePath: string) => {
+  try {
+    const files = await sshManager.listFiles(id, remotePath)
+    return { success: true, files }
+  } catch (error: any) {
+    console.error('SSH list files error:', error)
+    return { success: false, error: error.message }
+  }
+})
+
+ipcMain.handle('ssh:upload-file', async (_, id: string, localPath: string, remotePath: string) => {
+  try {
+    await sshManager.uploadFile(id, localPath, remotePath)
+    return { success: true }
+  } catch (error: any) {
+    console.error('SSH upload file error:', error)
+    return { success: false, error: error.message }
+  }
+})
+
+ipcMain.handle('ssh:download-file', async (_, id: string, remotePath: string, localPath: string) => {
+  try {
+    await sshManager.downloadFile(id, remotePath, localPath)
+    return { success: true }
+  } catch (error: any) {
+    console.error('SSH download file error:', error)
+    return { success: false, error: error.message }
+  }
+})
+
+ipcMain.handle('ssh:delete-file', async (_, id: string, remotePath: string, isDirectory: boolean) => {
+  try {
+    await sshManager.deleteFile(id, remotePath, isDirectory)
+    return { success: true }
+  } catch (error: any) {
+    console.error('SSH delete file error:', error)
+    return { success: false, error: error.message }
+  }
+})
+
+ipcMain.handle('ssh:create-directory', async (_, id: string, remotePath: string) => {
+  try {
+    await sshManager.createDirectory(id, remotePath)
+    return { success: true }
+  } catch (error: any) {
+    console.error('SSH create directory error:', error)
+    return { success: false, error: error.message }
   }
 })
 

@@ -25,6 +25,15 @@ const routes: RouteRecordRaw[] = [
     }
   },
   {
+    path: '/file-manager',
+    name: 'FileManager',
+    component: () => import('@/views/FileManagerView.vue'),
+    meta: {
+      title: 'SSH 文件管理',
+      icon: 'bi-folder-open'
+    }
+  },
+  {
     path: '/files',
     name: 'Files',
     component: () => import('@/views/FilesView.vue'),

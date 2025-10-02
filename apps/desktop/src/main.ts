@@ -17,6 +17,13 @@ import routes from './router'
 // 创建应用实例
 const app = createApp(App)
 
+// 设置 Vue 错误处理器
+app.config.errorHandler = (err: any, instance: any, info: string) => {
+  console.error('Vue Error:', err)
+  console.error('Error Info:', info)
+  console.error('Stack:', err.stack)
+}
+
 // 创建 Pinia store
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)

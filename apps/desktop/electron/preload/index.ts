@@ -47,7 +47,14 @@ const api = {
     getConnections: () => ipcRenderer.invoke('ssh:get-connections'),
     saveConnection: (config: any) => ipcRenderer.invoke('ssh:save-connection', config),
     deleteConnection: (id: string) => ipcRenderer.invoke('ssh:delete-connection', id),
-    testConnection: (config: any) => ipcRenderer.invoke('ssh:test-connection', config)
+    testConnection: (config: any) => ipcRenderer.invoke('ssh:test-connection', config),
+    
+    // SFTP 相关
+    listFiles: (id: string, remotePath: string) => ipcRenderer.invoke('ssh:list-files', id, remotePath),
+    uploadFile: (id: string, localPath: string, remotePath: string) => ipcRenderer.invoke('ssh:upload-file', id, localPath, remotePath),
+    downloadFile: (id: string, remotePath: string, localPath: string) => ipcRenderer.invoke('ssh:download-file', id, remotePath, localPath),
+    deleteFile: (id: string, remotePath: string, isDirectory: boolean) => ipcRenderer.invoke('ssh:delete-file', id, remotePath, isDirectory),
+    createDirectory: (id: string, remotePath: string) => ipcRenderer.invoke('ssh:create-directory', id, remotePath)
   },
 
   // AI 相关
@@ -72,7 +79,14 @@ const api = {
     uploadFile: (localPath: string, remotePath: string, connectionId: string) => 
       ipcRenderer.invoke('fs:upload-file', localPath, remotePath, connectionId),
     downloadFile: (remotePath: string, localPath: string, connectionId: string) => 
-      ipcRenderer.invoke('fs:download-file', remotePath, localPath, connectionId)
+      ipcRenderer.invoke('fs:download-file', remotePath, localPath, connectionId),
+    
+    // 文件对话框
+    showOpenDialog: (options: any) => ipcRenderer.invoke('fs:show-open-dialog', options),
+    showSaveDialog: (options: any) => ipcRenderer.invoke('fs:show-save-dialog', options),
+    
+    // 打开文件夹
+    openPath: (targetPath: string) => ipcRenderer.invoke('fs:open-path', targetPath)
   },
 
   // 系统信息
@@ -178,6 +192,13 @@ export type ElectronAPI = {
     saveConnection: (config: any) => Promise<any>
     deleteConnection: (id: string) => Promise<any>
     testConnection: (config: any) => Promise<any>
+    
+    // SFTP 相关
+    listFiles: (id: string, remotePath: string) => Promise<any>
+    uploadFile: (id: string, localPath: string, remotePath: string) => Promise<any>
+    downloadFile: (id: string, remotePath: string, localPath: string) => Promise<any>
+    deleteFile: (id: string, remotePath: string, isDirectory: boolean) => Promise<any>
+    createDirectory: (id: string, remotePath: string) => Promise<any>
   }
   
   // AI 相关
@@ -199,6 +220,13 @@ export type ElectronAPI = {
     getStats: (path: string) => Promise<any>
     uploadFile: (localPath: string, remotePath: string, connectionId: string) => Promise<boolean>
     downloadFile: (remotePath: string, localPath: string, connectionId: string) => Promise<boolean>
+    
+    // 文件对话框
+    showOpenDialog: (options: any) => Promise<string[]>
+    showSaveDialog: (options: any) => Promise<string | null>
+    
+    // 打开文件夹
+    openPath: (targetPath: string) => Promise<string>
   }
   
   // 系统信息

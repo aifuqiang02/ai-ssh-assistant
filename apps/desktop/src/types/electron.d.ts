@@ -40,6 +40,13 @@ export interface ElectronAPI {
     saveConnection: (config: any) => Promise<any>
     deleteConnection: (id: string) => Promise<any>
     testConnection: (config: any) => Promise<any>
+    
+    // SFTP 相关
+    listFiles: (id: string, remotePath: string) => Promise<any>
+    uploadFile: (id: string, localPath: string, remotePath: string) => Promise<any>
+    downloadFile: (id: string, remotePath: string, localPath: string) => Promise<any>
+    deleteFile: (id: string, remotePath: string, isDirectory: boolean) => Promise<any>
+    createDirectory: (id: string, remotePath: string) => Promise<any>
   }
   
   // AI 相关
@@ -61,6 +68,13 @@ export interface ElectronAPI {
     getStats: (path: string) => Promise<any>
     uploadFile: (localPath: string, remotePath: string, connectionId: string) => Promise<boolean>
     downloadFile: (remotePath: string, localPath: string, connectionId: string) => Promise<boolean>
+    
+    // 文件对话框
+    showOpenDialog: (options: any) => Promise<string[]>
+    showSaveDialog: (options: any) => Promise<string | null>
+    
+    // 打开文件夹
+    openPath: (targetPath: string) => Promise<string>
   }
   
   // 系统信息

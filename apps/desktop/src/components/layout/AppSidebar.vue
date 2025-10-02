@@ -36,6 +36,7 @@
               @create-folder="handleCreateSubFolder"
               @create-connection="handleCreateSubConnection"
               @edit-connection="openEditConnectionDialog"
+              @open-file-manager="handleOpenFileManager"
             />
           </div>
         </div>
@@ -479,6 +480,56 @@ const handleCreateSubFolder = async (data: { parentId: string; name: string }) =
 const handleCreateSubConnection = (data: { folderId: string; name: string }) => {
   // 打开对话框，并传入 folderId
   openConnectionDialog(data.folderId)
+}
+
+// 打开文件管理器
+const handleOpenFileManager = async (connection: SSHTreeNodeData) => {
+  console.log('打开文件管理器:', connection)
+  
+  if (!window.electronAPI) {
+    alert('文件管理功能仅在桌面应用中可用')
+    return
+  }
+  
+  if (!openNewTab) {
+    console.error('openNewTab 方法未注入')
+    return
+  }
+  
+  try {
+    // 构建连接配置
+    const connectionConfig = {
+      id: connection.id,
+      name: connection.name,
+      host: connection.host,
+      port: connection.port || 22,
+      username: connection.username,
+      authType: connection.authType,
+      password: connection.password,
+      privateKey: connection.privateKey,
+      passphrase: connection.passphrase
+    }
+    
+    // 建立连接
+    const result = await window.electronAPI.ssh.connect(connectionConfig)
+    
+    if (result && result.status === 'connected') {
+      // 连接成功，在新标签页中打开文件管理器
+      const fileManagerId = `file-manager-${result.id || connection.id}`
+      openNewTab(
+        fileManagerId,
+        `${connection.name} - 文件管理`,
+        'bi bi-folder-open',
+        `/file-manager?connectionId=${result.id || connection.id}&nodeId=${connection.id}&name=${encodeURIComponent(connection.name)}&host=${encodeURIComponent(connection.host || '')}&port=${connection.port || 22}`
+      )
+      console.log(`Opened file manager tab for connection: ${connection.name}`)
+    } else {
+      alert(`连接失败: ${result?.message || '未知错误'}`)
+    }
+  } catch (err: any) {
+    console.error('打开文件管理器失败:', err)
+    alert(`连接失败: ${err.message || '未知错误'}`)
+  }
 }
 </script>
 

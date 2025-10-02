@@ -1,4 +1,4 @@
-import { ipcMain, dialog } from 'electron'
+import { ipcMain, dialog, shell } from 'electron'
 import fs from 'fs/promises'
 import path from 'path'
 import { windowEvents } from '../shared/events'
@@ -180,6 +180,17 @@ class FileSystemManager {
 
     return result.canceled ? null : result.filePath || null
   }
+
+  async openPath(targetPath: string): Promise<string> {
+    try {
+      // 使用 shell.openPath 打开文件夹或文件
+      const errorMessage = await shell.openPath(targetPath)
+      return errorMessage // 如果成功返回空字符串，失败返回错误信息
+    } catch (error) {
+      console.error('Open path error:', error)
+      throw error
+    }
+  }
 }
 
 // 创建文件系统管理器实例
@@ -286,6 +297,15 @@ ipcMain.handle('fs:show-save-dialog', async (_, options: any) => {
     return await fsManager.showSaveDialog(options)
   } catch (error) {
     console.error('Show save dialog error:', error)
+    throw error
+  }
+})
+
+ipcMain.handle('fs:open-path', async (_, targetPath: string) => {
+  try {
+    return await fsManager.openPath(targetPath)
+  } catch (error) {
+    console.error('Open path error:', error)
     throw error
   }
 })

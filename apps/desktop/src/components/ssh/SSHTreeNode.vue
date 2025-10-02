@@ -81,6 +81,11 @@
                 <i class="bi bi-play"></i>
                 <span>连接</span>
               </div>
+              <div class="action-item" @click="handleOpenFileManager">
+                <i class="bi bi-folder-open"></i>
+                <span>文件管理</span>
+              </div>
+              <div class="action-divider"></div>
               <div class="action-item" @click="handleEditConnection">
                 <i class="bi bi-gear"></i>
                 <span>编辑</span>
@@ -139,6 +144,7 @@
         @create-folder="$emit('create-folder', $event)"
         @create-connection="$emit('create-connection', $event)"
         @edit-connection="$emit('edit-connection', $event)"
+        @open-file-manager="$emit('open-file-manager', $event)"
       />
     </div>
 
@@ -193,6 +199,7 @@ const emit = defineEmits<{
   'create-folder': [data: { parentId: string; name: string }]
   'create-connection': [data: { folderId: string; name: string }]
   'edit-connection': [connection: SSHTreeNodeData]
+  'open-file-manager': [connection: SSHTreeNodeData]
 }>()
 
 // 展开/折叠状态（文件夹默认展开）
@@ -283,6 +290,12 @@ const handleDelete = () => {
 // 处理编辑连接
 const handleEditConnection = () => {
   emit('edit-connection', props.node)
+  showActions.value = false
+}
+
+// 处理打开文件管理
+const handleOpenFileManager = () => {
+  emit('open-file-manager', props.node)
   showActions.value = false
 }
 
