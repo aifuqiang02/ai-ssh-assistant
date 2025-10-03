@@ -13,7 +13,7 @@
     </div>
 
     <!-- 下拉选择框 -->
-    <div v-if="isOpen" class="dropdown-overlay" @click="closeDropdown"></div>
+    <div v-if="isOpen" class="dropdown-overlay" @click.self="closeDropdown"></div>
     <transition name="dropdown">
       <div v-if="isOpen" class="dropdown-menu">
         <!-- 搜索框 -->
@@ -53,7 +53,7 @@
                 :key="model.id"
                 class="model-item"
                 :class="{ selected: isModelSelected(provider.id, model.id) }"
-                @click="selectModel(provider, model)"
+                @click.stop="selectModel(provider, model)"
               >
                 <div class="model-item-content">
                   <div class="model-item-header">
@@ -139,12 +139,18 @@ const enabledProviders = computed(() => {
 })
 
 const filteredProviders = computed(() => {
+  // 先过滤出启用的 provider，并过滤每个 provider 中启用的模型
+  const providersWithEnabledModels = enabledProviders.value.map(provider => ({
+    ...provider,
+    models: provider.models.filter(model => model.enabled !== false)  // 只显示已启用的模型
+  })).filter(provider => provider.models.length > 0)  // 移除没有启用模型的 provider
+  
   if (!searchQuery.value.trim()) {
-    return enabledProviders.value
+    return providersWithEnabledModels
   }
   
   const query = searchQuery.value.toLowerCase()
-  return enabledProviders.value
+  return providersWithEnabledModels
     .map(provider => ({
       ...provider,
       models: provider.models.filter(model => 
@@ -166,18 +172,33 @@ const closeDropdown = () => {
 }
 
 const isModelSelected = (providerId: string, modelId: string) => {
-  return props.modelValue?.providerId === providerId && props.modelValue?.modelId === modelId
+  const result = props.modelValue?.providerId === providerId && props.modelValue?.modelId === modelId
+  console.log(`isModelSelected(${providerId}, ${modelId}):`, result, 'current:', props.modelValue)
+  return result
 }
 
 const selectModel = (provider: AIProvider, model: AIModel) => {
+  console.log('=== 点击选择模型 ===')
+  console.log('Provider:', provider.name, provider.id)
+  console.log('Model:', model.name, model.id)
+  
   const selection: SelectedModel = {
     providerId: provider.id,
     modelId: model.id
   }
   
+  console.log('创建选择对象:', JSON.stringify(selection))
+  console.log('当前 modelValue:', JSON.stringify(props.modelValue))
+  
   emit('update:modelValue', selection)
   emit('change', provider, model)
-  closeDropdown()
+  
+  console.log('已触发 emit')
+  
+  // 延迟关闭下拉菜单，确保选择操作完成
+  setTimeout(() => {
+    closeDropdown()
+  }, 100)
 }
 
 const formatContextWindow = (tokens: number): string => {
@@ -200,7 +221,12 @@ const loadProviders = () => {
     ...provider,
     apiKey: '',
     enabled: false,
-    isDefault: false
+    isDefault: false,
+    // 为每个模型设置默认启用状态
+    models: provider.models.map(model => ({
+      ...model,
+      enabled: model.enabled !== undefined ? model.enabled : true
+    }))
   }))
   
   // 从 localStorage 加载已保存的配置
@@ -209,12 +235,26 @@ const loadProviders = () => {
     if (saved) {
       const savedConfigs = JSON.parse(saved)
       aiProviders.value = aiProviders.value.map(provider => {
-        const savedConfig = savedConfigs.find((c: AIProvider) => c.id === provider.id)
+        const savedConfig = savedConfigs.find((c: any) => c.id === provider.id)
         if (savedConfig) {
+          // 恢复模型的 enabled 状态
+          const models = provider.models.map(model => {
+            const savedModel = savedConfig.models?.find((m: any) => m.id === model.id)
+            return {
+              ...model,
+              enabled: savedModel?.enabled !== undefined ? savedModel.enabled : true
+            }
+          })
+          
           return {
             ...provider,
-            ...savedConfig,
-            apiKey: savedConfig.apiKey ? decryptApiKey(savedConfig.apiKey) : ''
+            models,
+            // 只覆盖配置字段，保留默认的 name, description, icon, website
+            apiKey: savedConfig.apiKey ? decryptApiKey(savedConfig.apiKey) : '',
+            endpoint: savedConfig.endpoint || provider.endpoint,
+            enabled: savedConfig.enabled || false,
+            isDefault: savedConfig.isDefault || false,
+            config: savedConfig.config || provider.config
           }
         }
         return provider
@@ -252,7 +292,12 @@ const handleClickOutside = (e: MouseEvent) => {
 
 watch(isOpen, (newVal) => {
   if (newVal) {
-    document.addEventListener('click', handleClickOutside)
+    // 延迟添加监听器，避免打开下拉菜单的点击事件立即触发关闭
+    setTimeout(() => {
+      if (isOpen.value) {
+        document.addEventListener('click', handleClickOutside)
+      }
+    }, 0)
   } else {
     document.removeEventListener('click', handleClickOutside)
   }

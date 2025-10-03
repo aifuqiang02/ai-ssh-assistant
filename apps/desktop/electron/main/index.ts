@@ -1,4 +1,4 @@
-import { app, BrowserWindow, shell, ipcMain, dialog, globalShortcut } from 'electron'
+import { app, BrowserWindow, shell, ipcMain, dialog, globalShortcut, session } from 'electron'
 import { join } from 'path'
 import { windowEvents } from '../shared/events'
 
@@ -17,6 +17,26 @@ class Application {
     if (process.platform === 'win32') {
       app.setAppUserModelId('com.ai-ssh-assistant.desktop')
     }
+
+    // 配置 CSP 允许连接到 AI API
+    app.on('ready', () => {
+      session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+        callback({
+          responseHeaders: {
+            ...details.responseHeaders,
+            'Content-Security-Policy': [
+              "default-src 'self'; " +
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
+              "style-src 'self' 'unsafe-inline'; " +
+              "img-src 'self' data: https:; " +
+              "font-src 'self' data:; " +
+              "connect-src 'self' http://127.0.0.1:3000 http://localhost:3000 ws://127.0.0.1:3000 ws://localhost:3000 https://*; " +
+              "media-src 'self'"
+            ]
+          }
+        })
+      })
+    })
 
     // 当所有窗口关闭时退出应用 (macOS 除外)
     app.on('window-all-closed', () => {

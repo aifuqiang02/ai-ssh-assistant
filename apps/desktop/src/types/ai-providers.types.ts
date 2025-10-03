@@ -40,6 +40,7 @@ export interface AIModel {
   }
   
   recommended?: boolean
+  enabled?: boolean  // 是否启用该模型（默认启用）
 }
 
 // 省略 apiKey, enabled, isDefault 的类型

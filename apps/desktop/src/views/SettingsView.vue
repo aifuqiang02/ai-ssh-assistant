@@ -367,58 +367,156 @@
 
                   <!-- 详细模型列表 -->
                   <div v-else class="models-detail-list">
-                    <div 
-                      v-for="model in provider.models" 
-                      :key="model.id"
-                      class="model-detail-card"
-                    >
-                      <div class="model-header">
-                        <h5 class="model-name">
-                          {{ model.name }}
-                          <span v-if="model.recommended" class="recommended-tag">
-                            <i class="bi bi-star-fill"></i>
-                            推荐
-                          </span>
-                        </h5>
-                        <p v-if="model.description" class="model-description">{{ model.description }}</p>
+                    <!-- 已启用的模型 -->
+                    <div v-if="getEnabledModels(provider.models).length > 0" class="model-section">
+                      <div class="model-section-header">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <span>已启用 ({{ getEnabledModels(provider.models).length }})</span>
                       </div>
-                      
-                      <div class="model-specs">
-                        <div class="spec-item">
-                          <i class="bi bi-window-stack"></i>
-                          <span class="spec-label">上下文窗口:</span>
-                          <span class="spec-value">{{ formatContextWindow(model.contextWindow) }}</span>
+                      <div 
+                        v-for="model in getEnabledModels(provider.models)" 
+                        :key="model.id"
+                        class="model-row"
+                      >
+                        <!-- 模型名称 -->
+                        <div class="model-name-col" :title="model.description || model.name">
+                          <i :class="getModelProviderIcon(model, provider).icon" class="provider-icon" :title="getModelProviderIcon(model, provider).name"></i>
+                          <span class="model-name-text">{{ model.name }}</span>
+                          <i v-if="model.recommended" class="bi bi-star-fill model-star" title="推荐"></i>
                         </div>
                         
-                        <div class="spec-item">
-                          <i class="bi bi-lightning-charge"></i>
-                          <span class="spec-label">能力:</span>
-                          <div class="capabilities">
-                            <span v-if="model.capabilities.text" class="capability-badge">
-                              <i class="bi bi-chat-text"></i>
-                              文本
-                            </span>
-                            <span v-if="model.capabilities.image" class="capability-badge">
-                              <i class="bi bi-image"></i>
-                              图片
-                            </span>
-                            <span v-if="model.capabilities.vision" class="capability-badge">
-                              <i class="bi bi-eye"></i>
-                              视觉
-                            </span>
-                            <span v-if="model.capabilities.functionCall" class="capability-badge">
-                              <i class="bi bi-code-square"></i>
-                              函数调用
-                            </span>
-                          </div>
+                        <!-- 上下文窗口 -->
+                        <div class="model-info-col">
+                          <i 
+                            class="bi bi-window-stack model-icon" 
+                            :title="`上下文窗口: ${formatContextWindow(model.contextWindow)}`"
+                          ></i>
+                          <span class="model-info-text">{{ formatContextWindow(model.contextWindow) }}</span>
                         </div>
                         
-                        <div v-if="model.price" class="spec-item">
-                          <i class="bi bi-currency-dollar"></i>
-                          <span class="spec-label">价格:</span>
-                          <span class="spec-value">
-                            输入 ${{ model.price.input }}/1M · 输出 ${{ model.price.output }}/1M
-                          </span>
+                        <!-- 能力图标 -->
+                        <div class="model-capabilities-col">
+                          <i 
+                            v-if="model.capabilities.text" 
+                            class="bi bi-chat-text model-capability-icon" 
+                            title="支持文本对话"
+                          ></i>
+                          <i 
+                            v-if="model.capabilities.image" 
+                            class="bi bi-image model-capability-icon" 
+                            title="支持图片生成"
+                          ></i>
+                          <i 
+                            v-if="model.capabilities.vision" 
+                            class="bi bi-eye model-capability-icon" 
+                            title="支持视觉理解"
+                          ></i>
+                          <i 
+                            v-if="model.capabilities.functionCall" 
+                            class="bi bi-code-square model-capability-icon" 
+                            title="支持函数调用"
+                          ></i>
+                        </div>
+                        
+                        <!-- 价格 -->
+                        <div v-if="model.price" class="model-price-col">
+                          <i 
+                            class="bi bi-currency-dollar model-icon" 
+                            :title="`价格: 输入 $${model.price.input.toFixed(2)}/1M · 输出 $${model.price.output.toFixed(2)}/1M`"
+                          ></i>
+                          <span class="model-info-text">${{ model.price.input.toFixed(2) }}/${{ model.price.output.toFixed(2) }}</span>
+                        </div>
+                        <div v-else class="model-price-col">
+                          <span class="model-info-text">-</span>
+                        </div>
+                        
+                        <!-- 开关 -->
+                        <div class="model-toggle-col">
+                          <label class="toggle-switch model-toggle" @click.stop>
+                            <input 
+                              v-model="model.enabled" 
+                              type="checkbox"
+                              @change="onModelToggle(provider.id, model.id)"
+                            />
+                            <span class="toggle-slider"></span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 已禁用的模型 -->
+                    <div v-if="getDisabledModels(provider.models).length > 0" class="model-section">
+                      <div class="model-section-header disabled">
+                        <i class="bi bi-dash-circle"></i>
+                        <span>已禁用 ({{ getDisabledModels(provider.models).length }})</span>
+                      </div>
+                      <div 
+                        v-for="model in getDisabledModels(provider.models)" 
+                        :key="model.id"
+                        class="model-row disabled"
+                      >
+                        <!-- 模型名称 -->
+                        <div class="model-name-col" :title="model.description || model.name">
+                          <i :class="getModelProviderIcon(model, provider).icon" class="provider-icon" :title="getModelProviderIcon(model, provider).name"></i>
+                          <span class="model-name-text">{{ model.name }}</span>
+                          <i v-if="model.recommended" class="bi bi-star-fill model-star" title="推荐"></i>
+                        </div>
+                        
+                        <!-- 上下文窗口 -->
+                        <div class="model-info-col">
+                          <i 
+                            class="bi bi-window-stack model-icon" 
+                            :title="`上下文窗口: ${formatContextWindow(model.contextWindow)}`"
+                          ></i>
+                          <span class="model-info-text">{{ formatContextWindow(model.contextWindow) }}</span>
+                        </div>
+                        
+                        <!-- 能力图标 -->
+                        <div class="model-capabilities-col">
+                          <i 
+                            v-if="model.capabilities.text" 
+                            class="bi bi-chat-text model-capability-icon" 
+                            title="支持文本对话"
+                          ></i>
+                          <i 
+                            v-if="model.capabilities.image" 
+                            class="bi bi-image model-capability-icon" 
+                            title="支持图片生成"
+                          ></i>
+                          <i 
+                            v-if="model.capabilities.vision" 
+                            class="bi bi-eye model-capability-icon" 
+                            title="支持视觉理解"
+                          ></i>
+                          <i 
+                            v-if="model.capabilities.functionCall" 
+                            class="bi bi-code-square model-capability-icon" 
+                            title="支持函数调用"
+                          ></i>
+                        </div>
+                        
+                        <!-- 价格 -->
+                        <div v-if="model.price" class="model-price-col">
+                          <i 
+                            class="bi bi-currency-dollar model-icon" 
+                            :title="`价格: 输入 $${model.price.input.toFixed(2)}/1M · 输出 $${model.price.output.toFixed(2)}/1M`"
+                          ></i>
+                          <span class="model-info-text">${{ model.price.input.toFixed(2) }}/${{ model.price.output.toFixed(2) }}</span>
+                        </div>
+                        <div v-else class="model-price-col">
+                          <span class="model-info-text">-</span>
+                        </div>
+                        
+                        <!-- 开关 -->
+                        <div class="model-toggle-col">
+                          <label class="toggle-switch model-toggle" @click.stop>
+                            <input 
+                              v-model="model.enabled" 
+                              type="checkbox"
+                              @change="onModelToggle(provider.id, model.id)"
+                            />
+                            <span class="toggle-slider"></span>
+                          </label>
                         </div>
                       </div>
                     </div>
@@ -447,6 +545,15 @@
                   >
                     <i :class="['bi', testingProviders[provider.id] ? 'bi-hourglass-split spin' : 'bi-lightning']"></i>
                     {{ testingProviders[provider.id] ? '测试中...' : '测试连接' }}
+                  </button>
+                  <button 
+                    class="btn-refresh"
+                    :disabled="!provider.apiKey || fetchingModels[provider.id]"
+                    @click="refreshModelList(provider)"
+                    :title="provider.apiKey ? '从 API 刷新最新模型列表' : '请先配置 API Key'"
+                  >
+                    <i :class="['bi', fetchingModels[provider.id] ? 'bi-arrow-repeat spin' : 'bi-arrow-repeat']"></i>
+                    {{ fetchingModels[provider.id] ? '刷新中...' : '刷新模型' }}
                   </button>
                   <button 
                     class="btn-clear"
@@ -786,10 +893,12 @@ import {
   CLOUD_PROVIDERS,
   OPENSOURCE_PROVIDERS,
   SPECIALIZED_PROVIDERS,
-  type AIProvider 
+  type AIProvider,
+  type AIModel 
 } from '../types/ai-providers'
 import { encryptApiKey, decryptApiKey } from '../utils/encryption'
 import { testProviderConnection as testProviderAPI, type TestResult } from '../services/ai-test.service'
+import { fetchModelsForProvider } from '../services/model-fetcher.service'
 
 // 设置分类
 const settingsSections = [
@@ -838,6 +947,7 @@ const showApiKey = ref<Record<string, boolean>>({})
 const testingProviders = ref<Record<string, boolean>>({})
 const testResults = ref<Record<string, TestResult>>({})
 const expandedModels = ref<Record<string, boolean>>({})
+const fetchingModels = ref<Record<string, boolean>>({})
 
 // 过滤和搜索
 const providerSearchQuery = ref('')
@@ -1279,13 +1389,16 @@ const initializeAIProviders = () => {
     if (saved) {
       const savedConfigs = JSON.parse(saved)
       aiProviders.value = aiProviders.value.map(provider => {
-        const savedConfig = savedConfigs.find((c: AIProvider) => c.id === provider.id)
+        const savedConfig = savedConfigs.find((c: any) => c.id === provider.id)
         if (savedConfig) {
-          // 解密 API Key
+          // 只覆盖配置字段，保留默认的 name, description, icon, website, models
           return {
             ...provider,
-            ...savedConfig,
-            apiKey: savedConfig.apiKey ? decryptApiKey(savedConfig.apiKey) : ''
+            apiKey: savedConfig.apiKey ? decryptApiKey(savedConfig.apiKey) : '',
+            endpoint: savedConfig.endpoint || provider.endpoint,
+            enabled: savedConfig.enabled || false,
+            isDefault: savedConfig.isDefault || false,
+            config: savedConfig.config || provider.config
           }
         }
         return provider
@@ -1342,6 +1455,53 @@ const testProviderConnection = async (provider: AIProvider) => {
   }
 }
 
+const refreshModelList = async (provider: AIProvider) => {
+  if (!provider.apiKey) {
+    showNotification('请先输入 API Key', 'error')
+    return
+  }
+  
+  fetchingModels.value[provider.id] = true
+  
+  try {
+    const result = await fetchModelsForProvider(
+      provider.id,
+      provider.apiKey,
+      provider.endpoint
+    )
+    
+    if (result.success && result.models) {
+      // 合并获取的模型列表和现有配置
+      const existingModels = provider.models || []
+      const fetchedModels = result.models
+      
+      // 保留用户对现有模型的 enabled 配置，新模型默认禁用
+      const mergedModels = fetchedModels.map(fetchedModel => {
+        const existing = existingModels.find(m => m.id === fetchedModel.id)
+        return {
+          ...fetchedModel,
+          enabled: existing?.enabled !== undefined ? existing.enabled : false  // 新模型默认禁用
+        }
+      })
+      
+      // 更新模型列表
+      provider.models = mergedModels
+      
+      // 自动保存
+      saveAIProviderConfigs()
+      
+      showNotification(`成功获取 ${mergedModels.length} 个模型`, 'success')
+    } else {
+      showNotification(result.error || '获取模型列表失败', 'error')
+    }
+  } catch (error: any) {
+    console.error('Failed to refresh model list:', error)
+    showNotification('刷新模型列表失败: ' + error.message, 'error')
+  } finally {
+    fetchingModels.value[provider.id] = false
+  }
+}
+
 const clearProviderConfig = (providerId: string) => {
   const provider = aiProviders.value.find(p => p.id === providerId)
   if (provider) {
@@ -1357,6 +1517,59 @@ const toggleModelDetails = (providerId: string) => {
   expandedModels.value[providerId] = !expandedModels.value[providerId]
 }
 
+const onModelToggle = (providerId: string, modelId: string) => {
+  console.log(`模型切换: ${providerId} - ${modelId}`)
+  // watch 会自动触发保存
+}
+
+const getEnabledModels = (models: AIModel[]) => {
+  return models.filter(model => model.enabled !== false)
+}
+
+const getDisabledModels = (models: AIModel[]) => {
+  return models.filter(model => model.enabled === false)
+}
+
+// 获取模型的真实供应商图标（用于 OpenRouter 等聚合平台）
+const getModelProviderIcon = (model: AIModel, provider: AIProvider): { icon: string, name: string } => {
+  // 如果是聚合平台（如 OpenRouter），从模型 ID 中提取真实供应商
+  if (provider.id === 'openrouter' || provider.id === 'together') {
+    const modelId = model.id.toLowerCase()
+    
+    // 根据模型 ID 前缀或关键字识别供应商
+    if (modelId.includes('openai/') || modelId.includes('gpt')) {
+      return { icon: 'bi bi-robot', name: 'OpenAI' }
+    }
+    if (modelId.includes('anthropic/') || modelId.includes('claude')) {
+      return { icon: 'bi bi-brain', name: 'Anthropic' }
+    }
+    if (modelId.includes('google/') || modelId.includes('gemini') || modelId.includes('palm')) {
+      return { icon: 'bi bi-search', name: 'Google' }
+    }
+    if (modelId.includes('meta/') || modelId.includes('llama')) {
+      return { icon: 'bi bi-facebook', name: 'Meta' }
+    }
+    if (modelId.includes('mistral/') || modelId.includes('mistral')) {
+      return { icon: 'bi bi-wind', name: 'Mistral AI' }
+    }
+    if (modelId.includes('cohere/')) {
+      return { icon: 'bi bi-graph-up', name: 'Cohere' }
+    }
+    if (modelId.includes('deepseek/')) {
+      return { icon: 'bi bi-search-heart', name: 'DeepSeek' }
+    }
+    if (modelId.includes('qwen/') || modelId.includes('qwen')) {
+      return { icon: 'bi bi-cloud', name: '通义千问' }
+    }
+    if (modelId.includes('yi/')) {
+      return { icon: 'bi bi-lightning', name: '零一万物' }
+    }
+  }
+  
+  // 默认返回当前供应商的图标
+  return { icon: provider.icon, name: provider.name }
+}
+
 const formatContextWindow = (tokens: number): string => {
   if (tokens >= 1000000) {
     return `${(tokens / 1000000).toFixed(1)}M tokens`
@@ -1368,12 +1581,17 @@ const formatContextWindow = (tokens: number): string => {
 
 const saveAIProviderConfigs = () => {
   try {
-    // 加密 API Key 后保存
+    // 只保存必要的配置字段，不保存 models（从默认配置中读取）
     const configsToSave = aiProviders.value.map(provider => ({
-      ...provider,
-      apiKey: provider.apiKey ? encryptApiKey(provider.apiKey) : ''
+      id: provider.id,
+      apiKey: provider.apiKey ? encryptApiKey(provider.apiKey) : '',
+      endpoint: provider.endpoint,
+      enabled: provider.enabled,
+      isDefault: provider.isDefault,
+      config: provider.config
     }))
     localStorage.setItem('aiProviderConfigs', JSON.stringify(configsToSave))
+    console.log('Settings saved:', configsToSave)
   } catch (error) {
     console.error('Failed to save AI provider configs:', error)
   }
@@ -2542,109 +2760,155 @@ onMounted(() => {
 .models-detail-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
   margin-top: 12px;
 }
 
-.model-detail-card {
-  padding: 16px;
-  background: var(--vscode-bg);
-  border: 1px solid var(--vscode-border);
-  border-radius: 6px;
-  transition: all 0.2s;
-}
-
-.model-detail-card:hover {
-  border-color: var(--vscode-fg-muted);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.model-header {
-  margin-bottom: 12px;
-}
-
-.model-name {
-  margin: 0 0 4px 0;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--vscode-fg);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.recommended-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 8px;
-  background: linear-gradient(135deg, #f39c12, #e67e22);
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 500;
-  color: white;
-}
-
-.recommended-tag i {
-  font-size: 10px;
-}
-
-.model-description {
-  margin: 0;
-  font-size: 13px;
-  color: var(--vscode-fg-muted);
-  line-height: 1.5;
-}
-
-.model-specs {
+/* 模型分组 */
+.model-section {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
-.spec-item {
+.model-section-header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 8px;
+  padding: 8px 12px;
+  background: rgba(var(--vscode-accent-rgb), 0.08);
+  border-left: 3px solid var(--vscode-accent);
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--vscode-fg);
+  margin-bottom: 4px;
+}
+
+.model-section-header i {
+  color: var(--vscode-accent);
+  font-size: 14px;
+}
+
+.model-section-header.disabled {
+  background: rgba(var(--vscode-fg-rgb), 0.05);
+  border-left-color: var(--vscode-fg-muted);
+}
+
+.model-section-header.disabled i {
+  color: var(--vscode-fg-muted);
+}
+
+/* 模型行布局 */
+.model-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: var(--vscode-bg);
+  border: 1px solid var(--vscode-border);
+  border-radius: 4px;
+  transition: all 0.2s;
   font-size: 13px;
 }
 
-.spec-item > i {
-  margin-top: 2px;
-  color: var(--vscode-accent);
-  flex-shrink: 0;
+.model-row:hover {
+  border-color: var(--vscode-fg-muted);
+  background: rgba(var(--vscode-accent-rgb), 0.03);
 }
 
-.spec-label {
-  color: var(--vscode-fg-muted);
-  font-weight: 500;
-  flex-shrink: 0;
+.model-row.disabled {
+  opacity: 0.5;
+  background: rgba(var(--vscode-fg-rgb), 0.02);
 }
 
-.spec-value {
-  color: var(--vscode-fg);
+.model-row.disabled:hover {
+  opacity: 0.7;
+  background: rgba(var(--vscode-fg-rgb), 0.04);
 }
 
-.capabilities {
+.model-name-col {
+  flex: 1;
+  min-width: 0;
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
   gap: 6px;
 }
 
-.capability-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 3px 8px;
-  background: rgba(var(--vscode-accent-rgb), 0.1);
-  border: 1px solid rgba(var(--vscode-accent-rgb), 0.3);
-  border-radius: 12px;
-  font-size: 11px;
-  color: var(--vscode-accent);
+.model-name-text {
+  font-weight: 600;
+  color: var(--vscode-fg);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.capability-badge i {
-  font-size: 10px;
+.provider-icon {
+  color: var(--vscode-accent);
+  font-size: 14px;
+  flex-shrink: 0;
+  opacity: 0.7;
+  margin-right: 2px;
+}
+
+.model-star {
+  color: #ffc107;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.model-info-col {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.model-icon {
+  color: var(--vscode-accent);
+  font-size: 14px;
+  cursor: help;
+}
+
+.model-info-text {
+  color: var(--vscode-fg-muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.model-capabilities-col {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.model-capability-icon {
+  color: var(--vscode-accent);
+  font-size: 14px;
+  cursor: help;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.model-capability-icon:hover {
+  opacity: 1;
+}
+
+.model-price-col {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  min-width: 80px;
+}
+
+.model-toggle-col {
+  flex-shrink: 0;
+}
+
+.model-toggle {
+  margin: 0;
 }
 
 .config-actions {
@@ -2656,6 +2920,7 @@ onMounted(() => {
 }
 
 .btn-test,
+.btn-refresh,
 .btn-clear {
   display: flex;
   align-items: center;
@@ -2684,6 +2949,24 @@ onMounted(() => {
   cursor: not-allowed;
 }
 
+.btn-refresh {
+  background: transparent;
+  border: 1px solid var(--vscode-accent);
+  color: var(--vscode-accent);
+}
+
+.btn-refresh:hover:not(:disabled) {
+  background: rgba(var(--vscode-accent-rgb), 0.1);
+  transform: translateY(-1px);
+}
+
+.btn-refresh:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-color: var(--vscode-border);
+  color: var(--vscode-fg-muted);
+}
+
 .btn-clear {
   background: transparent;
   border: 1px solid var(--vscode-border);
@@ -2709,8 +2992,8 @@ onMounted(() => {
 
 @keyframes slideIn {
   from {
-    opacity: 0;
-    transform: translateY(-10px);
+  opacity: 0;
+  transform: translateY(-10px);
   }
   to {
     opacity: 1;

@@ -106,7 +106,7 @@ const onModelChange = (provider: AIProvider, model: AIModel) => {
   currentProvider.value = provider
   currentModel.value = model
   console.log('模型已切换:', provider.name, model.name)
-  // TODO: 这里可以添加切换模型后的其他逻辑
+  console.log('selectedModel.value:', selectedModel.value)
 }
 
 const sendMessage = async () => {
