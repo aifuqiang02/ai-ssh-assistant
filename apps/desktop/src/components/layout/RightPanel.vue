@@ -67,6 +67,13 @@
             >
               {{ message.content }}
             </div>
+            <!-- AI 消息：流式输出时显示纯文本，完成后渲染 Markdown -->
+            <div 
+              v-else-if="message.streaming"
+              class="whitespace-pre-wrap text-sm pr-8 message-content streaming-text"
+            >
+              {{ message.content }}<span class="cursor-blink">▋</span>
+            </div>
             <div 
               v-else
               class="markdown-content text-sm pr-8 message-content"
@@ -401,7 +408,13 @@ const sendMessage = async () => {
     streaming: true
   }
   messages.value.push(aiMessage)
+  const aiMessageIndex = messages.value.length - 1 // 记录索引
   scrollToBottom()
+  
+  // 打字机效果相关变量（需要在 try-catch 外定义，以便清理）
+  let bufferContent = ''
+  let typewriterInterval: NodeJS.Timeout | null = null
+  let apiStreamCompleted = false
   
   try {
     // 构建 API 请求消息
@@ -418,6 +431,39 @@ const sendMessage = async () => {
       content: 'You are a helpful AI assistant for SSH remote server management. You can help with code analysis, file operations, SSH connection management, and terminal commands.'
     })
     
+    // 节流控制：避免过于频繁的滚动
+    let lastScrollTime = 0
+    const scrollThrottle = 100 // 100ms 更新一次滚动
+    
+    // 打字机效果：逐字符显示
+    const startTypewriter = () => {
+      if (typewriterInterval) return
+      
+      typewriterInterval = setInterval(() => {
+        if (bufferContent.length > 0) {
+          // 每次取出 2-5 个字符（模拟自然的打字速度）
+          const charsToAdd = bufferContent.slice(0, Math.min(Math.floor(Math.random() * 4) + 2, bufferContent.length))
+          
+          // 通过索引更新，确保 Vue 响应式系统能检测到变化
+          messages.value[aiMessageIndex].content += charsToAdd
+          bufferContent = bufferContent.slice(charsToAdd.length)
+          
+          // 节流滚动更新
+          const now = Date.now()
+          if (now - lastScrollTime > scrollThrottle) {
+            scrollToBottom()
+            lastScrollTime = now
+          }
+        } else if (apiStreamCompleted) {
+          // API 完成且缓冲区清空，停止打字机效果
+          if (typewriterInterval) {
+            clearInterval(typewriterInterval)
+            typewriterInterval = null
+          }
+        }
+      }, 20) // 每 20ms 添加几个字符
+    }
+    
     // 调用 AI API（流式）
     await chatCompletion(
       currentProvider.value,
@@ -430,26 +476,58 @@ const sendMessage = async () => {
       },
       (chunk) => {
         if (!chunk.done && chunk.content) {
-          aiMessage.content += chunk.content
-          scrollToBottom()
+          // 将接收到的内容添加到缓冲区
+          bufferContent += chunk.content
+          
+          // 启动打字机效果
+          if (!typewriterInterval) {
+            startTypewriter()
+          }
         }
       }
     )
     
-    // 流式完成
-    aiMessage.streaming = false
+    // API 流式响应完成
+    apiStreamCompleted = true
+    
+    // 等待缓冲区内容全部显示（打字机效果完成）
+    while (bufferContent.length > 0 || (typewriterInterval !== null)) {
+      await new Promise(resolve => setTimeout(resolve, 50))
+    }
+    
+    // 清理打字机定时器
+    if (typewriterInterval) {
+      clearInterval(typewriterInterval)
+      typewriterInterval = null
+    }
+    
+    // 打字机效果完成，切换到 Markdown 渲染
+    messages.value[aiMessageIndex].streaming = false
     
     // 如果内容为空，显示错误提示
-    if (!aiMessage.content.trim()) {
-      aiMessage.content = '抱歉，AI 没有返回任何内容。请重试。'
+    if (!messages.value[aiMessageIndex].content.trim()) {
+      messages.value[aiMessageIndex].content = '抱歉，AI 没有返回任何内容。请重试。'
     }
+    
+    // 等待 Markdown 渲染完成后滚动到底部
+    await nextTick()
+    scrollToBottom()
     
   } catch (error: any) {
     console.error('AI API 调用失败:', error)
     
+    // 标记 API 完成（即使出错）
+    apiStreamCompleted = true
+    
+    // 清理打字机定时器
+    if (typewriterInterval) {
+      clearInterval(typewriterInterval)
+      typewriterInterval = null
+    }
+    
     // 更新消息为错误提示
-    aiMessage.content = `❌ 调用失败: ${error.message}\n\n请检查：\n1. API Key 是否正确\n2. 网络连接是否正常\n3. API 配额是否充足\n4. 端点 URL 是否正确`
-    aiMessage.streaming = false
+    messages.value[aiMessageIndex].content = `❌ 调用失败: ${error.message}\n\n请检查：\n1. API Key 是否正确\n2. 网络连接是否正常\n3. API 配额是否充足\n4. 端点 URL 是否正确`
+    messages.value[aiMessageIndex].streaming = false
   } finally {
     isGenerating.value = false
     scrollToBottom()
@@ -685,6 +763,22 @@ const scrollToBottom = () => {
   -moz-user-select: text;
   -ms-user-select: text;
   cursor: text;
+}
+
+/* 流式输出光标闪烁效果 */
+.streaming-text .cursor-blink {
+  animation: blink 1s infinite;
+  color: var(--vscode-accent);
+  font-weight: bold;
+}
+
+@keyframes blink {
+  0%, 49% {
+    opacity: 1;
+  }
+  50%, 100% {
+    opacity: 0;
+  }
 }
 
 /* Markdown 内容样式 */
