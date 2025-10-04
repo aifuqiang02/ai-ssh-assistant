@@ -32,6 +32,7 @@ model User {
   // 关联关系
   sshFolders     SSHFolder[]
   sshConnections SSHConnection[]
+  chatFolders    ChatFolder[]
   chatSessions   ChatSession[]
   messages       Message[]
   commandLogs    CommandLog[]
@@ -123,11 +124,36 @@ enum ConnectionStatus {
   ERROR
 }
 
+// 聊天文件夹表（用于组织聊天会话）
+model ChatFolder {
+  id        String   @id @default(cuid())
+  name      String   // 文件夹名称
+  order     Int      @default(0) // 排序顺序
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 树形结构支持
+  parentId  String?
+  parent    ChatFolder?  @relation("ChatFolderHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
+  children  ChatFolder[] @relation("ChatFolderHierarchy")
+
+  // 关联用户
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // 该文件夹下的聊天会话
+  sessions ChatSession[]
+
+  @@map("chat_folders")
+}
+
 // 聊天会话表
 model ChatSession {
   id          String   @id @default(cuid())
   title       String   // 会话标题
   type        SessionType   @default(CHAT) // 会话类型枚举
+  order       Int      @default(0) // 排序顺序
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -136,6 +162,10 @@ model ChatSession {
 
   // 会话元数据 - JSON 格式
   meta        Json?       // 存储会话的元数据（描述、标签等）
+
+  // 所属文件夹
+  folderId  String?
+  folder    ChatFolder? @relation(fields: [folderId], references: [id], onDelete: SetNull)
 
   // 关联用户和 SSH 连接
   userId String

@@ -236,6 +236,11 @@ onMounted(() => {
 const saveSelectedModel = () => {
   if (selectedModel.value) {
     localStorage.setItem('selectedAIModel', JSON.stringify(selectedModel.value))
+    // 触发自定义事件，通知其他组件模型已更改
+    window.dispatchEvent(new CustomEvent('ai-model-changed', {
+      detail: selectedModel.value
+    }))
+    console.log('模型已切换并通知:', selectedModel.value)
   }
 }
 

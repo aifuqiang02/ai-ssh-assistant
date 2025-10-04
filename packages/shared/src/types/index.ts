@@ -53,3 +53,6 @@ export interface CommandResult {
 
 // Export SSH types
 export * from './ssh.types'
+
+// Export Chat types
+export * from './chat.types'

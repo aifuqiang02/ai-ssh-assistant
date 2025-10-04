@@ -16,6 +16,7 @@ import RedisManager from './config/redis.js'
 import { authRoutes } from './routes/auth.routes.js'
 import { userRoutes } from './routes/user.routes.js'
 import { sshRoutes } from './routes/ssh.routes.js'
+import { chatRoutes } from './routes/chat.routes.js'
 import { aiRoutes } from './routes/ai.routes.js'
 import { fileRoutes } from './routes/file.routes.js'
 import { systemRoutes } from './routes/system.routes.js'
@@ -214,6 +215,7 @@ export async function buildApp(): Promise<FastifyInstance> {
   await app.register(authRoutes, { prefix: '/api/v1/auth' })
   await app.register(userRoutes, { prefix: '/api/v1/users' })
   await app.register(sshRoutes, { prefix: '/api/v1/ssh' })
+  await app.register(chatRoutes, { prefix: '/api/v1/chat' })
   await app.register(aiRoutes, { prefix: '/api/v1/ai' })
   await app.register(fileRoutes, { prefix: '/api/v1/files' })
   await app.register(systemRoutes, { prefix: '/api/v1/system' })

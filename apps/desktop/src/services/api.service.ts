@@ -309,6 +309,34 @@ class ApiService {
   // ==================== 聊天相关API ====================
 
   /**
+   * 获取聊天树形结构
+   */
+  async getChatTree(): Promise<ApiResponse<any[]>> {
+    return this.get('/chat/tree')
+  }
+
+  /**
+   * 创建聊天文件夹
+   */
+  async createChatFolder(folderData: any): Promise<ApiResponse<any>> {
+    return this.post('/chat/folders', folderData)
+  }
+
+  /**
+   * 更新聊天文件夹
+   */
+  async updateChatFolder(id: string, folderData: any): Promise<ApiResponse<any>> {
+    return this.put(`/chat/folders/${id}`, folderData)
+  }
+
+  /**
+   * 删除聊天文件夹
+   */
+  async deleteChatFolder(id: string): Promise<ApiResponse<void>> {
+    return this.delete(`/chat/folders/${id}`)
+  }
+
+  /**
    * 获取聊天会话列表
    */
   async getChatSessions(): Promise<ApiResponse<any[]>> {
@@ -320,6 +348,27 @@ class ApiService {
    */
   async createChatSession(sessionData: any): Promise<ApiResponse<any>> {
     return this.post('/chat/sessions', sessionData)
+  }
+
+  /**
+   * 更新聊天会话
+   */
+  async updateChatSession(id: string, sessionData: any): Promise<ApiResponse<any>> {
+    return this.put(`/chat/sessions/${id}`, sessionData)
+  }
+
+  /**
+   * 删除聊天会话
+   */
+  async deleteChatSession(id: string): Promise<ApiResponse<void>> {
+    return this.delete(`/chat/sessions/${id}`)
+  }
+
+  /**
+   * 移动聊天节点
+   */
+  async moveChatNode(moveData: any): Promise<ApiResponse<any>> {
+    return this.post('/chat/move', moveData)
   }
 
   /**

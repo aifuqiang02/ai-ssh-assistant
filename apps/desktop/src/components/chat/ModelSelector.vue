@@ -193,7 +193,13 @@ const selectModel = (provider: AIProvider, model: AIModel) => {
   emit('update:modelValue', selection)
   emit('change', provider, model)
   
-  console.log('已触发 emit')
+  // 保存到 localStorage 并通知其他组件
+  localStorage.setItem('selectedAIModel', JSON.stringify(selection))
+  window.dispatchEvent(new CustomEvent('ai-model-changed', {
+    detail: selection
+  }))
+  
+  console.log('已触发 emit 和模型切换事件')
   
   // 延迟关闭下拉菜单，确保选择操作完成
   setTimeout(() => {

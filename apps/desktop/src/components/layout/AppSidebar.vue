@@ -54,22 +54,35 @@
       <!-- AI 聊天视图 -->
       <div v-else-if="activeView === 'chat'" class="p-4">
         <div class="mb-4">
-          <button class="vscode-button primary w-full mb-2">
+          <button class="vscode-button primary w-full mb-2" @click="createRootChatFolder">
+            新建文件夹
+          </button>
+          <button class="vscode-button w-full" @click="createRootChatSession">
             新建对话
           </button>
         </div>
         
         <div class="space-y-2">
           <div class="vscode-tree-title text-xs font-medium text-vscode-fg-muted mb-2">
-            聊天历史
+            对话列表
           </div>
-          <div 
-            v-for="chat in chatHistory" 
-            :key="chat.id"
-            class="vscode-tree-item"
-          >
-            <i class="bi bi-chat-dots text-vscode-success mr-2"></i>
-            <span class="truncate">{{ chat.title }}</span>
+          <div class="chat-tree-container">
+            <ChatTreeNode
+              v-for="node in chatTreeData"
+              :key="node.id"
+              :node="node"
+              :selected-id="selectedChatNodeId"
+              :auto-edit-id="autoEditChatNodeId"
+              :edit-trigger="editChatTrigger"
+              @select="handleChatNodeSelect"
+              @update="handleChatNodeUpdate"
+              @delete="handleChatNodeDelete"
+              @open-session="handleOpenSession"
+              @drag-node="handleDragChatNode"
+              @drop-node="handleDropChatNode"
+              @create-folder="handleCreateChatSubFolder"
+              @create-session="handleCreateChatSubSession"
+            />
           </div>
         </div>
       </div>
@@ -138,9 +151,12 @@
 
 <script setup lang="ts">
 import { computed, ref, onMounted, watch, nextTick, inject } from 'vue'
+import { useRouter } from 'vue-router'
 import SSHTreeNode, { type SSHTreeNodeData } from '../ssh/SSHTreeNode.vue'
 import SSHConnectionDialog from '../ssh/SSHConnectionDialog.vue'
+import ChatTreeNode, { type ChatTreeNodeData } from '../chat/ChatTreeNode.vue'
 import { useSSHStore } from '../../stores/ssh'
+import { useChatStore } from '../../stores/chat'
 
 interface Props {
   activeView: string
@@ -148,12 +164,18 @@ interface Props {
 
 const props = defineProps<Props>()
 
+const router = useRouter()
+
 // 使用 SSH Store
 const sshStore = useSSHStore()
+
+// 使用 Chat Store
+const chatStore = useChatStore()
 
 // 注入 openNewTab 方法
 const openNewTab = inject<(id: string, name: string, icon: string, path: string) => void>('openNewTab')
 
+// SSH 相关
 // 从 store 获取数据
 const sshTreeData = computed(() => sshStore.sshTree as any)
 const selectedNodeId = computed(() => sshStore.selectedNodeId)
@@ -171,25 +193,30 @@ const autoEditNodeId = ref<string | null>(null)
 // 编辑触发计数器（用于强制触发 watch）
 const editTrigger = ref(0)
 
+// Chat 相关
+const chatTreeData = computed(() => chatStore.chatTree as any)
+const selectedChatNodeId = computed(() => chatStore.selectedNodeId)
+const dragChatNode = ref<ChatTreeNodeData | null>(null)
+const autoEditChatNodeId = ref<string | null>(null)
+const editChatTrigger = ref(0)
+
 // 初始化时加载数据
 onMounted(() => {
   if (props.activeView === 'ssh') {
     sshStore.loadSSHTree()
+  } else if (props.activeView === 'chat') {
+    chatStore.loadChatTree()
   }
 })
 
-// 监听视图切换，当切换到 SSH 视图时加载数据
+// 监听视图切换，加载对应数据
 watch(() => props.activeView, (newView) => {
   if (newView === 'ssh' && sshStore.sshTree.length === 0) {
     sshStore.loadSSHTree()
+  } else if (newView === 'chat' && chatStore.chatTree.length === 0) {
+    chatStore.loadChatTree()
   }
 })
-
-const chatHistory = ref([
-  { id: '1', title: '如何优化数据库查询？' },
-  { id: '2', title: 'SSH 连接问题排查' },
-  { id: '3', title: 'Docker 部署指南' }
-])
 
 const terminals = ref([
   { id: '1', name: 'bash' },
@@ -529,6 +556,171 @@ const handleOpenFileManager = async (connection: SSHTreeNodeData) => {
   } catch (err: any) {
     console.error('打开文件管理器失败:', err)
     alert(`连接失败: ${err.message || '未知错误'}`)
+  }
+}
+
+// ==================== Chat Tree 相关方法 ====================
+
+// 创建根级文件夹（Chat）
+const createRootChatFolder = async () => {
+  const folderName = prompt('请输入文件夹名称：')
+  if (!folderName?.trim()) return
+  
+  try {
+    const newFolder = await chatStore.createFolder({
+      name: folderName.trim(),
+      parentId: null,
+      order: 0
+    })
+    
+    if (newFolder && newFolder.id) {
+      await nextTick()
+      await new Promise(resolve => setTimeout(resolve, 150))
+      
+      autoEditChatNodeId.value = newFolder.id
+      editChatTrigger.value++
+      
+      setTimeout(() => {
+        autoEditChatNodeId.value = null
+      }, 500)
+    }
+  } catch (err) {
+    console.error('创建文件夹失败:', err)
+  }
+}
+
+// 创建根级会话（Chat）
+const createRootChatSession = async () => {
+  const sessionName = prompt('请输入对话名称：')
+  if (!sessionName?.trim()) return
+  
+  try {
+    const newSession = await chatStore.createSession({
+      title: sessionName.trim(),
+      folderId: null,
+      order: 0
+    })
+    
+    if (newSession && newSession.id) {
+      // 打开新创建的会话
+      handleOpenSession({ id: newSession.id, name: sessionName.trim(), type: 'session' } as ChatTreeNodeData)
+    }
+  } catch (err) {
+    console.error('创建对话失败:', err)
+  }
+}
+
+// 选中 Chat 节点
+const handleChatNodeSelect = (node: ChatTreeNodeData) => {
+  chatStore.selectNode(node.id)
+}
+
+// 更新 Chat 节点
+const handleChatNodeUpdate = async (node: ChatTreeNodeData) => {
+  try {
+    if (node.type === 'folder') {
+      await chatStore.updateFolder(node.id, {
+        name: node.name,
+        parentId: node.parentId,
+        order: node.order
+      })
+    } else {
+      await chatStore.updateSession(node.id, {
+        title: node.name,
+        folderId: node.folderId,
+        order: node.order
+      })
+    }
+  } catch (err) {
+    console.error('更新节点失败:', err)
+  }
+}
+
+// 删除 Chat 节点
+const handleChatNodeDelete = async (node: ChatTreeNodeData) => {
+  const nodeType = node.type === 'folder' ? '文件夹' : '对话'
+  const confirmed = confirm(`确定要删除${nodeType} "${node.name}" 吗？`)
+  if (!confirmed) return
+  
+  try {
+    if (node.type === 'folder') {
+      await chatStore.deleteFolder(node.id)
+    } else {
+      await chatStore.deleteSession(node.id)
+    }
+  } catch (err) {
+    console.error('删除节点失败:', err)
+  }
+}
+
+// 打开会话
+const handleOpenSession = (node: ChatTreeNodeData) => {
+  chatStore.openSession(node.id)
+  router.push({ path: '/chat', query: { sessionId: node.id } })
+}
+
+// 拖拽 Chat 节点
+const handleDragChatNode = (node: ChatTreeNodeData) => {
+  dragChatNode.value = node
+}
+
+// 放置 Chat 节点
+const handleDropChatNode = async (data: { dragNode: ChatTreeNodeData; dropNode: ChatTreeNodeData }) => {
+  console.log('放置节点:', data)
+  // 只能放到文件夹中
+  if (data.dropNode.type !== 'folder') return
+  
+  try {
+    await chatStore.moveNode({
+      nodeId: data.dragNode.id,
+      targetFolderId: data.dropNode.id,
+      order: 0
+    })
+    dragChatNode.value = null
+  } catch (err) {
+    console.error('移动节点失败:', err)
+  }
+}
+
+// 创建子文件夹（Chat）
+const handleCreateChatSubFolder = async (data: { parentId: string; name: string }) => {
+  try {
+    const newFolder = await chatStore.createFolder({
+      name: data.name,
+      parentId: data.parentId,
+      order: 0
+    })
+    
+    if (newFolder && newFolder.id) {
+      await nextTick()
+      await new Promise(resolve => setTimeout(resolve, 150))
+      
+      autoEditChatNodeId.value = newFolder.id
+      editChatTrigger.value++
+      
+      setTimeout(() => {
+        autoEditChatNodeId.value = null
+      }, 500)
+    }
+  } catch (err) {
+    console.error('创建子文件夹失败:', err)
+  }
+}
+
+// 创建子会话（Chat）
+const handleCreateChatSubSession = async (data: { folderId: string; name: string }) => {
+  try {
+    const newSession = await chatStore.createSession({
+      title: data.name,
+      folderId: data.folderId,
+      order: 0
+    })
+    
+    if (newSession && newSession.id) {
+      handleOpenSession({ id: newSession.id, name: data.name, type: 'session' } as ChatTreeNodeData)
+    }
+  } catch (err) {
+    console.error('创建子会话失败:', err)
   }
 }
 </script>

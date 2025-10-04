@@ -380,7 +380,11 @@
                       >
                         <!-- 模型名称 -->
                         <div class="model-name-col" :title="model.description || model.name">
-                          <i :class="getModelProviderIcon(model, provider).icon" class="provider-icon" :title="getModelProviderIcon(model, provider).name"></i>
+                          <ProviderIcon 
+                            :provider-id="getProviderIdFromModel(model, provider)" 
+                            :size="16" 
+                            :title="getModelProviderIcon(model, provider).name"
+                          />
                           <span class="model-name-text">{{ model.name }}</span>
                           <i v-if="model.recommended" class="bi bi-star-fill model-star" title="推荐"></i>
                         </div>
@@ -457,7 +461,11 @@
                       >
                         <!-- 模型名称 -->
                         <div class="model-name-col" :title="model.description || model.name">
-                          <i :class="getModelProviderIcon(model, provider).icon" class="provider-icon" :title="getModelProviderIcon(model, provider).name"></i>
+                          <ProviderIcon 
+                            :provider-id="getProviderIdFromModel(model, provider)" 
+                            :size="16" 
+                            :title="getModelProviderIcon(model, provider).name"
+                          />
                           <span class="model-name-text">{{ model.name }}</span>
                           <i v-if="model.recommended" class="bi bi-star-fill model-star" title="推荐"></i>
                         </div>
@@ -882,6 +890,7 @@
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { storeToRefs } from 'pinia'
 import LoginModal from '../components/auth/LoginModal.vue'
+import ProviderIcon from '../components/common/ProviderIcon.vue'
 import { useThemeStore } from '../stores/theme'
 import { 
   DEFAULT_PROVIDERS, 
@@ -1391,8 +1400,8 @@ const initializeAIProviders = () => {
       aiProviders.value = aiProviders.value.map(provider => {
         const savedConfig = savedConfigs.find((c: any) => c.id === provider.id)
         if (savedConfig) {
-          // 只覆盖配置字段，保留默认的 name, description, icon, website, models
-          return {
+          // 恢复配置，包括模型的 enabled 状态
+          const providerWithConfig = {
             ...provider,
             apiKey: savedConfig.apiKey ? decryptApiKey(savedConfig.apiKey) : '',
             endpoint: savedConfig.endpoint || provider.endpoint,
@@ -1400,9 +1409,24 @@ const initializeAIProviders = () => {
             isDefault: savedConfig.isDefault || false,
             config: savedConfig.config || provider.config
           }
+          
+          // 恢复模型的 enabled 状态
+          if (savedConfig.models && provider.models) {
+            providerWithConfig.models = provider.models.map(model => {
+              const savedModel = savedConfig.models.find((m: any) => m.id === model.id)
+              return {
+                ...model,
+                enabled: savedModel ? savedModel.enabled : model.enabled
+              }
+            })
+          }
+          
+          return providerWithConfig
         }
         return provider
       })
+      
+      console.log('✅ 已加载 AI Provider 配置，包括模型 enabled 状态')
     }
   } catch (error) {
     console.error('Failed to load AI provider configs:', error)
@@ -1530,6 +1554,37 @@ const getDisabledModels = (models: AIModel[]) => {
   return models.filter(model => model.enabled === false)
 }
 
+// 从模型 ID 中提取真实的供应商 ID（用于彩色图标组件）
+const getProviderIdFromModel = (model: AIModel, provider: AIProvider): string => {
+  // 如果不是聚合平台，直接返回供应商 ID
+  if (provider.id !== 'openrouter' && provider.id !== 'together') {
+    return provider.id
+  }
+  
+  // 从模型 ID 中提取真实供应商
+  const modelId = model.id.toLowerCase()
+  
+  // 根据模型 ID 前缀或关键字识别供应商
+  if (modelId.includes('openai/') || modelId.includes('gpt-')) return 'openai'
+  if (modelId.includes('anthropic/') || modelId.includes('claude')) return 'anthropic'
+  if (modelId.includes('google/') || modelId.includes('gemini') || modelId.includes('palm')) return 'google'
+  if (modelId.includes('meta/') || modelId.includes('llama')) return 'meta'
+  if (modelId.includes('mistral/') || modelId.includes('mistral')) return 'mistral'
+  if (modelId.includes('cohere/')) return 'cohere'
+  if (modelId.includes('deepseek/')) return 'deepseek'
+  if (modelId.includes('qwen/') || modelId.includes('qwen')) return 'qwen'
+  if (modelId.includes('yi/')) return 'yi'
+  if (modelId.includes('huggingface/')) return 'huggingface'
+  if (modelId.includes('groq/')) return 'groq'
+  if (modelId.includes('perplexity/')) return 'perplexity'
+  if (modelId.includes('alibaba/')) return 'qwen'
+  if (modelId.includes('baichuan/')) return 'baichuan'
+  if (modelId.includes('minimax/')) return 'minimax'
+  
+  // 默认返回平台自身的 ID
+  return provider.id
+}
+
 // 获取模型的真实供应商图标（用于 OpenRouter 等聚合平台）
 const getModelProviderIcon = (model: AIModel, provider: AIProvider): { icon: string, name: string } => {
   // 如果是聚合平台（如 OpenRouter），从模型 ID 中提取真实供应商
@@ -1581,17 +1636,39 @@ const formatContextWindow = (tokens: number): string => {
 
 const saveAIProviderConfigs = () => {
   try {
-    // 只保存必要的配置字段，不保存 models（从默认配置中读取）
+    // 保存完整配置，包括模型的详细信息和 enabled 状态
     const configsToSave = aiProviders.value.map(provider => ({
       id: provider.id,
+      name: provider.name,
       apiKey: provider.apiKey ? encryptApiKey(provider.apiKey) : '',
       endpoint: provider.endpoint,
       enabled: provider.enabled,
       isDefault: provider.isDefault,
-      config: provider.config
+      config: provider.config,
+      // 保存完整的模型信息
+      models: provider.models?.map(model => ({
+        id: model.id,
+        name: model.name,
+        description: model.description,
+        providerId: model.providerId,
+        contextWindow: model.contextWindow,
+        capabilities: model.capabilities,
+        price: model.price,
+        recommended: model.recommended,
+        enabled: model.enabled !== false // 默认为 true
+      }))
     }))
     localStorage.setItem('aiProviderConfigs', JSON.stringify(configsToSave))
-    console.log('Settings saved:', configsToSave)
+    console.log('Settings saved (包含完整 models 信息):', configsToSave.map(c => ({
+      id: c.id,
+      enabled: c.enabled,
+      modelsCount: c.models?.length,
+      enabledModelsCount: c.models?.filter(m => m.enabled).length
+    })))
+    
+    // 触发自定义事件通知其他组件配置已更新
+    window.dispatchEvent(new CustomEvent('ai-provider-configs-updated'))
+    console.log('✅ 已触发 ai-provider-configs-updated 事件')
   } catch (error) {
     console.error('Failed to save AI provider configs:', error)
   }
