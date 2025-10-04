@@ -65,9 +65,14 @@ ai-ssh-assistant/
 
 ### 1. 环境要求
 
+#### 使用 Docker（推荐）
+- Docker >= 20.10
+- Docker Compose >= 2.0
+
+#### 本地开发
 - Node.js >= 18
 - pnpm >= 8
-- PostgreSQL >= 14 (生产环境)
+- PostgreSQL >= 14
 - Redis (可选)
 
 ### 2. 安装依赖
@@ -122,6 +127,97 @@ pnpm prisma db seed
 ```
 
 ### 5. 启动开发环境
+
+#### 方式一：使用 Docker（推荐）
+
+使用 Docker Compose 快速启动所有服务：
+
+```bash
+# 启动所有服务（PostgreSQL + Redis + 后端 API + Web 前端 + Nginx + 监控）
+docker-compose up -d
+
+# 启动核心服务（PostgreSQL + Redis + 后端 API）
+docker-compose up -d postgres redis api
+
+# 查看日志
+docker-compose logs -f
+
+# 停止所有服务
+docker-compose down
+
+# 停止并删除数据卷（完全清理）
+docker-compose down -v
+```
+
+单独启动某个服务：
+
+```bash
+# 只启动数据库
+docker-compose up -d postgres
+
+# 只启动 Redis
+docker-compose up -d redis
+
+# 启动后端 API 服务
+docker-compose up -d api
+
+# 启动 Web 前端（可选）
+docker-compose up -d web
+
+# 启动监控服务（可选）
+docker-compose up -d prometheus grafana
+```
+
+常用 Docker 命令：
+
+```bash
+# 进入 PostgreSQL 容器
+docker-compose exec postgres psql -U ai_ssh_user -d ai_ssh_assistant
+
+# 进入 Redis 容器
+docker-compose exec redis redis-cli
+
+# 查看容器状态
+docker-compose ps
+
+# 重启服务
+docker-compose restart api
+
+# 查看特定服务的日志
+docker-compose logs -f api
+
+# 重新构建镜像
+docker-compose build --no-cache api
+
+# 重新构建所有镜像
+docker-compose build --no-cache
+```
+
+初始化数据库（使用 Docker）：
+
+```bash
+# 进入 API 容器
+docker-compose exec api sh
+
+# 在容器内运行 Prisma 命令
+cd /app/packages/database
+pnpm prisma generate
+pnpm prisma migrate dev
+pnpm prisma db seed
+exit
+```
+
+访问服务：
+
+```bash
+# 后端 API：http://localhost:3000
+# Web 前端：http://localhost:5173
+# Nginx：http://localhost
+# Grafana 监控：http://localhost:3001（用户名: admin, 密码: admin123）
+# Prometheus：http://localhost:9090
+```
+
+#### 方式二：本地开发
 
 使用提供的启动脚本：
 
@@ -1174,6 +1270,81 @@ rm -rf node_modules pnpm-lock.yaml
 pnpm install
 ```
 
+### Q7: Docker 容器无法启动
+
+**问题**: 运行 `docker-compose up` 后容器启动失败。
+
+**解决**:
+```bash
+# 1. 检查端口是否被占用
+docker ps -a
+netstat -ano | findstr "5432"  # PostgreSQL
+netstat -ano | findstr "6379"  # Redis
+netstat -ano | findstr "3000"  # 后端 API
+netstat -ano | findstr "5173"  # Web 前端
+netstat -ano | findstr "80"    # Nginx
+
+# 2. 清理旧容器和数据卷
+docker-compose down -v
+docker system prune -a
+
+# 3. 重新构建并启动
+docker-compose build --no-cache
+docker-compose up -d
+
+# 4. 查看详细日志
+docker-compose logs api
+docker-compose logs postgres
+docker-compose logs redis
+```
+
+### Q8: Docker 容器内无法连接数据库
+
+**问题**: 后端服务无法连接到 PostgreSQL 容器。
+
+**解决**:
+1. 检查 `docker-compose.yml` 中的网络配置和 healthcheck
+2. 确保 `DATABASE_URL` 使用容器服务名（如 `postgres`）而不是 `localhost`
+3. Docker Compose 会自动等待数据库健康检查通过，如果还有问题可以手动控制启动顺序：
+```bash
+docker-compose up -d postgres redis
+sleep 15
+docker-compose up -d api
+
+# 查看数据库是否就绪
+docker-compose exec postgres pg_isready -U ai_ssh_user
+
+# 测试容器间网络连接
+docker-compose exec api ping postgres
+docker-compose exec api nc -zv postgres 5432
+```
+
+### Q9: Docker 数据持久化问题
+
+**问题**: 重启 Docker 后数据丢失。
+
+**解决**:
+确保 `docker-compose.yml` 中配置了数据卷：
+```yaml
+volumes:
+  postgres_data:
+  redis_data:
+
+services:
+  postgres:
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+```
+
+如需备份数据：
+```bash
+# 备份 PostgreSQL
+docker-compose exec postgres pg_dump -U ai_ssh_user ai_ssh_assistant > backup.sql
+
+# 恢复
+docker-compose exec -T postgres psql -U ai_ssh_user ai_ssh_assistant < backup.sql
+```
+
 ---
 
 ## 调试技巧
@@ -1226,16 +1397,85 @@ logger.info('Operation started', { userId, operation: 'createTag' })
 logger.error('Operation failed', { error: error.message, stack: error.stack })
 ```
 
+### 5. Docker 调试
+
+使用 Docker 进行调试：
+
+```bash
+# 实时查看容器日志
+docker-compose logs -f api
+
+# 查看最近 100 行日志
+docker-compose logs --tail=100 api
+
+# 查看所有服务的日志
+docker-compose logs -f
+
+# 进入容器内部
+docker-compose exec api sh
+
+# 查看容器资源使用情况
+docker stats
+
+# 查看容器详细信息
+docker inspect ai-ssh-api
+
+# 查看网络连接
+docker network inspect ai-ssh-assistant_ai-ssh-network
+
+# 测试容器间连接
+docker-compose exec api ping postgres
+docker-compose exec api nc -zv postgres 5432
+docker-compose exec api nc -zv redis 6379
+
+# 查看容器内的进程
+docker-compose exec api ps aux
+
+# 查看容器的磁盘使用
+docker-compose exec api df -h
+```
+
+在容器内运行命令：
+
+```bash
+# 在容器内运行 Node.js 脚本
+docker-compose exec api node scripts/test.js
+
+# 在容器内运行 Prisma 命令
+docker-compose exec api pnpm prisma studio
+
+# 检查环境变量
+docker-compose exec api env | grep DATABASE
+docker-compose exec api env | grep REDIS
+
+# 在容器内运行数据库查询
+docker-compose exec postgres psql -U ai_ssh_user -d ai_ssh_assistant -c "SELECT * FROM users LIMIT 5;"
+
+# 在容器内测试 Redis
+docker-compose exec redis redis-cli PING
+docker-compose exec redis redis-cli INFO
+```
+
 ---
 
 ## 资源链接
 
+### 核心技术栈
 - [Fastify 文档](https://www.fastify.io/)
 - [Prisma 文档](https://www.prisma.io/docs)
 - [Vue 3 文档](https://vuejs.org/)
 - [Pinia 文档](https://pinia.vuejs.org/)
 - [Electron 文档](https://www.electronjs.org/docs)
 - [TailwindCSS 文档](https://tailwindcss.com/docs)
+
+### 容器化 & 部署
+- [Docker 文档](https://docs.docker.com/)
+- [Docker Compose 文档](https://docs.docker.com/compose/)
+- [Docker Hub](https://hub.docker.com/)
+
+### 数据库 & 缓存
+- [PostgreSQL 文档](https://www.postgresql.org/docs/)
+- [Redis 文档](https://redis.io/docs/)
 
 ---
 
