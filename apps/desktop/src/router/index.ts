@@ -3,8 +3,12 @@ import type { RouteRecordRaw } from 'vue-router'
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    name: 'Home',
-    redirect: '/chat'
+    name: 'Welcome',
+    component: () => import('@/views/WelcomeView.vue'),
+    meta: {
+      title: '欢迎',
+      icon: 'bi-house'
+    }
   },
   {
     path: '/chat',

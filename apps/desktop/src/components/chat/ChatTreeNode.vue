@@ -147,6 +147,7 @@
         @drop-node="$emit('drop-node', $event)"
         @create-folder="$emit('create-folder', $event)"
         @create-session="$emit('create-session', $event)"
+        @request-input="$emit('request-input', $event)"
       />
     </div>
 
@@ -195,6 +196,7 @@ const emit = defineEmits<{
   'drop-node': [data: { dragNode: ChatTreeNodeData; dropNode: ChatTreeNodeData }]
   'create-folder': [data: { parentId: string; name: string }]
   'create-session': [data: { folderId: string; name: string }]
+  'request-input': [data: { type: string; title: string; placeholder: string; callback: (name: string) => void }]
 }>()
 
 // 展开/折叠状态（文件夹默认展开）
@@ -278,24 +280,34 @@ const handleDelete = () => {
 }
 
 const handleCreateFolder = () => {
-  const folderName = prompt('请输入文件夹名称：')
-  if (folderName?.trim()) {
-    emit('create-folder', {
-      parentId: props.node.id,
-      name: folderName.trim()
-    })
-  }
+  // 通过事件请求父组件显示输入对话框
+  emit('request-input', {
+    type: 'folder',
+    title: '新建文件夹',
+    placeholder: '请输入文件夹名称',
+    callback: (name: string) => {
+      emit('create-folder', {
+        parentId: props.node.id,
+        name: name.trim()
+      })
+    }
+  })
   hideActions()
 }
 
 const handleCreateSession = () => {
-  const sessionName = prompt('请输入对话名称：')
-  if (sessionName?.trim()) {
-    emit('create-session', {
-      folderId: props.node.id,
-      name: sessionName.trim()
-    })
-  }
+  // 通过事件请求父组件显示输入对话框
+  emit('request-input', {
+    type: 'session',
+    title: '新建对话',
+    placeholder: '请输入对话名称',
+    callback: (name: string) => {
+      emit('create-session', {
+        folderId: props.node.id,
+        name: name.trim()
+      })
+    }
+  })
   hideActions()
 }
 

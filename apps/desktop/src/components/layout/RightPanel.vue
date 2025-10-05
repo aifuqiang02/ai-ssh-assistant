@@ -4,13 +4,6 @@
     <div class="vscode-right-panel-header px-4 py-2 border-b border-vscode-border flex items-center justify-between">
       <div class="flex flex-col">
         <h3 class="text-sm font-medium text-vscode-fg m-0">AI 助手 (Cline)</h3>
-        <div v-if="currentProvider && currentModel" class="text-xs text-vscode-fg-muted mt-1">
-          <i class="bi bi-cpu"></i>
-          {{ currentProvider.name }} - {{ currentModel.name }}
-        </div>
-        <div v-else class="text-xs text-vscode-warning mt-1">
-          ⚠️ 未选择模型
-        </div>
       </div>
       <button 
         @click="closePanel"

@@ -82,6 +82,7 @@
               @drop-node="handleDropChatNode"
               @create-folder="handleCreateChatSubFolder"
               @create-session="handleCreateChatSubSession"
+              @request-input="handleRequestInput"
             />
           </div>
         </div>
@@ -145,6 +146,91 @@
           </div>
         </div>
       </div>
+      
+      <!-- 欢迎视图 -->
+      <div v-else-if="activeView === 'welcome'" class="p-4">
+        <div class="space-y-4">
+          <!-- 快速导航 -->
+          <div class="mb-6">
+            <div class="vscode-tree-title text-xs font-medium text-vscode-fg-muted mb-3">
+              快速导航
+            </div>
+            <div class="space-y-2">
+              <div 
+                class="vscode-tree-item cursor-pointer hover:bg-vscode-bg-lighter"
+                @click="navigateToView('ssh')"
+              >
+                <i class="bi bi-hdd-network text-vscode-accent mr-2"></i>
+                <span>SSH 连接</span>
+              </div>
+              <div 
+                class="vscode-tree-item cursor-pointer hover:bg-vscode-bg-lighter"
+                @click="navigateToView('chat')"
+              >
+                <i class="bi bi-chat-dots text-vscode-accent mr-2"></i>
+                <span>AI 对话</span>
+              </div>
+              <div 
+                class="vscode-tree-item cursor-pointer hover:bg-vscode-bg-lighter"
+                @click="navigateToView('files')"
+              >
+                <i class="bi bi-folder text-vscode-accent mr-2"></i>
+                <span>文件管理</span>
+              </div>
+              <div 
+                class="vscode-tree-item cursor-pointer hover:bg-vscode-bg-lighter"
+                @click="navigateToView('history')"
+              >
+                <i class="bi bi-clock-history text-vscode-accent mr-2"></i>
+                <span>历史记录</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 最近使用 -->
+          <div>
+            <div class="vscode-tree-title text-xs font-medium text-vscode-fg-muted mb-3">
+              最近使用
+            </div>
+            <div class="space-y-2">
+              <div class="text-sm text-vscode-fg-muted text-center py-4">
+                暂无最近使用的项目
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 输入对话框 -->
+    <div v-if="showInputDialog" class="input-dialog-overlay" @click.self="closeInputDialog">
+      <div class="input-dialog">
+        <div class="input-dialog-header">
+          <h3 class="text-sm font-medium text-vscode-fg">{{ inputDialogTitle }}</h3>
+          <button @click="closeInputDialog" class="vscode-icon-button">
+            <i class="bi bi-x"></i>
+          </button>
+        </div>
+        <div class="input-dialog-body">
+          <input
+            ref="inputDialogInput"
+            v-model="inputDialogValue"
+            type="text"
+            :placeholder="inputDialogPlaceholder"
+            class="form-input-full"
+            @keyup.enter="confirmInputDialog"
+            @keyup.escape="closeInputDialog"
+          />
+        </div>
+        <div class="input-dialog-footer">
+          <button @click="closeInputDialog" class="vscode-button">
+            取消
+          </button>
+          <button @click="confirmInputDialog" class="vscode-button primary">
+            确定
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -168,6 +254,14 @@ const router = useRouter()
 
 // 使用 SSH Store
 const sshStore = useSSHStore()
+
+// 输入对话框相关
+const showInputDialog = ref(false)
+const inputDialogTitle = ref('')
+const inputDialogPlaceholder = ref('')
+const inputDialogValue = ref('')
+const inputDialogInput = ref<HTMLInputElement | null>(null)
+const inputDialogCallback = ref<((value: string) => void) | null>(null)
 
 // 使用 Chat Store
 const chatStore = useChatStore()
@@ -232,13 +326,14 @@ const history = ref([
 // 计算侧边栏标题
 const sidebarTitle = computed(() => {
   const titles: Record<string, string> = {
+    welcome: '欢迎',
     ssh: 'SSH 连接',
     chat: 'AI 助手',
     files: '文件管理',
     terminal: '终端',
     history: '历史记录'
   }
-  return titles[props.activeView] || 'SSH 连接'
+  return titles[props.activeView] || '欢迎'
 })
 
 // 创建根文件夹
@@ -563,8 +658,7 @@ const handleOpenFileManager = async (connection: SSHTreeNodeData) => {
 
 // 创建根级文件夹（Chat）
 const createRootChatFolder = async () => {
-  const folderName = prompt('请输入文件夹名称：')
-  if (!folderName?.trim()) return
+  showInputPrompt('新建文件夹', '请输入文件夹名称', async (folderName: string) => {
   
   try {
     const newFolder = await chatStore.createFolder({
@@ -587,12 +681,12 @@ const createRootChatFolder = async () => {
   } catch (err) {
     console.error('创建文件夹失败:', err)
   }
+  })
 }
 
 // 创建根级会话（Chat）
 const createRootChatSession = async () => {
-  const sessionName = prompt('请输入对话名称：')
-  if (!sessionName?.trim()) return
+  showInputPrompt('新建对话', '请输入对话名称', async (sessionName: string) => {
   
   try {
     const newSession = await chatStore.createSession({
@@ -608,6 +702,7 @@ const createRootChatSession = async () => {
   } catch (err) {
     console.error('创建对话失败:', err)
   }
+  })
 }
 
 // 选中 Chat 节点
@@ -722,6 +817,50 @@ const handleCreateChatSubSession = async (data: { folderId: string; name: string
   } catch (err) {
     console.error('创建子会话失败:', err)
   }
+}
+
+// 导航到指定视图
+const navigateToView = (viewId: string) => {
+  // 触发自定义事件通知父组件切换视图
+  const event = new CustomEvent('switch-view', {
+    detail: { viewId }
+  })
+  window.dispatchEvent(event)
+}
+
+// 输入对话框方法
+const showInputPrompt = (title: string, placeholder: string, callback: (value: string) => void) => {
+  inputDialogTitle.value = title
+  inputDialogPlaceholder.value = placeholder
+  inputDialogValue.value = ''
+  inputDialogCallback.value = callback
+  showInputDialog.value = true
+  
+  // 自动聚焦输入框
+  nextTick(() => {
+    inputDialogInput.value?.focus()
+  })
+}
+
+const closeInputDialog = () => {
+  showInputDialog.value = false
+  inputDialogTitle.value = ''
+  inputDialogPlaceholder.value = ''
+  inputDialogValue.value = ''
+  inputDialogCallback.value = null
+}
+
+const confirmInputDialog = () => {
+  const value = inputDialogValue.value.trim()
+  if (value && inputDialogCallback.value) {
+    inputDialogCallback.value(value)
+  }
+  closeInputDialog()
+}
+
+// 处理来自 ChatTreeNode 的输入请求
+const handleRequestInput = (data: { type: string; title: string; placeholder: string; callback: (name: string) => void }) => {
+  showInputPrompt(data.title, data.placeholder, data.callback)
 }
 </script>
 
@@ -871,5 +1010,63 @@ const handleCreateChatSubSession = async (data: { folderId: string; name: string
 
 .text-vscode-fg-muted {
   color: var(--vscode-fg-muted);
+}
+
+/* 输入对话框样式 */
+.input-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.input-dialog {
+  background: var(--vscode-bg-light);
+  border: 1px solid var(--vscode-border);
+  border-radius: 4px;
+  width: 400px;
+  max-width: 90vw;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.input-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--vscode-border);
+}
+
+.input-dialog-body {
+  padding: 16px;
+}
+
+.input-dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--vscode-border);
+}
+
+.form-input-full {
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--vscode-input-bg);
+  border: 1px solid var(--vscode-border);
+  border-radius: 4px;
+  color: var(--vscode-fg);
+  font-size: 13px;
+  outline: none;
+}
+
+.form-input-full:focus {
+  border-color: var(--vscode-accent);
 }
 </style>

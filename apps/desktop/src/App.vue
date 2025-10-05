@@ -260,6 +260,14 @@ const closeRightPanel = () => {
   showRightPanel.value = false
 }
 
+// 处理视图切换事件
+const handleSwitchView = (event: CustomEvent) => {
+  const { viewId } = event.detail
+  if (viewId) {
+    setActiveView(viewId)
+  }
+}
+
 // 拖拽调整大小功能
 const startLeftResize = (event: MouseEvent) => {
   isResizing.value = true
@@ -399,6 +407,7 @@ onMounted(async () => {
   document.addEventListener('keydown', handleKeydown)
   window.addEventListener('resize', handleResize)
   window.addEventListener('close-right-panel', closeRightPanel)
+  window.addEventListener('switch-view', handleSwitchView)
   
   // 监听全屏状态变化
   if (window.electronAPI?.onFullscreenChange) {
@@ -421,6 +430,7 @@ onUnmounted(async () => {
   document.removeEventListener('keydown', handleKeydown)
   window.removeEventListener('resize', handleResize)
   window.removeEventListener('close-right-panel', closeRightPanel)
+  window.removeEventListener('switch-view', handleSwitchView)
 })
 </script>
 

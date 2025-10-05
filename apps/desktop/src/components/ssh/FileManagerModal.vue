@@ -157,11 +157,42 @@
         </div>
       </div>
     </div>
+    
+    <!-- 输入对话框 -->
+    <div v-if="showInputDialog" class="input-dialog-overlay" @click.self="closeInputDialog">
+      <div class="input-dialog">
+        <div class="input-dialog-header">
+          <h3 class="text-sm font-medium text-vscode-fg">{{ inputDialogTitle }}</h3>
+          <button @click="closeInputDialog" class="vscode-icon-button">
+            <i class="bi bi-x"></i>
+          </button>
+        </div>
+        <div class="input-dialog-body">
+          <input
+            ref="inputDialogInput"
+            v-model="inputDialogValue"
+            type="text"
+            :placeholder="inputDialogPlaceholder"
+            class="form-input-full"
+            @keyup.enter="confirmInputDialog"
+            @keyup.escape="closeInputDialog"
+          />
+        </div>
+        <div class="input-dialog-footer">
+          <button @click="closeInputDialog" class="vscode-button">
+            取消
+          </button>
+          <button @click="confirmInputDialog" class="vscode-button primary">
+            确定
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, nextTick } from 'vue'
 import type { SSHTreeNodeData } from './SSHTreeNode.vue'
 
 interface FileItem {
@@ -188,6 +219,14 @@ const currentPath = ref('/')
 const files = ref<FileItem[]>([])
 const loading = ref(false)
 const selectedFiles = ref<FileItem[]>([])
+
+// 输入对话框相关
+const showInputDialog = ref(false)
+const inputDialogTitle = ref('')
+const inputDialogPlaceholder = ref('')
+const inputDialogValue = ref('')
+const inputDialogInput = ref<HTMLInputElement | null>(null)
+const inputDialogCallback = ref<((value: string) => void) | null>(null)
 
 // 计算属性
 const isAllSelected = computed(() => {
@@ -480,31 +519,60 @@ const handleBulkDelete = async () => {
   }
 }
 
+// 输入对话框方法
+const showInputPrompt = (title: string, placeholder: string, callback: (value: string) => void) => {
+  inputDialogTitle.value = title
+  inputDialogPlaceholder.value = placeholder
+  inputDialogValue.value = ''
+  inputDialogCallback.value = callback
+  showInputDialog.value = true
+  
+  // 自动聚焦输入框
+  nextTick(() => {
+    inputDialogInput.value?.focus()
+  })
+}
+
+const closeInputDialog = () => {
+  showInputDialog.value = false
+  inputDialogTitle.value = ''
+  inputDialogPlaceholder.value = ''
+  inputDialogValue.value = ''
+  inputDialogCallback.value = null
+}
+
+const confirmInputDialog = () => {
+  const value = inputDialogValue.value.trim()
+  if (value && inputDialogCallback.value) {
+    inputDialogCallback.value(value)
+  }
+  closeInputDialog()
+}
+
 // 新建文件夹
 const createFolder = async () => {
-  const folderName = prompt('请输入文件夹名称:')
-  if (!folderName) return
+  showInputPrompt('新建文件夹', '请输入文件夹名称', async (folderName: string) => {
+    if (!props.connection || !window.electronAPI) return
 
-  if (!props.connection || !window.electronAPI) return
-
-  try {
-    const remotePath = currentPath.value === '/' 
-      ? `/${folderName}` 
-      : `${currentPath.value}/${folderName}`
-    
-    loading.value = true
-    await window.electronAPI.ssh.createDirectory(
-      props.connection.id,
-      remotePath
-    )
-    
-    await loadFiles()
-  } catch (error: any) {
-    console.error('Create folder error:', error)
-    alert(`创建文件夹失败: ${error.message}`)
-  } finally {
-    loading.value = false
-  }
+    try {
+      const remotePath = currentPath.value === '/' 
+        ? `/${folderName}` 
+        : `${currentPath.value}/${folderName}`
+      
+      loading.value = true
+      await window.electronAPI.ssh.createDirectory(
+        props.connection.id,
+        remotePath
+      )
+      
+      await loadFiles()
+    } catch (error: any) {
+      console.error('Create folder error:', error)
+      alert(`创建文件夹失败: ${error.message}`)
+    } finally {
+      loading.value = false
+    }
+  })
 }
 
 // 工具函数
@@ -934,5 +1002,109 @@ const handleClose = () => {
 .bi-file-music::before { content: "🎵"; }
 .bi-file-play::before { content: "🎬"; }
 .bi-file-earmark::before { content: "📄"; }
+
+/* 输入对话框样式 */
+.input-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.input-dialog {
+  background: var(--vscode-bg-light);
+  border: 1px solid var(--vscode-border);
+  border-radius: 4px;
+  width: 400px;
+  max-width: 90vw;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.input-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--vscode-border);
+}
+
+.input-dialog-body {
+  padding: 16px;
+}
+
+.input-dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--vscode-border);
+}
+
+.form-input-full {
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--vscode-input-bg);
+  border: 1px solid var(--vscode-border);
+  border-radius: 4px;
+  color: var(--vscode-fg);
+  font-size: 13px;
+  outline: none;
+}
+
+.form-input-full:focus {
+  border-color: var(--vscode-accent);
+}
+
+.vscode-icon-button {
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.25rem;
+  transition: color 0.15s ease;
+  color: var(--vscode-fg-muted);
+  cursor: pointer;
+  border: none;
+  background: transparent;
+}
+
+.vscode-icon-button:hover {
+  color: var(--vscode-fg);
+  background: var(--vscode-bg-lighter);
+}
+
+.vscode-button {
+  padding: 6px 12px;
+  font-size: 13px;
+  border: 1px solid var(--vscode-border);
+  border-radius: 2px;
+  background: var(--vscode-bg-light);
+  color: var(--vscode-fg);
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.vscode-button:hover {
+  background: var(--vscode-bg-lighter);
+  border-color: var(--vscode-accent);
+}
+
+.vscode-button.primary {
+  background: var(--vscode-accent);
+  color: #ffffff;
+  border-color: var(--vscode-accent);
+}
+
+.vscode-button.primary:hover {
+  background: var(--vscode-accent-hover);
+  border-color: var(--vscode-accent-hover);
+}
 </style>
 
