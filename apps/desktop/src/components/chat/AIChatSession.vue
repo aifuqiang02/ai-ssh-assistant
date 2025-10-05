@@ -16,10 +16,10 @@
         <div v-for="message in messages" :key="message.id" class="message mb-4">
           <div 
             :class="[
-              'message-bubble p-3 rounded-lg group relative',
+              'message-bubble p-3 rounded-lg group relative border',
               message.role === 'user' 
-                ? 'user-message ml-auto bg-vscode-accent text-white max-w-3xl' 
-                : 'assistant-message bg-vscode-bg-light border border-vscode-border text-vscode-fg'
+                ? 'user-message ml-auto bg-vscode-accent border-vscode-accent max-w-3xl' 
+                : 'assistant-message bg-vscode-bg-light border-vscode-border text-vscode-fg'
             ]"
           >
             <!-- 复制按钮 -->
@@ -461,7 +461,11 @@ watch(messages, () => {
 
 .user-message {
   background: var(--vscode-button-background);
-  color: var(--vscode-button-foreground);
+  color: #ffffff !important;
+}
+
+.user-message * {
+  color: #ffffff !important;
 }
 
 .assistant-message {
