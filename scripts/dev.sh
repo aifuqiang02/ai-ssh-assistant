@@ -32,16 +32,17 @@ fi
 echo "✅ All required tools are available"
 
 # 检查环境变量文件
-if [ ! -f ".env" ]; then
+echo `pwd`
+if [ ! -f "`pwd`/.env" ]; then
     echo "📋 Creating .env file from template..."
-    cp env.example .env
-    echo "⚠️  Please edit .env file and set your API keys and database credentials"
+    cp `pwd`/env.example `pwd`/.env
+    echo "⚠️  Please edit ../.env file and set your API keys and database credentials"
     echo "   Required variables:"
     echo "   - DATABASE_URL"
     echo "   - JWT_SECRET"
     echo "   - ENCRYPTION_KEY"
     echo "   - OPENAI_API_KEY or ANTHROPIC_API_KEY"
-    read -p "Press Enter to continue after editing .env file..."
+    read -p "Press Enter to continue after editing `pwd`/.env file..."
 fi
 
 # 启动数据库服务

@@ -169,14 +169,27 @@ exports.Prisma.SSHConnectionScalarFieldEnum = {
   userId: 'userId'
 };
 
+exports.Prisma.ChatFolderScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  order: 'order',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  parentId: 'parentId',
+  userId: 'userId'
+};
+
 exports.Prisma.ChatSessionScalarFieldEnum = {
   id: 'id',
   title: 'title',
   type: 'type',
+  order: 'order',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   config: 'config',
   meta: 'meta',
+  folderId: 'folderId',
   userId: 'userId',
   sshConnectionId: 'sshConnectionId'
 };
@@ -280,6 +293,7 @@ exports.Prisma.ModelName = {
   User: 'User',
   SSHFolder: 'SSHFolder',
   SSHConnection: 'SSHConnection',
+  ChatFolder: 'ChatFolder',
   ChatSession: 'ChatSession',
   Message: 'Message',
   CommandLog: 'CommandLog'
