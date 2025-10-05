@@ -3,7 +3,7 @@
     "target": "ES2022",
     "lib": ["ES2022"],
     "module": "ESNext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "composite": true,
@@ -11,6 +11,8 @@
     "rootDir": ".",
     "baseUrl": "./src",
     "noEmit": false,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     
     "strict": true,
     "noUnusedLocals": true,
