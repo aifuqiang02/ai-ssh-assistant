@@ -760,12 +760,12 @@ onBeforeUnmount(() => {
 }
 
 .terminal-container.with-ai-panel {
-  flex: 0 0 60%;
+  flex: 0 0 65%;
 }
 
 .ai-assistant-panel {
-  flex: 0 0 40%;
-  min-width: 300px;
+  flex: 0 0 35%;
+  min-width: 150px;
   background-color: var(--vscode-bg-light);
   border-left: 1px solid var(--vscode-border);
   display: flex;
