@@ -133,6 +133,8 @@ const handleSendMessage = async (content: string) => {
       },
       (chunk) => {
         assistantMessage.content += chunk.content || ''
+        // 强制触发响应式更新
+        messages.value = [...messages.value]
       }
     )
     

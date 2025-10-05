@@ -433,6 +433,9 @@ const sendMessageInternal = async (content: string) => {
         })
         assistantMessage.content += chunk.content || ''
         console.log('🔄 [AIChatSession] 内容已更新，当前长度:', assistantMessage.content.length)
+        // 强制触发响应式更新
+        internalMessages.value = [...internalMessages.value]
+        console.log('✨ [AIChatSession] 触发响应式更新')
         scrollToBottom()
       }
     )

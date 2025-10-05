@@ -579,9 +579,17 @@ const handleAISendMessage = async (content: string) => {
         chunkIndex: chunkReceived, 
         content: chunk.content?.substring(0, 50) + '...',
         contentLength: chunk.content?.length || 0,
-        done: chunk.done
+        done: chunk.done,
+        beforeUpdate: aiMessage.content.length
       })
       aiMessage.content += chunk.content || ''
+      console.log('🔄 [TerminalView] 内容已更新:', { 
+        afterUpdate: aiMessage.content.length,
+        messageIndex: aiMessages.value.length - 1
+      })
+      // 强制触发响应式更新
+      aiMessages.value = [...aiMessages.value]
+      console.log('✨ [TerminalView] 触发响应式更新')
     }
     
     console.log('🔧 [TerminalView] 回调函数已定义:', { hasCallback: !!onChunkCallback })
