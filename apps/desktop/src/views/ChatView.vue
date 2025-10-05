@@ -11,24 +11,26 @@
     </div>
     
     <!-- AI 会话组件 -->
-    <AIChatSession
-      :messages="messages"
-      :current-provider="currentProvider"
-      :current-model="currentModel"
-      :session-name="currentSessionName"
-      :session-id="currentSessionId || undefined"
-      :multiline="true"
-      :input-rows="3"
-      input-placeholder="输入消息... (Ctrl+Enter 发送)"
-      :empty-state-text="currentSessionId ? `${currentSessionName}` : '开始与 AI 助手对话吧！'"
-      :empty-state-subtext="currentSessionId ? '这是一个新的对话会话，开始与 AI 助手对话吧！' : '提示：您可以在左侧创建会话来保存对话历史'"
-      :show-attach-button="true"
-      :show-status-info="false"
-      @send-message="handleSendMessage"
-      @clear-messages="handleClearMessages"
-      @attach-file="handleAttachFile"
-      @update:messages="handleUpdateMessages"
-    />
+    <div class="flex-1 overflow-hidden">
+      <AIChatSession
+        :messages="messages"
+        :current-provider="currentProvider"
+        :current-model="currentModel"
+        :session-name="currentSessionName"
+        :session-id="currentSessionId || undefined"
+        :multiline="true"
+        :input-rows="3"
+        input-placeholder="输入消息... (Ctrl+Enter 发送)"
+        :empty-state-text="currentSessionId ? `${currentSessionName}` : '开始与 AI 助手对话吧！'"
+        :empty-state-subtext="currentSessionId ? '这是一个新的对话会话，开始与 AI 助手对话吧！' : '提示：您可以在左侧创建会话来保存对话历史'"
+        :show-attach-button="true"
+        :show-status-info="false"
+        @send-message="handleSendMessage"
+        @clear-messages="handleClearMessages"
+        @attach-file="handleAttachFile"
+        @update:messages="handleUpdateMessages"
+      />
+    </div>
   </div>
 </template>
 
