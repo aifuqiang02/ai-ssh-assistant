@@ -245,9 +245,13 @@ const messages = computed(() => internalMessages.value)
 
 // Markdown 渲染配置
 const renderer = new marked.Renderer()
-renderer.code = (code: string, language: string) => {
-  const validLanguage = hljs.getLanguage(language) ? language : 'plaintext'
-  const highlighted = hljs.highlight(code, { language: validLanguage }).value
+renderer.code = (code: string | any, language: string | any) => {
+  // 确保 code 和 language 都是字符串
+  const codeStr = String(code || '')
+  const langStr = String(language || '')
+  
+  const validLanguage = hljs.getLanguage(langStr) ? langStr : 'plaintext'
+  const highlighted = hljs.highlight(codeStr, { language: validLanguage }).value
   return `<pre class="hljs bg-vscode-bg-darker rounded p-3 my-2 overflow-x-auto"><code class="language-${validLanguage}">${highlighted}</code></pre>`
 }
 
@@ -260,10 +264,16 @@ marked.setOptions({
 // 方法
 const renderMarkdown = (content: string): string => {
   try {
-    return marked(content)
+    // 确保 content 是字符串
+    const contentStr = String(content || '')
+    if (!contentStr.trim()) {
+      return contentStr
+    }
+    return marked(contentStr)
   } catch (error) {
     console.error('Markdown rendering error:', error)
-    return content
+    // 返回原始内容，但进行 HTML 转义以防止 XSS
+    return String(content || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
   }
 }
 
