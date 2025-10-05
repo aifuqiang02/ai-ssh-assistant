@@ -219,14 +219,26 @@ exit
 
 #### 方式二：本地开发
 
-使用提供的启动脚本：
+使用提供的启动脚本（推荐）：
 
-```powershell
-# Windows PowerShell
-.\start-dev.ps1
+```bash
+# Linux/macOS - 使用 Bash 脚本
+chmod +x scripts/dev.sh
+./scripts/dev.sh
+
+# Windows - 使用 PowerShell 脚本
+.\scripts\start-dev.ps1
 ```
 
-或手动启动：
+**注意**: 启动脚本会自动：
+1. 检查必要的工具（Node.js、pnpm、Docker）
+2. 加载 `.env` 文件中的环境变量
+3. 验证必需的环境变量是否已配置
+4. 启动 Docker 数据库服务（PostgreSQL + Redis）
+5. 安装依赖并运行数据库迁移
+6. 启动后端 API 和桌面应用
+
+手动启动：
 
 ```bash
 # 终端 1: 启动后端服务
@@ -1343,6 +1355,56 @@ docker-compose exec postgres pg_dump -U ai_ssh_user ai_ssh_assistant > backup.sq
 
 # 恢复
 docker-compose exec -T postgres psql -U ai_ssh_user ai_ssh_assistant < backup.sql
+```
+
+### Q10: 环境变量未生效
+
+**问题**: `.env` 文件中的环境变量在运行时未生效。
+
+**解决**:
+
+使用启动脚本（推荐）：
+```bash
+# Linux/macOS
+./scripts/dev.sh
+
+# Windows
+.\scripts\start-dev.ps1
+```
+
+手动加载环境变量：
+```bash
+# Linux/macOS
+export $(grep -v '^#' .env | xargs)
+
+# 或使用 source
+set -a
+source .env
+set +a
+
+# Windows PowerShell
+Get-Content .env | ForEach-Object {
+    if ($_ -notmatch '^#' -and $_ -match '=') {
+        $name, $value = $_ -split '=', 2
+        [Environment]::SetEnvironmentVariable($name, $value, 'Process')
+    }
+}
+
+# 或使用 dotenv-cli (跨平台)
+npm install -g dotenv-cli
+dotenv -e .env -- pnpm dev
+```
+
+验证环境变量是否加载：
+```bash
+# Linux/macOS
+echo $DATABASE_URL
+
+# Windows PowerShell
+echo $env:DATABASE_URL
+
+# Node.js 中验证
+node -e "require('dotenv').config(); console.log(process.env.DATABASE_URL)"
 ```
 
 ---

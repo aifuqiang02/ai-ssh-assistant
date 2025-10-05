@@ -32,17 +32,48 @@ fi
 echo "✅ All required tools are available"
 
 # 检查环境变量文件
-echo `pwd`
-if [ ! -f "`pwd`/.env" ]; then
+ROOT_DIR="`pwd`"
+ENV_FILE="$ROOT_DIR/.env"
+
+if [ ! -f "$ENV_FILE" ]; then
     echo "📋 Creating .env file from template..."
-    cp `pwd`/env.example `pwd`/.env
-    echo "⚠️  Please edit ../.env file and set your API keys and database credentials"
+    cp "$ROOT_DIR/env.example" "$ENV_FILE"
+    echo "⚠️  Please edit .env file and set your API keys and database credentials"
     echo "   Required variables:"
     echo "   - DATABASE_URL"
     echo "   - JWT_SECRET"
     echo "   - ENCRYPTION_KEY"
     echo "   - OPENAI_API_KEY or ANTHROPIC_API_KEY"
-    read -p "Press Enter to continue after editing `pwd`/.env file..."
+    read -p "Press Enter to continue after editing .env file..."
+fi
+
+# 加载环境变量
+echo "🔐 Loading environment variables from .env file..."
+if [ -f "$ENV_FILE" ]; then
+    # 使用 set -a 自动导出所有变量
+    set -a
+    source "$ENV_FILE"
+    set +a
+    echo "✅ Environment variables loaded successfully"
+    
+    # 验证必要的环境变量
+    MISSING_VARS=()
+    [ -z "$DATABASE_URL" ] && MISSING_VARS+=("DATABASE_URL")
+    [ -z "$JWT_SECRET" ] && MISSING_VARS+=("JWT_SECRET")
+    [ -z "$ENCRYPTION_KEY" ] && MISSING_VARS+=("ENCRYPTION_KEY")
+    
+    if [ ${#MISSING_VARS[@]} -gt 0 ]; then
+        echo "⚠️  Warning: The following required environment variables are missing:"
+        for var in "${MISSING_VARS[@]}"; do
+            echo "   - $var"
+        done
+        echo ""
+        echo "   Please edit $ENV_FILE and set these variables."
+        read -p "Press Enter to continue anyway or Ctrl+C to abort..."
+    fi
+else
+    echo "❌ .env file not found at $ENV_FILE"
+    exit 1
 fi
 
 # 启动数据库服务
