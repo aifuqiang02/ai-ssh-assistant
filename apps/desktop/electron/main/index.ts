@@ -115,7 +115,7 @@ class Application {
   private createWindow(): void {
     // 创建浏览器窗口
     this.mainWindow = new BrowserWindow({
-      width: 1750,
+      width: 1450,
       height: 900,
       minWidth: 800,
       minHeight: 600,
