@@ -153,13 +153,26 @@ async function handleOpenAIStream(
             const parsed = JSON.parse(data)
             const content = parsed.choices[0]?.delta?.content || ''
             
-            console.log('🔍 [Stream] 解析数据:', { 
-              hasChoices: !!parsed.choices?.[0], 
-              hasDelta: !!parsed.choices?.[0]?.delta,
-              hasContent: !!content,
-              content: content.substring(0, 30) + '...',
-              rawData: data.substring(0, 100) + '...'
-            })
+            // 只在前3个数据块显示完整结构用于调试
+            if (chunkCount < 3) {
+              console.log('🔍 [Stream] 解析数据 (详细):', { 
+                chunkIndex: chunkCount + 1,
+                hasChoices: !!parsed.choices?.[0], 
+                hasDelta: !!parsed.choices?.[0]?.delta,
+                deltaKeys: Object.keys(parsed.choices?.[0]?.delta || {}),
+                hasContent: !!content,
+                content: content.substring(0, 30) + '...',
+                fullDelta: parsed.choices?.[0]?.delta,
+                rawData: data.substring(0, 200) + '...'
+              })
+            } else {
+              console.log('🔍 [Stream] 解析数据:', { 
+                hasChoices: !!parsed.choices?.[0], 
+                hasDelta: !!parsed.choices?.[0]?.delta,
+                hasContent: !!content,
+                content: content.substring(0, 30) + '...'
+              })
+            }
             
             if (content) {
               chunkCount++
