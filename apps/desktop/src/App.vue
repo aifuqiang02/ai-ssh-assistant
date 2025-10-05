@@ -65,37 +65,6 @@
         </main>
       </div>
       
-      <!-- 右侧拖拽分割条 -->
-      <div 
-        v-if="showRightPanel"
-        class="vscode-splitter vscode-splitter-vertical"
-        @mousedown="startRightResize"
-      ></div>
-      
-      <!-- 右侧面板 (Cline功能区域) -->
-      <div 
-        v-if="showRightPanel" 
-        class="vscode-right-panel bg-vscode-bg-light border-l border-vscode-border flex flex-col flex-shrink-0"
-        :style="{ width: rightPanelWidth + 'px' }"
-      >
-        <RightPanel />
-      </div>
-      
-      <!-- 右侧面板切换按钮 -->
-      <div class="vscode-activitybar-right w-12 bg-vscode-bg-light border-l border-vscode-border flex flex-col" v-if="!showRightPanel">
-        <div class="flex-1 py-2">
-          <div 
-            class="vscode-activity-item"
-            @click="toggleRightPanel"
-            title="AI助手 (Cline)"
-          >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-              <path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zM7 3v2H5v1h2v2h1V6h2V5H8V3H7z"/>
-              <path d="M8 11.5a.5.5 0 0 1-.5-.5V9.5a.5.5 0 0 1 1 0V11a.5.5 0 0 1-.5.5z"/>
-            </svg>
-          </div>
-        </div>
-      </div>
     </div>
     
     <!-- 状态栏 -->
@@ -118,7 +87,6 @@ import { useStorageStore } from '@/stores/storage'
 import AppTitleBar from '@/components/layout/AppTitleBar.vue'
 import AppSidebar from '@/components/layout/AppSidebar.vue'
 import AppStatusBar from '@/components/layout/AppStatusBar.vue'
-import RightPanel from '@/components/layout/RightPanel.vue'
 import GlobalModals from '@/components/common/GlobalModals.vue'
 import NotificationContainer from '@/components/common/NotificationContainer.vue'
 
@@ -130,17 +98,15 @@ const storageStore = useStorageStore()
 // 响应式数据
 const isFullscreen = ref(false)
 const showSidebar = ref(true)
-const showRightPanel = ref(true)
 const activeView = ref('welcome')
 const activeTab = ref('welcome')
 
 // 面板尺寸
 const sidebarWidth = ref(256) // 默认256px
-const rightPanelWidth = ref(500) // 默认500px
 
 // 拖拽状态
 const isResizing = ref(false)
-const resizeType = ref<'left' | 'right' | null>(null)
+const resizeType = ref<'left' | null>(null)
 const startX = ref(0)
 const startWidth = ref(0)
 
@@ -149,8 +115,7 @@ const activityBarItems = ref([
   { id: 'welcome', icon: 'bi bi-house', tooltip: '欢迎' },
   { id: 'ssh', icon: 'bi bi-hdd-network', tooltip: 'SSH 连接' },
   { id: 'chat', icon: 'bi bi-chat-dots', tooltip: 'AI 聊天' },
-  { id: 'files', icon: 'bi bi-folder', tooltip: '文件管理' },
-  { id: 'history', icon: 'bi bi-clock-history', tooltip: '历史记录' }
+  { id: 'files', icon: 'bi bi-folder', tooltip: '文件管理' }
 ])
 
 // 打开的标签
@@ -162,17 +127,15 @@ const openTabs = ref([
 const setActiveView = (viewId: string) => {
   activeView.value = viewId
   
-  // SSH 视图只切换侧边栏，不打开新 tab
-  if (viewId === 'ssh') {
+  // SSH 和 Chat 视图只切换侧边栏，不打开新 tab
+  if (viewId === 'ssh' || viewId === 'chat') {
     return
   }
   
   // 定义路由和标签信息映射
   const viewConfigs: Record<string, { path: string; name: string; icon: string }> = {
     welcome: { path: '/', name: '欢迎', icon: 'bi bi-house' },
-    chat: { path: '/chat', name: 'AI 对话', icon: 'bi bi-chat-dots' },
-    files: { path: '/files', name: '文件管理', icon: 'bi bi-folder' },
-    history: { path: '/history', name: '历史记录', icon: 'bi bi-clock-history' }
+    files: { path: '/files', name: '文件管理', icon: 'bi bi-folder' }
   }
   
   const config = viewConfigs[viewId]
@@ -252,17 +215,11 @@ const openSettings = () => {
 // 提供打开新标签的方法给子组件
 provide('openNewTab', openNewTab)
 
-const toggleRightPanel = () => {
-  showRightPanel.value = !showRightPanel.value
-}
-
-const closeRightPanel = () => {
-  showRightPanel.value = false
-}
 
 // 处理视图切换事件
-const handleSwitchView = (event: CustomEvent) => {
-  const { viewId } = event.detail
+const handleSwitchView = (event: Event) => {
+  const customEvent = event as CustomEvent
+  const { viewId } = customEvent.detail
   if (viewId) {
     setActiveView(viewId)
   }
@@ -280,16 +237,6 @@ const startLeftResize = (event: MouseEvent) => {
   event.preventDefault()
 }
 
-const startRightResize = (event: MouseEvent) => {
-  isResizing.value = true
-  resizeType.value = 'right'
-  startX.value = event.clientX
-  startWidth.value = rightPanelWidth.value
-  document.body.classList.add('resizing')
-  document.addEventListener('mousemove', handlePanelResize)
-  document.addEventListener('mouseup', stopResize)
-  event.preventDefault()
-}
 
 const handlePanelResize = (event: MouseEvent) => {
   if (!isResizing.value) return
@@ -300,10 +247,6 @@ const handlePanelResize = (event: MouseEvent) => {
     // 左侧侧边栏调整
     const newWidth = startWidth.value + deltaX
     sidebarWidth.value = Math.max(200, Math.min(600, newWidth)) // 限制在200-600px之间
-  } else if (resizeType.value === 'right') {
-    // 右侧面板调整
-    const newWidth = startWidth.value - deltaX // 右侧面板向左拖拽时减小宽度
-    rightPanelWidth.value = Math.max(250, Math.min(600, newWidth)) // 限制在250-600px之间
   }
 }
 
@@ -406,8 +349,7 @@ onMounted(async () => {
   // 绑定事件监听器
   document.addEventListener('keydown', handleKeydown)
   window.addEventListener('resize', handleResize)
-  window.addEventListener('close-right-panel', closeRightPanel)
-  window.addEventListener('switch-view', handleSwitchView)
+  window.addEventListener('switch-view', handleSwitchView as EventListener)
   
   // 监听全屏状态变化
   if (window.electronAPI?.onFullscreenChange) {
@@ -429,8 +371,7 @@ onUnmounted(async () => {
   // 清理事件监听器
   document.removeEventListener('keydown', handleKeydown)
   window.removeEventListener('resize', handleResize)
-  window.removeEventListener('close-right-panel', closeRightPanel)
-  window.removeEventListener('switch-view', handleSwitchView)
+  window.removeEventListener('switch-view', handleSwitchView as EventListener)
 })
 </script>
 

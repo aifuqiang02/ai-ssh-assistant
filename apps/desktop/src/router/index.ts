@@ -47,15 +47,6 @@ const routes: RouteRecordRaw[] = [
     }
   },
   {
-    path: '/history',
-    name: 'History',
-    component: () => import('@/views/HistoryView.vue'),
-    meta: {
-      title: '历史记录',
-      icon: 'bi-clock-history'
-    }
-  },
-  {
     path: '/settings',
     name: 'Settings',
     component: () => import('@/views/SettingsView.vue'),

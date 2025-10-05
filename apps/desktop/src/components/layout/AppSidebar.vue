@@ -130,23 +130,6 @@
         </div>
       </div>
       
-      <!-- 历史记录视图 -->
-      <div v-else-if="activeView === 'history'" class="p-4">
-        <div class="space-y-2">
-          <div class="vscode-tree-title text-xs font-medium text-vscode-fg-muted mb-2">
-            操作历史
-          </div>
-          <div 
-            v-for="item in history" 
-            :key="item.id"
-            class="vscode-tree-item"
-          >
-            <i class="bi bi-clock-history text-vscode-fg-muted mr-2"></i>
-            <span class="text-sm">{{ item.action }}</span>
-          </div>
-        </div>
-      </div>
-      
       <!-- 欢迎视图 -->
       <div v-else-if="activeView === 'welcome'" class="p-4">
         <div class="space-y-4">
@@ -170,20 +153,13 @@
                 <i class="bi bi-chat-dots text-vscode-accent mr-2"></i>
                 <span>AI 对话</span>
               </div>
-              <div 
-                class="vscode-tree-item cursor-pointer hover:bg-vscode-bg-lighter"
-                @click="navigateToView('files')"
-              >
-                <i class="bi bi-folder text-vscode-accent mr-2"></i>
-                <span>文件管理</span>
-              </div>
-              <div 
-                class="vscode-tree-item cursor-pointer hover:bg-vscode-bg-lighter"
-                @click="navigateToView('history')"
-              >
-                <i class="bi bi-clock-history text-vscode-accent mr-2"></i>
-                <span>历史记录</span>
-              </div>
+               <div
+                 class="vscode-tree-item cursor-pointer hover:bg-vscode-bg-lighter"
+                 @click="navigateToView('files')"
+               >
+                 <i class="bi bi-folder text-vscode-accent mr-2"></i>
+                 <span>文件管理</span>
+               </div>
             </div>
           </div>
           
@@ -317,11 +293,6 @@ const terminals = ref([
   { id: '2', name: 'powershell' }
 ])
 
-const history = ref([
-  { id: '1', action: '连接到生产服务器' },
-  { id: '2', action: '执行命令: ls -la' },
-  { id: '3', action: '上传文件到服务器' }
-])
 
 // 计算侧边栏标题
 const sidebarTitle = computed(() => {
@@ -330,8 +301,7 @@ const sidebarTitle = computed(() => {
     ssh: 'SSH 连接',
     chat: 'AI 助手',
     files: '文件管理',
-    terminal: '终端',
-    history: '历史记录'
+    terminal: '终端'
   }
   return titles[props.activeView] || '欢迎'
 })
@@ -659,8 +629,7 @@ const handleOpenFileManager = async (connection: SSHTreeNodeData) => {
 // 创建根级文件夹（Chat）
 const createRootChatFolder = async () => {
   showInputPrompt('新建文件夹', '请输入文件夹名称', async (folderName: string) => {
-  
-  try {
+    try {
     const newFolder = await chatStore.createFolder({
       name: folderName.trim(),
       parentId: null,
@@ -687,8 +656,7 @@ const createRootChatFolder = async () => {
 // 创建根级会话（Chat）
 const createRootChatSession = async () => {
   showInputPrompt('新建对话', '请输入对话名称', async (sessionName: string) => {
-  
-  try {
+    try {
     const newSession = await chatStore.createSession({
       title: sessionName.trim(),
       folderId: null,
@@ -751,7 +719,19 @@ const handleChatNodeDelete = async (node: ChatTreeNodeData) => {
 // 打开会话
 const handleOpenSession = (node: ChatTreeNodeData) => {
   chatStore.openSession(node.id)
-  router.push({ path: '/chat', query: { sessionId: node.id } })
+  
+  // 创建或切换到对话标签页
+  if (openNewTab) {
+    const tabId = `chat-${node.id}`
+    const tabName = node.name || node.title || 'AI 对话'
+    const tabPath = `/chat?sessionId=${node.id}`
+    
+    openNewTab(tabId, tabName, 'bi bi-chat-dots', tabPath)
+    console.log(`Opened chat session tab: ${tabName}`)
+  } else {
+    // 如果没有 openNewTab 方法，fallback 到路由跳转
+    router.push({ path: '/chat', query: { sessionId: node.id } })
+  }
 }
 
 // 拖拽 Chat 节点

@@ -60,15 +60,6 @@
             </p>
           </div>
 
-          <div class="feature-card bg-vscode-bg border border-vscode-border rounded-lg p-6 hover:border-vscode-accent transition-colors">
-            <div class="feature-icon mb-4">
-              <i class="bi bi-clock-history text-2xl text-vscode-accent"></i>
-            </div>
-            <h3 class="text-lg font-semibold text-vscode-fg mb-2">历史记录</h3>
-            <p class="text-vscode-fg-muted">
-              完整的操作历史记录，方便回顾和重复执行命令
-            </p>
-          </div>
 
           <div class="feature-card bg-vscode-bg border border-vscode-border rounded-lg p-6 hover:border-vscode-accent transition-colors">
             <div class="feature-icon mb-4">
