@@ -572,6 +572,20 @@ const handleAISendMessage = async (content: string) => {
     
     // 调用 AI API
     console.log('🚀 [TerminalView] 开始调用 chatCompletion')
+    
+    const onChunkCallback = (chunk) => {
+      chunkReceived++
+      console.log('📦 [TerminalView] 收到流式数据块:', { 
+        chunkIndex: chunkReceived, 
+        content: chunk.content?.substring(0, 50) + '...',
+        contentLength: chunk.content?.length || 0,
+        done: chunk.done
+      })
+      aiMessage.content += chunk.content || ''
+    }
+    
+    console.log('🔧 [TerminalView] 回调函数已定义:', { hasCallback: !!onChunkCallback })
+    
     const response = await chatCompletion(
       providerWithApiKey,
       currentModel.value,
@@ -579,16 +593,7 @@ const handleAISendMessage = async (content: string) => {
         messages: apiMessages,
         stream: true
       },
-      (chunk) => {
-        chunkReceived++
-        console.log('📦 [TerminalView] 收到流式数据块:', { 
-          chunkIndex: chunkReceived, 
-          content: chunk.content?.substring(0, 50) + '...',
-          contentLength: chunk.content?.length || 0,
-          done: chunk.done
-        })
-        aiMessage.content += chunk.content || ''
-      }
+      onChunkCallback
     )
     
     console.log('✅ [TerminalView] API 调用完成:', { 

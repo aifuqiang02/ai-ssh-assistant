@@ -157,7 +157,9 @@ async function handleOpenAIStream(
               chunkCount++
               fullContent += content
               console.log('🌊 [Stream] 处理内容块:', { chunkIndex: chunkCount, contentLength: content.length, content: content.substring(0, 50) + '...' })
+              console.log('🔄 [Stream] 调用 onChunk 回调:', { hasCallback: !!onChunk, content: content.substring(0, 20) + '...' })
               onChunk({ content, done: false })
+              console.log('✅ [Stream] onChunk 回调完成')
             }
           } catch (e) {
             console.warn('🌊 [Stream] 解析数据失败:', { data: data.substring(0, 100), error: e })
