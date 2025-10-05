@@ -129,7 +129,6 @@ async function handleOpenAIStream(
             
             if (content) {
               fullContent += content
-              console.log('[Stream] 收到内容:', content)
               onChunk({ content, done: false })
             }
           } catch (e) {
