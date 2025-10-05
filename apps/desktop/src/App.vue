@@ -61,9 +61,9 @@
         
         <!-- 主内容 -->
         <main class="flex-1 overflow-hidden bg-vscode-bg">
-          <router-view v-slot="{ Component }">
+          <router-view v-slot="{ Component, route }">
             <keep-alive>
-              <component :is="Component" />
+              <component :is="Component" :key="getRouteKey(route)" />
             </keep-alive>
           </router-view>
         </main>
@@ -219,6 +219,19 @@ const openSettings = () => {
 // 提供打开新标签的方法给子组件
 provide('openNewTab', openNewTab)
 
+// 为路由生成唯一的缓存键
+const getRouteKey = (route: any) => {
+  // 对于终端路由，使用 connectionId 作为唯一键
+  if (route.path.startsWith('/terminal') && route.query.connectionId) {
+    return `terminal-${route.query.connectionId}`
+  }
+  // 对于聊天路由，使用 sessionId 作为唯一键
+  if (route.path.startsWith('/chat') && route.query.sessionId) {
+    return `chat-${route.query.sessionId}`
+  }
+  // 其他路由使用路径作为键
+  return route.path
+}
 
 // 处理视图切换事件
 const handleSwitchView = (event: Event) => {

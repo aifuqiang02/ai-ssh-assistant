@@ -121,7 +121,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, watch, computed, nextTick } from 'vue'
+import { ref, onMounted, onBeforeUnmount, onActivated, onDeactivated, watch, computed, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import { Terminal } from '@xterm/xterm'
 import { FitAddon } from '@xterm/addon-fit'
@@ -596,23 +596,49 @@ watch(() => actualConnectionId.value, (newId) => {
   }
 })
 
+// 标记是否已初始化
+const isInitialized = ref(false)
+
 // 生命周期
 onMounted(() => {
   // 确保 DOM 已经渲染
   nextTick(() => {
-    if (terminalContainer.value) {
+    if (terminalContainer.value && !isInitialized.value) {
       initTerminal()
+      isInitialized.value = true
       if (actualConnectionId.value) {
         currentConnectionId.value = actualConnectionId.value
         connectToSSH()
       }
     } else {
-      console.warn('Terminal container not found')
+      console.warn('Terminal container not found or already initialized')
     }
   })
   
   // 加载AI模型配置
   loadAIModelConfiguration()
+})
+
+// 当组件被 KeepAlive 激活时
+onActivated(() => {
+  console.log('TerminalView activated')
+  // 重新调整终端大小以适应容器
+  if (terminal.value && fitAddon.value) {
+    nextTick(() => {
+      try {
+        fitAddon.value?.fit()
+        terminal.value?.focus()
+      } catch (err) {
+        console.warn('Failed to fit terminal on activation:', err)
+      }
+    })
+  }
+})
+
+// 当组件被 KeepAlive 停用时
+onDeactivated(() => {
+  console.log('TerminalView deactivated')
+  // 组件被隐藏时不需要特殊处理，保持连接和状态
 })
 
 onBeforeUnmount(() => {
@@ -646,6 +672,9 @@ onBeforeUnmount(() => {
   if (currentConnectionId.value && window.electronAPI) {
     window.electronAPI.ssh.disconnect(currentConnectionId.value).catch(console.error)
   }
+  
+  // 重置初始化标记
+  isInitialized.value = false
 })
 </script>
 
