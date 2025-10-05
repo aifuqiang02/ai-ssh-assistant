@@ -153,6 +153,14 @@ async function handleOpenAIStream(
             const parsed = JSON.parse(data)
             const content = parsed.choices[0]?.delta?.content || ''
             
+            console.log('🔍 [Stream] 解析数据:', { 
+              hasChoices: !!parsed.choices?.[0], 
+              hasDelta: !!parsed.choices?.[0]?.delta,
+              hasContent: !!content,
+              content: content.substring(0, 30) + '...',
+              rawData: data.substring(0, 100) + '...'
+            })
+            
             if (content) {
               chunkCount++
               fullContent += content
@@ -160,10 +168,14 @@ async function handleOpenAIStream(
               console.log('🔄 [Stream] 调用 onChunk 回调:', { hasCallback: !!onChunk, content: content.substring(0, 20) + '...' })
               onChunk({ content, done: false })
               console.log('✅ [Stream] onChunk 回调完成')
+            } else {
+              console.log('⚠️ [Stream] 数据块无内容，跳过')
             }
           } catch (e) {
             console.warn('🌊 [Stream] 解析数据失败:', { data: data.substring(0, 100), error: e })
           }
+        } else {
+          console.log('🔍 [Stream] 非数据行，跳过:', { line: line.substring(0, 50) + '...' })
         }
       }
     }
