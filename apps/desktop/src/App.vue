@@ -434,7 +434,6 @@ onUnmounted(async () => {
   color: var(--vscode-fg-muted);
   cursor: pointer;
   border-top: 2px solid transparent;
-  border-left: 1px solid var(--vscode-border);
   border-right: 1px solid var(--vscode-border);
   position: relative;
   min-width: 120px;
