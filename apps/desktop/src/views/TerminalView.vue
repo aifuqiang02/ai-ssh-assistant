@@ -619,8 +619,18 @@ const handleAIUpdateMessages = (newMessages: Message[]) => {
 }
 
 // 监听 connectionId 变化
-watch(() => actualConnectionId.value, (newId) => {
-  if (newId && terminal.value) {
+watch(() => actualConnectionId.value, (newId, oldId) => {
+  console.log('[Watch] actualConnectionId changed:', { oldId, newId, currentId: currentConnectionId.value })
+  
+  // 如果 newId 和当前的 connectionId 相同，说明是切换回来的，不需要重新连接
+  if (newId === currentConnectionId.value) {
+    console.log('[Watch] Connection ID unchanged, skipping reconnect')
+    return
+  }
+  
+  // 只有在 connectionId 真正改变时才重新连接
+  if (newId && terminal.value && newId !== oldId) {
+    console.log('[Watch] Connection ID changed, reconnecting...')
     currentConnectionId.value = newId
     terminal.value.clear()
     connectToSSH()
