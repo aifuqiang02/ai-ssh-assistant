@@ -184,6 +184,7 @@ const connectionStatus = ref<'disconnected' | 'connecting' | 'connected'>('disco
 const outputListener = ref<(() => void) | null>(null)
 const statusListener = ref<(() => void) | null>(null)
 const currentConnectionId = ref<string>('') // 当前活动的连接ID
+const terminalDataDisposable = ref<any>(null) // 保存 terminal.onData 的 disposable 引用
 
 // 右键菜单状态
 const showContextMenu = ref(false)
@@ -251,8 +252,15 @@ const initTerminal = () => {
 
   console.log('[Terminal Init] Terminal opened and fitted')
 
+  // 清理旧的监听器（如果存在）
+  if (terminalDataDisposable.value) {
+    console.log('[Terminal Init] Disposing old input listener')
+    terminalDataDisposable.value.dispose()
+    terminalDataDisposable.value = null
+  }
+
   // 监听终端输入
-  terminal.value.onData((data) => {
+  terminalDataDisposable.value = terminal.value.onData((data) => {
     console.log('[Terminal Input] Received input:', {
       dataLength: data.length,
       data: data.replace(/\r/g, '\\r').replace(/\n/g, '\\n'),
@@ -672,11 +680,20 @@ onDeactivated(() => {
 })
 
 onBeforeUnmount(() => {
+  console.log('[Unmount] Cleaning up TerminalView')
+  
   // 移除窗口大小监听器
   window.removeEventListener('resize', handleResize)
   
   // 清理事件监听器
   cleanupListeners()
+  
+  // 清理终端输入监听器
+  if (terminalDataDisposable.value) {
+    console.log('[Unmount] Disposing terminal data listener')
+    terminalDataDisposable.value.dispose()
+    terminalDataDisposable.value = null
+  }
   
   // 清理终端实例和 addons
   if (terminal.value) {
