@@ -199,13 +199,6 @@ const currentModel = ref<AIModel | null>(null)
 
 // 初始化终端
 const initTerminal = () => {
-  console.log('[Terminal Init] Starting initialization...', {
-    hasContainer: !!terminalContainer.value,
-    isInitialized: isInitialized.value,
-    connectionId: actualConnectionId.value,
-    terminalExists: !!terminal.value
-  })
-
   if (!terminalContainer.value) {
     console.error('[Terminal Init] Terminal container not found')
     return
@@ -250,34 +243,22 @@ const initTerminal = () => {
   terminal.value.open(terminalContainer.value)
   fitAddon.value.fit()
 
-  console.log('[Terminal Init] Terminal opened and fitted')
-
   // 清理旧的监听器（如果存在）
   if (terminalDataDisposable.value) {
-    console.log('[Terminal Init] Disposing old input listener')
     terminalDataDisposable.value.dispose()
     terminalDataDisposable.value = null
   }
 
   // 监听终端输入
   terminalDataDisposable.value = terminal.value.onData((data) => {
-    console.log('[Terminal Input] Received input:', {
-      dataLength: data.length,
-      data: data.replace(/\r/g, '\\r').replace(/\n/g, '\\n'),
-      connectionId: currentConnectionId.value
-    })
     const connId = currentConnectionId.value
     if (connId && window.electronAPI) {
       // 发送输入到 SSH 服务器
       window.electronAPI.ssh.execute(connId, data).catch((err: any) => {
-        console.error('[Terminal Input] Failed to send input:', err)
+        console.error('Failed to send input:', err)
       })
-    } else {
-      console.warn('[Terminal Input] No connection ID or electronAPI')
     }
   })
-
-  console.log('[Terminal Init] Input listener registered')
 
   // 添加右键菜单功能
   terminalContainer.value.addEventListener('contextmenu', (e: MouseEvent) => {
@@ -296,8 +277,6 @@ const initTerminal = () => {
 
   // 监听窗口大小变化
   window.addEventListener('resize', handleResize)
-
-  console.log('[Terminal Init] Initialization complete')
 }
 
 // 处理窗口大小变化
@@ -623,18 +602,14 @@ const handleAIUpdateMessages = (newMessages: Message[]) => {
 // 这是正常的，因为 actualConnectionId 来自路由参数（标签创建时的 ID）
 // 而 currentConnectionId 是实际的 SSH 连接 ID
 // 我们不应该在这里重新连接，除非是真正的新连接
-watch(() => actualConnectionId.value, (newId, oldId) => {
-  console.log('[Watch] actualConnectionId changed:', { oldId, newId, currentId: currentConnectionId.value, isInitialized: isInitialized.value })
-  
+watch(() => actualConnectionId.value, (newId) => {
   // 如果已经初始化过，说明是切换回来的，不需要重新连接
   if (isInitialized.value && currentConnectionId.value) {
-    console.log('[Watch] Already initialized with connection, skipping reconnect')
     return
   }
   
   // 只有在首次初始化时才建立连接
   if (newId && terminal.value && !currentConnectionId.value) {
-    console.log('[Watch] First time initialization, connecting...')
     currentConnectionId.value = newId
     connectToSSH()
   }
@@ -665,20 +640,14 @@ onMounted(() => {
 
 // 当组件被 KeepAlive 激活时
 onActivated(() => {
-  console.log('[KeepAlive] TerminalView activated', {
-    connectionId: actualConnectionId.value,
-    hasTerminal: !!terminal.value,
-    isInitialized: isInitialized.value
-  })
   // 重新调整终端大小以适应容器
   if (terminal.value && fitAddon.value) {
     nextTick(() => {
       try {
         fitAddon.value?.fit()
         terminal.value?.focus()
-        console.log('[KeepAlive] Terminal fitted and focused')
       } catch (err) {
-        console.warn('[KeepAlive] Failed to fit terminal on activation:', err)
+        console.warn('Failed to fit terminal on activation:', err)
       }
     })
   }
@@ -686,15 +655,10 @@ onActivated(() => {
 
 // 当组件被 KeepAlive 停用时
 onDeactivated(() => {
-  console.log('[KeepAlive] TerminalView deactivated', {
-    connectionId: actualConnectionId.value
-  })
   // 组件被隐藏时不需要特殊处理，保持连接和状态
 })
 
 onBeforeUnmount(() => {
-  console.log('[Unmount] Cleaning up TerminalView')
-  
   // 移除窗口大小监听器
   window.removeEventListener('resize', handleResize)
   
@@ -703,7 +667,6 @@ onBeforeUnmount(() => {
   
   // 清理终端输入监听器
   if (terminalDataDisposable.value) {
-    console.log('[Unmount] Disposing terminal data listener')
     terminalDataDisposable.value.dispose()
     terminalDataDisposable.value = null
   }

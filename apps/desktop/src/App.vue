@@ -221,19 +221,16 @@ provide('openNewTab', openNewTab)
 
 // 为路由生成唯一的缓存键
 const getRouteKey = (route: any) => {
-  let key = route.path
-  
   // 对于终端路由，使用 connectionId 作为唯一键
   if (route.path.startsWith('/terminal') && route.query.connectionId) {
-    key = `terminal-${route.query.connectionId}`
+    return `terminal-${route.query.connectionId}`
   }
   // 对于聊天路由，使用 sessionId 作为唯一键
-  else if (route.path.startsWith('/chat') && route.query.sessionId) {
-    key = `chat-${route.query.sessionId}`
+  if (route.path.startsWith('/chat') && route.query.sessionId) {
+    return `chat-${route.query.sessionId}`
   }
-  
-  console.log('[Route Key] Generated key:', key, 'for route:', route.path, 'query:', route.query)
-  return key
+  // 其他路由使用路径作为键
+  return route.path
 }
 
 // 处理视图切换事件
