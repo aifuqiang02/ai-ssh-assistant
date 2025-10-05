@@ -117,14 +117,19 @@ const handleSendMessage = async (content: string) => {
       throw new Error('未找到 API 密钥配置')
     }
     
-    const apiKey = providerConfig.apiKey
+    // 创建包含 API Key 的 provider 对象
+    const providerWithApiKey = {
+      ...currentProvider.value,
+      apiKey: providerConfig.apiKey
+    }
     
     // 调用 AI API
     const response = await chatCompletion(
-      currentProvider.value,
+      providerWithApiKey,
       currentModel.value,
       {
-        messages: apiMessages
+        messages: apiMessages,
+        stream: true
       },
       (chunk) => {
         assistantMessage.content += chunk.content || ''

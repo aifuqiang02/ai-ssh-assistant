@@ -556,7 +556,8 @@ const handleAISendMessage = async (content: string) => {
       providerWithApiKey,
       currentModel.value,
       {
-        messages: apiMessages
+        messages: apiMessages,
+        stream: true
       },
       (chunk) => {
         aiMessage.content += chunk.content || ''

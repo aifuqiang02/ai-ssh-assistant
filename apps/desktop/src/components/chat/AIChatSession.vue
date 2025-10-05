@@ -378,28 +378,34 @@ const sendMessageInternal = async (content: string) => {
       content
     })
     
-    // 获取加密的 API 密钥
-    const configs = JSON.parse(localStorage.getItem('aiProviderConfigs') || '{}')
-    const providerConfig = configs[props.currentProvider.id]
+    // 获取 API 密钥配置
+    const configsStr = localStorage.getItem('aiProviderConfigs') || '[]'
+    const configs = JSON.parse(configsStr)
+    const providerConfig = configs.find((p: any) => p.id === props.currentProvider?.id)
     
     if (!providerConfig?.apiKey) {
       throw new Error('未找到 API 密钥配置')
     }
     
-    const apiKey = providerConfig.apiKey
+    // 创建包含 API Key 的 provider 对象
+    const providerWithApiKey = {
+      ...props.currentProvider,
+      apiKey: providerConfig.apiKey
+    }
     
     // 调用 AI API
-    const response = await chatCompletion({
-      provider: props.currentProvider,
-      model: props.currentModel,
-      messages: apiMessages,
-      apiKey,
-      baseUrl: providerConfig.baseUrl,
-      onStream: (chunk: string) => {
-        assistantMessage.content += chunk
+    const response = await chatCompletion(
+      providerWithApiKey,
+      props.currentModel,
+      {
+        messages: apiMessages,
+        stream: true
+      },
+      (chunk) => {
+        assistantMessage.content += chunk.content || ''
         scrollToBottom()
       }
-    })
+    )
     
     // 完成流式输出
     assistantMessage.streaming = false
