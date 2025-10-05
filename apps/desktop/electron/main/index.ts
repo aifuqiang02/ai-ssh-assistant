@@ -209,24 +209,16 @@ class Application {
     if (!this.mainWindow) return
 
     // 监听来自渲染进程的键盘事件
+    // 注意：F12 快捷键已在 registerShortcuts() 中通过 globalShortcut 注册
+    // 这里不再重复处理 F12，避免冲突
     this.mainWindow.webContents.on('before-input-event', (event, input) => {
-      if (input.key === 'F12' && input.type === 'keyDown') {
-        console.log('F12 detected via before-input-event')
-        const webContents = this.mainWindow!.webContents
-        const isOpened = webContents.isDevToolsOpened()
-        console.log('DevTools currently opened:', isOpened)
-        
-        if (isOpened) {
-          console.log('Closing DevTools via local handler...')
-          webContents.closeDevTools()
-        } else {
-          console.log('Opening DevTools via local handler...')
-          webContents.openDevTools()
-        }
-        
-        // 防止默认行为
-        event.preventDefault()
+      // F12 由 globalShortcut 处理，这里跳过
+      if (input.key === 'F12') {
+        return // 不处理，让 globalShortcut 处理
       }
+      
+      // 这里可以处理其他键盘快捷键
+      // 例如: Ctrl+Shift+I, Ctrl+R 等
     })
 
     // 添加调试窗口状态监听

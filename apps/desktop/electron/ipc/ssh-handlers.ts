@@ -208,14 +208,95 @@ class SSHManager {
     console.log(`Disconnected: ${id}`)
   }
 
-  async execute(id: string, data: string): Promise<void> {
+  async execute(id: string, command: string): Promise<{ success: boolean; output?: string; error?: string }> {
+    console.log('[SSHManager] ========== 执行 SSH 命令 ==========')
+    console.log('[SSHManager] 连接ID:', id)
+    console.log('[SSHManager] 命令:', command)
+    
     const connection = this.connections.get(id)
     if (!connection || !connection.shell || !connection.isConnected) {
+      console.error('[SSHManager] ❌ 连接不存在或未连接')
       throw new Error('Connection not found or not connected')
     }
 
-    // 写入数据到 shell
-    connection.shell.write(data)
+    console.log('[SSHManager] ✅ 连接有效，准备执行命令')
+
+    return new Promise((resolve, reject) => {
+      const shell = connection.shell
+      let output = ''
+      let errorOutput = ''
+      let commandSent = false
+      const timeout = 30000 // 30 秒超时
+
+      // 超时处理
+      const timeoutId = setTimeout(() => {
+        console.log('[SSHManager] ⏱️ 命令执行超时')
+        shell.removeAllListeners('data')
+        shell.stderr.removeAllListeners('data')
+        resolve({
+          success: false,
+          error: '命令执行超时'
+        })
+      }, timeout)
+
+      // 监听标准输出
+      const onData = (data: Buffer) => {
+        const chunk = data.toString()
+        output += chunk
+        console.log('[SSHManager] 收到输出片段:', chunk.substring(0, 100))
+        
+        // 检测命令提示符（简单的启发式方法）
+        // 通常 shell 提示符以 $ 或 # 结尾
+        if (commandSent && (chunk.includes('$') || chunk.includes('#') || chunk.includes('> '))) {
+          console.log('[SSHManager] ✅ 检测到命令执行完成（提示符出现）')
+          clearTimeout(timeoutId)
+          shell.removeListener('data', onData)
+          shell.stderr.removeListener('data', onStderr)
+          
+          // 清理输出（移除命令本身和提示符）
+          const lines = output.split('\n')
+          let cleanedOutput = lines
+            .slice(1, -1) // 移除第一行（命令）和最后一行（提示符）
+            .join('\n')
+            .trim()
+          
+          console.log('[SSHManager] 清理后的输出长度:', cleanedOutput.length)
+          console.log('[SSHManager] 清理后的输出预览:', cleanedOutput.substring(0, 200))
+          
+          resolve({
+            success: !errorOutput,
+            output: cleanedOutput,
+            error: errorOutput || undefined
+          })
+        }
+      }
+
+      // 监听错误输出
+      const onStderr = (data: Buffer) => {
+        const chunk = data.toString()
+        errorOutput += chunk
+        console.log('[SSHManager] 收到错误输出:', chunk)
+      }
+
+      shell.on('data', onData)
+      shell.stderr.on('data', onStderr)
+
+      // 发送命令（添加换行符）
+      const commandWithNewline = command.endsWith('\n') ? command : command + '\n'
+      console.log('[SSHManager] 发送命令到 shell...')
+      shell.write(commandWithNewline, (err: any) => {
+        if (err) {
+          console.error('[SSHManager] ❌ 写入命令失败:', err)
+          clearTimeout(timeoutId)
+          shell.removeListener('data', onData)
+          shell.stderr.removeListener('data', onStderr)
+          reject(err)
+        } else {
+          console.log('[SSHManager] ✅ 命令已发送')
+          commandSent = true
+        }
+      })
+    })
   }
 
   async getInitialOutput(id: string): Promise<string> {

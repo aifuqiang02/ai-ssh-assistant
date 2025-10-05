@@ -78,20 +78,20 @@
           </button>
         </div>
         
-        <AIChatSession
-          :messages="aiMessages"
+        <AIChatSessionWithTools
           :current-provider="currentProvider"
           :current-model="currentModel"
+          :connection-id="actualConnectionId"
+          :enable-tools="true"
+          :server-info="serverInfo"
           :multiline="true"
           :input-rows="2"
-          input-placeholder="向AI助手提问... (Ctrl+Enter 发送)"
-          empty-state-text="SSH终端AI助手"
-          empty-state-subtext="可以帮助您解决SSH连接和Linux命令相关问题"
+          input-placeholder="向AI助手提问... (Ctrl+Enter 发送，支持SSH命令执行)"
+          empty-state-text="SSH终端AI助手（支持工具调用）"
+          empty-state-subtext="可以通过AI执行SSH命令、读取文件等操作"
           :show-attach-button="false"
           :show-status-info="false"
-          @send-message="handleAISendMessage"
-          @clear-messages="handleAIClearMessages"
-          @update:messages="handleAIUpdateMessages"
+          @tool-executed="handleToolExecuted"
         />
       </div>
     </div>
@@ -128,9 +128,10 @@ import { FitAddon } from '@xterm/addon-fit'
 import { WebLinksAddon } from '@xterm/addon-web-links'
 import '@xterm/xterm/css/xterm.css'
 import { useSSHStore } from '@/stores/ssh'
-import AIChatSession, { type Message } from '@/components/chat/AIChatSession.vue'
+import AIChatSessionWithTools, { type Message } from '@/components/chat/AIChatSessionWithTools.vue'
 import type { AIProvider, AIModel } from '@/types/ai-providers'
 import { chatCompletion, type ChatMessage as APIChatMessage } from '@/services/ai-api.service'
+import type { ToolResult } from '@/types/tools'
 
 // Props
 const props = defineProps<{
@@ -193,9 +194,21 @@ const contextMenuY = ref(0)
 
 // AI助手相关状态
 const showAIAssistant = ref(true)
-const aiMessages = ref<Message[]>([])
+// 注意：不再在父组件管理消息，让子组件完全自己处理
+// const aiMessages = ref<Message[]>([])  // 移除父组件的消息管理
 const currentProvider = ref<AIProvider | null>(null)
 const currentModel = ref<AIModel | null>(null)
+
+// 服务器信息（用于工具调用）
+const serverInfo = computed(() => {
+  const config = getNodeConfig()
+  if (!config) return undefined
+  
+  return {
+    host: config.host,
+    username: config.username
+  }
+})
 
 // 初始化终端
 const initTerminal = () => {
@@ -487,114 +500,23 @@ const loadAIModelConfiguration = () => {
   }
 }
 
-// AI消息发送处理
-const handleAISendMessage = async (content: string) => {
-  // 检查是否选择了模型
-  if (!currentProvider.value || !currentModel.value) {
-    const tipMessage: Message = {
-      id: Date.now(),
-      role: 'assistant',
-      content: '请先在设置中配置并选择一个 AI 模型。',
-      timestamp: new Date()
-    }
-    aiMessages.value.push(tipMessage)
-    return
-  }
-  
-  // 检查 API Key
-  if (!currentProvider.value.apiKey && currentProvider.value.id !== 'ollama') {
-    const tipMessage: Message = {
-      id: Date.now(),
-      role: 'assistant',
-      content: `请先在设置中配置 ${currentProvider.value.name} 的 API Key。`,
-      timestamp: new Date()
-    }
-    aiMessages.value.push(tipMessage)
-    return
-  }
-  
-  const userMessage: Message = {
-    id: Date.now(),
-    role: 'user',
-    content: content,
-    timestamp: new Date()
-  }
-  
-  aiMessages.value.push(userMessage)
-  
-  // 创建 AI 响应消息（用于流式更新）
-  const aiMessage: Message = {
-    id: Date.now() + 1,
-    role: 'assistant',
-    content: '',
-    timestamp: new Date(),
-    streaming: true
-  }
-  aiMessages.value.push(aiMessage)
-  
-  try {
-    // 构建 API 请求消息，包含SSH上下文
-    const contextMessage = `你是一个SSH终端AI助手。当前连接信息：${actualConnectionName.value}。请帮助用户解决SSH连接、Linux命令和系统管理相关问题。`
-    
-    const apiMessages: APIChatMessage[] = [
-      { role: 'system', content: contextMessage },
-      ...aiMessages.value
-        .filter(m => !m.streaming)
-        .map(m => ({
-          role: m.role === 'user' ? 'user' : 'assistant',
-          content: m.content
-        }))
-    ]
-    
-    // 获取 API 密钥配置
-    const configsStr = localStorage.getItem('aiProviderConfigs') || '[]'
-    const configs = JSON.parse(configsStr)
-    const providerConfig = configs.find((p: any) => p.id === currentProvider.value?.id)
-    
-    if (!providerConfig?.apiKey) {
-      throw new Error('未找到 API 密钥配置')
-    }
-    
-    // 创建包含 API Key 的 provider 对象
-    const providerWithApiKey = {
-      ...currentProvider.value,
-      apiKey: providerConfig.apiKey
-    }
-    
-    // 调用 AI API
-    const response = await chatCompletion(
-      providerWithApiKey,
-      currentModel.value,
-      {
-        messages: apiMessages,
-        stream: true
-      },
-      (chunk) => {
-        aiMessage.content += chunk.content || ''
-        // 强制触发响应式更新
-        aiMessages.value = [...aiMessages.value]
-      }
-    )
-    
-    // 完成流式输出
-    aiMessage.streaming = false
-    aiMessage.content = response.content
-    
-  } catch (error: any) {
-    console.error('AI API 调用失败:', error)
-    
-    // 更新消息为错误提示
-    aiMessage.content = `❌ 调用失败: ${error.message}\n\n请检查：\n1. API Key 是否正确\n2. 网络连接是否正常\n3. API 配额是否充足\n4. 端点 URL 是否正确`
-    aiMessage.streaming = false
-  }
-}
+// 注意：移除了 handleAISendMessage, handleAIClearMessages, handleAIUpdateMessages
+// 因为子组件 AIChatSessionWithTools 现在完全自己管理消息
 
-const handleAIClearMessages = () => {
-  aiMessages.value = []
-}
-
-const handleAIUpdateMessages = (newMessages: Message[]) => {
-  aiMessages.value = newMessages
+const handleToolExecuted = (toolName: string, result: ToolResult) => {
+  console.log(`[Terminal] Tool ${toolName} executed:`, result)
+  
+  // 注意：SSH 命令的输出已经通过 shell 的 data 事件自动显示在终端了
+  // 这里不需要再次显示，避免重复
+  // 如果需要特殊标记，可以只添加一个提示
+  
+  if (toolName === 'execute_ssh_command' && result.success && result.content && terminal.value) {
+    // 只添加一个简单的成功提示，不重复显示输出
+    // terminal.value.write('\r\n\x1b[32m✓ AI 命令执行成功\x1b[0m\r\n')
+    
+    // 或者完全不显示，因为输出已经在终端中了
+    // 用户可以在 AI 助手面板中看到完整的分析
+  }
 }
 
 // 监听 connectionId 变化
