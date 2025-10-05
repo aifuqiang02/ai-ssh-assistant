@@ -310,23 +310,36 @@ const estimateTokens = (text: string): number => {
 }
 
 const handleSendMessage = async () => {
+  console.log('🚀 [AIChatSession] handleSendMessage 被调用:', { 
+    hasInput: !!inputMessage.value.trim(),
+    isGenerating: isGenerating.value,
+    messagesLength: props.messages.length
+  })
+  
   if (!inputMessage.value.trim() || isGenerating.value) return
   
   const content = inputMessage.value.trim()
   inputMessage.value = ''
   
+  console.log('📤 [AIChatSession] 发出 send-message 事件:', { content: content.substring(0, 50) + '...' })
   // 发送消息事件
   emit('send-message', content)
   
   // 如果没有外部处理，则内部处理
   if (props.messages.length === 0) {
+    console.log('🔄 [AIChatSession] 使用内部处理')
     await sendMessageInternal(content)
+  } else {
+    console.log('🔄 [AIChatSession] 使用外部处理，等待外部组件处理')
   }
 }
 
 const sendMessageInternal = async (content: string) => {
+  console.log('🎯 [AIChatSession] 开始发送消息:', { content: content.substring(0, 100) + '...' })
+  
   // 检查是否选择了模型
   if (!props.currentProvider || !props.currentModel) {
+    console.warn('⚠️ [AIChatSession] 缺少 AI 配置')
     const tipMessage: Message = {
       id: Date.now(),
       role: 'assistant',
@@ -338,6 +351,11 @@ const sendMessageInternal = async (content: string) => {
     scrollToBottom()
     return
   }
+  
+  console.log('📝 [AIChatSession] 当前配置:', {
+    provider: props.currentProvider?.id,
+    model: props.currentModel?.id
+  })
   
   // 添加用户消息
   const userMessage: Message = {
