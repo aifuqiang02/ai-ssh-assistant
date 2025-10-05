@@ -15,6 +15,14 @@
         </span>
       </div>
       <div class="terminal-actions">
+        <!-- AI助手切换按钮 -->
+        <button 
+          @click="toggleAIAssistant" 
+          :class="['btn-icon', { 'active': showAIAssistant }]"
+          title="AI助手"
+        >
+          <i class="bi bi-robot"></i>
+        </button>
         <!-- 已连接时显示断开按钮 -->
         <button 
           v-if="connectionStatus === 'connected'" 
@@ -45,8 +53,48 @@
       </div>
     </div>
     
-    <!-- 终端容器 -->
-    <div ref="terminalContainer" class="terminal-container"></div>
+    <!-- 主内容区域 -->
+    <div class="terminal-main">
+      <!-- 终端容器 -->
+      <div 
+        ref="terminalContainer" 
+        class="terminal-container"
+        :class="{ 'with-ai-panel': showAIAssistant }"
+      ></div>
+      
+      <!-- AI助手面板 -->
+      <div 
+        v-if="showAIAssistant"
+        class="ai-assistant-panel"
+      >
+        <div class="ai-panel-header">
+          <h3 class="ai-panel-title">AI 助手</h3>
+          <button 
+            @click="toggleAIAssistant"
+            class="btn-icon"
+            title="关闭AI助手"
+          >
+            <i class="bi bi-x"></i>
+          </button>
+        </div>
+        
+        <AIChatSession
+          :messages="aiMessages"
+          :current-provider="currentProvider"
+          :current-model="currentModel"
+          :multiline="true"
+          :input-rows="2"
+          input-placeholder="向AI助手提问... (Ctrl+Enter 发送)"
+          empty-state-text="SSH终端AI助手"
+          empty-state-subtext="可以帮助您解决SSH连接和Linux命令相关问题"
+          :show-attach-button="false"
+          :show-status-info="false"
+          @send-message="handleAISendMessage"
+          @clear-messages="handleAIClearMessages"
+          @update:messages="handleAIUpdateMessages"
+        />
+      </div>
+    </div>
     
     <!-- 右键菜单 -->
     <div 
@@ -80,6 +128,10 @@ import { FitAddon } from '@xterm/addon-fit'
 import { WebLinksAddon } from '@xterm/addon-web-links'
 import '@xterm/xterm/css/xterm.css'
 import { useSSHStore } from '@/stores/ssh'
+import AIChatSession, { type Message } from '@/components/chat/AIChatSession.vue'
+import type { AIProvider, AIModel } from '@/types/ai-providers'
+import { chatCompletion, type ChatMessage as APIChatMessage } from '@/services/ai-api.service'
+import { decryptApiKey } from '@/utils/encryption'
 
 // Props
 const props = defineProps<{
@@ -138,6 +190,12 @@ const currentConnectionId = ref<string>('') // 当前活动的连接ID
 const showContextMenu = ref(false)
 const contextMenuX = ref(0)
 const contextMenuY = ref(0)
+
+// AI助手相关状态
+const showAIAssistant = ref(true)
+const aiMessages = ref<Message[]>([])
+const currentProvider = ref<AIProvider | null>(null)
+const currentModel = ref<AIModel | null>(null)
 
 // 初始化终端
 const initTerminal = () => {
@@ -385,6 +443,150 @@ const handleClear = () => {
   showContextMenu.value = false
 }
 
+// AI助手相关函数
+const toggleAIAssistant = () => {
+  showAIAssistant.value = !showAIAssistant.value
+  // 调整终端大小以适应新布局
+  setTimeout(() => {
+    handleResize()
+  }, 100)
+}
+
+// 加载AI模型配置
+const loadAIModelConfiguration = () => {
+  try {
+    const saved = localStorage.getItem('selectedAIModel')
+    if (!saved) return
+    
+    const savedModel = JSON.parse(saved)
+    const configsStr = localStorage.getItem('aiProviderConfigs')
+    
+    if (configsStr && savedModel) {
+      const configs = JSON.parse(configsStr)
+      const provider = configs.find((p: AIProvider) => p.id === savedModel.providerId)
+      
+      if (provider) {
+        const model = provider.models?.find((m: AIModel) => m.id === savedModel.modelId)
+        if (model) {
+          currentProvider.value = provider
+          currentModel.value = model
+        }
+      }
+    }
+  } catch (error) {
+    console.error('AI模型配置加载失败:', error)
+  }
+}
+
+// AI消息发送处理
+const handleAISendMessage = async (content: string) => {
+  // 检查是否选择了模型
+  if (!currentProvider.value || !currentModel.value) {
+    const tipMessage: Message = {
+      id: Date.now(),
+      role: 'assistant',
+      content: '请先在设置中配置并选择一个 AI 模型。',
+      timestamp: new Date()
+    }
+    aiMessages.value.push(tipMessage)
+    return
+  }
+  
+  // 检查 API Key
+  if (!currentProvider.value.apiKey && currentProvider.value.id !== 'ollama') {
+    const tipMessage: Message = {
+      id: Date.now(),
+      role: 'assistant',
+      content: `请先在设置中配置 ${currentProvider.value.name} 的 API Key。`,
+      timestamp: new Date()
+    }
+    aiMessages.value.push(tipMessage)
+    return
+  }
+  
+  const userMessage: Message = {
+    id: Date.now(),
+    role: 'user',
+    content: content,
+    timestamp: new Date()
+  }
+  
+  aiMessages.value.push(userMessage)
+  
+  // 创建 AI 响应消息（用于流式更新）
+  const aiMessage: Message = {
+    id: Date.now() + 1,
+    role: 'assistant',
+    content: '',
+    timestamp: new Date(),
+    streaming: true
+  }
+  aiMessages.value.push(aiMessage)
+  
+  try {
+    // 构建 API 请求消息，包含SSH上下文
+    const contextMessage = `你是一个SSH终端AI助手。当前连接信息：${actualConnectionName.value}。请帮助用户解决SSH连接、Linux命令和系统管理相关问题。`
+    
+    const apiMessages: APIChatMessage[] = [
+      { role: 'system', content: contextMessage },
+      ...aiMessages.value
+        .filter(m => !m.streaming)
+        .map(m => ({
+          role: m.role === 'user' ? 'user' : 'assistant',
+          content: m.content
+        }))
+    ]
+    
+    // 获取加密的 API 密钥
+    const configsStr = localStorage.getItem('aiProviderConfigs') || '[]'
+    const configs = JSON.parse(configsStr)
+    const providerConfig = configs.find((p: any) => p.id === currentProvider.value?.id)
+    
+    if (!providerConfig?.apiKey) {
+      throw new Error('未找到 API 密钥配置')
+    }
+    
+    const apiKey = decryptApiKey(providerConfig.apiKey)
+    
+    // 创建包含解密 API Key 的 provider 对象
+    const providerWithApiKey = {
+      ...currentProvider.value,
+      apiKey: apiKey
+    }
+    
+    // 调用 AI API
+    const response = await chatCompletion(
+      providerWithApiKey,
+      currentModel.value,
+      {
+        messages: apiMessages
+      },
+      (chunk) => {
+        aiMessage.content += chunk.content || ''
+      }
+    )
+    
+    // 完成流式输出
+    aiMessage.streaming = false
+    aiMessage.content = response.content
+    
+  } catch (error: any) {
+    console.error('AI API 调用失败:', error)
+    
+    // 更新消息为错误提示
+    aiMessage.content = `❌ 调用失败: ${error.message}\n\n请检查：\n1. API Key 是否正确\n2. 网络连接是否正常\n3. API 配额是否充足\n4. 端点 URL 是否正确`
+    aiMessage.streaming = false
+  }
+}
+
+const handleAIClearMessages = () => {
+  aiMessages.value = []
+}
+
+const handleAIUpdateMessages = (newMessages: Message[]) => {
+  aiMessages.value = newMessages
+}
+
 // 监听 connectionId 变化
 watch(() => actualConnectionId.value, (newId) => {
   if (newId && terminal.value) {
@@ -408,6 +610,9 @@ onMounted(() => {
       console.warn('Terminal container not found')
     }
   })
+  
+  // 加载AI模型配置
+  loadAIModelConfiguration()
 })
 
 onBeforeUnmount(() => {
@@ -526,6 +731,11 @@ onBeforeUnmount(() => {
   color: var(--vscode-fg);
 }
 
+.btn-icon.active {
+  background-color: var(--vscode-accent);
+  color: #ffffff;
+}
+
 .btn-icon.btn-disabled {
   opacity: 0.5;
   cursor: not-allowed;
@@ -535,11 +745,47 @@ onBeforeUnmount(() => {
   background-color: transparent;
 }
 
+.terminal-main {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
 .terminal-container {
   flex: 1;
   padding: 8px;
   overflow: hidden;
   background-color: #1e1e1e;
+  transition: flex 0.3s ease;
+}
+
+.terminal-container.with-ai-panel {
+  flex: 0 0 60%;
+}
+
+.ai-assistant-panel {
+  flex: 0 0 40%;
+  min-width: 300px;
+  background-color: var(--vscode-bg-light);
+  border-left: 1px solid var(--vscode-border);
+  display: flex;
+  flex-direction: column;
+}
+
+.ai-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background-color: var(--vscode-bg-lighter);
+  border-bottom: 1px solid var(--vscode-border-subtle);
+}
+
+.ai-panel-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--vscode-fg);
+  margin: 0;
 }
 
 /* 右键菜单样式 */
