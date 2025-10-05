@@ -114,7 +114,7 @@ const startWidth = ref(0)
 const activityBarItems = ref([
   { id: 'welcome', icon: 'bi bi-house', tooltip: '欢迎' },
   { id: 'ssh', icon: 'bi bi-hdd-network', tooltip: 'SSH 连接' },
-  { id: 'chat', icon: 'bi bi-chat-dots', tooltip: 'AI 聊天' },
+  { id: 'chat', icon: 'bi bi-chat-dots', tooltip: '会话' },
   { id: 'files', icon: 'bi bi-folder', tooltip: '文件管理' }
 ])
 
