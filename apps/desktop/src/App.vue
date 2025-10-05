@@ -61,7 +61,11 @@
         
         <!-- 主内容 -->
         <main class="flex-1 overflow-hidden bg-vscode-bg">
-          <router-view />
+          <router-view v-slot="{ Component }">
+            <keep-alive>
+              <component :is="Component" />
+            </keep-alive>
+          </router-view>
         </main>
       </div>
       
