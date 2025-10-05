@@ -88,6 +88,34 @@ sleep 10
 echo "📦 Installing dependencies..."
 pnpm install
 
+# 检查 Electron 是否正确安装
+echo "🔍 Checking Electron installation..."
+ELECTRON_PATH="node_modules/electron/dist/electron"
+if [ ! -f "$ELECTRON_PATH" ] && [ ! -f "node_modules/electron/dist/electron.exe" ]; then
+    echo "⚠️  Electron binary not found, reinstalling..."
+    pnpm remove electron -w
+    pnpm add electron@27.3.11 -w --force
+    
+    # 如果还是失败，尝试使用国内镜像
+    if [ ! -f "$ELECTRON_PATH" ] && [ ! -f "node_modules/electron/dist/electron.exe" ]; then
+        echo "🌏 Trying with China mirror..."
+        export ELECTRON_MIRROR="https://npmmirror.com/mirrors/electron/"
+        export ELECTRON_CUSTOM_DIR="{{ version }}"
+        pnpm add electron@27.3.11 -w --force
+    fi
+fi
+
+# 验证 Electron 安装
+if command -v node &> /dev/null; then
+    if node -e "try { require('electron'); console.log('✅ Electron installed successfully'); } catch(e) { console.log('❌ Electron installation failed'); process.exit(1); }" 2>/dev/null; then
+        :
+    else
+        echo "❌ Electron installation failed. Please run manually:"
+        echo "   pnpm remove electron -w && pnpm add electron@27.3.11 -w"
+        exit 1
+    fi
+fi
+
 # 生成 Prisma 客户端
 echo "🔧 Generating Prisma client..."
 pnpm db:generate

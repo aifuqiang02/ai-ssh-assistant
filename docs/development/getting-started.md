@@ -1407,6 +1407,76 @@ echo $env:DATABASE_URL
 node -e "require('dotenv').config(); console.log(process.env.DATABASE_URL)"
 ```
 
+### Q11: Electron 安装失败
+
+**问题**: 运行桌面应用时报错 `Electron failed to install correctly, please delete node_modules/electron and try installing again`
+
+**原因**: 
+- Electron 二进制文件下载失败或不完整
+- 网络问题导致安装中断
+- 国内网络访问 GitHub Releases 受限
+
+**解决方案 1 - 重新安装 Electron**:
+```bash
+# 删除并重新安装 Electron
+pnpm remove electron -w
+pnpm add electron@27.3.11 -w
+
+# 如果还是失败，使用 --force 强制重装
+pnpm add electron@27.3.11 -w --force
+```
+
+**解决方案 2 - 使用国内镜像（推荐国内用户）**:
+```bash
+# 设置 Electron 镜像源（临时）
+export ELECTRON_MIRROR="https://npmmirror.com/mirrors/electron/"
+export ELECTRON_CUSTOM_DIR="{{ version }}"
+pnpm add electron@27.3.11 -w --force
+
+# 或者配置到 .npmrc（永久生效）
+echo "electron_mirror=https://npmmirror.com/mirrors/electron/" >> .npmrc
+echo "electron_custom_dir={{ version }}" >> .npmrc
+pnpm install
+```
+
+**解决方案 3 - 清理缓存后重装**:
+```bash
+# 清理所有缓存
+pnpm store prune
+rm -rf node_modules
+rm pnpm-lock.yaml
+
+# 设置镜像源
+export ELECTRON_MIRROR="https://npmmirror.com/mirrors/electron/"
+
+# 重新安装
+pnpm install
+```
+
+**解决方案 4 - 手动下载 Electron**:
+```bash
+# 1. 查看需要的版本
+cat package.json | grep electron
+
+# 2. 手动从镜像站下载对应版本
+# Windows: https://npmmirror.com/mirrors/electron/27.3.11/electron-v27.3.11-win32-x64.zip
+# macOS: https://npmmirror.com/mirrors/electron/27.3.11/electron-v27.3.11-darwin-x64.zip
+# Linux: https://npmmirror.com/mirrors/electron/27.3.11/electron-v27.3.11-linux-x64.zip
+
+# 3. 解压到 node_modules/electron/dist/
+```
+
+**验证安装**:
+```bash
+# 验证 Electron 是否可用
+node -e "console.log(require('electron'))"
+
+# 查看 Electron 版本
+npx electron --version
+```
+
+**注意**: 启动脚本 `dev.sh` 已经包含了 Electron 自动修复逻辑，会自动尝试解决这个问题。
+
 ---
 
 ## 调试技巧

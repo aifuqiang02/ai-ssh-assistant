@@ -210,6 +210,41 @@ nvm install 20  # 使用 nvm
 nvm use 20
 ```
 
+### 6. Electron 安装失败
+
+**错误信息**:
+```
+Error: Electron failed to install correctly, please delete node_modules/electron and try installing again
+```
+
+**原因**: Electron 二进制文件下载失败，通常是网络问题（国内访问 GitHub Releases 受限）
+
+**快速解决**:
+```bash
+# 方法 1: 使用国内镜像（推荐）
+export ELECTRON_MIRROR="https://npmmirror.com/mirrors/electron/"
+pnpm remove electron -w
+pnpm add electron@27.3.11 -w --force
+
+# 方法 2: 永久配置镜像源
+echo "electron_mirror=https://npmmirror.com/mirrors/electron/" >> .npmrc
+echo "electron_custom_dir={{ version }}" >> .npmrc
+pnpm install
+
+# 方法 3: 清理后重装
+pnpm store prune
+rm -rf node_modules
+pnpm install
+```
+
+**验证安装**:
+```bash
+node -e "console.log(require('electron'))"
+npx electron --version
+```
+
+**注意**: `dev.sh` 脚本已包含自动修复逻辑，会自动检测并修复 Electron 安装问题。
+
 ## 📖 更多信息
 
 详细的开发指南请参考：[开发文档](../docs/development/getting-started.md)
