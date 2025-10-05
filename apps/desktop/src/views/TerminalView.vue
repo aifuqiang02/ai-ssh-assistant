@@ -619,20 +619,23 @@ const handleAIUpdateMessages = (newMessages: Message[]) => {
 }
 
 // 监听 connectionId 变化
+// 注意：使用 KeepAlive 时，组件会被缓存，actualConnectionId 可能与 currentConnectionId 不同
+// 这是正常的，因为 actualConnectionId 来自路由参数（标签创建时的 ID）
+// 而 currentConnectionId 是实际的 SSH 连接 ID
+// 我们不应该在这里重新连接，除非是真正的新连接
 watch(() => actualConnectionId.value, (newId, oldId) => {
-  console.log('[Watch] actualConnectionId changed:', { oldId, newId, currentId: currentConnectionId.value })
+  console.log('[Watch] actualConnectionId changed:', { oldId, newId, currentId: currentConnectionId.value, isInitialized: isInitialized.value })
   
-  // 如果 newId 和当前的 connectionId 相同，说明是切换回来的，不需要重新连接
-  if (newId === currentConnectionId.value) {
-    console.log('[Watch] Connection ID unchanged, skipping reconnect')
+  // 如果已经初始化过，说明是切换回来的，不需要重新连接
+  if (isInitialized.value && currentConnectionId.value) {
+    console.log('[Watch] Already initialized with connection, skipping reconnect')
     return
   }
   
-  // 只有在 connectionId 真正改变时才重新连接
-  if (newId && terminal.value && newId !== oldId) {
-    console.log('[Watch] Connection ID changed, reconnecting...')
+  // 只有在首次初始化时才建立连接
+  if (newId && terminal.value && !currentConnectionId.value) {
+    console.log('[Watch] First time initialization, connecting...')
     currentConnectionId.value = newId
-    terminal.value.clear()
     connectToSSH()
   }
 })
