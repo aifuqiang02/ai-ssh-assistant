@@ -55,6 +55,14 @@ async function callOpenAI(
     stream: request.stream ?? false
   }
   
+  console.log('📡 [OpenAI API] 发送请求:', {
+    endpoint,
+    model: model.id,
+    stream: body.stream,
+    hasApiKey: !!provider.apiKey,
+    messagesCount: request.messages.length
+  })
+  
   const response = await fetch(endpoint, {
     method: 'POST',
     headers: {
@@ -64,17 +72,26 @@ async function callOpenAI(
     body: JSON.stringify(body)
   })
   
+  console.log('📡 [OpenAI API] 收到响应:', {
+    status: response.status,
+    statusText: response.statusText,
+    headers: Object.fromEntries(response.headers.entries())
+  })
+  
   if (!response.ok) {
     const error = await response.json().catch(() => ({}))
+    console.error('❌ [OpenAI API] 请求失败:', error)
     throw new Error(error.error?.message || `HTTP ${response.status}: ${response.statusText}`)
   }
   
   // 流式响应
   if (request.stream && onChunk) {
+    console.log('🌊 [OpenAI API] 开始处理流式响应')
     return await handleOpenAIStream(response, onChunk)
   }
   
   // 非流式响应
+  console.log('📄 [OpenAI API] 处理非流式响应')
   const data = await response.json()
   return {
     content: data.choices[0]?.message?.content || '',
@@ -104,21 +121,30 @@ async function handleOpenAIStream(
   
   let fullContent = ''
   let totalTokens = 0
+  let chunkCount = 0
+  
+  console.log('🌊 [Stream] 开始读取流式数据')
   
   try {
     while (true) {
       const { done, value } = await reader.read()
       
-      if (done) break
+      if (done) {
+        console.log('🌊 [Stream] 流式数据读取完成，总块数:', chunkCount)
+        break
+      }
       
       const chunk = decoder.decode(value, { stream: true })
       const lines = chunk.split('\n').filter(line => line.trim() !== '')
+      
+      console.log('🌊 [Stream] 收到数据块:', { chunkSize: chunk.length, linesCount: lines.length })
       
       for (const line of lines) {
         if (line.startsWith('data: ')) {
           const data = line.slice(6)
           
           if (data === '[DONE]') {
+            console.log('🌊 [Stream] 收到结束标记 [DONE]')
             onChunk({ content: '', done: true })
             break
           }
@@ -128,11 +154,13 @@ async function handleOpenAIStream(
             const content = parsed.choices[0]?.delta?.content || ''
             
             if (content) {
+              chunkCount++
               fullContent += content
+              console.log('🌊 [Stream] 处理内容块:', { chunkIndex: chunkCount, contentLength: content.length, content: content.substring(0, 50) + '...' })
               onChunk({ content, done: false })
             }
           } catch (e) {
-            // 忽略解析错误
+            console.warn('🌊 [Stream] 解析数据失败:', { data: data.substring(0, 100), error: e })
           }
         }
       }
@@ -140,6 +168,8 @@ async function handleOpenAIStream(
   } finally {
     reader.releaseLock()
   }
+  
+  console.log('🌊 [Stream] 流式处理完成:', { fullContentLength: fullContent.length, totalChunks: chunkCount })
   
   return {
     content: fullContent,
@@ -541,6 +571,14 @@ export async function chatCompletion(
   request: ChatCompletionRequest,
   onChunk?: (chunk: StreamChunk) => void
 ): Promise<ChatCompletionResponse> {
+  console.log('🚀 [AI API] 开始调用 chatCompletion:', {
+    providerId: provider.id,
+    modelId: model.id,
+    stream: request.stream,
+    hasOnChunk: !!onChunk,
+    messagesCount: request.messages.length
+  })
+  
   // 根据服务商选择对应的 API 调用方法
   switch (provider.id) {
     case 'openai':

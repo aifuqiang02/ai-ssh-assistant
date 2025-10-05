@@ -479,8 +479,11 @@ const loadAIModelConfiguration = () => {
 
 // AI消息发送处理
 const handleAISendMessage = async (content: string) => {
+  console.log('🎯 [TerminalView] 开始发送 AI 消息:', { content: content.substring(0, 100) + '...' })
+  
   // 检查是否选择了模型
   if (!currentProvider.value || !currentModel.value) {
+    console.warn('⚠️ [TerminalView] 缺少 AI 配置')
     const tipMessage: Message = {
       id: Date.now(),
       role: 'assistant',
@@ -490,6 +493,11 @@ const handleAISendMessage = async (content: string) => {
     aiMessages.value.push(tipMessage)
     return
   }
+  
+  console.log('📝 [TerminalView] 当前配置:', {
+    provider: currentProvider.value.id,
+    model: currentModel.value.id
+  })
   
   // 检查 API Key
   if (!currentProvider.value.apiKey && currentProvider.value.id !== 'ollama') {
@@ -521,6 +529,7 @@ const handleAISendMessage = async (content: string) => {
     streaming: true
   }
   aiMessages.value.push(aiMessage)
+  console.log('💬 [TerminalView] 创建消息对象，开始流式响应')
   
   try {
     // 构建 API 请求消息，包含SSH上下文
@@ -536,6 +545,8 @@ const handleAISendMessage = async (content: string) => {
         }))
     ]
     
+    console.log('📋 [TerminalView] 构建 API 消息:', { messagesCount: apiMessages.length })
+    
     // 获取加密的 API 密钥
     const configsStr = localStorage.getItem('aiProviderConfigs') || '[]'
     const configs = JSON.parse(configsStr)
@@ -545,13 +556,22 @@ const handleAISendMessage = async (content: string) => {
       throw new Error('未找到 API 密钥配置')
     }
     
+    console.log('🔑 [TerminalView] 找到 API 配置:', { 
+      providerId: providerConfig.id,
+      hasApiKey: !!providerConfig.apiKey,
+      endpoint: providerConfig.endpoint || currentProvider.value.endpoint
+    })
+    
     // 直接使用明文 API Key
     const providerWithApiKey = {
       ...currentProvider.value,
       apiKey: providerConfig.apiKey
     }
     
+    let chunkReceived = 0
+    
     // 调用 AI API
+    console.log('🚀 [TerminalView] 开始调用 chatCompletion')
     const response = await chatCompletion(
       providerWithApiKey,
       currentModel.value,
@@ -560,16 +580,29 @@ const handleAISendMessage = async (content: string) => {
         stream: true
       },
       (chunk) => {
+        chunkReceived++
+        console.log('📦 [TerminalView] 收到流式数据块:', { 
+          chunkIndex: chunkReceived, 
+          content: chunk.content?.substring(0, 50) + '...',
+          contentLength: chunk.content?.length || 0,
+          done: chunk.done
+        })
         aiMessage.content += chunk.content || ''
       }
     )
+    
+    console.log('✅ [TerminalView] API 调用完成:', { 
+      totalChunks: chunkReceived,
+      finalContentLength: response.content.length,
+      currentMessageLength: aiMessage.content.length
+    })
     
     // 完成流式输出
     aiMessage.streaming = false
     aiMessage.content = response.content
     
   } catch (error: any) {
-    console.error('AI API 调用失败:', error)
+    console.error('❌ [TerminalView] AI API 调用失败:', error)
     
     // 更新消息为错误提示
     aiMessage.content = `❌ 调用失败: ${error.message}\n\n请检查：\n1. API Key 是否正确\n2. 网络连接是否正常\n3. API 配额是否充足\n4. 端点 URL 是否正确`
