@@ -16,10 +16,10 @@
         <div v-for="message in messages" :key="message.id" class="message mb-4">
           <div 
             :class="[
-              'message-bubble max-w-3xl p-3 rounded-lg group relative',
+              'message-bubble p-3 rounded-lg group relative',
               message.role === 'user' 
-                ? 'user-message ml-auto bg-vscode-accent text-white' 
-                : 'assistant-message mr-auto bg-vscode-bg-light border border-vscode-border text-vscode-fg'
+                ? 'user-message ml-auto bg-vscode-accent text-white max-w-3xl' 
+                : 'assistant-message bg-vscode-bg-light border border-vscode-border text-vscode-fg'
             ]"
           >
             <!-- 复制按钮 -->
