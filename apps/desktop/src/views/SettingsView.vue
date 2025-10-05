@@ -905,7 +905,7 @@ import {
   type AIProvider,
   type AIModel 
 } from '../types/ai-providers'
-import { encryptApiKey, decryptApiKey } from '../utils/encryption'
+import { decryptApiKey } from '../utils/encryption'
 import { testProviderConnection as testProviderAPI, type TestResult } from '../services/ai-test.service'
 import { fetchModelsForProvider } from '../services/model-fetcher.service'
 
@@ -1640,7 +1640,7 @@ const saveAIProviderConfigs = () => {
     const configsToSave = aiProviders.value.map(provider => ({
       id: provider.id,
       name: provider.name,
-      apiKey: provider.apiKey ? encryptApiKey(provider.apiKey) : '',
+      apiKey: provider.apiKey || '',
       endpoint: provider.endpoint,
       enabled: provider.enabled,
       isDefault: provider.isDefault,

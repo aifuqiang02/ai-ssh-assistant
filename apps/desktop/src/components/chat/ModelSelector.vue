@@ -97,7 +97,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { DEFAULT_PROVIDERS, type AIProvider, type AIModel } from '../../types/ai-providers'
-import { decryptApiKey } from '../../utils/encryption'
 import { useRouter } from 'vue-router'
 
 interface SelectedModel {
@@ -256,7 +255,7 @@ const loadProviders = () => {
             ...provider,
             models,
             // 只覆盖配置字段，保留默认的 name, description, icon, website
-            apiKey: savedConfig.apiKey ? decryptApiKey(savedConfig.apiKey) : '',
+            apiKey: savedConfig.apiKey || '',
             endpoint: savedConfig.endpoint || provider.endpoint,
             enabled: savedConfig.enabled || false,
             isDefault: savedConfig.isDefault || false,

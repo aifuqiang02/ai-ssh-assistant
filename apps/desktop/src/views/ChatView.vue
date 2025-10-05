@@ -1,120 +1,69 @@
 <template>
   <div class="chat-view h-full flex flex-col bg-vscode-bg-light">
+    <!-- 聊天头部 -->
     <div class="chat-header p-4 border-b bg-vscode-bg-light border-vscode-border">
       <div class="header-content">
         <div class="header-text">
-          <h2 class="text-xl font-bold text-vscode-fg">AI 对话</h2>
-          <p class="text-vscode-fg-muted">与 AI 助手进行对话</p>
-        </div>
-        <div class="header-actions">
-          <ModelSelector v-model="selectedModel" @change="onModelChange" />
+          <h2 class="text-xl font-bold text-vscode-fg">{{ currentSessionName }}</h2>
+          <p class="text-vscode-fg-muted">{{ currentSessionId ? '会话对话' : '与 AI 助手进行对话' }}</p>
         </div>
       </div>
     </div>
     
-    <div class="chat-messages flex-1 p-4 overflow-y-auto bg-vscode-bg-light">
-      <div v-if="messages.length === 0" class="text-center text-vscode-fg-muted mt-10">
-        开始与 AI 助手对话吧！
-      </div>
-      
-      <div v-for="message in messages" :key="message.id" class="message mb-4">
-        <div 
-          :class="[
-            'max-w-3xl p-3 rounded-lg',
-            message.role === 'user' 
-              ? 'ml-auto bg-vscode-accent text-white' 
-              : 'mr-auto bg-vscode-bg border border-vscode-border text-vscode-fg'
-          ]"
-        >
-          <div class="text-sm font-medium mb-1">
-            {{ message.role === 'user' ? '你' : 'AI 助手' }}
-          </div>
-          <div class="whitespace-pre-wrap">{{ message.content }}</div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="chat-input p-4 border-t bg-vscode-bg-light border-vscode-border">
-      <div class="flex gap-2">
-        <input
-          v-model="inputMessage"
-          @keyup.enter="sendMessage"
-          type="text"
-          placeholder="输入消息..."
-          :disabled="isGenerating"
-          class="flex-1 px-3 py-2 border rounded-md bg-vscode-bg border-vscode-border text-vscode-fg placeholder-vscode-fg-muted disabled:opacity-50"
-        />
-        <button
-          @click="sendMessage"
-          :disabled="!inputMessage.trim() || isGenerating"
-          class="px-4 py-2 bg-vscode-accent text-white rounded-md hover:bg-vscode-accent-hover disabled:opacity-50 flex items-center gap-2"
-        >
-          <i v-if="isGenerating" class="bi bi-hourglass-split animate-spin"></i>
-          <span>{{ isGenerating ? '生成中...' : '发送' }}</span>
-        </button>
-      </div>
-      
-      <!-- Token 估算和模型信息 -->
-      <div v-if="currentModel" class="flex items-center justify-between mt-2 text-xs text-vscode-fg-muted">
-        <div class="flex items-center gap-3">
-          <span>
-            <i class="bi bi-cpu"></i>
-            {{ currentProvider?.name }} - {{ currentModel.name }}
-          </span>
-          <span v-if="messages.length > 0">
-            <i class="bi bi-chat-dots"></i>
-            {{ messages.length }} 条消息
-          </span>
-        </div>
-        <div v-if="inputMessage.trim()">
-          <i class="bi bi-coin"></i>
-          约 {{ estimateTokens(inputMessage) }} tokens
-        </div>
-      </div>
-    </div>
+    <!-- AI 会话组件 -->
+    <AIChatSession
+      :messages="messages"
+      :current-provider="currentProvider"
+      :current-model="currentModel"
+      :session-name="currentSessionName"
+      :session-id="currentSessionId || undefined"
+      :multiline="true"
+      :input-rows="3"
+      input-placeholder="输入消息... (Ctrl+Enter 发送)"
+      :empty-state-text="currentSessionId ? `${currentSessionName}` : '开始与 AI 助手对话吧！'"
+      :empty-state-subtext="currentSessionId ? '这是一个新的对话会话，开始与 AI 助手对话吧！' : '提示：您可以在左侧创建会话来保存对话历史'"
+      :show-attach-button="true"
+      :show-status-info="false"
+      @send-message="handleSendMessage"
+      @clear-messages="handleClearMessages"
+      @attach-file="handleAttachFile"
+      @update:messages="handleUpdateMessages"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from 'vue'
-import ModelSelector from '../components/chat/ModelSelector.vue'
+import { ref, onMounted, watch, computed } from 'vue'
+import { useRoute } from 'vue-router'
+import AIChatSession, { type Message } from '../components/chat/AIChatSession.vue'
 import type { AIProvider, AIModel } from '../types/ai-providers'
-import { chatCompletion, estimateRequestTokens, type ChatMessage as APIChatMessage } from '../services/ai-api.service'
-
-interface Message {
-  id: number
-  role: 'user' | 'assistant'
-  content: string
-  timestamp: Date
-  streaming?: boolean
-}
+import { chatCompletion, type ChatMessage as APIChatMessage } from '../services/ai-api.service'
+import { useChatStore } from '../stores/chat'
 
 interface SelectedModel {
   providerId: string
   modelId: string
 }
 
+// 路由和会话管理
+const route = useRoute()
+const chatStore = useChatStore()
+
+// 响应式数据
 const messages = ref<Message[]>([])
-const inputMessage = ref('')
 const selectedModel = ref<SelectedModel | undefined>()
 const currentProvider = ref<AIProvider | null>(null)
 const currentModel = ref<AIModel | null>(null)
-const isGenerating = ref(false)
-const messagesContainer = ref<HTMLElement | null>(null)
 
-const onModelChange = (provider: AIProvider, model: AIModel) => {
-  currentProvider.value = provider
-  currentModel.value = model
-  console.log('模型已切换:', provider.name, model.name)
-  console.log('selectedModel.value:', selectedModel.value)
-}
+// 当前会话信息
+const currentSessionId = computed(() => route.query.sessionId as string || null)
+const currentSessionName = ref('AI 对话')
 
-const sendMessage = async () => {
-  if (!inputMessage.value.trim() || isGenerating.value) return
-  
+
+// 消息发送处理
+const handleSendMessage = async (content: string) => {
   // 检查是否选择了模型
   if (!selectedModel.value || !currentProvider.value || !currentModel.value) {
-    // 显示提示消息
     const tipMessage: Message = {
       id: Date.now(),
       role: 'assistant',
@@ -122,168 +71,242 @@ const sendMessage = async () => {
       timestamp: new Date()
     }
     messages.value.push(tipMessage)
-    scrollToBottom()
     return
   }
   
-  // 检查 API Key
-  if (!currentProvider.value.apiKey && currentProvider.value.id !== 'ollama') {
-    const tipMessage: Message = {
-      id: Date.now(),
-      role: 'assistant',
-      content: `请先在设置中配置 ${currentProvider.value.name} 的 API Key。`,
-      timestamp: new Date()
-    }
-    messages.value.push(tipMessage)
-    scrollToBottom()
-    return
-  }
-  
+  // 添加用户消息
   const userMessage: Message = {
     id: Date.now(),
     role: 'user',
-    content: inputMessage.value,
+    content,
     timestamp: new Date()
   }
-  
   messages.value.push(userMessage)
-  scrollToBottom()
   
-  const userInput = inputMessage.value
-  inputMessage.value = ''
-  isGenerating.value = true
-  
-  // 创建 AI 响应消息（用于流式更新）
-  const aiMessage: Message = {
+  // 准备 AI 响应消息
+  const assistantMessage: Message = {
     id: Date.now() + 1,
     role: 'assistant',
     content: '',
     timestamp: new Date(),
     streaming: true
   }
-  messages.value.push(aiMessage)
-  scrollToBottom()
+  messages.value.push(assistantMessage)
   
   try {
-    // 构建 API 请求消息
+    // 准备 API 消息格式
     const apiMessages: APIChatMessage[] = messages.value
-      .filter(m => !m.streaming)
-      .map(m => ({
-        role: m.role === 'user' ? 'user' : 'assistant',
-        content: m.content
+      .filter(msg => !msg.streaming)
+      .map(msg => ({
+        role: msg.role,
+        content: msg.content
       }))
     
-    // 调用 AI API（流式）
-    await chatCompletion(
+    // 添加当前用户消息
+    apiMessages.push({
+      role: 'user',
+      content
+    })
+    
+    // 获取加密的 API 密钥
+    const configsStr = localStorage.getItem('aiProviderConfigs') || '[]'
+    const configs = JSON.parse(configsStr)
+    const providerConfig = configs.find((p: any) => p.id === currentProvider.value?.id)
+    
+    if (!providerConfig?.apiKey) {
+      throw new Error('未找到 API 密钥配置')
+    }
+    
+    const apiKey = providerConfig.apiKey
+    
+    // 调用 AI API
+    const response = await chatCompletion(
       currentProvider.value,
       currentModel.value,
       {
-        messages: apiMessages,
-        temperature: 0.7,
-        maxTokens: 4096,
-        stream: true
+        messages: apiMessages
       },
       (chunk) => {
-        if (!chunk.done && chunk.content) {
-          aiMessage.content += chunk.content
-          scrollToBottom()
-        }
+        assistantMessage.content += chunk.content || ''
       }
     )
     
-    // 流式完成
-    aiMessage.streaming = false
+    // 完成流式输出
+    assistantMessage.streaming = false
+    assistantMessage.content = response.content
     
-    // 如果内容为空，显示错误提示
-    if (!aiMessage.content.trim()) {
-      aiMessage.content = '抱歉，AI 没有返回任何内容。请重试。'
+    // 如果有会话ID，保存消息
+    if (currentSessionId.value) {
+      await saveSessionMessages(currentSessionId.value)
     }
     
   } catch (error: any) {
-    console.error('AI API 调用失败:', error)
-    
-    // 更新消息为错误提示
-    aiMessage.content = `❌ 调用失败: ${error.message}\n\n请检查：\n1. API Key 是否正确\n2. 网络连接是否正常\n3. API 配额是否充足\n4. 端点 URL 是否正确`
-    aiMessage.streaming = false
-  } finally {
-    isGenerating.value = false
-    scrollToBottom()
+    console.error('AI 响应错误:', error)
+    assistantMessage.streaming = false
+    assistantMessage.content = `抱歉，发生了错误：${error.message}`
   }
 }
 
-// 滚动到底部
-const scrollToBottom = async () => {
-  await nextTick()
-  const container = document.querySelector('.chat-messages')
-  if (container) {
-    container.scrollTop = container.scrollHeight
+// 清空消息处理
+const handleClearMessages = () => {
+  messages.value = []
+  if (currentSessionId.value) {
+    saveSessionMessages(currentSessionId.value)
   }
 }
 
-// 从 localStorage 加载上次选择的模型
-onMounted(() => {
+// 消息更新处理
+const handleUpdateMessages = (newMessages: Message[]) => {
+  messages.value = newMessages
+}
+
+// 附加文件处理
+const handleAttachFile = () => {
+  console.log('附加文件功能')
+}
+
+// 加载会话消息
+const loadSessionMessages = async (sessionId: string) => {
   try {
-    const saved = localStorage.getItem('selectedAIModel')
-    if (saved) {
-      selectedModel.value = JSON.parse(saved)
+    const savedMessages = localStorage.getItem(`chat-session-${sessionId}`)
+    if (savedMessages) {
+      const parsedMessages = JSON.parse(savedMessages)
+      messages.value = parsedMessages.map((msg: any) => ({
+        ...msg,
+        timestamp: new Date(msg.timestamp)
+      }))
+    } else {
+      messages.value = []
     }
-  } catch (error) {
-    console.error('Failed to load selected model:', error)
-  }
-})
 
-// 保存模型选择
+    const savedSessionName = localStorage.getItem(`chat-session-name-${sessionId}`)
+    if (savedSessionName) {
+      currentSessionName.value = savedSessionName
+    }
+    console.log(`已加载会话 ${sessionId} 的消息:`, messages.value.length, '条')
+  } catch (error) {
+    console.error('加载会话消息失败:', error)
+    messages.value = []
+  }
+}
+
+// 保存会话消息
+const saveSessionMessages = async (sessionId: string) => {
+  try {
+    localStorage.setItem(`chat-session-${sessionId}`, JSON.stringify(messages.value))
+    localStorage.setItem(`chat-session-name-${sessionId}`, currentSessionName.value)
+    console.log(`已保存会话 ${sessionId} 的消息:`, messages.value.length, '条')
+  } catch (error) {
+    console.error('保存会话消息失败:', error)
+  }
+}
+
+// 保存选中的模型
 const saveSelectedModel = () => {
   if (selectedModel.value) {
     localStorage.setItem('selectedAIModel', JSON.stringify(selectedModel.value))
-    // 触发自定义事件，通知其他组件模型已更改
-    window.dispatchEvent(new CustomEvent('ai-model-changed', {
-      detail: selectedModel.value
-    }))
-    console.log('模型已切换并通知:', selectedModel.value)
   }
 }
 
-// 监听模型变化并保存
-import { watch } from 'vue'
-watch(selectedModel, saveSelectedModel, { deep: true })
-
-// 用于显示的 token 估算
+// Token 估算
 const estimateTokens = (text: string): number => {
-  return estimateRequestTokens([{ role: 'user', content: text }])
+  return Math.ceil(text.length / 4)
 }
+
+// 监听会话ID变化
+watch(currentSessionId, async (newSessionId, oldSessionId) => {
+  if (oldSessionId) {
+    await saveSessionMessages(oldSessionId)
+  }
+  if (newSessionId) {
+    await loadSessionMessages(newSessionId)
+    const findSessionInTree = (nodes: any[], sessionId: string): any => {
+      for (const node of nodes) {
+        if (node.id === sessionId && node.type === 'session') {
+          return node
+        }
+        if (node.children) {
+          const found = findSessionInTree(node.children, sessionId)
+          if (found) return found
+        }
+      }
+      return null
+    }
+    const session = findSessionInTree(chatStore.chatTree, newSessionId)
+    if (session) {
+      currentSessionName.value = session.name || session.title || 'AI 对话'
+    }
+  } else {
+    messages.value = []
+    currentSessionName.value = 'AI 对话'
+  }
+}, { immediate: true })
+
+// 监听模型变化
+watch(selectedModel, () => {
+  saveSelectedModel()
+}, { deep: true })
+
+// 加载模型配置
+const loadModelConfiguration = () => {
+  try {
+    const saved = localStorage.getItem('selectedAIModel')
+    if (!saved) return
+    
+    const savedModel = JSON.parse(saved)
+    const configsStr = localStorage.getItem('aiProviderConfigs')
+    
+    if (configsStr && savedModel) {
+      const configs = JSON.parse(configsStr)
+      const provider = configs.find((p: AIProvider) => p.id === savedModel.providerId)
+      
+      if (provider) {
+        const model = provider.models?.find((m: AIModel) => m.id === savedModel.modelId)
+        if (model) {
+          selectedModel.value = savedModel
+          currentProvider.value = provider
+          currentModel.value = model
+        }
+      }
+    }
+  } catch (error) {
+    console.error('模型配置加载失败:', error)
+  }
+}
+
+// 生命周期
+onMounted(async () => {
+  loadModelConfiguration()
+  await chatStore.loadChatTree()
+})
 </script>
 
 <style scoped>
 .chat-view {
-  height: 100vh;
+  background: var(--vscode-editor-background);
+}
+
+.chat-header {
+  background: var(--vscode-editor-background);
+  border-bottom: 1px solid var(--vscode-panel-border);
 }
 
 .header-content {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
+  justify-content: flex-start;
+  align-items: flex-start;
 }
 
-.header-text {
-  flex: 1;
+.header-text h2 {
+  color: var(--vscode-editor-foreground);
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
 }
 
-.header-actions {
-  flex-shrink: 0;
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.animate-spin {
-  animation: spin 1s linear infinite;
+.header-text p {
+  color: var(--vscode-descriptionForeground);
+  margin: 0.25rem 0 0 0;
+  font-size: 0.875rem;
 }
 </style>

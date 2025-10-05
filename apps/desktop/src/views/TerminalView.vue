@@ -131,7 +131,6 @@ import { useSSHStore } from '@/stores/ssh'
 import AIChatSession, { type Message } from '@/components/chat/AIChatSession.vue'
 import type { AIProvider, AIModel } from '@/types/ai-providers'
 import { chatCompletion, type ChatMessage as APIChatMessage } from '@/services/ai-api.service'
-import { decryptApiKey } from '@/utils/encryption'
 
 // Props
 const props = defineProps<{
@@ -546,12 +545,10 @@ const handleAISendMessage = async (content: string) => {
       throw new Error('未找到 API 密钥配置')
     }
     
-    const apiKey = decryptApiKey(providerConfig.apiKey)
-    
-    // 创建包含解密 API Key 的 provider 对象
+    // 直接使用明文 API Key
     const providerWithApiKey = {
       ...currentProvider.value,
-      apiKey: apiKey
+      apiKey: providerConfig.apiKey
     }
     
     // 调用 AI API
