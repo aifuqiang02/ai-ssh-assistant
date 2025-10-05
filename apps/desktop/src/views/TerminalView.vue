@@ -198,7 +198,17 @@ const currentModel = ref<AIModel | null>(null)
 
 // 初始化终端
 const initTerminal = () => {
-  if (!terminalContainer.value) return
+  console.log('[Terminal Init] Starting initialization...', {
+    hasContainer: !!terminalContainer.value,
+    isInitialized: isInitialized.value,
+    connectionId: actualConnectionId.value,
+    terminalExists: !!terminal.value
+  })
+
+  if (!terminalContainer.value) {
+    console.error('[Terminal Init] Terminal container not found')
+    return
+  }
 
   // 创建终端实例
   terminal.value = new Terminal({
@@ -239,16 +249,27 @@ const initTerminal = () => {
   terminal.value.open(terminalContainer.value)
   fitAddon.value.fit()
 
+  console.log('[Terminal Init] Terminal opened and fitted')
+
   // 监听终端输入
   terminal.value.onData((data) => {
+    console.log('[Terminal Input] Received input:', {
+      dataLength: data.length,
+      data: data.replace(/\r/g, '\\r').replace(/\n/g, '\\n'),
+      connectionId: currentConnectionId.value
+    })
     const connId = currentConnectionId.value
     if (connId && window.electronAPI) {
       // 发送输入到 SSH 服务器
       window.electronAPI.ssh.execute(connId, data).catch((err: any) => {
-        console.error('Failed to send input:', err)
+        console.error('[Terminal Input] Failed to send input:', err)
       })
+    } else {
+      console.warn('[Terminal Input] No connection ID or electronAPI')
     }
   })
+
+  console.log('[Terminal Init] Input listener registered')
 
   // 添加右键菜单功能
   terminalContainer.value.addEventListener('contextmenu', (e: MouseEvent) => {
@@ -267,6 +288,8 @@ const initTerminal = () => {
 
   // 监听窗口大小变化
   window.addEventListener('resize', handleResize)
+
+  console.log('[Terminal Init] Initialization complete')
 }
 
 // 处理窗口大小变化
@@ -621,15 +644,20 @@ onMounted(() => {
 
 // 当组件被 KeepAlive 激活时
 onActivated(() => {
-  console.log('TerminalView activated')
+  console.log('[KeepAlive] TerminalView activated', {
+    connectionId: actualConnectionId.value,
+    hasTerminal: !!terminal.value,
+    isInitialized: isInitialized.value
+  })
   // 重新调整终端大小以适应容器
   if (terminal.value && fitAddon.value) {
     nextTick(() => {
       try {
         fitAddon.value?.fit()
         terminal.value?.focus()
+        console.log('[KeepAlive] Terminal fitted and focused')
       } catch (err) {
-        console.warn('Failed to fit terminal on activation:', err)
+        console.warn('[KeepAlive] Failed to fit terminal on activation:', err)
       }
     })
   }
@@ -637,7 +665,9 @@ onActivated(() => {
 
 // 当组件被 KeepAlive 停用时
 onDeactivated(() => {
-  console.log('TerminalView deactivated')
+  console.log('[KeepAlive] TerminalView deactivated', {
+    connectionId: actualConnectionId.value
+  })
   // 组件被隐藏时不需要特殊处理，保持连接和状态
 })
 
