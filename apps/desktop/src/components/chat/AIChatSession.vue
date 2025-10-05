@@ -393,7 +393,10 @@ const sendMessageInternal = async (content: string) => {
       apiKey: providerConfig.apiKey
     }
     
+    let chunkReceived = 0
+    
     // 调用 AI API
+    console.log('🚀 [AIChatSession] 开始调用 chatCompletion')
     const response = await chatCompletion(
       providerWithApiKey,
       props.currentModel,
@@ -402,10 +405,25 @@ const sendMessageInternal = async (content: string) => {
         stream: true
       },
       (chunk) => {
+        chunkReceived++
+        console.log('📦 [AIChatSession] 收到流式数据块:', { 
+          chunkIndex: chunkReceived, 
+          content: chunk.content?.substring(0, 50) + '...',
+          contentLength: chunk.content?.length || 0,
+          done: chunk.done,
+          currentContentLength: assistantMessage.content.length
+        })
         assistantMessage.content += chunk.content || ''
+        console.log('🔄 [AIChatSession] 内容已更新，当前长度:', assistantMessage.content.length)
         scrollToBottom()
       }
     )
+    
+    console.log('✅ [AIChatSession] API 调用完成:', { 
+      totalChunks: chunkReceived,
+      finalContentLength: response.content.length,
+      currentMessageLength: assistantMessage.content.length
+    })
     
     // 完成流式输出
     assistantMessage.streaming = false
