@@ -223,15 +223,23 @@ Error: Electron failed to install correctly, please delete node_modules/electron
 ```bash
 # 方法 1: 使用国内镜像（推荐）
 export ELECTRON_MIRROR="https://npmmirror.com/mirrors/electron/"
-pnpm remove electron -w
-pnpm add electron@27.3.11 -w --force
+cd apps/desktop
+pnpm remove electron
+pnpm add electron@27.3.11 --force
+cd ../..
 
 # 方法 2: 永久配置镜像源
-echo "electron_mirror=https://npmmirror.com/mirrors/electron/" >> .npmrc
-echo "electron_custom_dir={{ version }}" >> .npmrc
+echo "electron_mirror=https://npmmirror.com/mirrors/electron/" >> apps/desktop/.npmrc
+echo "electron_custom_dir={{ version }}" >> apps/desktop/.npmrc
+cd apps/desktop
 pnpm install
+cd ../..
 
-# 方法 3: 清理后重装
+# 方法 3: 使用修复脚本（最简单）
+chmod +x scripts/fix-electron.sh
+./scripts/fix-electron.sh
+
+# 方法 4: 清理后重装
 pnpm store prune
 rm -rf node_modules
 pnpm install
@@ -239,8 +247,10 @@ pnpm install
 
 **验证安装**:
 ```bash
+cd apps/desktop
 node -e "console.log(require('electron'))"
 npx electron --version
+cd ../..
 ```
 
 **注意**: `dev.sh` 脚本已包含自动修复逻辑，会自动检测并修复 Electron 安装问题。

@@ -1418,25 +1418,35 @@ node -e "require('dotenv').config(); console.log(process.env.DATABASE_URL)"
 
 **解决方案 1 - 重新安装 Electron**:
 ```bash
+# 进入 desktop 目录
+cd apps/desktop
+
 # 删除并重新安装 Electron
-pnpm remove electron -w
-pnpm add electron@27.3.11 -w
+pnpm remove electron
+pnpm add electron@27.3.11
 
 # 如果还是失败，使用 --force 强制重装
-pnpm add electron@27.3.11 -w --force
+pnpm add electron@27.3.11 --force
+
+# 返回根目录
+cd ../..
 ```
 
 **解决方案 2 - 使用国内镜像（推荐国内用户）**:
 ```bash
-# 设置 Electron 镜像源（临时）
+# 方法 1: 临时设置镜像源
 export ELECTRON_MIRROR="https://npmmirror.com/mirrors/electron/"
 export ELECTRON_CUSTOM_DIR="{{ version }}"
-pnpm add electron@27.3.11 -w --force
+cd apps/desktop
+pnpm add electron@27.3.11 --force
+cd ../..
 
-# 或者配置到 .npmrc（永久生效）
-echo "electron_mirror=https://npmmirror.com/mirrors/electron/" >> .npmrc
-echo "electron_custom_dir={{ version }}" >> .npmrc
+# 方法 2: 永久配置到 .npmrc
+echo "electron_mirror=https://npmmirror.com/mirrors/electron/" >> apps/desktop/.npmrc
+echo "electron_custom_dir={{ version }}" >> apps/desktop/.npmrc
+cd apps/desktop
 pnpm install
+cd ../..
 ```
 
 **解决方案 3 - 清理缓存后重装**:
@@ -1456,23 +1466,30 @@ pnpm install
 **解决方案 4 - 手动下载 Electron**:
 ```bash
 # 1. 查看需要的版本
-cat package.json | grep electron
+cat apps/desktop/package.json | grep electron
 
 # 2. 手动从镜像站下载对应版本
 # Windows: https://npmmirror.com/mirrors/electron/27.3.11/electron-v27.3.11-win32-x64.zip
-# macOS: https://npmmirror.com/mirrors/electron/27.3.11/electron-v27.3.11-darwin-x64.zip
+# macOS (x64): https://npmmirror.com/mirrors/electron/27.3.11/electron-v27.3.11-darwin-x64.zip
+# macOS (arm64): https://npmmirror.com/mirrors/electron/27.3.11/electron-v27.3.11-darwin-arm64.zip
 # Linux: https://npmmirror.com/mirrors/electron/27.3.11/electron-v27.3.11-linux-x64.zip
 
-# 3. 解压到 node_modules/electron/dist/
+# 3. 解压到 apps/desktop/node_modules/electron/dist/
+
+# 4. 设置执行权限 (Linux/macOS)
+chmod +x apps/desktop/node_modules/electron/dist/electron
 ```
 
 **验证安装**:
 ```bash
 # 验证 Electron 是否可用
+cd apps/desktop
 node -e "console.log(require('electron'))"
 
 # 查看 Electron 版本
 npx electron --version
+
+cd ../..
 ```
 
 **注意**: 启动脚本 `dev.sh` 已经包含了 Electron 自动修复逻辑，会自动尝试解决这个问题。

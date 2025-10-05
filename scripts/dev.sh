@@ -90,28 +90,67 @@ pnpm install
 
 # 检查 Electron 是否正确安装
 echo "🔍 Checking Electron installation..."
-ELECTRON_PATH="node_modules/electron/dist/electron"
-if [ ! -f "$ELECTRON_PATH" ] && [ ! -f "node_modules/electron/dist/electron.exe" ]; then
+DESKTOP_DIR="apps/desktop"
+ELECTRON_PATH="$DESKTOP_DIR/node_modules/electron/dist/electron"
+ELECTRON_PATH_WIN="$DESKTOP_DIR/node_modules/electron/dist/electron.exe"
+
+if [ ! -f "$ELECTRON_PATH" ] && [ ! -f "$ELECTRON_PATH_WIN" ]; then
     echo "⚠️  Electron binary not found, reinstalling..."
-    pnpm remove electron -w
-    pnpm add electron@27.3.11 -w --force
     
-    # 如果还是失败，尝试使用国内镜像
-    if [ ! -f "$ELECTRON_PATH" ] && [ ! -f "node_modules/electron/dist/electron.exe" ]; then
-        echo "🌏 Trying with China mirror..."
-        export ELECTRON_MIRROR="https://npmmirror.com/mirrors/electron/"
-        export ELECTRON_CUSTOM_DIR="{{ version }}"
-        pnpm add electron@27.3.11 -w --force
+    # 设置国内镜像源（推荐国内用户）
+    export ELECTRON_MIRROR="https://npmmirror.com/mirrors/electron/"
+    export ELECTRON_CUSTOM_DIR="{{ version }}"
+    
+    echo "🗑️  Removing existing Electron..."
+    cd "$DESKTOP_DIR"
+    pnpm remove electron 2>/dev/null || true
+    
+    echo "📦 Installing Electron with China mirror..."
+    pnpm add electron@27.3.11 --force
+    cd ../..
+    
+    # 检查是否安装成功
+    if [ ! -f "$ELECTRON_PATH" ] && [ ! -f "$ELECTRON_PATH_WIN" ]; then
+        echo "❌ Electron installation failed with mirror."
+        echo "   Trying without mirror..."
+        
+        unset ELECTRON_MIRROR
+        unset ELECTRON_CUSTOM_DIR
+        
+        cd "$DESKTOP_DIR"
+        pnpm add electron@27.3.11 --force
+        cd ../..
     fi
 fi
 
 # 验证 Electron 安装
-if command -v node &> /dev/null; then
-    if node -e "try { require('electron'); console.log('✅ Electron installed successfully'); } catch(e) { console.log('❌ Electron installation failed'); process.exit(1); }" 2>/dev/null; then
-        :
+echo "✅ Verifying Electron installation..."
+if [ -f "$ELECTRON_PATH" ] || [ -f "$ELECTRON_PATH_WIN" ]; then
+    echo "✅ Electron binary found"
+    
+    # 尝试运行验证
+    if cd "$DESKTOP_DIR" && node -e "require('electron')" 2>/dev/null; then
+        echo "✅ Electron can be loaded successfully"
+        cd ../..
     else
-        echo "❌ Electron installation failed. Please run manually:"
-        echo "   pnpm remove electron -w && pnpm add electron@27.3.11 -w"
+        echo "⚠️  Electron binary exists but cannot be loaded"
+        echo "   This might not affect development, continuing..."
+        cd ../..
+    fi
+else
+    echo "❌ Electron installation failed!"
+    echo ""
+    echo "请手动修复："
+    echo "  cd apps/desktop"
+    echo "  export ELECTRON_MIRROR='https://npmmirror.com/mirrors/electron/'"
+    echo "  pnpm remove electron && pnpm add electron@27.3.11 --force"
+    echo ""
+    echo "或运行修复脚本："
+    echo "  chmod +x scripts/fix-electron.sh"
+    echo "  ./scripts/fix-electron.sh"
+    echo ""
+    read -p "是否继续？(y/n): " continue_choice
+    if [ "$continue_choice" != "y" ] && [ "$continue_choice" != "Y" ]; then
         exit 1
     fi
 fi

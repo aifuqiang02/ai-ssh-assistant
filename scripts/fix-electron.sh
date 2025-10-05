@@ -27,18 +27,24 @@ if ! command -v pnpm &> /dev/null; then
     exit 1
 fi
 
+DESKTOP_DIR="apps/desktop"
+ELECTRON_PATH="$DESKTOP_DIR/node_modules/electron/dist/electron"
+ELECTRON_PATH_WIN="$DESKTOP_DIR/node_modules/electron/dist/electron.exe"
+
 echo "📋 当前 Electron 状态："
-if [ -f "node_modules/electron/dist/electron" ] || [ -f "node_modules/electron/dist/electron.exe" ]; then
+if [ -f "$ELECTRON_PATH" ] || [ -f "$ELECTRON_PATH_WIN" ]; then
     echo "   ✅ Electron 二进制文件存在"
     
     # 尝试验证
-    if node -e "require('electron')" 2>/dev/null; then
+    if cd "$DESKTOP_DIR" && node -e "require('electron')" 2>/dev/null; then
         echo "   ✅ Electron 可以正常加载"
+        cd ../..
         echo ""
         echo "✅ Electron 已正确安装，无需修复！"
         exit 0
     else
         echo "   ⚠️  Electron 二进制存在但无法加载"
+        cd ../.. 2>/dev/null || true
     fi
 else
     echo "   ❌ Electron 二进制文件不存在"
@@ -65,19 +71,21 @@ case $choice in
         export ELECTRON_CUSTOM_DIR="{{ version }}"
         
         echo "🗑️  删除现有 Electron..."
-        pnpm remove electron -w 2>/dev/null || true
+        cd "$DESKTOP_DIR"
+        pnpm remove electron 2>/dev/null || true
         
         echo "📦 安装 Electron (使用国内镜像)..."
-        pnpm add electron@27.3.11 -w --force
+        pnpm add electron@27.3.11 --force
+        cd ../..
         
         # 配置永久镜像
-        if [ ! -f ".npmrc" ] || ! grep -q "electron_mirror" .npmrc; then
+        if [ ! -f "$DESKTOP_DIR/.npmrc" ] || ! grep -q "electron_mirror" "$DESKTOP_DIR/.npmrc"; then
             echo ""
-            read -p "是否永久配置镜像源到 .npmrc? (y/n): " config_mirror
+            read -p "是否永久配置镜像源到 apps/desktop/.npmrc? (y/n): " config_mirror
             if [ "$config_mirror" = "y" ] || [ "$config_mirror" = "Y" ]; then
-                echo "electron_mirror=https://npmmirror.com/mirrors/electron/" >> .npmrc
-                echo "electron_custom_dir={{ version }}" >> .npmrc
-                echo "✅ 已配置镜像源到 .npmrc"
+                echo "electron_mirror=https://npmmirror.com/mirrors/electron/" >> "$DESKTOP_DIR/.npmrc"
+                echo "electron_custom_dir={{ version }}" >> "$DESKTOP_DIR/.npmrc"
+                echo "✅ 已配置镜像源到 apps/desktop/.npmrc"
             fi
         fi
         ;;
@@ -88,10 +96,12 @@ case $choice in
         echo "======================================"
         
         echo "🗑️  删除现有 Electron..."
-        pnpm remove electron -w 2>/dev/null || true
+        cd "$DESKTOP_DIR"
+        pnpm remove electron 2>/dev/null || true
         
         echo "📦 安装 Electron..."
-        pnpm add electron@27.3.11 -w --force
+        pnpm add electron@27.3.11 --force
+        cd ../..
         ;;
     
     3)
@@ -138,10 +148,10 @@ case $choice in
         echo "2. 解压下载的文件"
         echo ""
         echo "3. 将解压后的内容复制到:"
-        echo "   node_modules/electron/dist/"
+        echo "   apps/desktop/node_modules/electron/dist/"
         echo ""
         echo "4. 确保可执行文件有执行权限 (Linux/macOS):"
-        echo "   chmod +x node_modules/electron/dist/electron"
+        echo "   chmod +x apps/desktop/node_modules/electron/dist/electron"
         echo ""
         exit 0
         ;;
@@ -157,17 +167,19 @@ echo ""
 echo "🔍 验证 Electron 安装..."
 echo "======================================"
 
-if [ -f "node_modules/electron/dist/electron" ] || [ -f "node_modules/electron/dist/electron.exe" ]; then
+if [ -f "$ELECTRON_PATH" ] || [ -f "$ELECTRON_PATH_WIN" ]; then
     echo "✅ Electron 二进制文件存在"
 else
     echo "❌ Electron 二进制文件不存在"
     exit 1
 fi
 
-if node -e "require('electron')" 2>/dev/null; then
+if cd "$DESKTOP_DIR" && node -e "require('electron')" 2>/dev/null; then
     echo "✅ Electron 可以正常加载"
+    cd ../..
 else
     echo "❌ Electron 无法加载"
+    cd ../.. 2>/dev/null || true
     echo ""
     echo "可能的原因："
     echo "  1. 网络问题导致下载不完整"
@@ -181,7 +193,9 @@ else
 fi
 
 # 显示版本信息
+cd "$DESKTOP_DIR"
 ELECTRON_VERSION=$(npx electron --version 2>/dev/null || echo "未知")
+cd ../..
 echo "📌 Electron 版本: $ELECTRON_VERSION"
 
 echo ""
