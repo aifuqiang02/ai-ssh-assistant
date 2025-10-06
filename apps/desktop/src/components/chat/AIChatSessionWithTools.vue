@@ -1117,6 +1117,13 @@ onMounted(() => {
   padding: 8px 12px 12px;
 }
 
+.input-area .input-container {
+  border: 1px solid var(--vscode-border);
+  border-radius: 6px;
+  padding: 10px;
+  background: var(--vscode-bg);
+}
+
 .input-container {
   display: flex;
   flex-direction: column;
