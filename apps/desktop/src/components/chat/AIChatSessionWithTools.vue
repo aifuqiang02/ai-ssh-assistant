@@ -120,12 +120,34 @@
     <!-- 输入区域 -->
     <div class="input-area">
       <div class="input-container">
+        <!-- 模式切换 -->
+        <div class="mode-selector">
+          <button
+            class="mode-button"
+            :class="{ 'active': chatMode === 'agent' }"
+            title="Agent 模式：AI 可以主动执行工具和命令"
+            @click="chatMode = 'agent'"
+          >
+            <i class="bi bi-robot"></i>
+            <span>Agent</span>
+          </button>
+          <button
+            class="mode-button"
+            :class="{ 'active': chatMode === 'ask' }"
+            title="Ask 模式：AI 只回答问题，不执行工具"
+            @click="chatMode = 'ask'"
+          >
+            <i class="bi bi-chat-dots"></i>
+            <span>Ask</span>
+          </button>
+        </div>
+
         <div class="textarea-wrapper">
           <textarea
             ref="textareaRef"
             v-model="inputMessage"
             class="message-input"
-            :placeholder="inputPlaceholder"
+            :placeholder="currentPlaceholder"
             :rows="inputRows"
             :disabled="isGenerating"
             @keydown="handleKeyDown"
@@ -253,6 +275,9 @@ const messagesContainer = ref<HTMLElement | null>(null)
 const textareaRef = ref<HTMLTextAreaElement | null>(null)
 const internalMessages = ref<Message[]>([])
 
+// 聊天模式：agent (可执行工具) 或 ask (只回答问题)
+const chatMode = ref<'agent' | 'ask'>('agent')
+
 // 工具相关状态
 const showToolApproval = ref(false)
 const pendingToolRequest = ref<ToolApprovalRequest | null>(null)
@@ -264,6 +289,15 @@ const abortController = ref<AbortController | null>(null)
 
 // 计算属性
 const messages = computed(() => internalMessages.value)
+
+// 根据模式动态调整占位符
+const currentPlaceholder = computed(() => {
+  if (chatMode.value === 'agent') {
+    return props.inputPlaceholder || '描述你的任务，AI 会主动执行操作...'
+  } else {
+    return '提出你的问题，AI 会进行回答...'
+  }
+})
 
 // Markdown 渲染配置
 const renderer: any = new marked.Renderer()
@@ -523,9 +557,9 @@ const sendMessageInternal = async (content: string) => {
     // 准备 API 消息格式
     const apiMessages: APIChatMessage[] = []
 
-    // 添加系统提示词（如果启用工具）
-    if (props.enableTools) {
-      console.log('[Chat] 工具已启用，生成系统提示词')
+    // 添加系统提示词（根据模式决定）
+    if (props.enableTools && chatMode.value === 'agent') {
+      console.log('[Chat] Agent 模式：工具已启用，生成系统提示词')
       const systemPrompt = generateSystemPrompt({
         enableSSH: true,
         enableFileOps: true,
@@ -536,6 +570,12 @@ const sendMessageInternal = async (content: string) => {
       apiMessages.push({
         role: 'system',
         content: systemPrompt
+      })
+    } else if (chatMode.value === 'ask') {
+      console.log('[Chat] Ask 模式：仅回答问题，不执行工具')
+      apiMessages.push({
+        role: 'system',
+        content: '你是一个乐于助人的 AI 助手。请专注于回答用户的问题，提供清晰准确的信息和建议。不要尝试执行任何工具或命令。'
       })
     } else {
       console.log('[Chat] ⚠️ 工具未启用，跳过系统提示词')
@@ -1088,6 +1128,51 @@ onMounted(() => {
 .input-container {
   display: flex;
   flex-direction: column;
+  gap: 8px;
+}
+
+/* 模式选择器 */
+.mode-selector {
+  display: flex;
+  gap: 8px;
+  padding: 2px;
+  background: var(--vscode-editorGroupHeader-tabsBackground);
+  border-radius: 6px;
+  width: fit-content;
+}
+
+.mode-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: transparent;
+  color: var(--vscode-descriptionForeground);
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.mode-button i {
+  font-size: 14px;
+}
+
+.mode-button:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--vscode-foreground);
+}
+
+.mode-button.active {
+  background: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+}
+
+.mode-button.active:hover {
+  background: var(--vscode-button-hoverBackground);
 }
 
 .textarea-wrapper {
