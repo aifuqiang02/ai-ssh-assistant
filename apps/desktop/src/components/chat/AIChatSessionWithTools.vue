@@ -69,7 +69,6 @@
                 <!-- 工具参数 -->
                 <div class="tool-params">
                   <div v-for="(value, key) in message.toolUse.params" :key="key" class="tool-param">
-                    <span class="param-key">{{ key }}:</span>
                     <code class="param-value">{{ value }}</code>
                   </div>
                 </div>
