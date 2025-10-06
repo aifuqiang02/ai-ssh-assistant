@@ -604,6 +604,33 @@
             </div>
           </div>
 
+          <!-- 命令风险等级 -->
+          <div class="setting-row">
+            <div class="setting-left">
+              <label class="setting-label">命令自动执行风险等级</label>
+              <p class="setting-hint">自动执行此等级及以下风险的命令，无需确认</p>
+            </div>
+            <div class="setting-right">
+              <select v-model.number="commandRiskLevel" @change="saveSettings" class="form-select">
+                <option :value="0">🚫 全部需要确认</option>
+                <option :value="1">✅ 等级1: 只读命令 (ls, pwd, cat)</option>
+                <option :value="2">✅ 等级2: 查看状态 (ps, df, free)</option>
+                <option :value="3">✅ 等级3: 文件操作 (mkdir, cp, mv)</option>
+                <option :value="4">⚠️ 等级4: 删除修改 (rm, chmod, sed)</option>
+                <option :value="5">⛔ 等级5: 系统操作 (sudo, reboot)</option>
+              </select>
+              <p class="setting-info">
+                <i class="bi bi-info-circle"></i>
+                <span v-if="commandRiskLevel === 0">所有命令都需要您的确认</span>
+                <span v-else-if="commandRiskLevel === 1">自动执行只读命令，如查看文件、目录</span>
+                <span v-else-if="commandRiskLevel === 2">自动执行查看系统状态的命令</span>
+                <span v-else-if="commandRiskLevel === 3">自动执行文件操作命令（不含删除）</span>
+                <span v-else-if="commandRiskLevel === 4">自动执行删除和修改命令（谨慎！）</span>
+                <span v-else>自动执行所有命令包括系统级操作（危险！）</span>
+              </p>
+            </div>
+          </div>
+
           <!-- 对话历史 -->
           <div class="setting-row">
             <div class="setting-left">
@@ -1003,6 +1030,7 @@ const cursorBlink = ref(true)
 
 // AI 助手设置
 const autoApproveReadOnly = ref(true)
+const commandRiskLevel = ref(2) // 命令风险等级：1-5，自动通过此等级及以下的命令
 const enableChatHistory = ref(true)
 const maxHistoryMessages = ref(50)
 
@@ -1392,6 +1420,7 @@ const saveSettings = () => {
     cursorBlink: cursorBlink.value,
     // AI 助手设置
     autoApproveReadOnly: autoApproveReadOnly.value,
+    commandRiskLevel: commandRiskLevel.value,
     enableChatHistory: enableChatHistory.value,
     maxHistoryMessages: maxHistoryMessages.value,
     // 高级设置
@@ -1432,6 +1461,7 @@ const loadSettings = () => {
       cursorBlink.value = settings.cursorBlink !== undefined ? settings.cursorBlink : true
       // AI 助手设置
       autoApproveReadOnly.value = settings.autoApproveReadOnly !== undefined ? settings.autoApproveReadOnly : true
+      commandRiskLevel.value = settings.commandRiskLevel !== undefined ? settings.commandRiskLevel : 2
       enableChatHistory.value = settings.enableChatHistory !== undefined ? settings.enableChatHistory : true
       maxHistoryMessages.value = settings.maxHistoryMessages || 50
       // 高级设置
@@ -1453,7 +1483,7 @@ watch([
   theme, fontSize, selectedColorScheme, sshTimeout, keepAlive, defaultSSHPort,
   terminalFontSize, cursorStyle, cursorBlink,
   // AI 助手设置
-  autoApproveReadOnly,
+  autoApproveReadOnly, commandRiskLevel,
   enableChatHistory, maxHistoryMessages,
   // 高级设置
   autoConnect, saveCommandHistory,

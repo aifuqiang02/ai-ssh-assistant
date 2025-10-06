@@ -293,12 +293,171 @@ const toolExecutionProgress = ref('')
 // AI 助手设置
 const aiSettings = ref({
   autoApproveReadOnly: true,
+  commandRiskLevel: 2, // 命令风险等级：0-5
   enableChatHistory: true,
   maxHistoryMessages: 50
 })
 
 // 停止生成控制
 const abortController = ref<AbortController | null>(null)
+
+/**
+ * 评估命令风险等级
+ * @param command SSH命令
+ * @returns 风险等级 1-5
+ */
+const assessCommandRisk = (command: string): number => {
+  if (!command) return 5 // 空命令视为高风险
+  
+  const cmd = command.trim().toLowerCase()
+  
+  // 等级5: 系统级操作（最高风险）
+  const level5Patterns = [
+    /^sudo\s/,           // sudo 命令
+    /^su\s/,             // 切换用户
+    /\bsudo\b/,          // 包含 sudo
+    /^systemctl/,        // 系统服务
+    /^service\s/,        // 服务管理
+    /^reboot/,           // 重启
+    /^shutdown/,         // 关机
+    /^halt/,             // 停机
+    /^init\s/,           // 初始化级别
+    /^kill\s+-9/,        // 强制杀进程
+    /^pkill\s+-9/,       // 强制批量杀进程
+    /^dd\s/,             // 磁盘操作
+    /^fdisk/,            // 分区操作
+    /^mkfs/,             // 格式化
+    /^mount/,            // 挂载
+    /^umount/,           // 卸载
+    /^iptables/,         // 防火墙
+    /^firewall/,         // 防火墙
+    /^useradd/,          // 添加用户
+    /^userdel/,          // 删除用户
+    /^passwd/,           // 修改密码
+  ]
+  
+  for (const pattern of level5Patterns) {
+    if (pattern.test(cmd)) return 5
+  }
+  
+  // 等级4: 删除/修改操作（高风险）
+  const level4Patterns = [
+    /^rm\s/,             // 删除文件
+    /\brm\s+-rf?\b/,     // 递归删除
+    /^rmdir/,            // 删除目录
+    /^chmod/,            // 修改权限
+    /^chown/,            // 修改所有者
+    /^chgrp/,            // 修改组
+    /sed\s+-i/,          // 原地修改文件
+    /^truncate/,         // 截断文件
+    />>/,                // 追加重定向
+    />/,                 // 覆盖重定向
+    /^kill\s/,           // 杀进程
+    /^pkill/,            // 批量杀进程
+    /^killall/,          // 杀所有进程
+  ]
+  
+  for (const pattern of level4Patterns) {
+    if (pattern.test(cmd)) return 4
+  }
+  
+  // 等级3: 文件操作（中等风险）
+  const level3Patterns = [
+    /^mkdir/,            // 创建目录
+    /^touch/,            // 创建文件
+    /^cp\s/,             // 复制
+    /^mv\s/,             // 移动/重命名
+    /^ln\s/,             // 创建链接
+    /^tar\s/,            // 压缩解压
+    /^zip/,              // 压缩
+    /^unzip/,            // 解压
+    /^gzip/,             // 压缩
+    /^gunzip/,           // 解压
+    /^wget/,             // 下载
+    /^curl\s+-o/,        // 下载到文件
+    /^scp\s/,            // 远程复制
+    /^rsync/,            // 同步
+    /^git\s+clone/,      // 克隆仓库
+    /^git\s+pull/,       // 拉取更新
+    /^npm\s+install/,    // 安装包
+    /^apt\s+install/,    // 安装包
+    /^yum\s+install/,    // 安装包
+  ]
+  
+  for (const pattern of level3Patterns) {
+    if (pattern.test(cmd)) return 3
+  }
+  
+  // 等级2: 查看系统状态（低风险）
+  const level2Patterns = [
+    /^ps\s/,             // 进程列表
+    /^top/,              // 实时进程
+    /^htop/,             // 增强top
+    /^df\s/,             // 磁盘使用
+    /^du\s/,             // 目录大小
+    /^free/,             // 内存使用
+    /^uptime/,           // 运行时间
+    /^who/,              // 在线用户
+    /^w\s/,              // 用户活动
+    /^netstat/,          // 网络状态
+    /^ss\s/,             // socket状态
+    /^lsof/,             // 打开文件
+    /^uname/,            // 系统信息
+    /^hostname/,         // 主机名
+    /^ifconfig/,         // 网络配置
+    /^ip\s+addr/,        // IP地址
+    /^route/,            // 路由表
+    /^ping\s/,           // 网络测试
+    /^traceroute/,       // 路由跟踪
+    /^history/,          // 命令历史
+    /^env/,              // 环境变量
+    /^printenv/,         // 打印环境变量
+    /^date/,             // 日期时间
+    /^cal/,              // 日历
+    /^which/,            // 查找命令
+    /^whereis/,          // 查找文件
+    /^locate/,           // 定位文件
+  ]
+  
+  for (const pattern of level2Patterns) {
+    if (pattern.test(cmd)) return 2
+  }
+  
+  // 等级1: 只读命令（最低风险）
+  const level1Patterns = [
+    /^ls\s/,             // 列出文件
+    /^ls$/,              // ls 单独命令
+    /^ll\s/,             // ls -l 别名
+    /^ll$/,              // ll 单独命令
+    /^pwd/,              // 当前目录
+    /^cd\s/,             // 切换目录
+    /^cat\s/,            // 查看文件
+    /^less\s/,           // 分页查看
+    /^more\s/,           // 分页查看
+    /^head\s/,           // 查看开头
+    /^tail\s/,           // 查看结尾
+    /^grep\s/,           // 搜索
+    /^find\s/,           // 查找文件
+    /^wc\s/,             // 统计
+    /^diff\s/,           // 比较文件
+    /^echo\s/,           // 输出
+    /^printf\s/,         // 格式化输出
+    /^stat\s/,           // 文件状态
+    /^file\s/,           // 文件类型
+    /^tree/,             // 目录树
+    /^realpath/,         // 真实路径
+    /^basename/,         // 基本名
+    /^dirname/,          // 目录名
+    /^type\s/,           // 命令类型
+  ]
+  
+  for (const pattern of level1Patterns) {
+    if (pattern.test(cmd)) return 1
+  }
+  
+  // 默认返回中等风险
+  return 3
+}
 
 // 计算属性
 const messages = computed(() => internalMessages.value)
@@ -470,15 +629,33 @@ const executeToolCall = async (toolName: string, params: any, messageId: number)
   let approval: ToolApprovalResponse = { approved: true }
 
   // 判断是否需要确认
-  const needsApproval = !alwaysAutoApproveTools.includes(toolName) && 
-                        !(aiSettings.value.autoApproveReadOnly && readOnlyTools.includes(toolName))
+  let needsApproval = !alwaysAutoApproveTools.includes(toolName) && 
+                      !(aiSettings.value.autoApproveReadOnly && readOnlyTools.includes(toolName))
+  
+  // 针对 execute_ssh_command，使用风险等级判断
+  if (toolName === 'execute_ssh_command' && params.command) {
+    const commandRisk = assessCommandRisk(params.command)
+    console.log(`[Chat] 命令风险评估: "${params.command}" = 等级${commandRisk}`)
+    
+    // 如果命令风险等级 <= 设置的自动执行等级，则自动批准
+    if (commandRisk <= aiSettings.value.commandRiskLevel) {
+      console.log(`[Chat] ✅ 命令风险等级${commandRisk} <= 设置等级${aiSettings.value.commandRiskLevel}，自动批准`)
+      needsApproval = false
+    } else {
+      console.log(`[Chat] ⚠️ 命令风险等级${commandRisk} > 设置等级${aiSettings.value.commandRiskLevel}，需要确认`)
+      needsApproval = true
+    }
+  }
 
   // 只有需要确认的工具才请求批准
   if (needsApproval) {
     // 生成描述
     let description = `AI 助手请求执行工具: ${toolName}`
     if (toolName === 'execute_ssh_command') {
-      description = `AI 助手请求执行 SSH 命令:\n${params.command}`
+      const commandRisk = assessCommandRisk(params.command)
+      const riskLabels = ['', '✅ 只读', '✅ 查看', '⚠️ 操作', '⚠️ 删除', '⛔ 系统']
+      const riskLabel = riskLabels[commandRisk] || '❓ 未知'
+      description = `AI 助手请求执行 SSH 命令 [风险等级${commandRisk}: ${riskLabel}]:\n${params.command}`
     }
 
     console.log('[Chat] 描述:', description)
@@ -843,6 +1020,7 @@ const loadAISettings = () => {
       // 加载设置
       aiSettings.value = {
         autoApproveReadOnly: settings.autoApproveReadOnly !== undefined ? settings.autoApproveReadOnly : true,
+        commandRiskLevel: settings.commandRiskLevel !== undefined ? settings.commandRiskLevel : 2,
         enableChatHistory: settings.enableChatHistory !== undefined ? settings.enableChatHistory : true,
         maxHistoryMessages: settings.maxHistoryMessages || 50
       }
