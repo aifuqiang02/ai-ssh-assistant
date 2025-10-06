@@ -120,48 +120,44 @@
     <!-- 输入区域 -->
     <div class="input-area">
       <div class="input-container">
-        <!-- 模式切换下拉选择 -->
-        <div class="mode-selector-dropdown">
-          <label class="mode-label">模式：</label>
+        <!-- 输入框 -->
+        <textarea
+          ref="textareaRef"
+          v-model="inputMessage"
+          class="message-input"
+          :placeholder="currentPlaceholder"
+          :rows="inputRows"
+          :disabled="isGenerating"
+          @keydown="handleKeyDown"
+        ></textarea>
+
+        <!-- 底部控制栏：模式选择 + 按钮组 -->
+        <div class="input-controls">
+          <!-- 模式选择下拉框 -->
           <div class="select-wrapper">
             <select v-model="chatMode" class="mode-select">
-              <option value="agent">
-                🤖 Agent - AI 可以主动执行工具和命令
-              </option>
-              <option value="ask">
-                💬 Ask - AI 只回答问题，不执行工具
-              </option>
+              <option value="agent">🤖 Agent</option>
+              <option value="ask">💬 Ask</option>
             </select>
             <i class="bi bi-chevron-down select-icon"></i>
           </div>
-        </div>
 
-        <div class="textarea-wrapper">
-          <textarea
-            ref="textareaRef"
-            v-model="inputMessage"
-            class="message-input"
-            :placeholder="currentPlaceholder"
-            :rows="inputRows"
-            :disabled="isGenerating"
-            @keydown="handleKeyDown"
-          ></textarea>
-          
-          <!-- 右侧功能按钮组 -->
-          <div class="input-buttons">
+          <!-- 右侧按钮组 -->
+          <div class="action-buttons">
             <!-- 清空按钮 -->
             <button
               v-if="inputMessage.trim() && !isGenerating"
-              class="icon-button"
+              class="control-button"
               title="清空输入"
               @click="handleClearInput"
             >
               <i class="bi bi-x-lg"></i>
+              <span>清空</span>
             </button>
-            
+
             <!-- 发送/停止按钮 -->
             <button
-              class="icon-button send-button"
+              class="control-button send-button"
               :class="{ 'is-generating': isGenerating, 'has-content': inputMessage.trim() }"
               :disabled="!inputMessage.trim() && !isGenerating"
               :title="isGenerating ? '停止生成 (Ctrl+C)' : '发送消息 (Ctrl+Enter)'"
@@ -169,6 +165,8 @@
             >
               <i v-if="!isGenerating" class="bi bi-send-fill"></i>
               <i v-else class="bi bi-stop-circle-fill"></i>
+              <span v-if="!isGenerating">发送</span>
+              <span v-else>停止</span>
             </button>
           </div>
         </div>
@@ -1122,32 +1120,18 @@ onMounted(() => {
 .input-container {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0;
 }
 
-/* 模式选择器下拉 */
-.mode-selector-dropdown {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.mode-label {
-  font-size: 13px;
-  color: var(--vscode-descriptionForeground);
-  font-weight: 500;
-  white-space: nowrap;
-}
-
+/* 模式选择下拉框 */
 .select-wrapper {
   position: relative;
-  flex: 1;
-  max-width: 400px;
+  width: 140px;
 }
 
 .mode-select {
   width: 100%;
-  padding: 6px 30px 6px 10px;
+  padding: 6px 28px 6px 10px;
   background: var(--vscode-dropdown-background);
   color: var(--vscode-dropdown-foreground);
   border: 1px solid var(--vscode-dropdown-border);
@@ -1182,21 +1166,17 @@ onMounted(() => {
   right: 8px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 12px;
+  font-size: 10px;
   color: var(--vscode-descriptionForeground);
   pointer-events: none;
 }
 
-.textarea-wrapper {
-  position: relative;
-  width: 100%;
-}
-
+/* 输入框样式 */
 .message-input {
   width: 100%;
   min-height: 80px;
   max-height: 300px;
-  padding: 8px 50px 8px 10px;
+  padding: 10px 12px;
   background: var(--vscode-input-background);
   color: var(--vscode-input-foreground);
   border: 1px solid var(--vscode-input-border);
@@ -1220,71 +1200,58 @@ onMounted(() => {
   cursor: not-allowed;
 }
 
-/* 右侧按钮组 */
-.input-buttons {
-  position: absolute;
-  right: 8px;
-  bottom: 8px;
+/* 底部控制栏：模式选择 + 按钮组 */
+.input-controls {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-  z-index: 100;
-  pointer-events: none;
-}
-
-.input-buttons > * {
-  pointer-events: auto;
-}
-
-.icon-button {
-  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  background: transparent;
-  color: var(--vscode-descriptionForeground);
+  justify-content: space-between;
+  margin-top: 8px;
+  gap: 12px;
+}
+
+/* 右侧按钮组 */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.control-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
   border: none;
   border-radius: 4px;
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: 500;
   cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.control-button i {
+  font-size: 14px;
+}
+
+.control-button:hover:not(:disabled) {
+  background: var(--vscode-button-hoverBackground);
+  transform: translateY(-1px);
+}
+
+.control-button:disabled {
   opacity: 0.5;
-  transition: all 0.15s;
+  cursor: not-allowed;
 }
 
-.icon-button:hover {
-  opacity: 1;
-  color: var(--vscode-foreground);
-  background: rgba(255, 255, 255, 0.05);
+.control-button.send-button.is-generating {
+  background: var(--vscode-errorForeground);
 }
 
-.icon-button:active {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.icon-button:disabled {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.icon-button.send-button {
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-
-.icon-button.send-button.has-content {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.icon-button.send-button.is-generating {
-  opacity: 1;
-  color: var(--vscode-errorForeground);
-}
-
-.icon-button.send-button.is-generating:hover {
-  color: var(--vscode-errorForeground);
-  background: rgba(255, 0, 0, 0.1);
+.control-button.send-button.is-generating:hover:not(:disabled) {
+  background: var(--vscode-errorForeground);
+  opacity: 0.9;
 }
 </style>

@@ -14,43 +14,55 @@ AI 助手现在支持两种聊天模式，用户可以根据需求自由切换�
 ### 模式选择器位置
 
 ```
-┌─────────────────────────────────┐
-│ 消息显示区域                      │
-│                                 │
-│                                 │
-└─────────────────────────────────┘
-┌─────────────────────────────────┐
-│ [Agent] [Ask]  ← 模式选择器      │
-│ ┌─────────────────────────────┐ │
-│ │ 输入框                       │ │
-│ │                             │ │
-│ └─────────────────────────────┘ │
-└─────────────────────────────────┘
+┌─────────────────────────────────────────────┐
+│ 消息显示区域                                  │
+│                                             │
+│                                             │
+└─────────────────────────────────────────────┘
+┌─────────────────────────────────────────────┐
+│ 模式：[🤖 Agent - AI 可以主动执行工具和命令 ▼]│
+│ ┌─────────────────────────────────────────┐ │
+│ │ 输入框                                   │ │
+│ │                                         │ │
+│ └─────────────────────────────────────────┘ │
+└─────────────────────────────────────────────┘
 ```
 
 ### 视觉效果
 
-- **未激活状态**：灰色文字，透明背景
-- **悬停状态**：白色文字，半透明背景
-- **激活状态**：主题按钮颜色（蓝色），白色文字
+- **默认状态**：VSCode 下拉框背景色，清晰显示当前选中的模式
+- **悬停状态**：下拉框背景色变深，提示可交互
+- **聚焦状态**：蓝色边框高亮，阴影效果
+- **展开状态**：显示所有可选模式，Emoji + 文字描述
 
-### 按钮样式
+### 下拉选择器样式
 
 ```css
-.mode-button {
-  /* 图标 + 文本的横向布局 */
-  display: flex;
-  align-items: center;
-  gap: 6px;
+.mode-select {
+  /* 使用 VSCode 主题的下拉框样式 */
+  background: var(--vscode-dropdown-background);
+  color: var(--vscode-dropdown-foreground);
+  border: 1px solid var(--vscode-dropdown-border);
   
-  /* 紧凑的内边距 */
-  padding: 6px 14px;
+  /* 去除默认样式，使用自定义箭头 */
+  appearance: none;
+  -webkit-appearance: none;
   
-  /* 圆角设计 */
+  /* 圆角和间距 */
   border-radius: 4px;
+  padding: 6px 30px 6px 10px;
   
   /* 平滑过渡动画 */
   transition: all 0.2s;
+}
+
+/* 自定义下拉箭头 */
+.select-icon {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
 }
 ```
 
@@ -208,28 +220,22 @@ if (props.enableTools && chatMode.value === 'agent') {
 }
 ```
 
-### 模式切换按钮
+### 模式下拉选择器
 
 ```vue
-<div class="mode-selector">
-  <button
-    class="mode-button"
-    :class="{ 'active': chatMode === 'agent' }"
-    title="Agent 模式：AI 可以主动执行工具和命令"
-    @click="chatMode = 'agent'"
-  >
-    <i class="bi bi-robot"></i>
-    <span>Agent</span>
-  </button>
-  <button
-    class="mode-button"
-    :class="{ 'active': chatMode === 'ask' }"
-    title="Ask 模式：AI 只回答问题，不执行工具"
-    @click="chatMode = 'ask'"
-  >
-    <i class="bi bi-chat-dots"></i>
-    <span>Ask</span>
-  </button>
+<div class="mode-selector-dropdown">
+  <label class="mode-label">模式：</label>
+  <div class="select-wrapper">
+    <select v-model="chatMode" class="mode-select">
+      <option value="agent">
+        🤖 Agent - AI 可以主动执行工具和命令
+      </option>
+      <option value="ask">
+        💬 Ask - AI 只回答问题，不执行工具
+      </option>
+    </select>
+    <i class="bi bi-chevron-down select-icon"></i>
+  </div>
 </div>
 ```
 
