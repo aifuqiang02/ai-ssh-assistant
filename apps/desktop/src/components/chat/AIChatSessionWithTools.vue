@@ -1126,7 +1126,7 @@ onMounted(() => {
 /* 模式选择下拉框 */
 .select-wrapper {
   position: relative;
-  width: 140px;
+  width: 100px;
 }
 
 .mode-select {
