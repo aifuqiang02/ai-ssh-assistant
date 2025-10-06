@@ -1,0 +1,26 @@
+{
+  "name": "auto-keep-all",
+  "displayName": "Auto Keep All Changes",
+  "description": "自动点击 Keep All 按钮，保持所有 AI 建议的更改",
+  "version": "1.0.0",
+  "publisher": "local",
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "*"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "auto-keep-all.toggle",
+        "title": "Toggle Auto Keep All"
+      }
+    ]
+  }
+}
+
