@@ -1320,9 +1320,18 @@ const onLoginSuccess = (user: any) => {
   userInfo.value = user
   console.log('Login successful:', user)
   
+  // 设置当前用户到 Settings Manager
+  if (user && user.id) {
+    console.log('[Settings] 登录成功，设置用户ID:', user.id)
+    window.electronAPI.settings.setUser(user.id)
+  }
+  
   if (storageMode.value !== 'local') {
     initializeStorageManager()
   }
+  
+  // 重新加载设置（从数据库）
+  loadSettings()
 }
 
 // 退出登录
@@ -1333,6 +1342,11 @@ const logout = () => {
   sessionStorage.removeItem('userInfo')
   userInfo.value = null
   storageMode.value = 'local'
+  
+  // 清除用户ID，切换到文件存储
+  console.log('[Settings] 用户登出，切换到文件存储')
+  window.electronAPI.settings.setUser(null)
+  
   saveSettings()
 }
 
@@ -1885,9 +1899,16 @@ watch([mode, colorScheme, themeFontSize], () => {
 })
 
 onMounted(async () => {
-  // 设置当前用户（暂时设为 null，未登录状态）
-  // TODO: 从 auth store 获取当前用户
-  window.electronAPI.settings.setUser(null)
+  // 检查登录状态并设置当前用户
+  checkLoginStatus()
+  
+  if (userInfo.value && userInfo.value.id) {
+    console.log('[Settings] 用户已登录，设置用户ID:', userInfo.value.id)
+    window.electronAPI.settings.setUser(userInfo.value.id)
+  } else {
+    console.log('[Settings] 用户未登录，使用文件存储')
+    window.electronAPI.settings.setUser(null)
+  }
   
   await loadSettings()
   initializeAIProviders()
