@@ -10,7 +10,7 @@
           'is-drag-over': isDragOver
         }
       ]"
-      :style="{ paddingLeft: `${depth * 16}px` }"
+      :style="{ paddingLeft: `${depth * 10}px` }"
       draggable="true"
       @click="handleNodeClick"
       @dragstart="handleDragStart"
