@@ -68,40 +68,28 @@ class Application {
       // 注册开发者工具切换IPC处理器
       this.setupDevToolsIPC()
 
-      // 动态导入 IPC 处理器
+      // 注册 Settings 处理器（优先，确保始终成功）
+      console.log('[Main] 开始注册 Settings IPC 处理器...')
       try {
-        let storageManager = null
+        const settingsModule = await import('../ipc/settings-handlers')
+        console.log('[Main] Settings 模块导入成功:', !!settingsModule.registerSettingsHandlers)
         
-        // 尝试初始化 StorageManager（暂时禁用，使用临时存储）
-        try {
-          const { StorageManager } = await import('@repo/database')
-          storageManager = new StorageManager({
-            mode: 'local',
-            localOptions: {
-              enabled: true
-            }
-          })
-          await storageManager.connect()
-          console.log('[Main] ✅ StorageManager initialized')
-        } catch (storageError) {
-          console.warn('[Main] ⚠️  StorageManager initialization failed, using fallback:', storageError)
-          // 暂时使用 null，settings-handlers 会使用 localStorage 作为后备
-        }
-
-        // 注册 Settings 处理器
-        const { registerSettingsHandlers } = await import('../ipc/settings-handlers')
-        registerSettingsHandlers(storageManager as any)
-        console.log('[Main] ✅ Settings handlers registered')
-        
-        // 注册其他 IPC 处理器
+        settingsModule.registerSettingsHandlers(null)
+        console.log('[Main] ✅ Settings handlers registered successfully!')
+      } catch (settingsError) {
+        console.error('[Main] ❌ CRITICAL: Failed to register Settings handlers:', settingsError)
+      }
+      
+      // 动态导入其他 IPC 处理器
+      try {
         await import('../ipc/api-handlers')
         await import('../ipc/ssh-handlers')
         await import('../ipc/ai-handlers')
         await import('../ipc/file-handlers')
         await import('../ipc/system-handlers')
-        console.log('[Main] ✅ All IPC handlers registered')
+        console.log('[Main] ✅ All other IPC handlers registered')
       } catch (error) {
-        console.error('[Main] ❌ Failed to load IPC handlers:', error)
+        console.error('[Main] ❌ Failed to load some IPC handlers:', error)
       }
     })
 
