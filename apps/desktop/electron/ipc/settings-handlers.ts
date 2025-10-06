@@ -3,8 +3,10 @@
  * 负责处理设置的读写、迁移、导入导出等操作
  */
 
-import { ipcMain } from 'electron'
+import { ipcMain, app } from 'electron'
 import type { StorageManager } from '@repo/database'
+import fs from 'fs/promises'
+import path from 'path'
 
 interface UserSettings {
   // 外观设置
@@ -61,11 +63,16 @@ interface UserSettings {
 }
 
 class SettingsManager {
-  private storage: StorageManager
+  private storage: StorageManager | null
   private currentUserId: string | null = null
+  private settingsFilePath: string
   
-  constructor(storage: StorageManager) {
+  constructor(storage: StorageManager | null) {
     this.storage = storage
+    // 使用应用数据目录存储设置文件
+    const userDataPath = app.getPath('userData')
+    this.settingsFilePath = path.join(userDataPath, 'app-settings.json')
+    console.log('[SettingsManager] Settings file path:', this.settingsFilePath)
   }
   
   /**
@@ -77,9 +84,44 @@ class SettingsManager {
   }
   
   /**
+   * 从文件读取设置（后备方案）
+   */
+  private async readSettingsFromFile(): Promise<UserSettings | null> {
+    try {
+      const data = await fs.readFile(this.settingsFilePath, 'utf-8')
+      return JSON.parse(data)
+    } catch (error) {
+      // 文件不存在或读取失败
+      return null
+    }
+  }
+  
+  /**
+   * 写入设置到文件（后备方案）
+   */
+  private async writeSettingsToFile(settings: UserSettings): Promise<void> {
+    try {
+      // 确保目录存在
+      await fs.mkdir(path.dirname(this.settingsFilePath), { recursive: true })
+      await fs.writeFile(this.settingsFilePath, JSON.stringify(settings, null, 2), 'utf-8')
+    } catch (error) {
+      console.error('[SettingsManager] Failed to write settings to file:', error)
+      throw error
+    }
+  }
+  
+  /**
    * 获取用户设置
    */
   async getSettings(): Promise<UserSettings> {
+    // 如果没有数据库，使用文件存储
+    if (!this.storage) {
+      console.log('[SettingsManager] Using file storage (no database)')
+      const settings = await this.readSettingsFromFile()
+      return settings || this.getDefaultSettings()
+    }
+    
+    // 如果没有登录用户，返回默认设置
     if (!this.currentUserId) {
       console.log('[SettingsManager] No user logged in, returning default settings')
       return this.getDefaultSettings()
@@ -108,6 +150,27 @@ class SettingsManager {
    * 保存用户设置
    */
   async saveSettings(settings: Partial<UserSettings>): Promise<void> {
+    // 如果没有数据库，使用文件存储
+    if (!this.storage) {
+      console.log('[SettingsManager] Saving to file storage (no database)')
+      try {
+        const currentSettings = await this.getSettings()
+        const mergedSettings = {
+          ...currentSettings,
+          ...settings,
+          version: '1.0.0',
+          lastUpdated: new Date().toISOString()
+        }
+        await this.writeSettingsToFile(mergedSettings)
+        console.log('[SettingsManager] Settings saved to file successfully')
+        return
+      } catch (error) {
+        console.error('[SettingsManager] Failed to save settings to file:', error)
+        throw error
+      }
+    }
+    
+    // 数据库存储需要用户登录
     if (!this.currentUserId) {
       console.warn('[SettingsManager] No user logged in, settings not saved')
       throw new Error('No user logged in')
@@ -282,7 +345,7 @@ let settingsManager: SettingsManager | null = null
 /**
  * 注册设置相关的 IPC 处理器
  */
-export function registerSettingsHandlers(storage: StorageManager) {
+export function registerSettingsHandlers(storage: StorageManager | null) {
   settingsManager = new SettingsManager(storage)
   
   // 获取设置

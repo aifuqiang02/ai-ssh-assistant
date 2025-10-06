@@ -70,29 +70,38 @@ class Application {
 
       // 动态导入 IPC 处理器
       try {
-        // 初始化 StorageManager
-        const { StorageManager } = await import('@repo/database')
-        const storageManager = new StorageManager({
-          mode: 'local',  // 默认本地模式
-          localOptions: {
-            enabled: true
-          }
-        })
-        await storageManager.connect()
-        console.log('[Main] StorageManager initialized')
+        let storageManager = null
+        
+        // 尝试初始化 StorageManager（暂时禁用，使用临时存储）
+        try {
+          const { StorageManager } = await import('@repo/database')
+          storageManager = new StorageManager({
+            mode: 'local',
+            localOptions: {
+              enabled: true
+            }
+          })
+          await storageManager.connect()
+          console.log('[Main] ✅ StorageManager initialized')
+        } catch (storageError) {
+          console.warn('[Main] ⚠️  StorageManager initialization failed, using fallback:', storageError)
+          // 暂时使用 null，settings-handlers 会使用 localStorage 作为后备
+        }
 
-        // 注册 Settings 处理器（需要 StorageManager）
+        // 注册 Settings 处理器
         const { registerSettingsHandlers } = await import('../ipc/settings-handlers')
-        registerSettingsHandlers(storageManager)
+        registerSettingsHandlers(storageManager as any)
+        console.log('[Main] ✅ Settings handlers registered')
         
         // 注册其他 IPC 处理器
-        await import('../ipc/api-handlers')  // API处理器
+        await import('../ipc/api-handlers')
         await import('../ipc/ssh-handlers')
         await import('../ipc/ai-handlers')
         await import('../ipc/file-handlers')
         await import('../ipc/system-handlers')
+        console.log('[Main] ✅ All IPC handlers registered')
       } catch (error) {
-        console.warn('Warning: Could not load some IPC handlers:', error)
+        console.error('[Main] ❌ Failed to load IPC handlers:', error)
       }
     })
 
