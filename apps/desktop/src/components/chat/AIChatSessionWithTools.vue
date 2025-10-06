@@ -737,6 +737,7 @@ onMounted(() => {
   flex: 1;
   overflow-y: auto;
   padding: 6px 10px;
+  user-select: text;
 }
 
 .messages-area::-webkit-scrollbar {
@@ -806,6 +807,16 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  user-select: text;
+}
+
+/* 用户消息背景（使用主题色） */
+.message-user .message-container {
+  background: rgba(var(--vscode-accent-rgb, 0, 122, 204), 0.08);
+  border-left: 3px solid var(--vscode-accent);
+  border-radius: 6px;
+  padding: 8px 10px;
+  margin-left: 0;
 }
 
 /* 消息头部 */
@@ -843,11 +854,14 @@ onMounted(() => {
 /* 消息体 */
 .message-body {
   padding-left: 12px;
+  user-select: text;
+  cursor: text;
 }
 
 .message-content {
   line-height: 1.6;
   word-wrap: break-word;
+  user-select: text;
 }
 
 .message-content :deep(p) {
@@ -860,10 +874,12 @@ onMounted(() => {
   border-radius: 3px;
   font-family: 'Consolas', 'Monaco', monospace;
   font-size: 13px;
+  user-select: text;
 }
 
 .message-content :deep(pre) {
   margin: 6px 0;
+  user-select: text;
 }
 
 .message-content :deep(.code-block) {
@@ -872,6 +888,7 @@ onMounted(() => {
   border-radius: 4px;
   padding: 8px 10px;
   overflow-x: auto;
+  user-select: text;
 }
 
 .message-content :deep(.code-block code) {
@@ -879,6 +896,7 @@ onMounted(() => {
   padding: 0;
   font-size: 13px;
   line-height: 1.5;
+  user-select: text;
 }
 
 /* 工具块 */
@@ -888,6 +906,7 @@ onMounted(() => {
   border-radius: 6px;
   overflow: hidden;
   margin: 4px 0;
+  user-select: text;
 }
 
 .tool-header {
@@ -933,6 +952,7 @@ onMounted(() => {
   border-radius: 3px;
   font-family: 'Consolas', 'Monaco', monospace;
   flex: 1;
+  user-select: text;
 }
 
 /* 工具结果 */
@@ -962,6 +982,7 @@ onMounted(() => {
 .tool-output {
   padding: 8px 10px;
   border-top: 1px solid var(--vscode-editorGroup-border);
+  user-select: text;
 }
 
 .tool-output pre {
@@ -970,6 +991,7 @@ onMounted(() => {
   border-radius: 4px;
   overflow-x: auto;
   margin: 0;
+  user-select: text;
 }
 
 .tool-output code {
@@ -977,12 +999,14 @@ onMounted(() => {
   font-size: 13px;
   line-height: 1.5;
   white-space: pre;
+  user-select: text;
 }
 
 .tool-error {
   padding: 8px 10px;
   color: var(--vscode-errorForeground);
   font-size: 13px;
+  user-select: text;
 }
 
 /* 加载指示器 */
