@@ -384,10 +384,21 @@ const requestToolApproval = (toolName: string, params: any, description: string,
     const message = internalMessages.value.find(m => m.id === messageId)
     if (message) {
       message.toolApprovalPending = true
+      // 强制触发响应式更新
+      internalMessages.value = [...internalMessages.value]
       pendingToolMessageId.value = messageId
       pendingToolResolve.value = resolve
-      scrollToBottom()
-      console.log('[Chat] 已设置消息为待批准状态')
+      
+      nextTick(() => {
+        scrollToBottom()
+        console.log('[Chat] 已设置消息为待批准状态，UI 已更新')
+        console.log('[Chat] 消息状态:', {
+          id: message.id,
+          toolApprovalPending: message.toolApprovalPending,
+          toolUse: message.toolUse,
+          streaming: message.streaming
+        })
+      })
     } else {
       console.error('[Chat] 未找到消息:', messageId)
       resolve({ approved: false })
@@ -405,6 +416,8 @@ const handleInlineApproval = (messageId: number, approved: boolean) => {
   const message = internalMessages.value.find(m => m.id === messageId)
   if (message) {
     message.toolApprovalPending = false
+    // 强制触发响应式更新
+    internalMessages.value = [...internalMessages.value]
   }
   
   if (pendingToolResolve.value) {
