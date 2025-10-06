@@ -74,6 +74,30 @@
                   </div>
                 </div>
 
+                <!-- 权限确认（待批准状态） -->
+                <div v-if="message.toolApprovalPending" class="tool-approval">
+                  <div class="approval-message">
+                    <i class="bi bi-shield-check"></i>
+                    <span>此操作需要您的确认</span>
+                  </div>
+                  <div class="approval-buttons">
+                    <button 
+                      class="approval-btn approve-btn" 
+                      @click="handleInlineApproval(message.id, true)"
+                    >
+                      <i class="bi bi-check-circle"></i>
+                      同意
+                    </button>
+                    <button 
+                      class="approval-btn reject-btn" 
+                      @click="handleInlineApproval(message.id, false)"
+                    >
+                      <i class="bi bi-x-circle"></i>
+                      拒绝
+                    </button>
+                  </div>
+                </div>
+
                 <!-- 工具执行结果 -->
                 <div v-if="message.toolResult" class="tool-result">
                   <div 
@@ -173,14 +197,6 @@
       </div>
     </div>
 
-    <!-- 工具批准对话框 -->
-    <ToolApprovalDialog
-      :visible="showToolApproval"
-      :request="pendingToolRequest"
-      @approve="handleToolApproval"
-      @reject="handleToolRejection"
-      @close="() => { showToolApproval = false }"
-    />
   </div>
 </template>
 
@@ -195,7 +211,6 @@ import { chatCompletion, type ChatMessage as APIChatMessage } from '@/services/a
 import { generateSystemPrompt } from '@/services/tools/system-prompt'
 import { parseToolUse, executeTool } from '@/services/tools/tool-executor'
 import type { ToolResult } from '@/types/tools'
-import ToolApprovalDialog from './ToolApprovalDialog.vue'
 
 // Props
 interface Props {
@@ -245,6 +260,7 @@ interface Message {
     params: Record<string, any>
   }
   toolResult?: ToolResult
+  toolApprovalPending?: boolean
 }
 
 // 工具批准请求
@@ -271,9 +287,8 @@ const internalMessages = ref<Message[]>([])
 const chatMode = ref<'agent' | 'ask'>('agent')
 
 // 工具相关状态
-const showToolApproval = ref(false)
-const pendingToolRequest = ref<ToolApprovalRequest | null>(null)
 const pendingToolResolve = ref<((response: ToolApprovalResponse) => void) | null>(null)
+const pendingToolMessageId = ref<number | null>(null)
 const toolExecutionProgress = ref('')
 
 // 停止生成控制
@@ -357,48 +372,52 @@ const scrollToBottom = () => {
 /**
  * 请求工具批准
  */
-const requestToolApproval = (toolName: string, params: any, description: string): Promise<ToolApprovalResponse> => {
+const requestToolApproval = (toolName: string, params: any, description: string, messageId: number): Promise<ToolApprovalResponse> => {
   console.log('[Chat] ========== 请求工具批准 ==========')
   console.log('[Chat] 工具名称:', toolName)
   console.log('[Chat] 参数:', params)
   console.log('[Chat] 描述:', description)
+  console.log('[Chat] 消息ID:', messageId)
   
   return new Promise((resolve) => {
-    pendingToolRequest.value = {
-      tool: toolName,
-      params,
-      description,
-      timestamp: Date.now()
+    // 找到对应的消息并设置待批准状态
+    const message = internalMessages.value.find(m => m.id === messageId)
+    if (message) {
+      message.toolApprovalPending = true
+      pendingToolMessageId.value = messageId
+      pendingToolResolve.value = resolve
+      scrollToBottom()
+      console.log('[Chat] 已设置消息为待批准状态')
+    } else {
+      console.error('[Chat] 未找到消息:', messageId)
+      resolve({ approved: false })
     }
-    pendingToolResolve.value = resolve
-    showToolApproval.value = true
-    console.log('[Chat] 批准对话框已显示')
   })
 }
 
-const handleToolApproval = (response: ToolApprovalResponse) => {
-  console.log('[Chat] ✅ 用户批准工具执行')
-  console.log('[Chat] 反馈:', response.feedback)
-  showToolApproval.value = false
-  if (pendingToolResolve.value) {
-    pendingToolResolve.value(response)
-    pendingToolResolve.value = null
+/**
+ * 处理内联批准/拒绝
+ */
+const handleInlineApproval = (messageId: number, approved: boolean) => {
+  console.log('[Chat] 用户响应:', approved ? '✅ 批准' : '❌ 拒绝')
+  
+  // 找到对应的消息并清除待批准状态
+  const message = internalMessages.value.find(m => m.id === messageId)
+  if (message) {
+    message.toolApprovalPending = false
   }
-}
-
-const handleToolRejection = (response: ToolApprovalResponse) => {
-  console.log('[Chat] ❌ 用户拒绝工具执行')
-  showToolApproval.value = false
+  
   if (pendingToolResolve.value) {
-    pendingToolResolve.value(response)
+    pendingToolResolve.value({ approved })
     pendingToolResolve.value = null
+    pendingToolMessageId.value = null
   }
 }
 
 /**
  * 执行工具调用
  */
-const executeToolCall = async (toolName: string, params: any): Promise<ToolResult> => {
+const executeToolCall = async (toolName: string, params: any, messageId: number): Promise<ToolResult> => {
   console.log('[Chat] ========== 开始执行工具调用 ==========')
   console.log('[Chat] 工具名称:', toolName)
   console.log('[Chat] 参数:', params)
@@ -417,7 +436,7 @@ const executeToolCall = async (toolName: string, params: any): Promise<ToolResul
   console.log('[Chat] 等待用户批准...')
 
   // 请求用户批准
-  const approval = await requestToolApproval(toolName, params, description)
+  const approval = await requestToolApproval(toolName, params, description, messageId)
 
   console.log('[Chat] 用户响应:', approval)
 
@@ -677,7 +696,7 @@ const sendMessageInternal = async (content: string) => {
         // 执行工具
         try {
           console.log('[Chat] 开始执行工具...')
-          const toolResult = await executeToolCall(toolUse.toolName, toolUse.params)
+          const toolResult = await executeToolCall(toolUse.toolName, toolUse.params, assistantMessage.id)
           assistantMessage.toolResult = toolResult
           
           console.log('[Chat] 工具执行结果:', toolResult)
@@ -985,6 +1004,70 @@ onMounted(() => {
   font-family: 'Consolas', 'Monaco', monospace;
   flex: 1;
   user-select: text;
+}
+
+/* 工具权限确认 */
+.tool-approval {
+  border-top: 1px solid var(--vscode-editorGroup-border);
+  padding: 10px;
+  background: rgba(var(--vscode-accent-rgb, 0, 122, 204), 0.05);
+}
+
+.approval-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 13px;
+  color: var(--vscode-foreground);
+}
+
+.approval-message i {
+  font-size: 16px;
+  color: var(--vscode-charts-orange);
+}
+
+.approval-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.approval-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.approve-btn {
+  background: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+}
+
+.approve-btn:hover {
+  background: var(--vscode-button-hoverBackground);
+  transform: translateY(-1px);
+}
+
+.reject-btn {
+  background: var(--vscode-editorGroupHeader-tabsBackground);
+  color: var(--vscode-foreground);
+  border: 1px solid var(--vscode-editorGroup-border);
+}
+
+.reject-btn:hover {
+  background: var(--vscode-list-hoverBackground);
+  transform: translateY(-1px);
+}
+
+.approval-btn i {
+  font-size: 14px;
 }
 
 /* 工具结果 */
