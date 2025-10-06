@@ -22,18 +22,26 @@
       }
     }
 
-    // ===== 检查第二个容器：aiFullFilePromptBarWidget =====
-    const container2 = document.querySelector('.aiFullFilePromptBarWidget');
-    if (container2) {
-      const button2 = container2.querySelector(
-        '.flex.flex-nowrap.items-center.justify-center.gap-\\[2px\\].px-\\[4px\\].rounded.cursor-pointer.whitespace-nowrap.shrink-0.anysphere-text-button'
-      );
-      if (button2 && button2.textContent.includes('Keep')) {
-        console.log('✅ 点击 aiFullFilePromptBarWidget 中的 Keep 按钮');
-        button2.click();
-        clicked = true;
-      }
+  // ===== 检查第二个容器：aiFullFilePromptBarWidget =====
+  const container2 = document.querySelector('.aiFullFilePromptBarWidget');
+  if (container2) {
+    let button2 = container2.querySelector(
+      '.flex.flex-nowrap.items-center.justify-center.gap-\\[2px\\].px-\\[4px\\].rounded.cursor-pointer.whitespace-nowrap.shrink-0.anysphere-text-button'
+    );
+    if (button2 && button2.textContent.includes('Keep')) {
+      console.log('✅ 点击 aiFullFilePromptBarWidget 中的 Keep 按钮');
+      button2.click();
+      clicked = true;
     }
+    button2 = container2.querySelector(
+      '.flex.flex-nowrap.items-center.justify-center.gap-\\[2px\\].px-\\[4px\\].rounded.cursor-pointer.whitespace-nowrap.shrink-0.anysphere-text-button'
+    );
+    if (button2 && button2.textContent.includes('Keep')) {
+      console.log('✅ 点击 aiFullFilePromptBarWidget 中的 Keep 按钮');
+      button2.click();
+      clicked = true;
+    }
+  }
 
     return clicked;
   }
