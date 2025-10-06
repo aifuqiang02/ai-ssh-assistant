@@ -1067,12 +1067,11 @@ onMounted(() => {
 
 .textarea-wrapper {
   position: relative;
-  display: flex;
-  align-items: flex-end;
+  width: 100%;
 }
 
 .message-input {
-  flex: 1;
+  width: 100%;
   min-height: 80px;
   max-height: 300px;
   padding: 8px 50px 8px 10px;
@@ -1083,8 +1082,9 @@ onMounted(() => {
   font-family: inherit;
   font-size: 14px;
   line-height: 1.5;
-  resize: vertical;
+  resize: none;
   transition: border-color 0.15s;
+  box-sizing: border-box;
 }
 
 .message-input:focus {
@@ -1101,12 +1101,17 @@ onMounted(() => {
 /* 右侧按钮组 */
 .input-buttons {
   position: absolute;
-  right: 4px;
-  bottom: 4px;
+  right: 8px;
+  bottom: 8px;
   display: flex;
   flex-direction: column;
   gap: 4px;
-  z-index: 10;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.input-buttons > * {
+  pointer-events: auto;
 }
 
 .icon-button {
