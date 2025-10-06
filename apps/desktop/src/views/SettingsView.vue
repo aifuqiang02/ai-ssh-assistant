@@ -1510,25 +1510,18 @@ const initializeAIProviders = () => {
       aiProviders.value = aiProviders.value.map(provider => {
         const savedConfig = savedConfigs.find((c: any) => c.id === provider.id)
         if (savedConfig) {
-          // 恢复配置，包括模型的 enabled 状态
+          // 恢复配置，包括模型列表
           const providerWithConfig = {
             ...provider,
             apiKey: savedConfig.apiKey ? decryptApiKey(savedConfig.apiKey) : '',
             endpoint: savedConfig.endpoint || provider.endpoint,
             enabled: savedConfig.enabled || false,
             isDefault: savedConfig.isDefault || false,
-            config: savedConfig.config || provider.config
-          }
-          
-          // 恢复模型的 enabled 状态
-          if (savedConfig.models && provider.models) {
-            providerWithConfig.models = provider.models.map(model => {
-              const savedModel = savedConfig.models.find((m: any) => m.id === model.id)
-              return {
-                ...model,
-                enabled: savedModel ? savedModel.enabled : model.enabled
-              }
-            })
+            config: savedConfig.config || provider.config,
+            // 【修复】优先使用 savedConfig.models，保留用户刷新获取的模型列表
+            models: (savedConfig.models && savedConfig.models.length > 0) 
+              ? savedConfig.models 
+              : provider.models
           }
           
           return providerWithConfig
