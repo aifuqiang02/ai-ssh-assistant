@@ -860,9 +860,9 @@ const sendMessageInternal = async (content: string) => {
     
     console.log('[Chat] API 消息总数:', apiMessages.length)
     
-    // 获取 API 密钥配置
-    const configsStr = localStorage.getItem('aiProviderConfigs') || '[]'
-    const configs = JSON.parse(configsStr)
+    // 从数据库获取 API 密钥配置
+    const settings = await window.electronAPI.settings.get()
+    const configs = settings?.aiProviders || []
     const providerConfig = configs.find((p: any) => p.id === props.currentProvider?.id)
     
     if (!providerConfig?.apiKey) {
@@ -870,7 +870,7 @@ const sendMessageInternal = async (content: string) => {
       throw new Error('未找到 API 密钥配置')
     }
     
-    console.log('[Chat] ✅ API 密钥已找到')
+    console.log('[Chat] ✅ API 密钥已找到（从数据库加载）')
     
     const providerWithApiKey = {
       ...props.currentProvider,

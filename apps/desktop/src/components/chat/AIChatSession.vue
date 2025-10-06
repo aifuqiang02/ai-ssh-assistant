@@ -378,9 +378,9 @@ const sendMessageInternal = async (content: string) => {
       content
     })
     
-    // 获取 API 密钥配置
-    const configsStr = localStorage.getItem('aiProviderConfigs') || '[]'
-    const configs = JSON.parse(configsStr)
+    // 从数据库获取 API 密钥配置
+    const settings = await window.electronAPI.settings.get()
+    const configs = settings?.aiProviders || []
     const providerConfig = configs.find((p: any) => p.id === props.currentProvider?.id)
     
     if (!providerConfig?.apiKey) {

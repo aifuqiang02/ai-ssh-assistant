@@ -110,9 +110,9 @@ const handleSendMessage = async (content: string) => {
       content
     })
     
-    // 获取加密的 API 密钥
-    const configsStr = localStorage.getItem('aiProviderConfigs') || '[]'
-    const configs = JSON.parse(configsStr)
+    // 从数据库获取 API 密钥
+    const settings = await window.electronAPI.settings.get()
+    const configs = settings?.aiProviders || []
     const providerConfig = configs.find((p: any) => p.id === currentProvider.value?.id)
     
     if (!providerConfig?.apiKey) {
@@ -257,16 +257,18 @@ watch(selectedModel, () => {
 }, { deep: true })
 
 // 加载模型配置
-const loadModelConfiguration = () => {
+const loadModelConfiguration = async () => {
   try {
     const saved = localStorage.getItem('selectedAIModel')
     if (!saved) return
     
     const savedModel = JSON.parse(saved)
-    const configsStr = localStorage.getItem('aiProviderConfigs')
     
-    if (configsStr && savedModel) {
-      const configs = JSON.parse(configsStr)
+    // 从数据库获取配置
+    const settings = await window.electronAPI.settings.get()
+    const configs = settings?.aiProviders || []
+    
+    if (configs.length > 0 && savedModel) {
       const provider = configs.find((p: AIProvider) => p.id === savedModel.providerId)
       
       if (provider) {

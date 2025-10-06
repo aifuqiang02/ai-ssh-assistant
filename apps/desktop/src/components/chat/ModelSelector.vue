@@ -220,7 +220,7 @@ const openSettings = () => {
   router.push('/settings')
 }
 
-const loadProviders = () => {
+const loadProviders = async () => {
   // 从默认配置初始化
   aiProviders.value = DEFAULT_PROVIDERS.map(provider => ({
     ...provider,
@@ -234,27 +234,29 @@ const loadProviders = () => {
     }))
   }))
   
-  // 从 localStorage 加载已保存的配置
+  // 从数据库加载已保存的配置
   try {
-    const saved = localStorage.getItem('aiProviderConfigs')
-    if (saved) {
-      const savedConfigs = JSON.parse(saved)
+    const settings = await window.electronAPI.settings.get()
+    if (settings?.aiProviders && settings.aiProviders.length > 0) {
+      const savedConfigs = settings.aiProviders
       aiProviders.value = aiProviders.value.map(provider => {
         const savedConfig = savedConfigs.find((c: any) => c.id === provider.id)
         if (savedConfig) {
-          // 恢复模型的 enabled 状态
-          const models = provider.models.map(model => {
-            const savedModel = savedConfig.models?.find((m: any) => m.id === model.id)
-            return {
-              ...model,
-              enabled: savedModel?.enabled !== undefined ? savedModel.enabled : true
-            }
-          })
+          // 优先使用数据库中保存的完整模型列表
+          const models = savedConfig.models && savedConfig.models.length > 0
+            ? savedConfig.models.map((savedModel: any) => ({
+                ...savedModel,
+                enabled: savedModel.enabled !== undefined ? savedModel.enabled : true
+              }))
+            : provider.models.map(model => ({
+                ...model,
+                enabled: true
+              }))
           
           return {
             ...provider,
             models,
-            // 只覆盖配置字段，保留默认的 name, description, icon, website
+            // 覆盖配置字段
             apiKey: savedConfig.apiKey || '',
             endpoint: savedConfig.endpoint || provider.endpoint,
             enabled: savedConfig.enabled || false,
@@ -264,27 +266,30 @@ const loadProviders = () => {
         }
         return provider
       })
+      console.log('[ModelSelector] 已从数据库加载 AI 服务商配置')
     }
   } catch (error) {
-    console.error('Failed to load AI provider configs:', error)
+    console.error('[ModelSelector] Failed to load AI provider configs:', error)
   }
 }
 
-// 监听 storage 事件，当其他标签页修改配置时同步
-const handleStorageChange = (e: StorageEvent) => {
-  if (e.key === 'aiProviderConfigs') {
-    loadProviders()
-  }
+// 监听设置更新事件
+const handleSettingsUpdate = () => {
+  console.log('[ModelSelector] 检测到设置更新，重新加载配置')
+  loadProviders()
 }
 
 // Lifecycle
 onMounted(() => {
   loadProviders()
-  window.addEventListener('storage', handleStorageChange)
+  // 监听来自设置页面的配置更新事件
+  window.addEventListener('ai-provider-configs-updated', handleSettingsUpdate)
+  window.addEventListener('settings-updated', handleSettingsUpdate)
 })
 
 onUnmounted(() => {
-  window.removeEventListener('storage', handleStorageChange)
+  window.removeEventListener('ai-provider-configs-updated', handleSettingsUpdate)
+  window.removeEventListener('settings-updated', handleSettingsUpdate)
 })
 
 // 点击外部关闭下拉框
