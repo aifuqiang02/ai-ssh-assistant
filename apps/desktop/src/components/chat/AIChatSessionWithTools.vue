@@ -1182,7 +1182,6 @@ onMounted(() => {
 /* 输入框样式 */
 .message-input {
   width: 100%;
-  min-height: 80px;
   max-height: 300px;
   padding: 10px 12px;
   background: var(--vscode-input-background);
