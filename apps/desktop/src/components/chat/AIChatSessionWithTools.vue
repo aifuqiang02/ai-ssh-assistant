@@ -437,40 +437,53 @@ const executeToolCall = async (toolName: string, params: any, messageId: number)
   console.log('[Chat] 连接ID:', props.connectionId)
   console.log('[Chat] enableTools:', props.enableTools)
   
-  // 生成描述
-  let description = `AI 助手请求执行工具: ${toolName}`
-  if (toolName === 'execute_ssh_command') {
-    description = `AI 助手请求执行 SSH 命令:\n${params.command}`
-  } else if (toolName === 'read_file') {
-    description = `AI 助手请求读取文件: ${params.path}`
-  }
+  // 定义无需确认的工具列表
+  const noConfirmationTools = [
+    'attempt_completion',     // 任务完成
+    'ask_followup_question',  // 询问问题
+    'read_file',              // 读取文件（只读）
+    'list_files'              // 列出文件（只读）
+  ]
 
-  console.log('[Chat] 描述:', description)
-  console.log('[Chat] 等待用户批准...')
+  let approval: ToolApprovalResponse = { approved: true }
 
-  // 请求用户批准
-  const approval = await requestToolApproval(toolName, params, description, messageId)
-
-  console.log('[Chat] 用户响应:', approval)
-
-  if (!approval.approved) {
-    console.log('[Chat] ❌ 用户拒绝')
-    return {
-      success: false,
-      content: '',
-      error: '用户拒绝执行此工具'
-    }
-  }
-
-  console.log('[Chat] ✅ 用户批准，准备执行')
-
-  // 如果用户提供了反馈，修改参数
-  if (approval.feedback) {
-    console.log('[Chat] 用户提供了反馈:', approval.feedback)
+  // 只有需要确认的工具才请求批准
+  if (!noConfirmationTools.includes(toolName)) {
+    // 生成描述
+    let description = `AI 助手请求执行工具: ${toolName}`
     if (toolName === 'execute_ssh_command') {
-      params.command = `${params.command} # ${approval.feedback}`
-      console.log('[Chat] 修改后的命令:', params.command)
+      description = `AI 助手请求执行 SSH 命令:\n${params.command}`
     }
+
+    console.log('[Chat] 描述:', description)
+    console.log('[Chat] 等待用户批准...')
+
+    // 请求用户批准
+    approval = await requestToolApproval(toolName, params, description, messageId)
+
+    console.log('[Chat] 用户响应:', approval)
+
+    if (!approval.approved) {
+      console.log('[Chat] ❌ 用户拒绝')
+      return {
+        success: false,
+        content: '',
+        error: '用户拒绝执行此工具'
+      }
+    }
+
+    console.log('[Chat] ✅ 用户批准，准备执行')
+
+    // 如果用户提供了反馈，修改参数
+    if (approval.feedback) {
+      console.log('[Chat] 用户提供了反馈:', approval.feedback)
+      if (toolName === 'execute_ssh_command') {
+        params.command = `${params.command} # ${approval.feedback}`
+        console.log('[Chat] 修改后的命令:', params.command)
+      }
+    }
+  } else {
+    console.log('[Chat] 🚀 此工具无需确认，直接执行')
   }
 
   // 执行工具
