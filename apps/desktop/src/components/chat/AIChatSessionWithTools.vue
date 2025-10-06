@@ -727,7 +727,8 @@ onMounted(() => {
 .ai-chat-session {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: calc(100vh - 188px);
+  max-height: 100%;
   background: var(--vscode-editor-background);
   color: var(--vscode-foreground);
 }
