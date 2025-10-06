@@ -299,6 +299,32 @@ class SSHManager {
     })
   }
 
+  /**
+   * 直接写入终端输入（用于用户交互）
+   * 不添加换行符，不等待响应，只是简单地转发给 shell
+   */
+  async write(id: string, data: string): Promise<void> {
+    console.log('[SSHManager] write - 开始写入数据')
+    const connection = this.connections.get(id)
+    
+    if (!connection) {
+      console.error('[SSHManager] ❌ 连接不存在:', id)
+      throw new Error('Connection not found')
+    }
+
+    if (!connection.shell) {
+      console.error('[SSHManager] ❌ Shell 不可用')
+      throw new Error('Shell not available')
+    }
+
+    // 直接写入，不做任何修改
+    connection.shell.write(data, (err: any) => {
+      if (err) {
+        console.error('[SSHManager] ❌ 写入数据失败:', err)
+      }
+    })
+  }
+
   async getInitialOutput(id: string): Promise<string> {
     const connection = this.connections.get(id)
     if (!connection) {
@@ -620,6 +646,15 @@ ipcMain.handle('ssh:execute', async (_, id: string, command: string) => {
     return await sshManager.execute(id, command)
   } catch (error) {
     console.error('SSH execute error:', error)
+    throw error
+  }
+})
+
+ipcMain.handle('ssh:write', async (_, id: string, data: string) => {
+  try {
+    await sshManager.write(id, data)
+  } catch (error) {
+    console.error('SSH write error:', error)
     throw error
   }
 })

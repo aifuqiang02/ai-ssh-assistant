@@ -13,6 +13,37 @@
         <span v-else class="status-badge disconnected">
           <i class="bi bi-circle-fill"></i> 已断开
         </span>
+        
+        <!-- 连接控制按钮（放在状态旁边） -->
+        <div class="connection-actions">
+          <!-- 已连接时显示断开按钮 -->
+          <button 
+            v-if="connectionStatus === 'connected'" 
+            @click="handleDisconnect" 
+            class="btn-icon btn-small" 
+            title="断开连接"
+          >
+            <i class="bi bi-x-circle"></i>
+          </button>
+          <!-- 已断开时显示重新连接按钮 -->
+          <button 
+            v-else-if="connectionStatus === 'disconnected'" 
+            @click="handleReconnect" 
+            class="btn-icon btn-small" 
+            title="重新连接"
+          >
+            <i class="bi bi-arrow-clockwise"></i>
+          </button>
+          <!-- 连接中时禁用所有按钮 -->
+          <button 
+            v-else
+            disabled
+            class="btn-icon btn-small btn-disabled" 
+            title="连接中..."
+          >
+            <i class="bi bi-hourglass-split"></i>
+          </button>
+        </div>
       </div>
       <div class="terminal-actions">
         <!-- AI助手切换按钮 -->
@@ -22,33 +53,6 @@
           title="AI助手"
         >
           <i class="bi bi-robot"></i>
-        </button>
-        <!-- 已连接时显示断开按钮 -->
-        <button 
-          v-if="connectionStatus === 'connected'" 
-          @click="handleDisconnect" 
-          class="btn-icon" 
-          title="断开连接"
-        >
-          <i class="bi bi-x-circle"></i>
-        </button>
-        <!-- 已断开时显示重新连接按钮 -->
-        <button 
-          v-else-if="connectionStatus === 'disconnected'" 
-          @click="handleReconnect" 
-          class="btn-icon" 
-          title="重新连接"
-        >
-          <i class="bi bi-arrow-clockwise"></i>
-        </button>
-        <!-- 连接中时禁用所有按钮 -->
-        <button 
-          v-else
-          disabled
-          class="btn-icon btn-disabled" 
-          title="连接中..."
-        >
-          <i class="bi bi-hourglass-split"></i>
         </button>
       </div>
     </div>
@@ -128,7 +132,7 @@ import { FitAddon } from '@xterm/addon-fit'
 import { WebLinksAddon } from '@xterm/addon-web-links'
 import '@xterm/xterm/css/xterm.css'
 import { useSSHStore } from '@/stores/ssh'
-import AIChatSessionWithTools, { type Message } from '@/components/chat/AIChatSessionWithTools.vue'
+import AIChatSessionWithTools from '@/components/chat/AIChatSessionWithTools.vue'
 import type { AIProvider, AIModel } from '@/types/ai-providers'
 import { chatCompletion, type ChatMessage as APIChatMessage } from '@/services/ai-api.service'
 import type { ToolResult } from '@/types/tools'
@@ -222,6 +226,7 @@ const initTerminal = () => {
     cursorBlink: true,
     fontSize: 14,
     fontFamily: 'Consolas, "Courier New", monospace',
+    convertEol: false,  // 禁用自动换行符转换，避免重复换行
     theme: {
       background: '#1e1e1e',
       foreground: '#cccccc',
@@ -266,8 +271,8 @@ const initTerminal = () => {
   terminalDataDisposable.value = terminal.value.onData((data) => {
     const connId = currentConnectionId.value
     if (connId && window.electronAPI) {
-      // 发送输入到 SSH 服务器
-      window.electronAPI.ssh.execute(connId, data).catch((err: any) => {
+      // 直接写入终端输入（不添加换行符，不等待响应）
+      window.electronAPI.ssh.write(connId, data).catch((err: any) => {
         console.error('Failed to send input:', err)
       })
     }
@@ -652,6 +657,13 @@ onBeforeUnmount(() => {
   color: var(--vscode-fg);
 }
 
+.connection-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 4px;
+}
+
 .status-badge {
   display: inline-flex;
   align-items: center;
@@ -717,6 +729,12 @@ onBeforeUnmount(() => {
 
 .btn-icon.btn-disabled:hover {
   background-color: transparent;
+}
+
+.btn-icon.btn-small {
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
 }
 
 .terminal-main {

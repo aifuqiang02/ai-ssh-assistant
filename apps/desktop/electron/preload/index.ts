@@ -43,6 +43,7 @@ const api = {
     connect: (config: any) => ipcRenderer.invoke('ssh:connect', config),
     disconnect: (id: string) => ipcRenderer.invoke('ssh:disconnect', id),
     execute: (id: string, command: string) => ipcRenderer.invoke('ssh:execute', id, command),
+    write: (id: string, data: string) => ipcRenderer.invoke('ssh:write', id, data),  // 直接写入终端输入
     getInitialOutput: (id: string) => ipcRenderer.invoke('ssh:get-initial-output', id),
     getConnections: () => ipcRenderer.invoke('ssh:get-connections'),
     saveConnection: (config: any) => ipcRenderer.invoke('ssh:save-connection', config),
@@ -111,8 +112,11 @@ const api = {
 
   // 事件监听器
   on: (channel: string, callback: (...args: any[]) => void) => {
-    ipcRenderer.on(channel, (_, ...args) => callback(...args))
-    return () => ipcRenderer.removeListener(channel, callback)
+    // 创建包装函数并保存引用，以便正确移除监听器
+    const wrappedCallback = (_: any, ...args: any[]) => callback(...args)
+    ipcRenderer.on(channel, wrappedCallback)
+    // 返回清理函数，移除正确的监听器
+    return () => ipcRenderer.removeListener(channel, wrappedCallback)
   },
 
   once: (channel: string, callback: (...args: any[]) => void) => {
@@ -187,6 +191,7 @@ export type ElectronAPI = {
     connect: (config: any) => Promise<any>
     disconnect: (id: string) => Promise<any>
     execute: (id: string, command: string) => Promise<any>
+    write: (id: string, data: string) => Promise<void>  // 直接写入终端输入
     getInitialOutput: (id: string) => Promise<string>
     getConnections: () => Promise<any>
     saveConnection: (config: any) => Promise<any>
