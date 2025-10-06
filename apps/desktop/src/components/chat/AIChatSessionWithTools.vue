@@ -120,27 +120,41 @@
     <!-- 输入区域 -->
     <div class="input-area">
       <div class="input-container">
-        <textarea
-          ref="textareaRef"
-          v-model="inputMessage"
-          class="message-input"
-          :placeholder="inputPlaceholder"
-          :rows="inputRows"
-          :disabled="isGenerating"
-          @keydown="handleKeyDown"
-        ></textarea>
-        
-        <div class="input-actions">
-          <button
-            class="send-button"
-            :disabled="!inputMessage.trim() || isGenerating"
-            @click="handleSendMessage"
-            title="发送消息 (Ctrl+Enter)"
-          >
-            <i v-if="!isGenerating" class="bi bi-send"></i>
-            <i v-else class="bi bi-stop-circle"></i>
-            <span>{{ isGenerating ? '生成中...' : '发送' }}</span>
-          </button>
+        <div class="textarea-wrapper">
+          <textarea
+            ref="textareaRef"
+            v-model="inputMessage"
+            class="message-input"
+            :placeholder="inputPlaceholder"
+            :rows="inputRows"
+            :disabled="isGenerating"
+            @keydown="handleKeyDown"
+          ></textarea>
+          
+          <!-- 右侧功能按钮组 -->
+          <div class="input-buttons">
+            <!-- 清空按钮 -->
+            <button
+              v-if="inputMessage.trim() && !isGenerating"
+              class="icon-button"
+              title="清空输入"
+              @click="handleClearInput"
+            >
+              <i class="bi bi-x-lg"></i>
+            </button>
+            
+            <!-- 发送/停止按钮 -->
+            <button
+              class="icon-button send-button"
+              :class="{ 'is-generating': isGenerating, 'has-content': inputMessage.trim() }"
+              :disabled="!inputMessage.trim() && !isGenerating"
+              :title="isGenerating ? '停止生成 (Ctrl+C)' : '发送消息 (Ctrl+Enter)'"
+              @click="isGenerating ? handleStopGeneration() : handleSendMessage()"
+            >
+              <i v-if="!isGenerating" class="bi bi-send-fill"></i>
+              <i v-else class="bi bi-stop-circle-fill"></i>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -244,6 +258,9 @@ const showToolApproval = ref(false)
 const pendingToolRequest = ref<ToolApprovalRequest | null>(null)
 const pendingToolResolve = ref<((response: ToolApprovalResponse) => void) | null>(null)
 const toolExecutionProgress = ref('')
+
+// 停止生成控制
+const abortController = ref<AbortController | null>(null)
 
 // 计算属性
 const messages = computed(() => internalMessages.value)
@@ -574,12 +591,17 @@ const sendMessageInternal = async (content: string) => {
     
     // 调用 AI API
     console.log('[Chat] 🚀 调用 AI API (流式输出)...')
+    
+    // 创建 AbortController 用于取消请求
+    abortController.value = new AbortController()
+    
     const response = await chatCompletion(
       providerWithApiKey,
       props.currentModel,
       {
         messages: apiMessages,
-        stream: true
+        stream: true,
+        signal: abortController.value.signal
       },
       (chunk) => {
         assistantMessage.content += chunk.content || ''
@@ -657,11 +679,36 @@ const sendMessageInternal = async (content: string) => {
   } catch (error: any) {
     console.error('AI 响应错误:', error)
     assistantMessage.streaming = false
-    assistantMessage.content = `抱歉，发生了错误：${error.message}`
+    
+    // 检查是否为用户取消
+    if (error.name === 'AbortError') {
+      assistantMessage.content = '已停止生成'
+    } else {
+      assistantMessage.content = `抱歉，发生了错误：${error.message}`
+    }
     scrollToBottom()
   } finally {
     isGenerating.value = false
+    abortController.value = null
   }
+}
+
+// 停止生成
+const handleStopGeneration = () => {
+  console.log('[Chat] 用户请求停止生成')
+  if (abortController.value) {
+    abortController.value.abort()
+    console.log('[Chat] 已发送停止信号')
+  }
+}
+
+// 清空输入
+const handleClearInput = () => {
+  console.log('[Chat] 清空输入')
+  inputMessage.value = ''
+  nextTick(() => {
+    textareaRef.value?.focus()
+  })
 }
 
 const handleKeyDown = (e: KeyboardEvent) => {
@@ -1010,19 +1057,25 @@ onMounted(() => {
 .input-area {
   border-top: 1px solid var(--vscode-editorGroup-border);
   background: var(--vscode-editor-background);
-  padding: 16px;
+  padding: 8px 12px 12px;
 }
 
 .input-container {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+}
+
+.textarea-wrapper {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
 }
 
 .message-input {
-  width: 100%;
+  flex: 1;
   min-height: 80px;
-  padding: 12px;
+  max-height: 300px;
+  padding: 8px 50px 8px 10px;
   background: var(--vscode-input-background);
   color: var(--vscode-input-foreground);
   border: 1px solid var(--vscode-input-border);
@@ -1031,50 +1084,80 @@ onMounted(() => {
   font-size: 14px;
   line-height: 1.5;
   resize: vertical;
-  transition: border-color 0.2s;
+  transition: border-color 0.15s;
 }
 
 .message-input:focus {
   outline: none;
   border-color: var(--vscode-focusBorder);
+  box-shadow: 0 0 0 1px var(--vscode-focusBorder);
 }
 
 .message-input:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.input-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-}
-
-.send-button {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  background: var(--vscode-button-background);
-  color: var(--vscode-button-foreground);
-  border: none;
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.send-button:hover:not(:disabled) {
-  background: var(--vscode-button-hoverBackground);
-}
-
-.send-button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.send-button i {
-  font-size: 16px;
+/* 右侧按钮组 */
+.input-buttons {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 10;
+}
+
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  background: transparent;
+  color: var(--vscode-descriptionForeground);
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: all 0.15s;
+}
+
+.icon-button:hover {
+  opacity: 1;
+  color: var(--vscode-foreground);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.icon-button:active {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.icon-button:disabled {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.icon-button.send-button {
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.icon-button.send-button.has-content {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.icon-button.send-button.is-generating {
+  opacity: 1;
+  color: var(--vscode-errorForeground);
+}
+
+.icon-button.send-button.is-generating:hover {
+  color: var(--vscode-errorForeground);
+  background: rgba(255, 0, 0, 0.1);
 }
 </style>

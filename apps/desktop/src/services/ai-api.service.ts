@@ -15,6 +15,7 @@ export interface ChatCompletionRequest {
   topP?: number
   frequencyPenalty?: number
   presencePenalty?: number
+  signal?: AbortSignal
 }
 
 export interface ChatCompletionResponse {
@@ -61,7 +62,8 @@ async function callOpenAI(
       'Authorization': `Bearer ${provider.apiKey}`,
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(body)
+    body: JSON.stringify(body),
+    signal: request.signal
   })
   
   if (!response.ok) {
