@@ -357,8 +357,20 @@ const getToolTitle = (toolName: string): string => {
 }
 
 const extractCommandOutput = (content: string): string => {
-  const match = content.match(/<command_result>([\s\S]*?)<\/command_result>/)
-  return match ? match[1].trim() : content
+  // 尝试匹配 command_result 标签
+  let match = content.match(/<command_result>([\s\S]*?)<\/command_result>/)
+  if (match) {
+    return match[1].trim()
+  }
+  
+  // 尝试匹配 completion_result 标签
+  match = content.match(/<completion_result>([\s\S]*?)<\/completion_result>/)
+  if (match) {
+    return match[1].trim()
+  }
+  
+  // 如果都没有匹配，返回原始内容
+  return content
 }
 
 const scrollToBottom = () => {
