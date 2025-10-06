@@ -82,14 +82,7 @@ export const PLATFORM_PROVIDERS: ProviderConfig[] = [
     icon: 'bi bi-hdd',
     website: 'https://ollama.ai',
     endpoint: 'http://localhost:11434',
-    models: [
-      { id: 'llama3.1:70b', name: 'Llama 3.1 70B', description: 'Meta 最新开源模型', providerId: 'ollama', contextWindow: 131072, capabilities: { text: true, image: false, functionCall: false, vision: false }, recommended: true },
-      { id: 'llama3.1:8b', name: 'Llama 3.1 8B', providerId: 'ollama', contextWindow: 131072, capabilities: { text: true, image: false, functionCall: false, vision: false }, recommended: true },
-      { id: 'qwen2:72b', name: 'Qwen2 72B', providerId: 'ollama', contextWindow: 131072, capabilities: { text: true, image: false, functionCall: false, vision: false } },
-      { id: 'gemma2:27b', name: 'Gemma 2 27B', providerId: 'ollama', contextWindow: 8192, capabilities: { text: true, image: false, functionCall: false, vision: false } },
-      { id: 'mistral:7b', name: 'Mistral 7B', providerId: 'ollama', contextWindow: 32768, capabilities: { text: true, image: false, functionCall: false, vision: false } },
-      { id: 'codellama:70b', name: 'Code Llama 70B', description: '专业代码生成模型', providerId: 'ollama', contextWindow: 100000, capabilities: { text: true, image: false, functionCall: false, vision: false } }
-    ]
+    models: []
   }
 ]
 
