@@ -1407,74 +1407,170 @@ const initializeStorageManager = async () => {
 }
 
 // 保存设置
-const saveSettings = () => {
+const saveSettings = async () => {
   const settings = {
-    theme: theme.value,
-    fontSize: fontSize.value,
-    colorScheme: selectedColorScheme.value,
-    sshTimeout: sshTimeout.value,
-    keepAlive: keepAlive.value,
-    defaultSSHPort: defaultSSHPort.value,
-    terminalFontSize: terminalFontSize.value,
-    cursorStyle: cursorStyle.value,
-    cursorBlink: cursorBlink.value,
-    // AI 助手设置
-    autoApproveReadOnly: autoApproveReadOnly.value,
-    commandRiskLevel: commandRiskLevel.value,
-    enableChatHistory: enableChatHistory.value,
-    maxHistoryMessages: maxHistoryMessages.value,
-    // 高级设置
-    autoConnect: autoConnect.value,
-    saveCommandHistory: saveCommandHistory.value,
-    developerMode: developerMode.value,
-    storageMode: storageMode.value,
-    syncFrequency: syncFrequency.value
+    appearance: {
+      theme: theme.value,
+      fontSize: fontSize.value,
+      colorScheme: selectedColorScheme.value
+    },
+    ssh: {
+      timeout: sshTimeout.value,
+      keepAlive: keepAlive.value,
+      defaultPort: defaultSSHPort.value
+    },
+    terminal: {
+      fontSize: terminalFontSize.value,
+      cursorStyle: cursorStyle.value,
+      cursorBlink: cursorBlink.value
+    },
+    aiAssistant: {
+      autoApproveReadOnly: autoApproveReadOnly.value,
+      commandRiskLevel: commandRiskLevel.value,
+      enableChatHistory: enableChatHistory.value,
+      maxHistoryMessages: maxHistoryMessages.value
+    },
+    aiProviders: aiProviders.value,
+    advanced: {
+      autoConnect: autoConnect.value,
+      saveCommandHistory: saveCommandHistory.value,
+      developerMode: developerMode.value,
+      storageMode: storageMode.value,
+      syncFrequency: syncFrequency.value
+    },
+    storage: {
+      mode: storageMode.value
+    }
   }
   
-  localStorage.setItem('appSettings', JSON.stringify(settings))
-  themeStore.setMode(theme.value)
-  themeStore.setColorScheme(selectedColorScheme.value)
-  themeStore.setFontSize(fontSize.value)
-  
-  // 触发设置更新事件
-  window.dispatchEvent(new CustomEvent('settings-updated'))
-  
-  console.log('Settings saved:', settings)
+  try {
+    await window.electronAPI.settings.save(settings)
+    console.log('[Settings] Settings saved to database')
+    
+    // 更新主题 Store
+    themeStore.setMode(theme.value)
+    themeStore.setColorScheme(selectedColorScheme.value)
+    themeStore.setFontSize(fontSize.value)
+    
+    // 触发设置更新事件
+    window.dispatchEvent(new CustomEvent('settings-updated'))
+  } catch (error) {
+    console.error('[Settings] Failed to save settings:', error)
+    showNotification('保存设置失败', 'error')
+  }
 }
 
 // 加载设置
-const loadSettings = () => {
+const loadSettings = async () => {
   try {
+    // 从主题 Store 加载主题设置
     theme.value = mode.value
     fontSize.value = themeFontSize.value
     selectedColorScheme.value = colorScheme.value
     
-    const savedSettings = localStorage.getItem('appSettings')
-    if (savedSettings) {
-      const settings = JSON.parse(savedSettings)
+    // 从数据库加载设置
+    const settings = await window.electronAPI.settings.get()
+    
+    if (settings) {
+      // 外观设置
+      if (settings.appearance) {
+        theme.value = settings.appearance.theme || 'auto'
+        fontSize.value = settings.appearance.fontSize || 'medium'
+        selectedColorScheme.value = settings.appearance.colorScheme || 'blue'
+      }
       
-      sshTimeout.value = settings.sshTimeout || 30
-      keepAlive.value = settings.keepAlive !== undefined ? settings.keepAlive : true
-      defaultSSHPort.value = settings.defaultSSHPort || 22
-      terminalFontSize.value = settings.terminalFontSize || 14
-      cursorStyle.value = settings.cursorStyle || 'block'
-      cursorBlink.value = settings.cursorBlink !== undefined ? settings.cursorBlink : true
+      // SSH 设置
+      if (settings.ssh) {
+        sshTimeout.value = settings.ssh.timeout || 30
+        keepAlive.value = settings.ssh.keepAlive !== undefined ? settings.ssh.keepAlive : true
+        defaultSSHPort.value = settings.ssh.defaultPort || 22
+      }
+      
+      // 终端设置
+      if (settings.terminal) {
+        terminalFontSize.value = settings.terminal.fontSize || 14
+        cursorStyle.value = settings.terminal.cursorStyle || 'block'
+        cursorBlink.value = settings.terminal.cursorBlink !== undefined ? settings.terminal.cursorBlink : true
+      }
+      
       // AI 助手设置
-      autoApproveReadOnly.value = settings.autoApproveReadOnly !== undefined ? settings.autoApproveReadOnly : true
-      commandRiskLevel.value = settings.commandRiskLevel !== undefined ? settings.commandRiskLevel : 2
-      enableChatHistory.value = settings.enableChatHistory !== undefined ? settings.enableChatHistory : true
-      maxHistoryMessages.value = settings.maxHistoryMessages || 50
+      if (settings.aiAssistant) {
+        autoApproveReadOnly.value = settings.aiAssistant.autoApproveReadOnly !== undefined ? settings.aiAssistant.autoApproveReadOnly : true
+        commandRiskLevel.value = settings.aiAssistant.commandRiskLevel !== undefined ? settings.aiAssistant.commandRiskLevel : 2
+        enableChatHistory.value = settings.aiAssistant.enableChatHistory !== undefined ? settings.aiAssistant.enableChatHistory : true
+        maxHistoryMessages.value = settings.aiAssistant.maxHistoryMessages || 50
+      }
+      
+      // AI 服务商配置（如果数据库中有，使用数据库的；否则从 localStorage 迁移）
+      if (settings.aiProviders && settings.aiProviders.length > 0) {
+        // 数据库中已有配置，直接使用
+        aiProviders.value = settings.aiProviders
+      } else {
+        // 数据库中没有，尝试从 initializeAIProviders 恢复（会从 localStorage 加载）
+      }
+      
       // 高级设置
-      autoConnect.value = settings.autoConnect || false
-      saveCommandHistory.value = settings.saveCommandHistory !== undefined ? settings.saveCommandHistory : true
-      developerMode.value = settings.developerMode || false
-      storageMode.value = settings.storageMode || 'local'
-      syncFrequency.value = settings.syncFrequency || 'moderate'
+      if (settings.advanced) {
+        autoConnect.value = settings.advanced.autoConnect || false
+        saveCommandHistory.value = settings.advanced.saveCommandHistory !== undefined ? settings.advanced.saveCommandHistory : true
+        developerMode.value = settings.advanced.developerMode || false
+        storageMode.value = settings.advanced.storageMode || 'local'
+        syncFrequency.value = settings.advanced.syncFrequency || 'moderate'
+      }
       
       checkLoginStatus()
+      console.log('[Settings] Settings loaded from database')
     }
   } catch (error) {
-    console.error('Load settings error:', error)
+    console.error('[Settings] Failed to load settings:', error)
+    
+    // 失败时尝试从 localStorage 迁移
+    await migrateFromLocalStorage()
+  }
+}
+
+// 从 localStorage 迁移到数据库
+const migrateFromLocalStorage = async () => {
+  try {
+    const localSettings = localStorage.getItem('appSettings')
+    const localProviders = localStorage.getItem('aiProviderConfigs')
+    
+    if (localSettings || localProviders) {
+      console.log('[Settings] 检测到 localStorage 数据，开始迁移...')
+      
+      const data: any = {}
+      
+      if (localSettings) {
+        data.appSettings = JSON.parse(localSettings)
+      }
+      
+      if (localProviders) {
+        data.aiProviderConfigs = JSON.parse(localProviders)
+      }
+      
+      // 调用迁移 API
+      await window.electronAPI.settings.migrateFromLocalStorage(data.appSettings || {})
+      
+      // 如果有 AI 服务商配置，单独保存
+      if (data.aiProviderConfigs) {
+        const settings = await window.electronAPI.settings.get()
+        settings.aiProviders = data.aiProviderConfigs
+        await window.electronAPI.settings.save(settings)
+      }
+      
+      // 迁移成功后清除 localStorage
+      localStorage.removeItem('appSettings')
+      localStorage.removeItem('aiProviderConfigs')
+      
+      console.log('[Settings] ✅ 成功从 localStorage 迁移到数据库')
+      showNotification('设置已自动迁移到数据库', 'success')
+      
+      // 重新加载设置
+      await loadSettings()
+    }
+  } catch (error) {
+    console.error('[Settings] 迁移失败:', error)
+    showNotification('设置迁移失败，请手动重新配置', 'error')
   }
 }
 
@@ -1737,10 +1833,13 @@ const formatContextWindow = (tokens: number): string => {
   return `${tokens} tokens`
 }
 
-const saveAIProviderConfigs = () => {
+const saveAIProviderConfigs = async () => {
   try {
-    // 保存完整配置，包括模型的详细信息和 enabled 状态
-    const configsToSave = aiProviders.value.map(provider => ({
+    // 获取当前设置
+    const currentSettings = await window.electronAPI.settings.get()
+    
+    // 更新 AI 服务商配置
+    currentSettings.aiProviders = aiProviders.value.map(provider => ({
       id: provider.id,
       name: provider.name,
       apiKey: provider.apiKey || '',
@@ -1748,7 +1847,6 @@ const saveAIProviderConfigs = () => {
       enabled: provider.enabled,
       isDefault: provider.isDefault,
       config: provider.config,
-      // 保存完整的模型信息
       models: provider.models?.map(model => ({
         id: model.id,
         name: model.name,
@@ -1758,22 +1856,19 @@ const saveAIProviderConfigs = () => {
         capabilities: model.capabilities,
         price: model.price,
         recommended: model.recommended,
-        enabled: model.enabled !== false // 默认为 true
+        enabled: model.enabled !== false
       }))
     }))
-    localStorage.setItem('aiProviderConfigs', JSON.stringify(configsToSave))
-    console.log('Settings saved (包含完整 models 信息):', configsToSave.map(c => ({
-      id: c.id,
-      enabled: c.enabled,
-      modelsCount: c.models?.length,
-      enabledModelsCount: c.models?.filter(m => m.enabled).length
-    })))
+    
+    // 保存到数据库
+    await window.electronAPI.settings.save(currentSettings)
+    
+    console.log('[Settings] AI Provider configs saved to database')
     
     // 触发自定义事件通知其他组件配置已更新
     window.dispatchEvent(new CustomEvent('ai-provider-configs-updated'))
-    console.log('✅ 已触发 ai-provider-configs-updated 事件')
   } catch (error) {
-    console.error('Failed to save AI provider configs:', error)
+    console.error('[Settings] Failed to save AI provider configs:', error)
   }
 }
 
@@ -1789,8 +1884,12 @@ watch([mode, colorScheme, themeFontSize], () => {
   selectedColorScheme.value = colorScheme.value
 })
 
-onMounted(() => {
-  loadSettings()
+onMounted(async () => {
+  // 设置当前用户（暂时设为 null，未登录状态）
+  // TODO: 从 auth store 获取当前用户
+  window.electronAPI.settings.setUser(null)
+  
+  await loadSettings()
   initializeAIProviders()
   console.log('SettingsView mounted')
 })
