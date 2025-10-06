@@ -120,26 +120,20 @@
     <!-- 输入区域 -->
     <div class="input-area">
       <div class="input-container">
-        <!-- 模式切换 -->
-        <div class="mode-selector">
-          <button
-            class="mode-button"
-            :class="{ 'active': chatMode === 'agent' }"
-            title="Agent 模式：AI 可以主动执行工具和命令"
-            @click="chatMode = 'agent'"
-          >
-            <i class="bi bi-robot"></i>
-            <span>Agent</span>
-          </button>
-          <button
-            class="mode-button"
-            :class="{ 'active': chatMode === 'ask' }"
-            title="Ask 模式：AI 只回答问题，不执行工具"
-            @click="chatMode = 'ask'"
-          >
-            <i class="bi bi-chat-dots"></i>
-            <span>Ask</span>
-          </button>
+        <!-- 模式切换下拉选择 -->
+        <div class="mode-selector-dropdown">
+          <label class="mode-label">模式：</label>
+          <div class="select-wrapper">
+            <select v-model="chatMode" class="mode-select">
+              <option value="agent">
+                🤖 Agent - AI 可以主动执行工具和命令
+              </option>
+              <option value="ask">
+                💬 Ask - AI 只回答问题，不执行工具
+              </option>
+            </select>
+            <i class="bi bi-chevron-down select-icon"></i>
+          </div>
         </div>
 
         <div class="textarea-wrapper">
@@ -1131,48 +1125,66 @@ onMounted(() => {
   gap: 8px;
 }
 
-/* 模式选择器 */
-.mode-selector {
-  display: flex;
-  gap: 8px;
-  padding: 2px;
-  background: var(--vscode-editorGroupHeader-tabsBackground);
-  border-radius: 6px;
-  width: fit-content;
-}
-
-.mode-button {
+/* 模式选择器下拉 */
+.mode-selector-dropdown {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
-  background: transparent;
-  color: var(--vscode-descriptionForeground);
-  border: none;
-  border-radius: 4px;
+  gap: 8px;
+}
+
+.mode-label {
   font-size: 13px;
+  color: var(--vscode-descriptionForeground);
   font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
   white-space: nowrap;
 }
 
-.mode-button i {
-  font-size: 14px;
+.select-wrapper {
+  position: relative;
+  flex: 1;
+  max-width: 400px;
 }
 
-.mode-button:hover:not(.active) {
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--vscode-foreground);
+.mode-select {
+  width: 100%;
+  padding: 6px 30px 6px 10px;
+  background: var(--vscode-dropdown-background);
+  color: var(--vscode-dropdown-foreground);
+  border: 1px solid var(--vscode-dropdown-border);
+  border-radius: 4px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  outline: none;
+  transition: all 0.2s;
 }
 
-.mode-button.active {
-  background: var(--vscode-button-background);
-  color: var(--vscode-button-foreground);
+.mode-select:hover {
+  background: var(--vscode-dropdown-listBackground);
 }
 
-.mode-button.active:hover {
-  background: var(--vscode-button-hoverBackground);
+.mode-select:focus {
+  border-color: var(--vscode-focusBorder);
+  box-shadow: 0 0 0 1px var(--vscode-focusBorder);
+}
+
+.mode-select option {
+  background: var(--vscode-dropdown-listBackground);
+  color: var(--vscode-dropdown-foreground);
+  padding: 8px;
+}
+
+.select-icon {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  color: var(--vscode-descriptionForeground);
+  pointer-events: none;
 }
 
 .textarea-wrapper {
