@@ -3,7 +3,7 @@
 ## 🚀 快速开始
 
 ### 步骤 1：打开开发者工具
-在 Cursor 中按 `F12` 打开开发者工具
+在 Cursor 菜单栏点击：**Help** → **Toggle Developer Tools**
 
 ### 步骤 2：切换到控制台
 点击 **Console** 标签
