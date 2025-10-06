@@ -98,7 +98,7 @@
                 </div>
 
                 <!-- 工具执行结果 -->
-                <div v-if="message.toolResult" class="tool-result">
+                <div v-if="message.toolResult && message.toolUse?.name !== 'attempt_completion'" class="tool-result">
                   <div 
                     class="tool-result-status" 
                     :class="{ 'success': message.toolResult.success, 'error': !message.toolResult.success }"
@@ -200,7 +200,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, nextTick, onMounted } from 'vue'
+import { ref, computed, watch, nextTick, onMounted, onBeforeUnmount } from 'vue'
 import { marked } from 'marked'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/vs2015.css'
@@ -289,6 +289,13 @@ const chatMode = ref<'agent' | 'ask'>('agent')
 const pendingToolResolve = ref<((response: ToolApprovalResponse) => void) | null>(null)
 const pendingToolMessageId = ref<number | null>(null)
 const toolExecutionProgress = ref('')
+
+// AI 助手设置
+const aiSettings = ref({
+  autoApproveReadOnly: true,
+  enableChatHistory: true,
+  maxHistoryMessages: 50
+})
 
 // 停止生成控制
 const abortController = ref<AbortController | null>(null)
@@ -449,17 +456,25 @@ const executeToolCall = async (toolName: string, params: any, messageId: number)
   console.log('[Chat] enableTools:', props.enableTools)
   
   // 定义无需确认的工具列表
-  const noConfirmationTools = [
+  const alwaysAutoApproveTools = [
     'attempt_completion',     // 任务完成
-    'ask_followup_question',  // 询问问题
-    'read_file',              // 读取文件（只读）
-    'list_files'              // 列出文件（只读）
+    'ask_followup_question'   // 询问问题
+  ]
+  
+  // 定义只读工具列表
+  const readOnlyTools = [
+    'read_file',              // 读取文件
+    'list_files'              // 列出文件
   ]
 
   let approval: ToolApprovalResponse = { approved: true }
 
+  // 判断是否需要确认
+  const needsApproval = !alwaysAutoApproveTools.includes(toolName) && 
+                        !(aiSettings.value.autoApproveReadOnly && readOnlyTools.includes(toolName))
+
   // 只有需要确认的工具才请求批准
-  if (!noConfirmationTools.includes(toolName)) {
+  if (needsApproval) {
     // 生成描述
     let description = `AI 助手请求执行工具: ${toolName}`
     if (toolName === 'execute_ssh_command') {
@@ -631,22 +646,34 @@ const sendMessageInternal = async (content: string) => {
 
     // 添加历史消息
     console.log('[Chat] 添加历史消息，当前消息数:', internalMessages.value.length)
-    internalMessages.value
+    
+    // 获取历史消息
+    let historyMessages = internalMessages.value
       .filter(msg => !msg.streaming && msg.role !== 'system')
-      .forEach(msg => {
-        apiMessages.push({
-          role: msg.role,
-          content: msg.content
-        })
-
-        // 如果有工具结果，添加为独立消息
-        if (msg.toolResult) {
-          apiMessages.push({
-            role: 'user',
-            content: `Tool execution result:\n${msg.toolResult.content}`
-          })
-        }
+    
+    // 如果启用了历史记录限制，只保留最近的消息
+    if (aiSettings.value.enableChatHistory && aiSettings.value.maxHistoryMessages > 0) {
+      const maxMessages = aiSettings.value.maxHistoryMessages
+      if (historyMessages.length > maxMessages) {
+        historyMessages = historyMessages.slice(-maxMessages)
+        console.log('[Chat] 历史消息已限制为最近', maxMessages, '条')
+      }
+    }
+    
+    historyMessages.forEach(msg => {
+      apiMessages.push({
+        role: msg.role,
+        content: msg.content
       })
+
+      // 如果有工具结果，添加为独立消息
+      if (msg.toolResult) {
+        apiMessages.push({
+          role: 'user',
+          content: `Tool execution result:\n${msg.toolResult.content}`
+        })
+      }
+    })
     
     // 添加当前用户消息
     apiMessages.push({
@@ -806,8 +833,49 @@ const handleKeyDown = (e: KeyboardEvent) => {
   }
 }
 
+// 加载 AI 助手设置
+const loadAISettings = () => {
+  try {
+    const savedSettings = localStorage.getItem('appSettings')
+    if (savedSettings) {
+      const settings = JSON.parse(savedSettings)
+      
+      // 加载设置
+      aiSettings.value = {
+        autoApproveReadOnly: settings.autoApproveReadOnly !== undefined ? settings.autoApproveReadOnly : true,
+        enableChatHistory: settings.enableChatHistory !== undefined ? settings.enableChatHistory : true,
+        maxHistoryMessages: settings.maxHistoryMessages || 50
+      }
+      
+      console.log('[Chat] AI 助手设置已加载:', aiSettings.value)
+    }
+  } catch (error) {
+    console.error('[Chat] 加载 AI 助手设置失败:', error)
+  }
+}
+
+// 事件处理器
+const handleStorageChange = () => {
+  loadAISettings()
+}
+
+const handleSettingsUpdate = () => {
+  loadAISettings()
+}
+
 onMounted(() => {
+  loadAISettings()
   scrollToBottom()
+  
+  // 监听设置变化
+  window.addEventListener('storage', handleStorageChange)
+  window.addEventListener('settings-updated', handleSettingsUpdate)
+})
+
+onBeforeUnmount(() => {
+  // 清理事件监听
+  window.removeEventListener('storage', handleStorageChange)
+  window.removeEventListener('settings-updated', handleSettingsUpdate)
 })
 </script>
 

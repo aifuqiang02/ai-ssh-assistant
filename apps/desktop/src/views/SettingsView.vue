@@ -581,6 +581,62 @@
             </div>
           </div>
         </section>
+
+        <!-- AI 助手设置 -->
+        <section :id="'section-ai-assistant'" class="setting-section">
+          <h2 class="section-title">
+            <i class="bi bi-chat-dots"></i>
+            AI 助手
+          </h2>
+          <p class="section-description">配置 AI 助手的行为和交互方式</p>
+
+          <!-- 自动批准只读操作 -->
+          <div class="setting-row">
+            <div class="setting-left">
+              <label class="setting-label">自动批准只读操作</label>
+              <p class="setting-hint">自动批准读取文件、列出文件等只读操作</p>
+            </div>
+            <div class="setting-right">
+              <label class="toggle-switch">
+                <input v-model="autoApproveReadOnly" type="checkbox" @change="saveSettings" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 对话历史 -->
+          <div class="setting-row">
+            <div class="setting-left">
+              <label class="setting-label">保存对话历史</label>
+              <p class="setting-hint">保存 AI 助手的对话记录</p>
+            </div>
+            <div class="setting-right">
+              <label class="toggle-switch">
+                <input v-model="enableChatHistory" type="checkbox" @change="saveSettings" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 最大历史消息数 -->
+          <div v-if="enableChatHistory" class="setting-row">
+            <div class="setting-left">
+              <label class="setting-label">最大历史消息数</label>
+              <p class="setting-hint">保留的最大对话消息数量</p>
+            </div>
+            <div class="setting-right">
+              <input 
+                v-model.number="maxHistoryMessages" 
+                type="number" 
+                class="form-input"
+                min="10"
+                max="200"
+                step="10"
+                @change="saveSettings"
+              />
+            </div>
+          </div>
+        </section>
       
       <!-- 数据存储设置 -->
         <section :id="'section-storage'" class="setting-section">
@@ -913,6 +969,7 @@ import { fetchModelsForProvider } from '../services/model-fetcher.service'
 const settingsSections = [
   { id: 'appearance', label: '外观', icon: 'bi bi-palette' },
   { id: 'ai-providers', label: 'AI 服务商', icon: 'bi bi-robot' },
+  { id: 'ai-assistant', label: 'AI 助手', icon: 'bi bi-chat-dots' },
   { id: 'storage', label: '数据存储', icon: 'bi bi-database' },
   { id: 'ssh', label: 'SSH 配置', icon: 'bi bi-terminal' },
   { id: 'terminal', label: '终端', icon: 'bi bi-terminal-fill' },
@@ -943,6 +1000,11 @@ const defaultSSHPort = ref(22)
 const terminalFontSize = ref(14)
 const cursorStyle = ref('block')
 const cursorBlink = ref(true)
+
+// AI 助手设置
+const autoApproveReadOnly = ref(true)
+const enableChatHistory = ref(true)
+const maxHistoryMessages = ref(50)
 
 // 高级设置
 const autoConnect = ref(false)
@@ -1328,6 +1390,11 @@ const saveSettings = () => {
     terminalFontSize: terminalFontSize.value,
     cursorStyle: cursorStyle.value,
     cursorBlink: cursorBlink.value,
+    // AI 助手设置
+    autoApproveReadOnly: autoApproveReadOnly.value,
+    enableChatHistory: enableChatHistory.value,
+    maxHistoryMessages: maxHistoryMessages.value,
+    // 高级设置
     autoConnect: autoConnect.value,
     saveCommandHistory: saveCommandHistory.value,
     developerMode: developerMode.value,
@@ -1339,6 +1406,9 @@ const saveSettings = () => {
   themeStore.setMode(theme.value)
   themeStore.setColorScheme(selectedColorScheme.value)
   themeStore.setFontSize(fontSize.value)
+  
+  // 触发设置更新事件
+  window.dispatchEvent(new CustomEvent('settings-updated'))
   
   console.log('Settings saved:', settings)
 }
@@ -1360,6 +1430,11 @@ const loadSettings = () => {
       terminalFontSize.value = settings.terminalFontSize || 14
       cursorStyle.value = settings.cursorStyle || 'block'
       cursorBlink.value = settings.cursorBlink !== undefined ? settings.cursorBlink : true
+      // AI 助手设置
+      autoApproveReadOnly.value = settings.autoApproveReadOnly !== undefined ? settings.autoApproveReadOnly : true
+      enableChatHistory.value = settings.enableChatHistory !== undefined ? settings.enableChatHistory : true
+      maxHistoryMessages.value = settings.maxHistoryMessages || 50
+      // 高级设置
       autoConnect.value = settings.autoConnect || false
       saveCommandHistory.value = settings.saveCommandHistory !== undefined ? settings.saveCommandHistory : true
       developerMode.value = settings.developerMode || false
@@ -1376,7 +1451,12 @@ const loadSettings = () => {
 // 自动保存
 watch([
   theme, fontSize, selectedColorScheme, sshTimeout, keepAlive, defaultSSHPort,
-  terminalFontSize, cursorStyle, cursorBlink, autoConnect, saveCommandHistory,
+  terminalFontSize, cursorStyle, cursorBlink,
+  // AI 助手设置
+  autoApproveReadOnly,
+  enableChatHistory, maxHistoryMessages,
+  // 高级设置
+  autoConnect, saveCommandHistory,
   developerMode, storageMode, syncFrequency
 ], () => {
   saveSettings()
