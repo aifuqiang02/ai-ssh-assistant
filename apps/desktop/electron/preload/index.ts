@@ -151,6 +151,17 @@ const api = {
   // 菜单事件监听器
   onMenuAction: (action: string, callback: (...args: any[]) => void) => {
     return api.on(`menu:${action}`, callback)
+  },
+
+  // 设置相关
+  settings: {
+    get: () => ipcRenderer.invoke('settings:get'),
+    save: (settings: any) => ipcRenderer.invoke('settings:save', settings),
+    reset: () => ipcRenderer.invoke('settings:reset'),
+    export: () => ipcRenderer.invoke('settings:export'),
+    import: (settingsJson: string) => ipcRenderer.invoke('settings:import', settingsJson),
+    setUser: (userId: string | null) => ipcRenderer.send('settings:set-user', userId),
+    migrateFromLocalStorage: (localData: any) => ipcRenderer.invoke('settings:migrate-from-localstorage', localData)
   }
 }
 
@@ -265,6 +276,17 @@ export type ElectronAPI = {
   onNotification: (callback: (notification: any) => void) => () => void
   onStatusUpdate: (callback: (status: any) => void) => () => void
   onMenuAction: (action: string, callback: (...args: any[]) => void) => () => void
+  
+  // 设置相关
+  settings: {
+    get: () => Promise<any>
+    save: (settings: any) => Promise<{ success: boolean }>
+    reset: () => Promise<any>
+    export: () => Promise<string>
+    import: (settingsJson: string) => Promise<{ success: boolean }>
+    setUser: (userId: string | null) => void
+    migrateFromLocalStorage: (localData: any) => Promise<{ success: boolean }>
+  }
 }
 
 // 通过 contextBridge 暴露 API

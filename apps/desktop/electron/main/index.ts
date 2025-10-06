@@ -70,6 +70,22 @@ class Application {
 
       // 动态导入 IPC 处理器
       try {
+        // 初始化 StorageManager
+        const { StorageManager } = await import('@repo/database')
+        const storageManager = new StorageManager({
+          mode: 'local',  // 默认本地模式
+          localOptions: {
+            enabled: true
+          }
+        })
+        await storageManager.connect()
+        console.log('[Main] StorageManager initialized')
+
+        // 注册 Settings 处理器（需要 StorageManager）
+        const { registerSettingsHandlers } = await import('../ipc/settings-handlers')
+        registerSettingsHandlers(storageManager)
+        
+        // 注册其他 IPC 处理器
         await import('../ipc/api-handlers')  // API处理器
         await import('../ipc/ssh-handlers')
         await import('../ipc/ai-handlers')
