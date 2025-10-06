@@ -1,183 +1,146 @@
 <template>
-  <div class="ai-chat-session h-full flex flex-col">
-    <!-- 消息区域 -->
-    <div ref="messagesContainer" class="messages-area flex-1 overflow-y-auto scrollbar-thin">
-      <div class="messages-content p-4">
-        <!-- 空状态 -->
-        <div v-if="messages.length === 0" class="empty-state text-center text-vscode-fg-muted py-8">
-          <div class="empty-icon mb-4">
-            <i class="bi bi-chat-dots text-4xl opacity-50"></i>
-          </div>
-          <p class="text-sm">{{ emptyStateText || '开始与 AI 助手对话' }}</p>
-          <p v-if="emptyStateSubtext" class="text-xs mt-2 opacity-75">{{ emptyStateSubtext }}</p>
+  <div class="ai-chat-session" :class="{ 'generating': isGenerating }">
+    <!-- 消息列表 -->
+    <div 
+      ref="messagesContainer" 
+      class="messages-area"
+      :style="{ maxHeight: maxHeight || 'calc(100vh - 200px)' }"
+    >
+      <!-- 空状态 -->
+      <div v-if="messages.length === 0" class="empty-state">
+        <div class="empty-icon">
+          <i class="bi bi-chat-dots"></i>
         </div>
-        
-        <!-- 消息列表 -->
-        <div v-for="message in messages" :key="message.id" class="message mb-4">
-          <div 
-            :class="[
-              'message-bubble p-3 rounded-lg group relative border',
-              message.role === 'user' 
-                ? 'user-message ml-auto bg-vscode-accent border-vscode-accent max-w-3xl' 
-                : 'assistant-message bg-vscode-bg-light border-vscode-border text-vscode-fg'
-            ]"
-          >
-            <!-- 复制按钮 -->
-            <button
-              v-if="message.role === 'assistant' && message.content && showCopyButton"
-              @click="copyMessage(message.content, message.id)"
-              :class="[
-                'copy-button absolute top-2 right-2 p-1.5 rounded transition-opacity',
-                'opacity-0 group-hover:opacity-100',
-                copiedMessageId === message.id 
-                  ? 'bg-green-500/20 text-green-400' 
-                  : 'bg-vscode-bg hover:bg-vscode-bg-lighter text-vscode-fg-muted hover:text-vscode-fg'
-              ]"
-              :title="copiedMessageId === message.id ? '已复制' : '复制内容'"
-            >
-              <i 
-                :class="[
-                  'bi text-xs',
-                  copiedMessageId === message.id ? 'bi-check2' : 'bi-clipboard'
-                ]"
-              ></i>
-            </button>
-            
-            <!-- 消息头部 -->
-            <div class="message-header text-xs font-medium mb-1 opacity-70 flex items-center gap-2">
-              <span>{{ message.role === 'user' ? '你' : 'AI 助手' }}</span>
-              <span v-if="message.toolUse" class="tool-badge px-2 py-0.5 bg-vscode-bg-darker rounded text-xs">
-                <i class="bi bi-tools"></i> {{ message.toolUse.name }}
-              </span>
-            </div>
-            
-            <!-- 消息内容 -->
-            <div 
-              v-if="message.role === 'user'"
-              class="message-content whitespace-pre-wrap text-sm pr-8"
-            >
-              {{ message.content }}
-            </div>
-            <!-- AI 消息：流式输出时显示纯文本，完成后渲染 Markdown -->
-            <div 
-              v-else-if="message.streaming"
-              class="message-content whitespace-pre-wrap text-sm pr-8 streaming-text"
-            >
-              {{ message.content }}<span class="cursor-blink">▋</span>
-            </div>
-            <div 
-              v-else
-              class="message-content markdown-content text-sm pr-8"
-              v-html="renderMarkdown(message.content)"
-            ></div>
+        <div class="empty-text">{{ emptyStateText }}</div>
+        <div v-if="emptyStateSubtext" class="empty-subtext">{{ emptyStateSubtext }}</div>
+      </div>
 
-            <!-- 工具执行结果 -->
-            <div v-if="message.toolResult" class="tool-result mt-3 p-3 bg-vscode-bg-darker rounded border border-vscode-border">
-              <div class="flex items-start gap-2">
-                <i :class="[
-                  'bi text-sm mt-0.5',
-                  message.toolResult.success ? 'bi-check-circle text-green-500' : 'bi-x-circle text-red-500'
-                ]"></i>
-                <div class="flex-1">
-                  <div class="text-xs text-vscode-fg-muted mb-1">
-                    {{ message.toolResult.success ? '执行成功' : '执行失败' }}
+      <!-- 消息列表 -->
+      <div v-else class="messages-list">
+        <div 
+          v-for="message in messages" 
+          :key="message.id"
+          class="message-row"
+          :class="[
+            `message-${message.role}`,
+            { 'message-streaming': message.streaming },
+            { 'message-has-tool': message.toolUse }
+          ]"
+        >
+          <div class="message-container">
+            <!-- 消息头部（图标 + 角色） -->
+            <div class="message-header">
+              <div class="message-icon">
+                <i v-if="message.role === 'user'" class="bi bi-person-circle"></i>
+                <i v-else-if="message.role === 'assistant'" class="bi bi-robot"></i>
+                <i v-else class="bi bi-info-circle"></i>
+              </div>
+              <div class="message-role">
+                {{ message.role === 'user' ? '你' : (message.role === 'assistant' ? 'AI 助手' : '系统') }}
+              </div>
+              <div v-if="message.role === 'assistant'" class="message-timestamp">
+                {{ formatTime(message.timestamp) }}
+              </div>
+            </div>
+
+            <!-- 消息内容 -->
+            <div class="message-body">
+              <!-- 普通文本消息 -->
+              <div 
+                v-if="!message.toolUse && message.content" 
+                class="message-content"
+                v-html="renderMarkdown(message.content)"
+              ></div>
+
+              <!-- 工具调用 -->
+              <div v-if="message.toolUse" class="tool-use-block">
+                <div class="tool-header">
+                  <div class="tool-icon">
+                    <i v-if="message.toolUse.name === 'execute_ssh_command'" class="bi bi-terminal"></i>
+                    <i v-else-if="message.toolUse.name === 'read_file'" class="bi bi-file-text"></i>
+                    <i v-else-if="message.toolUse.name === 'list_files'" class="bi bi-folder"></i>
+                    <i v-else class="bi bi-tools"></i>
                   </div>
-                  <pre v-if="message.toolResult.content" class="text-xs text-vscode-fg whitespace-pre-wrap font-mono">{{ message.toolResult.content }}</pre>
-                  <div v-if="message.toolResult.error" class="text-xs text-red-400">{{ message.toolResult.error }}</div>
+                  <div class="tool-title">
+                    {{ getToolTitle(message.toolUse.name) }}
+                  </div>
+                </div>
+
+                <!-- 工具参数 -->
+                <div class="tool-params">
+                  <div v-for="(value, key) in message.toolUse.params" :key="key" class="tool-param">
+                    <span class="param-key">{{ key }}:</span>
+                    <code class="param-value">{{ value }}</code>
+                  </div>
+                </div>
+
+                <!-- 工具执行结果 -->
+                <div v-if="message.toolResult" class="tool-result">
+                  <div 
+                    class="tool-result-status" 
+                    :class="{ 'success': message.toolResult.success, 'error': !message.toolResult.success }"
+                  >
+                    <i v-if="message.toolResult.success" class="bi bi-check-circle"></i>
+                    <i v-else class="bi bi-x-circle"></i>
+                    <span>{{ message.toolResult.success ? '执行成功' : '执行失败' }}</span>
+                  </div>
+
+                  <!-- 成功输出 -->
+                  <div v-if="message.toolResult.success && message.toolResult.content" class="tool-output">
+                    <pre><code>{{ extractCommandOutput(message.toolResult.content) }}</code></pre>
+                  </div>
+
+                  <!-- 错误信息 -->
+                  <div v-if="!message.toolResult.success && message.toolResult.error" class="tool-error">
+                    <span>{{ message.toolResult.error }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 加载指示器 -->
+              <div v-if="message.streaming" class="message-loading">
+                <div class="loading-dots">
+                  <span></span><span></span><span></span>
                 </div>
               </div>
             </div>
-            
-            <!-- 时间戳 -->
-            <div class="message-timestamp text-xs opacity-50 mt-2">
-              {{ formatTime(message.timestamp) }}
-            </div>
-          </div>
-        </div>
-
-        <!-- 工具执行进度 -->
-        <div v-if="toolExecutionProgress" class="tool-progress p-3 bg-vscode-bg-lighter rounded border border-vscode-border animate-pulse">
-          <div class="flex items-center gap-2 text-sm text-vscode-fg">
-            <i class="bi bi-hourglass-split animate-spin"></i>
-            <span>{{ toolExecutionProgress }}</span>
           </div>
         </div>
       </div>
+
+      <!-- 工具执行进度 -->
+      <div v-if="toolExecutionProgress" class="tool-progress">
+        <div class="progress-spinner">
+          <i class="bi bi-arrow-repeat spin"></i>
+        </div>
+        <span>{{ toolExecutionProgress }}</span>
+      </div>
     </div>
-    
+
     <!-- 输入区域 -->
-    <div class="input-area border-t border-vscode-border p-4">
-      <div class="input-container flex flex-col space-y-2">
-        <div class="input-row flex gap-2">
-          <textarea
-            v-if="multiline"
-            v-model="inputMessage"
-            @keydown.ctrl.enter="handleSendMessage"
-            @keydown.meta.enter="handleSendMessage"
-            :disabled="isGenerating"
-            :placeholder="inputPlaceholder"
-            class="input-field flex-1 resize-none form-input-full"
-            :rows="inputRows"
-          ></textarea>
-          <input
-            v-else
-            v-model="inputMessage"
-            @keyup.enter="handleSendMessage"
-            type="text"
-            :placeholder="inputPlaceholder"
-            :disabled="isGenerating"
-            class="input-field flex-1 px-3 py-2 border rounded-md bg-vscode-bg border-vscode-border text-vscode-fg placeholder-vscode-fg-muted disabled:opacity-50"
-          />
+    <div class="input-area">
+      <div class="input-container">
+        <textarea
+          ref="textareaRef"
+          v-model="inputMessage"
+          class="message-input"
+          :placeholder="inputPlaceholder"
+          :rows="inputRows"
+          :disabled="isGenerating"
+          @keydown="handleKeyDown"
+        ></textarea>
+        
+        <div class="input-actions">
           <button
-            @click="handleSendMessage"
+            class="send-button"
             :disabled="!inputMessage.trim() || isGenerating"
-            class="send-button px-4 py-2 bg-vscode-accent text-white rounded-md hover:bg-vscode-accent-hover disabled:opacity-50 flex items-center gap-2"
+            @click="handleSendMessage"
+            title="发送消息 (Ctrl+Enter)"
           >
-            <i v-if="isGenerating" class="bi bi-hourglass-split animate-spin"></i>
+            <i v-if="!isGenerating" class="bi bi-send"></i>
+            <i v-else class="bi bi-stop-circle"></i>
             <span>{{ isGenerating ? '生成中...' : '发送' }}</span>
           </button>
-        </div>
-        
-        <!-- 工具栏 -->
-        <div v-if="showToolbar" class="toolbar flex items-center justify-between">
-          <div class="toolbar-left flex items-center space-x-2">
-            <button 
-              v-if="showClearButton"
-              class="toolbar-button vscode-icon-button"
-              title="清空对话"
-              @click="handleClearMessages"
-            >
-              <i class="bi bi-trash"></i>
-            </button>
-            <div v-if="enableTools" class="tool-indicator flex items-center gap-1 px-2 py-1 rounded bg-vscode-bg-darker text-xs text-vscode-fg-muted">
-              <i class="bi bi-tools"></i>
-              <span>工具已启用</span>
-            </div>
-          </div>
-          <div class="toolbar-right">
-            <span v-if="inputMessage.trim() && showTokenCount" class="token-count text-xs text-vscode-fg-muted">
-              <i class="bi bi-coin"></i>
-              约 {{ estimateTokens(inputMessage) }} tokens
-            </span>
-          </div>
-        </div>
-        
-        <!-- 状态信息 -->
-        <div v-if="showStatusInfo && (currentModel || messages.length > 0)" class="status-info flex items-center justify-between text-xs text-vscode-fg-muted">
-          <div class="status-left flex items-center gap-3">
-            <span v-if="currentModel && currentProvider">
-              <i class="bi bi-cpu"></i>
-              {{ currentProvider.name }} - {{ currentModel.name }}
-            </span>
-            <span v-if="connectionId">
-              <i class="bi bi-server"></i>
-              SSH 连接已建立
-            </span>
-            <span v-if="messages.length > 0">
-              <i class="bi bi-chat-dots"></i>
-              {{ messages.length }} 条消息
-            </span>
-          </div>
         </div>
       </div>
     </div>
@@ -188,24 +151,62 @@
       :request="pendingToolRequest"
       @approve="handleToolApproval"
       @reject="handleToolRejection"
-      @close="showToolApproval = false"
+      @close="() => { showToolApproval = false }"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, computed, onMounted, watch } from 'vue'
-import { chatCompletion, type ChatMessage as APIChatMessage } from '../../services/ai-api.service'
-import type { AIProvider, AIModel } from '../../types/ai-providers'
-import type { ToolApprovalRequest, ToolApprovalResponse, ToolResult } from '../../types/tools'
+import { ref, computed, watch, nextTick, onMounted } from 'vue'
 import { marked } from 'marked'
 import hljs from 'highlight.js'
-import ToolApprovalDialog from './ToolApprovalDialog.vue'
-import { generateSystemPrompt } from '../../services/tools/system-prompt'
-import { parseToolUse, executeTool } from '../../services/tools/tool-executor'
+import 'highlight.js/styles/vs2015.css'
 
-// 消息接口
-export interface Message {
+import type { AIProvider, AIModel } from '@/types/ai-providers'
+import { chatCompletion, type ChatMessage as APIChatMessage } from '@/services/ai-api.service'
+import { generateSystemPrompt } from '@/services/tools/system-prompt'
+import { parseToolUse, executeTool } from '@/services/tools/tool-executor'
+import type { ToolResult } from '@/types/tools'
+import ToolApprovalDialog from './ToolApprovalDialog.vue'
+
+// Props
+interface Props {
+  currentProvider: AIProvider | null
+  currentModel: AIModel | null
+  connectionId?: string
+  serverInfo?: {
+    host: string
+    username: string
+  }
+  enableTools?: boolean
+  multiline?: boolean
+  inputRows?: number
+  inputPlaceholder?: string
+  emptyStateText?: string
+  emptyStateSubtext?: string
+  maxHeight?: string
+  showAttachButton?: boolean
+  showStatusInfo?: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  enableTools: true,
+  multiline: false,
+  inputRows: 3,
+  inputPlaceholder: '输入消息...',
+  emptyStateText: '开始与 AI 助手对话',
+  maxHeight: '',
+  showAttachButton: true,
+  showStatusInfo: true
+})
+
+// Emits
+const emit = defineEmits<{
+  'tool-executed': [toolName: string, result: ToolResult]
+}>()
+
+// 消息类型定义
+interface Message {
   id: number
   role: 'user' | 'assistant' | 'system'
   content: string
@@ -213,76 +214,36 @@ export interface Message {
   streaming?: boolean
   toolUse?: {
     name: string
-    params: any
+    params: Record<string, any>
   }
   toolResult?: ToolResult
 }
 
-// 组件属性
-interface Props {
-  messages?: Message[]
-  currentProvider?: AIProvider | null
-  currentModel?: AIModel | null
-  connectionId?: string  // SSH 连接 ID
-  enableTools?: boolean  // 是否启用工具
-  serverInfo?: {
-    host: string
-    username: string
-  }
-  sessionName?: string
-  sessionId?: string
-  multiline?: boolean
-  inputRows?: number
-  inputPlaceholder?: string
-  emptyStateText?: string
-  emptyStateSubtext?: string
-  showCopyButton?: boolean
-  showToolbar?: boolean
-  showClearButton?: boolean
-  showTokenCount?: boolean
-  showStatusInfo?: boolean
-  autoScroll?: boolean
+// 工具批准请求
+interface ToolApprovalRequest {
+  tool: string
+  params: Record<string, any>
+  description: string
+  timestamp: number
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  messages: () => [],
-  enableTools: true,
-  multiline: false,
-  inputRows: 3,
-  inputPlaceholder: '输入消息...',
-  emptyStateText: '开始与 AI 助手对话',
-  showCopyButton: true,
-  showToolbar: true,
-  showClearButton: true,
-  showTokenCount: true,
-  showStatusInfo: true,
-  autoScroll: true
-})
-
-const emit = defineEmits<{
-  'send-message': [content: string]
-  'clear-messages': []
-  'update:messages': [messages: Message[]]
-  'tool-executed': [toolName: string, result: ToolResult]
-}>()
+interface ToolApprovalResponse {
+  approved: boolean
+  feedback?: string
+}
 
 // 响应式数据
 const inputMessage = ref('')
 const isGenerating = ref(false)
 const messagesContainer = ref<HTMLElement | null>(null)
-const copiedMessageId = ref<number | null>(null)
-const internalMessages = ref<Message[]>([...props.messages])
+const textareaRef = ref<HTMLTextAreaElement | null>(null)
+const internalMessages = ref<Message[]>([])
 
 // 工具相关状态
 const showToolApproval = ref(false)
 const pendingToolRequest = ref<ToolApprovalRequest | null>(null)
 const pendingToolResolve = ref<((response: ToolApprovalResponse) => void) | null>(null)
 const toolExecutionProgress = ref('')
-
-// 监听外部消息变化
-watch(() => props.messages, (newMessages) => {
-  internalMessages.value = [...newMessages]
-}, { deep: true })
 
 // 计算属性
 const messages = computed(() => internalMessages.value)
@@ -295,7 +256,7 @@ renderer.code = (code: any) => {
   
   const validLanguage = hljs.getLanguage(langStr) ? langStr : 'plaintext'
   const highlighted = hljs.highlight(codeStr, { language: validLanguage }).value
-  return `<pre class="hljs bg-vscode-bg-darker rounded p-3 my-2 overflow-x-auto"><code class="language-${validLanguage}">${highlighted}</code></pre>`
+  return `<pre class="code-block"><code class="language-${validLanguage}">${highlighted}</code></pre>`
 }
 
 marked.setOptions({
@@ -326,29 +287,28 @@ const formatTime = (date: Date): string => {
   })
 }
 
-const scrollToBottom = async () => {
-  if (!props.autoScroll) return
-  
-  await nextTick()
-  if (messagesContainer.value) {
-    messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight
+const getToolTitle = (toolName: string): string => {
+  const titles: Record<string, string> = {
+    'execute_ssh_command': 'SSH 命令执行',
+    'read_file': '读取文件',
+    'list_files': '列出文件',
+    'ask_followup_question': '询问问题',
+    'attempt_completion': '完成任务'
   }
+  return titles[toolName] || toolName
 }
 
-const copyMessage = async (content: string, messageId: number) => {
-  try {
-    await navigator.clipboard.writeText(content)
-    copiedMessageId.value = messageId
-    setTimeout(() => {
-      copiedMessageId.value = null
-    }, 2000)
-  } catch (error) {
-    console.error('复制失败:', error)
-  }
+const extractCommandOutput = (content: string): string => {
+  const match = content.match(/<command_result>([\s\S]*?)<\/command_result>/)
+  return match ? match[1].trim() : content
 }
 
-const estimateTokens = (text: string): number => {
-  return Math.ceil(text.length / 4)
+const scrollToBottom = () => {
+  nextTick(() => {
+    if (messagesContainer.value) {
+      messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight
+    }
+  })
 }
 
 /**
@@ -376,6 +336,7 @@ const requestToolApproval = (toolName: string, params: any, description: string)
 const handleToolApproval = (response: ToolApprovalResponse) => {
   console.log('[Chat] ✅ 用户批准工具执行')
   console.log('[Chat] 反馈:', response.feedback)
+  showToolApproval.value = false
   if (pendingToolResolve.value) {
     pendingToolResolve.value(response)
     pendingToolResolve.value = null
@@ -384,6 +345,7 @@ const handleToolApproval = (response: ToolApprovalResponse) => {
 
 const handleToolRejection = (response: ToolApprovalResponse) => {
   console.log('[Chat] ❌ 用户拒绝工具执行')
+  showToolApproval.value = false
   if (pendingToolResolve.value) {
     pendingToolResolve.value(response)
     pendingToolResolve.value = null
@@ -483,10 +445,7 @@ const handleSendMessage = async () => {
   inputMessage.value = ''
   
   console.log('[Chat] 发送消息:', content)
-  console.log('[Chat] props.messages.length:', props.messages.length)
-  
-  // 不再 emit send-message，因为父组件不需要处理了
-  // emit('send-message', content)
+  console.log('[Chat] props.messages.length:', 0)
   
   // 直接调用 sendMessageInternal 处理消息
   console.log('[Chat] 直接调用 sendMessageInternal')
@@ -510,7 +469,6 @@ const sendMessageInternal = async (content: string) => {
       timestamp: new Date()
     }
     internalMessages.value.push(tipMessage)
-    emit('update:messages', internalMessages.value)
     scrollToBottom()
     return
   }
@@ -525,7 +483,6 @@ const sendMessageInternal = async (content: string) => {
     timestamp: new Date()
   }
   internalMessages.value.push(userMessage)
-  emit('update:messages', internalMessages.value)
   scrollToBottom()
   
   console.log('[Chat] 用户消息已添加，准备 AI 响应')
@@ -539,7 +496,7 @@ const sendMessageInternal = async (content: string) => {
     streaming: true
   }
   internalMessages.value.push(assistantMessage)
-  emit('update:messages', internalMessages.value)
+  scrollToBottom()
   
   isGenerating.value = true
   
@@ -558,10 +515,6 @@ const sendMessageInternal = async (content: string) => {
         serverInfo: props.serverInfo
       })
       console.log('[Chat] 系统提示词长度:', systemPrompt.length)
-      console.log('[Chat] 系统提示词前500字符:')
-      console.log(systemPrompt.substring(0, 500))
-      console.log('[Chat] 系统提示词后500字符:')
-      console.log(systemPrompt.substring(systemPrompt.length - 500))
       
       apiMessages.push({
         role: 'system',
@@ -597,10 +550,6 @@ const sendMessageInternal = async (content: string) => {
     })
     
     console.log('[Chat] API 消息总数:', apiMessages.length)
-    console.log('[Chat] 💬 发送给 AI 的消息预览:')
-    apiMessages.forEach((msg, index) => {
-      console.log(`  ${index + 1}. [${msg.role}] ${msg.content.substring(0, 150)}${msg.content.length > 150 ? '...' : ''}`)
-    })
     
     // 获取 API 密钥配置
     const configsStr = localStorage.getItem('aiProviderConfigs') || '[]'
@@ -641,8 +590,6 @@ const sendMessageInternal = async (content: string) => {
     
     console.log('[Chat] ✅ AI API 调用完成')
     console.log('[Chat] 响应内容长度:', response.content?.length || 0)
-    console.log('[Chat] 响应内容类型:', typeof response.content)
-    console.log('[Chat] 响应对象:', response)
     
     // 完成流式输出
     assistantMessage.streaming = false
@@ -650,7 +597,6 @@ const sendMessageInternal = async (content: string) => {
     
     console.log('[Chat] AI 完整响应:')
     console.log(response.content)
-    console.log('[Chat] AI 响应字符码:', response.content ? [...response.content].map(c => c.charCodeAt(0)) : 'empty')
 
     // 检查是否包含工具调用
     console.log('[Chat] 检查是否包含工具调用...')
@@ -685,7 +631,6 @@ const sendMessageInternal = async (content: string) => {
           // 如果工具执行成功，继续对话让 AI 处理结果
           if (toolResult.success && toolUse.toolName !== 'attempt_completion') {
             console.log('[Chat] 工具执行成功，继续对话...')
-            emit('update:messages', internalMessages.value)
             scrollToBottom()
 
             // 递归调用以处理工具结果
@@ -707,97 +652,417 @@ const sendMessageInternal = async (content: string) => {
       console.log('[Chat] ⚠️ 工具未启用')
     }
 
-    emit('update:messages', internalMessages.value)
     scrollToBottom()
     
   } catch (error: any) {
     console.error('AI 响应错误:', error)
     assistantMessage.streaming = false
     assistantMessage.content = `抱歉，发生了错误：${error.message}`
-    emit('update:messages', internalMessages.value)
     scrollToBottom()
   } finally {
     isGenerating.value = false
   }
 }
 
-const handleClearMessages = () => {
-  emit('clear-messages')
-  if (props.messages.length === 0) {
-    internalMessages.value = []
-    emit('update:messages', internalMessages.value)
+const handleKeyDown = (e: KeyboardEvent) => {
+  if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+    e.preventDefault()
+    handleSendMessage()
   }
 }
 
 onMounted(() => {
   scrollToBottom()
 })
-
-watch(messages, () => {
-  scrollToBottom()
-}, { deep: true })
 </script>
 
 <style scoped>
 .ai-chat-session {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   background: var(--vscode-editor-background);
+  color: var(--vscode-foreground);
 }
 
 .messages-area {
-  background: var(--vscode-editor-background);
+  flex: 1;
+  overflow-y: auto;
+  padding: 6px 10px;
 }
 
-.message-bubble {
-  word-wrap: break-word;
-  word-break: break-word;
+.messages-area::-webkit-scrollbar {
+  width: 10px;
 }
 
-.user-message {
-  background: var(--vscode-button-background);
-  color: #ffffff !important;
+.messages-area::-webkit-scrollbar-track {
+  background: var(--vscode-scrollbarSlider-background);
 }
 
-.user-message * {
-  color: #ffffff !important;
+.messages-area::-webkit-scrollbar-thumb {
+  background: var(--vscode-scrollbarSlider-hoverBackground);
+  border-radius: 5px;
 }
 
-.assistant-message {
-  background: var(--vscode-input-background);
-  border: 1px solid var(--vscode-input-border);
-  color: var(--vscode-editor-foreground);
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 16px;
+  opacity: 0.6;
 }
 
-.tool-badge {
-  border: 1px solid var(--vscode-border);
+.empty-icon {
+  font-size: 64px;
+  color: var(--vscode-descriptionForeground);
 }
 
-.copy-button {
+.empty-text {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.empty-subtext {
+  font-size: 14px;
+  color: var(--vscode-descriptionForeground);
+}
+
+/* 消息列表 */
+.messages-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.message-row {
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* 消息头部 */
+.message-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-left: 2px;
+}
+
+.message-icon {
+  font-size: 18px;
+  color: var(--vscode-foreground);
+}
+
+.message-user .message-icon {
+  color: var(--vscode-charts-blue);
+}
+
+.message-assistant .message-icon {
+  color: var(--vscode-charts-green);
+}
+
+.message-role {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.message-timestamp {
   font-size: 12px;
+  color: var(--vscode-descriptionForeground);
+  margin-left: auto;
 }
 
-.streaming-text .cursor-blink {
-  animation: blink 1s infinite;
+/* 消息体 */
+.message-body {
+  padding-left: 12px;
 }
 
-@keyframes blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
+.message-content {
+  line-height: 1.6;
+  word-wrap: break-word;
 }
 
-.input-field {
+.message-content :deep(p) {
+  margin: 4px 0;
+}
+
+.message-content :deep(code) {
+  background: var(--vscode-textCodeBlock-background);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 13px;
+}
+
+.message-content :deep(pre) {
+  margin: 6px 0;
+}
+
+.message-content :deep(.code-block) {
+  background: var(--vscode-textCodeBlock-background);
+  border: 1px solid var(--vscode-editorGroup-border);
+  border-radius: 4px;
+  padding: 8px 10px;
+  overflow-x: auto;
+}
+
+.message-content :deep(.code-block code) {
+  background: none;
+  padding: 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* 工具块 */
+.tool-use-block {
+  background: var(--vscode-editor-background);
+  border: 1px solid var(--vscode-editorGroup-border);
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 4px 0;
+}
+
+.tool-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: var(--vscode-editorGroupHeader-tabsBackground);
+  border-bottom: 1px solid var(--vscode-editorGroup-border);
+}
+
+.tool-icon {
+  font-size: 16px;
+  color: var(--vscode-charts-purple);
+}
+
+.tool-title {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.tool-params {
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tool-param {
+  display: flex;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.param-key {
+  color: var(--vscode-descriptionForeground);
+  font-weight: 500;
+}
+
+.param-value {
+  background: var(--vscode-textCodeBlock-background);
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-family: 'Consolas', 'Monaco', monospace;
+  flex: 1;
+}
+
+/* 工具结果 */
+.tool-result {
+  border-top: 1px solid var(--vscode-editorGroup-border);
+}
+
+.tool-result-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  font-weight: 500;
+  font-size: 13px;
+}
+
+.tool-result-status.success {
+  color: var(--vscode-charts-green);
+  background: rgba(0, 255, 0, 0.05);
+}
+
+.tool-result-status.error {
+  color: var(--vscode-errorForeground);
+  background: rgba(255, 0, 0, 0.05);
+}
+
+.tool-output {
+  padding: 8px 10px;
+  border-top: 1px solid var(--vscode-editorGroup-border);
+}
+
+.tool-output pre {
+  background: var(--vscode-textCodeBlock-background);
+  padding: 8px 10px;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin: 0;
+}
+
+.tool-output code {
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  white-space: pre;
+}
+
+.tool-error {
+  padding: 8px 10px;
+  color: var(--vscode-errorForeground);
+  font-size: 13px;
+}
+
+/* 加载指示器 */
+.message-loading {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.loading-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.loading-dots span {
+  width: 8px;
+  height: 8px;
+  background: var(--vscode-charts-blue);
+  border-radius: 50%;
+  animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.loading-dots span:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.loading-dots span:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+@keyframes bounce {
+  0%, 80%, 100% {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* 工具进度 */
+.tool-progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: var(--vscode-editorGroupHeader-tabsBackground);
+  border-radius: 6px;
+  margin-top: 16px;
+  font-size: 13px;
+  color: var(--vscode-charts-blue);
+}
+
+.progress-spinner i {
+  font-size: 18px;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 输入区域 */
+.input-area {
+  border-top: 1px solid var(--vscode-editorGroup-border);
+  background: var(--vscode-editor-background);
+  padding: 16px;
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.message-input {
+  width: 100%;
+  min-height: 80px;
+  padding: 12px;
   background: var(--vscode-input-background);
-  border: 1px solid var(--vscode-input-border);
   color: var(--vscode-input-foreground);
+  border: 1px solid var(--vscode-input-border);
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  resize: vertical;
+  transition: border-color 0.2s;
 }
 
-.input-field:focus {
+.message-input:focus {
   outline: none;
   border-color: var(--vscode-focusBorder);
 }
 
+.message-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.input-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
 .send-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
   background: var(--vscode-button-background);
   color: var(--vscode-button-foreground);
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
 .send-button:hover:not(:disabled) {
@@ -809,93 +1074,7 @@ watch(messages, () => {
   cursor: not-allowed;
 }
 
-.toolbar-button {
-  padding: 6px;
-  border-radius: 4px;
-  background: transparent;
-  border: none;
-  color: var(--vscode-icon-foreground);
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.toolbar-button:hover {
-  background: var(--vscode-toolbar-hoverBackground);
-}
-
-.tool-indicator {
-  border: 1px solid var(--vscode-border);
-}
-
-.tool-progress {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
-}
-
-.tool-result {
-  font-size: 0.875rem;
-}
-
-.status-info {
-  font-size: 11px;
-  color: var(--vscode-descriptionForeground);
-}
-
-.token-count {
-  font-size: 11px;
-  color: var(--vscode-descriptionForeground);
-}
-
-/* Markdown 样式 */
-.markdown-content :deep(pre) {
-  background: var(--vscode-textCodeBlock-background);
-  border: 1px solid var(--vscode-input-border);
-  border-radius: 4px;
-  padding: 12px;
-  margin: 8px 0;
-  overflow-x: auto;
-}
-
-.markdown-content :deep(code) {
-  background: var(--vscode-textCodeBlock-background);
-  padding: 2px 4px;
-  border-radius: 3px;
-  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-  font-size: 0.9em;
-}
-
-.markdown-content :deep(pre code) {
-  background: transparent;
-  padding: 0;
-}
-
-.markdown-content :deep(blockquote) {
-  border-left: 4px solid var(--vscode-textBlockQuote-border);
-  background: var(--vscode-textBlockQuote-background);
-  margin: 8px 0;
-  padding: 8px 16px;
-}
-
-.markdown-content :deep(table) {
-  border-collapse: collapse;
-  width: 100%;
-  margin: 8px 0;
-}
-
-.markdown-content :deep(th),
-.markdown-content :deep(td) {
-  border: 1px solid var(--vscode-input-border);
-  padding: 8px 12px;
-  text-align: left;
-}
-
-.markdown-content :deep(th) {
-  background: var(--vscode-input-background);
-  font-weight: 600;
+.send-button i {
+  font-size: 16px;
 }
 </style>
-
