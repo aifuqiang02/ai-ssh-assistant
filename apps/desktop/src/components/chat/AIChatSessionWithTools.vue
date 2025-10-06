@@ -220,7 +220,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   enableTools: true,
   multiline: false,
-  inputRows: 3,
+  inputRows: 2,
   inputPlaceholder: '输入消息...',
   emptyStateText: '开始与 AI 助手对话',
   maxHeight: '',
