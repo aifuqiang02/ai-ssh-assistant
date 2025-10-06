@@ -1132,10 +1132,10 @@ onMounted(() => {
 .mode-select {
   width: 100%;
   padding: 6px 28px 6px 10px;
-  background: var(--vscode-dropdown-background);
-  color: var(--vscode-dropdown-foreground);
-  border: 1px solid var(--vscode-dropdown-border);
-  border-radius: 4px;
+  background: var(--vscode-bg);
+  color: var(--vscode-fg);
+  border: 1px solid var(--vscode-border);
+  border-radius: 2px;
   font-size: 13px;
   font-family: inherit;
   cursor: pointer;
@@ -1147,17 +1147,18 @@ onMounted(() => {
 }
 
 .mode-select:hover {
-  background: var(--vscode-dropdown-listBackground);
+  background: var(--vscode-bg);
+  opacity: 0.9;
 }
 
 .mode-select:focus {
-  border-color: var(--vscode-focusBorder);
-  box-shadow: 0 0 0 1px var(--vscode-focusBorder);
+  border-color: var(--vscode-accent);
+  box-shadow: 0 0 0 3px rgba(var(--vscode-accent-rgb), 0.1);
 }
 
 .mode-select option {
-  background: var(--vscode-dropdown-listBackground);
-  color: var(--vscode-dropdown-foreground);
+  background: var(--vscode-bg);
+  color: var(--vscode-fg);
   padding: 8px;
 }
 
