@@ -1131,7 +1131,7 @@ onMounted(() => {
 
 .mode-select {
   width: 100%;
-  padding: 0;
+  padding-left: 5px;
   background: var(--vscode-bg);
   color: var(--vscode-fg);
   border: 1px solid var(--vscode-border);
