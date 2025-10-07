@@ -68,10 +68,10 @@ class Application {
       // 注册开发者工具切换IPC处理器
       this.setupDevToolsIPC()
 
-      // 注册 Settings IPC 处理器
+      // 注册 Settings IPC 处理器（简化版）
       try {
         console.log('[Main] 注册 Settings IPC 处理器...')
-        const { registerSettingsHandlers } = await import('../ipc/settings-handlers.new')
+        const { registerSettingsHandlers } = await import('../ipc/settings-handlers')
         
         registerSettingsHandlers()
         console.log('[Main] ✅ Settings handlers registered successfully!')

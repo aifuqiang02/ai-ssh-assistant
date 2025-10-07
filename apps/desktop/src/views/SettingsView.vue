@@ -1319,27 +1319,9 @@ const onStorageModeChange = async () => {
     return
   }
   
-  // ✅ 修复：先设置云端配置，再设置存储模式
-  const userToken = getUserToken()
-  
-  if ((storageMode.value === 'cloud' || storageMode.value === 'hybrid') && userToken) {
-    // 1️⃣ 先设置云端配置
-    const cloudConfig = {
-      apiEndpoint: import.meta.env.VITE_API_ENDPOINT || 'http://127.0.0.1:3000/api/v1',
-      userToken: userToken
-    }
-    await window.electronAPI.settings.setCloudConfig(cloudConfig)
-    console.log('[Settings] ✅ 云端配置已设置，token:', userToken.substring(0, 10) + '...')
-    
-    // 2️⃣ 再设置存储模式
-    await window.electronAPI.settings.setStorageMode(storageMode.value)
-    console.log('[Settings] ✅ 存储模式已切换为:', storageMode.value)
-  } else if (storageMode.value === 'local') {
-    // 本地模式：清除云端配置
-    await window.electronAPI.settings.setCloudConfig(null)
-    await window.electronAPI.settings.setStorageMode('local')
-    console.log('[Settings] ✅ 已切换到本地存储模式')
-  }
+  // ✅ 简化：直接保存到 localStorage
+  localStorage.setItem('storageMode', storageMode.value)
+  console.log('[Settings] ✅ 存储模式已切换为:', storageMode.value)
   
   await saveSettings()
 }
@@ -1349,25 +1331,10 @@ const onLoginSuccess = async (user: any) => {
   userInfo.value = user
   console.log('Login successful:', user)
   
-  // 设置云端存储配置（token 存储在 localStorage/sessionStorage 中）
-  const userToken = getUserToken()
-  if (userToken) {
-    const cloudConfig = {
-      apiEndpoint: import.meta.env.VITE_API_ENDPOINT || 'http://127.0.0.1:3000/api/v1',
-      userToken: userToken
-    }
-    await window.electronAPI.settings.setCloudConfig(cloudConfig)
-    console.log('[Settings] 登录成功，云端配置已设置，token:', userToken.substring(0, 10) + '...')
-  }
-  
-  // 如果是云端或混合模式，设置存储模式
-  if (storageMode.value !== 'local') {
-    await window.electronAPI.settings.setStorageMode(storageMode.value)
-    console.log('[Settings] ✅ 登录后存储模式已设置为:', storageMode.value)
-  }
-  
-  // 重新加载设置（从云端/混合存储）
+  // ✅ 简化：登录成功后重新加载设置即可
+  // 云端配置会在 loadSettings 中根据 storageMode 和 token 自动构建
   await loadSettings()
+  console.log('[Settings] ✅ 登录成功，设置已重新加载')
 }
 
 // 退出登录
@@ -1379,15 +1346,14 @@ const logout = async () => {
   userInfo.value = null
   storageMode.value = 'local'
   
-  // 清除云端配置，切换到本地存储
+  // ✅ 简化：保存到 localStorage
+  localStorage.setItem('storageMode', 'local')
   console.log('[Settings] 用户登出，切换到本地存储')
-  await window.electronAPI.settings.setCloudConfig(null)
-  await window.electronAPI.settings.setStorageMode('local')
   
   await saveSettings()
 }
 
-// 手动同步
+// 手动同步（简化版：重新从云端加载）
 const manualSync = async () => {
   if (!userInfo.value || storageMode.value === 'local') {
     showErrorNotification('仅在云端或混合存储模式下可用')
@@ -1396,15 +1362,10 @@ const manualSync = async () => {
   
   syncLoading.value = true
   try {
-    const result = await window.electronAPI.settings.sync()
-    if (result.success) {
+    // ✅ 简化：重新从云端加载设置
+    await loadSettings()
     lastSyncTime.value = new Date().toLocaleString()
     showSuccessNotification('同步成功')
-      // 重新加载设置
-      await loadSettings()
-    } else {
-      showErrorNotification(`同步失败: ${result.message}`)
-    }
   } catch (error) {
     console.error('Sync error:', error)
     showErrorNotification('同步失败')
@@ -1499,8 +1460,21 @@ const saveSettings = async () => {
   }
   
   try {
-    await window.electronAPI.settings.save(settings)
+    // ✅ 简化：构建请求选项
+    const userToken = getUserToken()
+    const options = (storageMode.value !== 'local' && userToken) ? {
+      storageMode: storageMode.value,
+      cloudConfig: {
+        apiEndpoint: import.meta.env.VITE_API_ENDPOINT || 'http://127.0.0.1:3000/api/v1',
+        userToken: userToken
+      }
+    } : undefined
+    
+    await window.electronAPI.settings.save(settings, options)
     console.log('[Settings] Settings saved successfully, mode:', storageMode.value)
+    
+    // ✅ 保存元配置到 localStorage
+    localStorage.setItem('storageMode', storageMode.value)
     
     // 更新主题 Store
   themeStore.setMode(theme.value)
@@ -1523,8 +1497,18 @@ const loadSettings = async () => {
     fontSize.value = themeFontSize.value
     selectedColorScheme.value = colorScheme.value
     
-    // 从数据库加载设置
-    const settings = await window.electronAPI.settings.get()
+    // ✅ 简化：构建请求选项
+    const userToken = getUserToken()
+    const options = (storageMode.value !== 'local' && userToken) ? {
+      storageMode: storageMode.value,
+      cloudConfig: {
+        apiEndpoint: import.meta.env.VITE_API_ENDPOINT || 'http://127.0.0.1:3000/api/v1',
+        userToken: userToken
+      }
+    } : undefined
+    
+    // 从存储加载设置
+    const settings = await window.electronAPI.settings.get(options)
     
     if (settings) {
       // 外观设置
@@ -1894,8 +1878,18 @@ const saveAIProviderConfigs = async () => {
   try {
     console.log('[Settings] 💾 开始保存 AI Provider 配置...')
     
+    // ✅ 简化：构建请求选项
+    const userToken = getUserToken()
+    const options = (storageMode.value !== 'local' && userToken) ? {
+      storageMode: storageMode.value,
+      cloudConfig: {
+        apiEndpoint: import.meta.env.VITE_API_ENDPOINT || 'http://127.0.0.1:3000/api/v1',
+        userToken: userToken
+      }
+    } : undefined
+    
     // 获取当前设置
-    const currentSettings = await window.electronAPI.settings.get()
+    const currentSettings = await window.electronAPI.settings.get(options)
     
     // 创建纯 JSON 对象（避免响应式代理）
     const cleanProviders = aiProviders.value.map(provider => {
@@ -1934,8 +1928,8 @@ const saveAIProviderConfigs = async () => {
       lastUpdated: new Date().toISOString()
     }
     
-    // 保存到数据库
-    await window.electronAPI.settings.save(JSON.parse(JSON.stringify(updatedSettings)))
+    // 保存到存储
+    await window.electronAPI.settings.save(JSON.parse(JSON.stringify(updatedSettings)), options)
     
     console.log('[Settings] ✅ AI Provider 配置保存成功')
     
@@ -1963,47 +1957,13 @@ onMounted(async () => {
   // 检查登录状态
   checkLoginStatus()
   
-  // ✅ 修复循环依赖：先从本地文件预加载 storageMode
-  try {
-    const preloadSettings = await window.electronAPI.settings.get()
-    if (preloadSettings?.advanced?.storageMode) {
-      storageMode.value = preloadSettings.advanced.storageMode
-      console.log('[Settings] 📋 预加载存储模式:', storageMode.value)
-    }
-  } catch (error) {
-    console.warn('[Settings] 预加载存储模式失败，使用默认值:', error)
-  }
+  // ✅ 简化：从 localStorage 读取元配置
+  const savedMode = localStorage.getItem('storageMode') as 'local' | 'cloud' | 'hybrid' | null
+  storageMode.value = savedMode || 'local'
   
-  // ✅ 在加载完整设置之前，先设置 storageMode 和 cloudConfig
-  const userToken = getUserToken()
-  console.log('[Settings] 当前存储模式:', storageMode.value, ', 已登录:', !!userToken)
+  console.log('[Settings] 当前存储模式:', storageMode.value)
   
-  if ((storageMode.value === 'cloud' || storageMode.value === 'hybrid') && userToken) {
-    // 1️⃣ 先设置云端配置
-    const cloudConfig = {
-      apiEndpoint: import.meta.env.VITE_API_ENDPOINT || 'http://127.0.0.1:3000/api/v1',
-      userToken: userToken
-    }
-    await window.electronAPI.settings.setCloudConfig(cloudConfig)
-    console.log('[Settings] ✅ 云端配置已设置，token:', userToken.substring(0, 10) + '...')
-    
-    // 2️⃣ 再设置存储模式
-    await window.electronAPI.settings.setStorageMode(storageMode.value)
-    console.log('[Settings] ✅ 存储模式已设置为:', storageMode.value)
-  } else if (storageMode.value === 'local') {
-    // 本地模式：清除云端配置
-    await window.electronAPI.settings.setCloudConfig(null)
-    await window.electronAPI.settings.setStorageMode('local')
-    console.log('[Settings] ✅ 本地存储模式已启用')
-  } else {
-    // 用户选择了云端/混合模式但未登录，降级到本地
-    console.warn('[Settings] ⚠️ 存储模式为', storageMode.value, '但用户未登录，降级到本地存储')
-    storageMode.value = 'local'
-    await window.electronAPI.settings.setCloudConfig(null)
-    await window.electronAPI.settings.setStorageMode('local')
-  }
-  
-  // ✅ 现在 storageMode 和 cloudConfig 都已正确设置，可以加载完整设置了
+  // 加载完整设置
   await loadSettings()
   
   console.log('SettingsView mounted')

@@ -153,17 +153,18 @@ const api = {
     return api.on(`menu:${action}`, callback)
   },
 
-  // 设置相关
+  // 设置相关（简化版）
   settings: {
-    get: () => ipcRenderer.invoke('settings:get'),
-    save: (settings: any) => ipcRenderer.invoke('settings:save', settings),
-    reset: () => ipcRenderer.invoke('settings:reset'),
-    export: (exportPath: string) => ipcRenderer.invoke('settings:export', exportPath),
-    import: (importPath: string) => ipcRenderer.invoke('settings:import', importPath),
-    sync: () => ipcRenderer.invoke('settings:sync'),
-    setStorageMode: (mode: 'local' | 'cloud' | 'hybrid') => ipcRenderer.invoke('settings:set-storage-mode', mode),
-    setCloudConfig: (config: { apiEndpoint: string; userToken: string } | null) => ipcRenderer.invoke('settings:set-cloud-config', config),
-    migrateFromLocalStorage: (localData: any) => ipcRenderer.invoke('settings:migrate-from-localstorage', localData)
+    get: (options?: { storageMode?: string; cloudConfig?: any }) => 
+      ipcRenderer.invoke('settings:get', options),
+    save: (settings: any, options?: { storageMode?: string; cloudConfig?: any }) => 
+      ipcRenderer.invoke('settings:save', settings, options),
+    reset: (options?: { storageMode?: string; cloudConfig?: any }) => 
+      ipcRenderer.invoke('settings:reset', options),
+    export: (exportPath: string, options?: { storageMode?: string; cloudConfig?: any }) => 
+      ipcRenderer.invoke('settings:export', exportPath, options),
+    import: (importPath: string, options?: { storageMode?: string; cloudConfig?: any }) => 
+      ipcRenderer.invoke('settings:import', importPath, options)
   }
 }
 
@@ -279,17 +280,13 @@ export type ElectronAPI = {
   onStatusUpdate: (callback: (status: any) => void) => () => void
   onMenuAction: (action: string, callback: (...args: any[]) => void) => () => void
   
-  // 设置相关
+  // 设置相关（简化版）
   settings: {
-    get: () => Promise<any>
-    save: (settings: any) => Promise<{ success: boolean }>
-    reset: () => Promise<any>
-    export: (exportPath: string) => Promise<{ success: boolean }>
-    import: (importPath: string) => Promise<any>
-    sync: () => Promise<{ success: boolean; message: string }>
-    setStorageMode: (mode: 'local' | 'cloud' | 'hybrid') => Promise<{ success: boolean }>
-    setCloudConfig: (config: { apiEndpoint: string; userToken: string } | null) => Promise<{ success: boolean }>
-    migrateFromLocalStorage: (localData: any) => Promise<{ success: boolean; settings: any }>
+    get: (options?: { storageMode?: string; cloudConfig?: any }) => Promise<any>
+    save: (settings: any, options?: { storageMode?: string; cloudConfig?: any }) => Promise<{ success: boolean }>
+    reset: (options?: { storageMode?: string; cloudConfig?: any }) => Promise<{ success: boolean }>
+    export: (exportPath: string, options?: { storageMode?: string; cloudConfig?: any }) => Promise<{ success: boolean }>
+    import: (importPath: string, options?: { storageMode?: string; cloudConfig?: any }) => Promise<{ success: boolean }>
   }
 }
 
