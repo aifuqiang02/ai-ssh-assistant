@@ -1,6 +1,6 @@
 // 数据库类型导出
 
-export type * from './generated/client'
+export type * from './generated/client/index.js'
 
 // 明确导出枚举类型 - 手动定义以确保浏览器兼容性
 export const UserRole = {

@@ -3,9 +3,9 @@
  * 统一管理本地和云存储适配器，提供数据同步和冲突解决功能
  */
 
-import { BaseStorageAdapter, SyncResult } from './adapters/base.adapter'
-import { LocalStorageAdapter } from './adapters/local.adapter'
-import { CloudStorageAdapter, CloudStorageOptions } from './adapters/cloud.adapter'
+import { BaseStorageAdapter, SyncResult } from './adapters/base.adapter.js'
+import { LocalStorageAdapter } from './adapters/local.adapter.js'
+import { CloudStorageAdapter, CloudStorageOptions } from './adapters/cloud.adapter.js'
 
 export interface StorageManagerOptions {
   // 存储模式

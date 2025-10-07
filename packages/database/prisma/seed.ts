@@ -1,4 +1,4 @@
-import { PrismaClient, UserRole } from '../src/generated/client-postgresql'
+import { PrismaClient, UserRole } from '../src/generated/client-postgresql/index.js'
 import bcrypt from 'bcryptjs'
 
 const prisma = new PrismaClient({

@@ -3,8 +3,8 @@
  * 支持多种云数据库服务：PostgreSQL、MySQL、MongoDB等
  */
 
-import { PrismaClient } from '../client-browser'
-import { BaseStorageAdapter, StorageOptions, SyncResult } from './base.adapter'
+import { PrismaClient } from '../client-browser.js'
+import { BaseStorageAdapter, StorageOptions, SyncResult } from './base.adapter.js'
 
 export interface CloudStorageOptions extends StorageOptions {
   provider?: 'postgresql' | 'mysql' | 'mongodb' | 'supabase' | 'planetscale'

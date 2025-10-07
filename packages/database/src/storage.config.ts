@@ -3,7 +3,7 @@
  * 根据环境和用户设置配置存储模式
  */
 
-import { StorageManagerOptions } from './storage-manager'
+import { StorageManagerOptions } from './storage-manager.js'
 
 // 安全的环境变量访问函数 - 支持浏览器和Node.js环境
 function getEnv(key: string, defaultValue?: string): string | undefined {
