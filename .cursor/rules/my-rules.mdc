@@ -5,5 +5,6 @@ alwaysApply: true
 ---
 
 1、不要怀疑因为没有编译或者没有重启，导致代码没有生效。
-2、任务完成后，提交并推送代码,git add .  git commit git push
+2、任务完成后，提交并推送代码,git add .  git commit 说明内容尽量简短 git push
 3、登录token存储方式。localStorage.setItem('userToken', accessToken)
+4、

@@ -316,7 +316,7 @@ export class SettingsStorageService {
       // 保存默认设置
       await this.saveSettings(settings)
     }
-    
+    console.log('[SettingsStorage]get settings',settings)
     return settings
   }
   
@@ -326,6 +326,7 @@ export class SettingsStorageService {
   async saveSettings(settings: UserSettings): Promise<void> {
     console.log('[SettingsStorage] this:', this)
     console.log('[SettingsStorage] Saving settings, mode:', this.storageMode)
+    console.log('[SettingsStorage]save settings',settings)
     // 更新时间戳
     settings.lastUpdated = new Date().toISOString()
     

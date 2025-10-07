@@ -1925,7 +1925,8 @@ const saveAIProviderConfigs = async () => {
           capabilities: model.capabilities,
           price: model.price,
           recommended: model.recommended,
-          enabled: model.enabled !== false
+          // 只有明确为 true 才保存为 true，否则为 false
+          enabled: model.enabled === true
         }))
       }
     })

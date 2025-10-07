@@ -229,10 +229,10 @@ const loadProviders = async () => {
     apiKey: '',
     enabled: false,
     isDefault: false,
-    // 为每个模型设置默认启用状态
+    // 为每个模型设置默认启用状态（默认禁用）
     models: provider.models.map(model => ({
       ...model,
-      enabled: model.enabled !== undefined ? model.enabled : true
+      enabled: model.enabled === true  // 只有明确为 true 才启用
     }))
   }))
   
@@ -250,11 +250,13 @@ const loadProviders = async () => {
           const models = savedConfig.models && savedConfig.models.length > 0
             ? savedConfig.models.map((savedModel: any) => ({
                 ...savedModel,
-                enabled: savedModel.enabled !== undefined ? savedModel.enabled : true
+                // 只有明确为 true 才启用，否则禁用
+                enabled: savedModel.enabled === true
               }))
             : provider.models.map(model => ({
                 ...model,
-                enabled: true
+                // 如果数据库中没有模型，使用默认配置（保持原有 enabled 状态）
+                enabled: model.enabled === true
               }))
           
           const enabledModelsCount = models.filter((m: any) => m.enabled !== false).length
