@@ -1297,6 +1297,19 @@ const getUserToken = (): string | null => {
   return localStorage.getItem('userToken') || sessionStorage.getItem('userToken')
 }
 
+const getUserId = (): string | null => {
+  const savedUserInfo = localStorage.getItem('userInfo') || sessionStorage.getItem('userInfo')
+  if (savedUserInfo) {
+    try {
+      const user = JSON.parse(savedUserInfo)
+      return user.id || null
+    } catch {
+      return null
+    }
+  }
+  return null
+}
+
 // 检查登录状态
 const checkLoginStatus = () => {
   const token = getUserToken()
@@ -1461,14 +1474,16 @@ const saveSettings = async () => {
   
   try {
     // ✅ 简化：构建请求选项
+    const userId = getUserId()
     const userToken = getUserToken()
     const options = (storageMode.value !== 'local' && userToken) ? {
+      userId,
       storageMode: storageMode.value,
       cloudConfig: {
         apiEndpoint: import.meta.env.VITE_API_ENDPOINT || 'http://127.0.0.1:3000/api/v1',
         userToken: userToken
       }
-    } : undefined
+    } : { userId }  // 本地模式也需要 userId
     
     await window.electronAPI.settings.save(settings, options)
     console.log('[Settings] Settings saved successfully, mode:', storageMode.value)
@@ -1498,14 +1513,16 @@ const loadSettings = async () => {
     selectedColorScheme.value = colorScheme.value
     
     // ✅ 简化：构建请求选项
+    const userId = getUserId()
     const userToken = getUserToken()
     const options = (storageMode.value !== 'local' && userToken) ? {
+      userId,
       storageMode: storageMode.value,
       cloudConfig: {
         apiEndpoint: import.meta.env.VITE_API_ENDPOINT || 'http://127.0.0.1:3000/api/v1',
         userToken: userToken
       }
-    } : undefined
+    } : { userId }  // 本地模式也需要 userId
     
     // 从存储加载设置
     const settings = await window.electronAPI.settings.get(options)
@@ -1879,14 +1896,16 @@ const saveAIProviderConfigs = async () => {
     console.log('[Settings] 💾 开始保存 AI Provider 配置...')
     
     // ✅ 简化：构建请求选项
+    const userId = getUserId()
     const userToken = getUserToken()
     const options = (storageMode.value !== 'local' && userToken) ? {
+      userId,
       storageMode: storageMode.value,
       cloudConfig: {
         apiEndpoint: import.meta.env.VITE_API_ENDPOINT || 'http://127.0.0.1:3000/api/v1',
         userToken: userToken
       }
-    } : undefined
+    } : { userId }  // 本地模式也需要 userId
     
     // 获取当前设置
     const currentSettings = await window.electronAPI.settings.get(options)

@@ -1,11 +1,9 @@
 /**
  * 设置存储服务
- * 支持本地存储和云端同步
+ * 支持数据库存储和云端同步
  */
 
-import { app } from 'electron'
-import fs from 'fs/promises'
-import path from 'path'
+import { StorageManager } from '@ai-ssh/database'
 import axios from 'axios'
 
 export interface UserSettings {
@@ -78,13 +76,11 @@ interface CloudStorageConfig {
  * 设置存储服务类
  */
 export class SettingsStorageService {
-  private settingsFilePath: string
+  private storage: StorageManager | null
   
-  constructor() {
-    // 使用应用数据目录存储设置文件
-    const userDataPath = app.getPath('userData')
-    this.settingsFilePath = path.join(userDataPath, 'app-settings.json')
-    console.log('[SettingsStorage] Settings file path:', this.settingsFilePath)
+  constructor(storage: StorageManager | null = null) {
+    this.storage = storage
+    console.log('[SettingsStorage] Initialized with storage:', !!storage)
   }
   
   /**
@@ -131,29 +127,65 @@ export class SettingsStorageService {
   }
   
   /**
-   * 从本地文件读取设置
+   * 从数据库读取设置
    */
-  private async readFromLocalFile(): Promise<UserSettings | null> {
+  private async readFromDatabase(userId: string): Promise<UserSettings | null> {
+    if (!this.storage) {
+      console.warn('[SettingsStorage] No database storage available')
+      return null
+    }
+    
     try {
-      const data = await fs.readFile(this.settingsFilePath, 'utf-8')
-      return JSON.parse(data)
+      const userSettings = await this.storage.findUnique('UserSettings', {
+        where: { userId }
+      })
+      
+      if (userSettings?.data) {
+        console.log('[SettingsStorage] Settings loaded from database for user:', userId)
+        return userSettings.data as UserSettings
+      }
+      
+      return null
     } catch (error) {
-      // 文件不存在或读取失败
+      console.error('[SettingsStorage] Failed to read from database:', error)
       return null
     }
   }
   
   /**
-   * 写入设置到本地文件
+   * 写入设置到数据库
    */
-  private async writeToLocalFile(settings: UserSettings): Promise<void> {
+  private async writeToDatabase(userId: string, settings: UserSettings): Promise<void> {
+    if (!this.storage) {
+      throw new Error('No database storage available')
+    }
+    
     try {
-      // 确保目录存在
-      await fs.mkdir(path.dirname(this.settingsFilePath), { recursive: true })
-      await fs.writeFile(this.settingsFilePath, JSON.stringify(settings, null, 2), 'utf-8')
-      console.log('[SettingsStorage] Settings saved to local file')
+      // 检查是否已存在
+      const existing = await this.storage.findUnique('UserSettings', {
+        where: { userId }
+      })
+      
+      if (existing) {
+        // 更新现有记录
+        await this.storage.update('UserSettings', {
+          where: { userId },
+          data: { 
+            data: settings,
+            updatedAt: new Date()
+          }
+        })
+      } else {
+        // 创建新记录
+        await this.storage.create('UserSettings', { 
+          userId, 
+          data: settings 
+        })
+      }
+      
+      console.log('[SettingsStorage] Settings saved to database for user:', userId)
     } catch (error) {
-      console.error('[SettingsStorage] Failed to write settings to file:', error)
+      console.error('[SettingsStorage] Failed to write to database:', error)
       throw error
     }
   }
@@ -256,37 +288,45 @@ export class SettingsStorageService {
   /**
    * 获取设置（根据存储模式）
    */
-  async getSettings(storageMode: StorageMode = 'local', cloudConfig: CloudStorageConfig | null = null): Promise<UserSettings> {
-    console.log('[SettingsStorage] Getting settings, mode:', storageMode)
+  async getSettings(
+    userId: string | null = null, 
+    storageMode: StorageMode = 'local', 
+    cloudConfig: CloudStorageConfig | null = null
+  ): Promise<UserSettings> {
+    console.log('[SettingsStorage] Getting settings, userId:', userId, 'mode:', storageMode)
     let settings: UserSettings | null = null
     
     switch (storageMode) {
       case 'local':
-        // 仅本地存储
-        console.log('[SettingsStorage] Using local file storage')
-        settings = await this.readFromLocalFile()
+        // 本地数据库存储
+        console.log('[SettingsStorage] Using local database storage')
+        if (userId) {
+          settings = await this.readFromDatabase(userId)
+        } else {
+          console.warn('[SettingsStorage] No userId provided for local storage')
+        }
         break
         
       case 'cloud':
-        // 仅云端存储（失败时降级到本地）
+        // 云端存储（失败时降级到本地数据库）
         console.log('[SettingsStorage] Using cloud storage')
         settings = await this.readFromCloud(cloudConfig)
-        if (!settings) {
-          console.warn('[SettingsStorage] Cloud read failed, falling back to local')
-          settings = await this.readFromLocalFile()
+        if (!settings && userId) {
+          console.warn('[SettingsStorage] Cloud read failed, falling back to local database')
+          settings = await this.readFromDatabase(userId)
         }
         break
         
       case 'hybrid':
-        // 混合模式：优先云端，同步到本地
+        // 混合模式：优先云端，同步到本地数据库
         console.log('[SettingsStorage] Using hybrid storage')
         settings = await this.readFromCloud(cloudConfig)
-        if (settings) {
-          // 云端读取成功，同步到本地
-          await this.writeToLocalFile(settings)
-        } else {
-          // 云端失败，使用本地
-          settings = await this.readFromLocalFile()
+        if (settings && userId) {
+          // 云端读取成功，同步到本地数据库
+          await this.writeToDatabase(userId, settings)
+        } else if (userId) {
+          // 云端失败，使用本地数据库
+          settings = await this.readFromDatabase(userId)
         }
         break
     }
@@ -296,46 +336,61 @@ export class SettingsStorageService {
       console.log('[SettingsStorage] No settings found, using defaults')
       settings = this.getDefaultSettings()
       // 保存默认设置
-      await this.saveSettings(settings, storageMode, cloudConfig)
+      if (userId) {
+        await this.saveSettings(userId, settings, storageMode, cloudConfig)
+      }
     }
-    console.log('[SettingsStorage]get settings',settings)
+    console.log('[SettingsStorage] Settings retrieved successfully')
     return settings
   }
   
   /**
    * 保存设置（根据存储模式）
    */
-  async saveSettings(settings: UserSettings, storageMode: StorageMode = 'local', cloudConfig: CloudStorageConfig | null = null): Promise<void> {
-    console.log('[SettingsStorage] Saving settings, mode:', storageMode)
+  async saveSettings(
+    userId: string | null = null,
+    settings: UserSettings, 
+    storageMode: StorageMode = 'local', 
+    cloudConfig: CloudStorageConfig | null = null
+  ): Promise<void> {
+    console.log('[SettingsStorage] Saving settings, userId:', userId, 'mode:', storageMode)
     // 更新时间戳
     settings.lastUpdated = new Date().toISOString()
     
     switch (storageMode) {
       case 'local':
-        // 仅本地存储
-        console.log('[SettingsStorage] Saving to local file')
-        await this.writeToLocalFile(settings)
+        // 本地数据库存储
+        console.log('[SettingsStorage] Saving to local database')
+        if (userId) {
+          await this.writeToDatabase(userId, settings)
+        } else {
+          console.warn('[SettingsStorage] No userId provided, cannot save to database')
+        }
         break
         
       case 'cloud':
-        // 云端存储（同时保留本地缓存）
+        // 云端存储（同时保留本地数据库缓存）
         console.log('[SettingsStorage] Saving to cloud')
         const cloudSuccess = await this.writeToCloud(settings, cloudConfig)
         
-        // ✅ 无论云端是否成功，都保存到本地作为缓存
-        await this.writeToLocalFile(settings)
+        // ✅ 无论云端是否成功，都保存到本地数据库作为缓存
+        if (userId) {
+          await this.writeToDatabase(userId, settings)
+        }
         
         if (!cloudSuccess) {
-          console.warn('[SettingsStorage] Cloud write failed, using local cache')
+          console.warn('[SettingsStorage] Cloud write failed, using local database cache')
         } else {
-          console.log('[SettingsStorage] Cloud saved, local cache updated')
+          console.log('[SettingsStorage] Cloud saved, local database cache updated')
         }
         break
         
       case 'hybrid':
-        // 混合模式：同时保存到本地和云端
-        console.log('[SettingsStorage] Saving to both local and cloud')
-        await this.writeToLocalFile(settings)
+        // 混合模式：同时保存到本地数据库和云端
+        console.log('[SettingsStorage] Saving to both local database and cloud')
+        if (userId) {
+          await this.writeToDatabase(userId, settings)
+        }
         // 云端保存失败不影响本地
         await this.writeToCloud(settings, cloudConfig).catch(err => {
           console.error('[SettingsStorage] Cloud sync failed:', err)
@@ -349,26 +404,42 @@ export class SettingsStorageService {
   /**
    * 导出设置
    */
-  async exportSettings(exportPath: string, storageMode: StorageMode = 'local', cloudConfig: CloudStorageConfig | null = null): Promise<void> {
-    const settings = await this.getSettings(storageMode, cloudConfig)
+  async exportSettings(
+    userId: string | null,
+    exportPath: string, 
+    storageMode: StorageMode = 'local', 
+    cloudConfig: CloudStorageConfig | null = null
+  ): Promise<void> {
+    const fs = await import('fs/promises')
+    const settings = await this.getSettings(userId, storageMode, cloudConfig)
     await fs.writeFile(exportPath, JSON.stringify(settings, null, 2), 'utf-8')
   }
   
   /**
    * 导入设置
    */
-  async importSettings(importPath: string, storageMode: StorageMode = 'local', cloudConfig: CloudStorageConfig | null = null): Promise<void> {
+  async importSettings(
+    userId: string | null,
+    importPath: string, 
+    storageMode: StorageMode = 'local', 
+    cloudConfig: CloudStorageConfig | null = null
+  ): Promise<void> {
+    const fs = await import('fs/promises')
     const data = await fs.readFile(importPath, 'utf-8')
     const settings = JSON.parse(data) as UserSettings
-    await this.saveSettings(settings, storageMode, cloudConfig)
+    await this.saveSettings(userId, settings, storageMode, cloudConfig)
   }
   
   /**
    * 重置设置
    */
-  async resetSettings(storageMode: StorageMode = 'local', cloudConfig: CloudStorageConfig | null = null): Promise<void> {
+  async resetSettings(
+    userId: string | null,
+    storageMode: StorageMode = 'local', 
+    cloudConfig: CloudStorageConfig | null = null
+  ): Promise<void> {
     const defaultSettings = this.getDefaultSettings()
-    await this.saveSettings(defaultSettings, storageMode, cloudConfig)
+    await this.saveSettings(userId, defaultSettings, storageMode, cloudConfig)
   }
 }
 

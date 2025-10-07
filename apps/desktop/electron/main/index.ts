@@ -68,15 +68,28 @@ class Application {
       // 注册开发者工具切换IPC处理器
       this.setupDevToolsIPC()
 
-      // 注册 Settings IPC 处理器（简化版）
+      // 注册 Settings IPC 处理器（数据库版）
       try {
+        console.log('[Main] 初始化 StorageManager...')
+        const { StorageManager } = await import('@ai-ssh/database')
+        const storageManager = new StorageManager()
+        console.log('[Main] ✅ StorageManager initialized')
+        
         console.log('[Main] 注册 Settings IPC 处理器...')
         const { registerSettingsHandlers } = await import('../ipc/settings-handlers')
         
-        registerSettingsHandlers()
+        registerSettingsHandlers(storageManager)
         console.log('[Main] ✅ Settings handlers registered successfully!')
       } catch (settingsError) {
         console.error('[Main] ❌ CRITICAL: Failed to register Settings handlers:', settingsError)
+        // 降级：不传 StorageManager
+        try {
+          const { registerSettingsHandlers } = await import('../ipc/settings-handlers')
+          registerSettingsHandlers(null)
+          console.log('[Main] ⚠️ Settings handlers registered without database')
+        } catch (fallbackError) {
+          console.error('[Main] ❌ Failed to register settings handlers even without database:', fallbackError)
+        }
       }
       
       // 动态导入其他 IPC 处理器
