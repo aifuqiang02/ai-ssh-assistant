@@ -185,6 +185,13 @@ export class SettingsStorageService {
       return null
     }
     
+    console.log('[SettingsStorage] Reading from cloud...')
+    console.log('[SettingsStorage] API Endpoint:', this.cloudConfig.apiEndpoint)
+    console.log('[SettingsStorage] Token present:', !!this.cloudConfig.userToken)
+    if (this.cloudConfig.userToken) {
+      console.log('[SettingsStorage] Token (first 20 chars):', this.cloudConfig.userToken.substring(0, 20) + '...')
+    }
+    
     try {
       const response = await axios.get(`${this.cloudConfig.apiEndpoint}/settings`, {
         headers: {
@@ -212,6 +219,13 @@ export class SettingsStorageService {
     if (!this.cloudConfig) {
       console.warn('[SettingsStorage] No cloud config available')
       return false
+    }
+    
+    console.log('[SettingsStorage] Writing to cloud...')
+    console.log('[SettingsStorage] API Endpoint:', this.cloudConfig.apiEndpoint)
+    console.log('[SettingsStorage] Token present:', !!this.cloudConfig.userToken)
+    if (this.cloudConfig.userToken) {
+      console.log('[SettingsStorage] Token (first 20 chars):', this.cloudConfig.userToken.substring(0, 20) + '...')
     }
     
     try {
