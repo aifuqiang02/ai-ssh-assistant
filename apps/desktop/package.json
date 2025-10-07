@@ -3,7 +3,6 @@
   "version": "1.0.1",
   "description": "AI SSH Assistant Desktop Application",
   "main": "dist-electron/main/index.js",
-  "type": "module",
   "private": true,
   "author": {
     "name": "AI SSH Assistant Team",
