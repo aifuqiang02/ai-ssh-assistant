@@ -1444,6 +1444,7 @@ const initializeStorageManager = async () => {
 
 // 保存设置
 const saveSettings = async () => {
+  // 将响应式对象转换为纯 JSON 对象（避免 IPC 序列化错误）
   const settings = {
     appearance: {
       theme: theme.value,
@@ -1466,7 +1467,8 @@ const saveSettings = async () => {
       enableChatHistory: enableChatHistory.value,
       maxHistoryMessages: maxHistoryMessages.value
     },
-    aiProviders: aiProviders.value,
+    // 转换为纯 JSON，移除响应式代理和不可序列化的对象
+    aiProviders: JSON.parse(JSON.stringify(aiProviders.value)),
     advanced: {
       autoConnect: autoConnect.value,
       saveCommandHistory: saveCommandHistory.value,
@@ -1476,12 +1478,14 @@ const saveSettings = async () => {
     },
     storage: {
       mode: storageMode.value
-    }
+    },
+    version: '1.0.0',
+    lastUpdated: new Date().toISOString()
   }
   
   try {
     await window.electronAPI.settings.save(settings)
-    console.log('[Settings] Settings saved to database')
+    console.log('[Settings] Settings saved successfully, mode:', storageMode.value)
     
     // 更新主题 Store
     themeStore.setMode(theme.value)
@@ -1874,15 +1878,15 @@ const saveAIProviderConfigs = async () => {
     // 获取当前设置
     const currentSettings = await window.electronAPI.settings.get()
     
-    // 更新 AI 服务商配置
-    currentSettings.aiProviders = aiProviders.value.map(provider => ({
+    // 创建纯 JSON 对象（避免响应式代理）
+    const cleanProviders = aiProviders.value.map(provider => ({
       id: provider.id,
       name: provider.name,
       apiKey: provider.apiKey || '',
       endpoint: provider.endpoint,
       enabled: provider.enabled,
       isDefault: provider.isDefault,
-      config: provider.config,
+      config: provider.config ? JSON.parse(JSON.stringify(provider.config)) : undefined,
       models: provider.models?.map(model => ({
         id: model.id,
         name: model.name,
@@ -1896,10 +1900,17 @@ const saveAIProviderConfigs = async () => {
       }))
     }))
     
-    // 保存到数据库
-    await window.electronAPI.settings.save(currentSettings)
+    // 更新 AI 服务商配置（使用纯 JSON 对象）
+    const updatedSettings = {
+      ...currentSettings,
+      aiProviders: cleanProviders,
+      lastUpdated: new Date().toISOString()
+    }
     
-    console.log('[Settings] AI Provider configs saved to database')
+    // 保存到数据库
+    await window.electronAPI.settings.save(JSON.parse(JSON.stringify(updatedSettings)))
+    
+    console.log('[Settings] AI Provider configs saved successfully')
     
     // 触发自定义事件通知其他组件配置已更新
     window.dispatchEvent(new CustomEvent('ai-provider-configs-updated'))
