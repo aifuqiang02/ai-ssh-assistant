@@ -498,8 +498,6 @@ class SSHManager {
     const sftp = await this.getSFTP(id)
 
     // 确保本地目录存在
-    const path = await import('path')
-    const fs = await import('fs/promises')
     const localDir = path.dirname(localPath)
     
     try {

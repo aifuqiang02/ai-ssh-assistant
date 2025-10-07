@@ -1,8 +1,15 @@
 import { app, BrowserWindow, shell, ipcMain, dialog, globalShortcut, session } from 'electron'
 import { join } from 'path'
 import { windowEvents } from '../shared/events'
+import { StorageManager } from '@ai-ssh/database'
+import { registerSettingsHandlers } from '../ipc/settings-handlers'
 
-// IPC 处理器将在运行时动态加载
+// 静态导入所有 IPC 处理器（避免 Electron ESM 问题）
+import '../ipc/api-handlers'
+import '../ipc/ssh-handlers'
+import '../ipc/ai-handlers'
+import '../ipc/file-handlers'
+import '../ipc/system-handlers'
 
 class Application {
   private mainWindow: BrowserWindow | null = null
@@ -71,7 +78,6 @@ class Application {
       // 初始化 StorageManager 并注册 Settings IPC 处理器
       try {
         console.log('[Main] 初始化 StorageManager...')
-        const { StorageManager } = await import('@ai-ssh/database')
         
         // ✅ 默认使用本地模式，登录后会动态切换到云端/混合模式
         const storageConfig = {
@@ -86,12 +92,10 @@ class Application {
         console.log('[Main] ✅ StorageManager initialized in local mode')
         
         // 注册 Settings IPC 处理器
-        const { registerSettingsHandlers } = await import('../ipc/settings-handlers')
         registerSettingsHandlers(storageManager)
         console.log('[Main] ✅ Settings handlers registered')
         
         // ✅ 注册存储模式切换处理器
-        const { ipcMain } = await import('electron')
         
         // 切换到云端/混合模式（登录时调用）
         ipcMain.handle('storage:switch-to-cloud', async (_, userToken: string) => {
@@ -174,17 +178,8 @@ class Application {
         throw settingsError // 不再降级，必须有 StorageManager
       }
       
-      // 动态导入其他 IPC 处理器
-      try {
-        await import('../ipc/api-handlers')
-        await import('../ipc/ssh-handlers')
-        await import('../ipc/ai-handlers')
-        await import('../ipc/file-handlers')
-        await import('../ipc/system-handlers')
-        console.log('[Main] ✅ All other IPC handlers registered')
-      } catch (error) {
-        console.error('[Main] ❌ Failed to load some IPC handlers:', error)
-      }
+      // IPC 处理器已通过静态导入自动注册
+      console.log('[Main] ✅ All IPC handlers registered')
     })
 
     // 安全设置

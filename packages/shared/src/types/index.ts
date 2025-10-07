@@ -52,7 +52,7 @@ export interface CommandResult {
 }
 
 // Export SSH types
-export * from './ssh.types'
+export * from './ssh.types.js'
 
 // Export Chat types
-export * from './chat.types'
+export * from './chat.types.js'

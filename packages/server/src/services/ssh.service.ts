@@ -1,4 +1,4 @@
-import { PrismaClient } from '../../../database/src/generated/client-postgresql/index.js'
+import type { PrismaClient } from '../../../database/src/generated/client-postgresql/index.js'
 import { Client as SSHClient } from 'ssh2'
 import type {
   SSHFolder,

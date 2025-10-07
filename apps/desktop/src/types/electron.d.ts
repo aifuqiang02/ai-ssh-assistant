@@ -35,6 +35,7 @@ export interface ElectronAPI {
     connect: (config: any) => Promise<any>
     disconnect: (id: string) => Promise<any>
     execute: (id: string, command: string) => Promise<any>
+    write: (id: string, data: string) => Promise<void>  // 直接写入终端输入
     getInitialOutput: (id: string) => Promise<string>
     getConnections: () => Promise<any>
     saveConnection: (config: any) => Promise<any>
@@ -134,4 +135,5 @@ declare global {
   }
 }
 
-export {}
+// 导出类型供其他文件使用
+export type { ElectronAPI }

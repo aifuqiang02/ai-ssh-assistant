@@ -1,4 +1,4 @@
-import { PrismaClient } from '@ai-ssh/database'
+import type { PrismaClient } from '../../../database/src/generated/client-postgresql/index.js'
 import type {
   ChatTreeNode,
   CreateChatFolderDto,
@@ -178,7 +178,7 @@ export class ChatService {
   /**
    * 创建会话
    */
-  async createSession(userId: string, data: CreateChatSessionDto) {
+  async createSession(userId: string, data: CreateChatSessionDto): Promise<any> {
     return await this.prisma.chatSession.create({
       data: {
         title: data.title,
@@ -193,7 +193,7 @@ export class ChatService {
   /**
    * 更新会话
    */
-  async updateSession(userId: string, id: string, data: UpdateChatSessionDto) {
+  async updateSession(userId: string, id: string, data: UpdateChatSessionDto): Promise<any> {
     // 验证会话是否属于用户
     const session = await this.prisma.chatSession.findUnique({
       where: { id }
@@ -239,7 +239,7 @@ export class ChatService {
   /**
    * 移动节点（文件夹或会话）
    */
-  async moveNode(userId: string, data: MoveChatNodeDto) {
+  async moveNode(userId: string, data: MoveChatNodeDto): Promise<any> {
     // 首先检查是文件夹还是会话
     const folder = await this.prisma.chatFolder.findUnique({
       where: { id: data.nodeId }

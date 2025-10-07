@@ -1,22 +1,47 @@
 {
-  "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "target": "ES2022",
+    "lib": [
+      "ES2022"
+    ],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
     "composite": true,
     "outDir": "./dist",
     "rootDir": "./src",
     "baseUrl": "./src",
+    "noEmit": false,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "paths": {
-      "@/*": ["./*"],
-      "@/controllers/*": ["./controllers/*"],
-      "@/services/*": ["./services/*"],
-      "@/middleware/*": ["./middleware/*"],
-      "@/utils/*": ["./utils/*"],
-      "@/config/*": ["./config/*"],
-      "@/types/*": ["./types/*"],
-      "@ai-ssh/shared/*": ["../../packages/shared/src/*"],
-      "@ai-ssh/database/*": ["../../packages/database/src/*"]
+      "@/*": [
+        "./*"
+      ],
+      "@/controllers/*": [
+        "./controllers/*"
+      ],
+      "@/services/*": [
+        "./services/*"
+      ],
+      "@/middleware/*": [
+        "./middleware/*"
+      ],
+      "@/utils/*": [
+        "./utils/*"
+      ],
+      "@/config/*": [
+        "./config/*"
+      ],
+      "@/types/*": [
+        "./types/*"
+      ]
     },
-    "types": ["node", "vitest"],
+    "types": [
+      "node",
+      "vitest"
+    ],
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "strict": false,
@@ -24,7 +49,11 @@
     "noImplicitAny": false,
     "strictNullChecks": false,
     "strictFunctionTypes": false,
-    "strictPropertyInitialization": false
+    "strictPropertyInitialization": false,
+    "forceConsistentCasingInFileNames": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true
   },
   "include": [
     "src/**/*"
