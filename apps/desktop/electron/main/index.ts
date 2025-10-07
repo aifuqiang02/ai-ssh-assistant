@@ -68,50 +68,13 @@ class Application {
       // 注册开发者工具切换IPC处理器
       this.setupDevToolsIPC()
 
-      // 初始化存储管理器
-      let storageManager = null
-      
-      try {
-        console.log('[Main] 开始初始化 StorageManager...')
-        const { StorageManager } = await import('@ai-ssh/database')
-        
-        // 从环境变量或配置文件读取存储模式
-        const storageMode = process.env.STORAGE_MODE || 'local'
-        
-        const storageConfig: any = {
-          mode: storageMode as any,
-          localOptions: {
-            enabled: true
-          }
-        }
-        
-        // 如果是云存储或混合模式，添加云配置
-        if (storageMode === 'cloud' || storageMode === 'hybrid') {
-          storageConfig.cloudOptions = {
-            enabled: true,
-            endpoint: process.env.CLOUD_STORAGE_ENDPOINT,
-            apiKey: process.env.CLOUD_STORAGE_API_KEY
-          }
-        }
-        
-        console.log('[Main] StorageManager 配置:', { mode: storageMode })
-        
-        storageManager = new StorageManager(storageConfig)
-        await storageManager.connect()
-        
-        console.log('[Main] ✅ StorageManager 初始化成功，模式:', storageMode)
-      } catch (storageError) {
-        console.warn('[Main] ⚠️  StorageManager 初始化失败，将使用文件存储作为后备:', storageError)
-        storageManager = null
-      }
-      
-      // 注册 Settings 处理器（无论数据库是否成功都注册）
+      // 注册 Settings IPC 处理器
       try {
         console.log('[Main] 注册 Settings IPC 处理器...')
-        const settingsModule = await import('../ipc/settings-handlers')
+        const { registerSettingsHandlers } = await import('../ipc/settings-handlers.new')
         
-        settingsModule.registerSettingsHandlers(storageManager)
-        console.log('[Main] ✅ Settings handlers registered successfully!', storageManager ? '(使用数据库)' : '(使用文件)')
+        registerSettingsHandlers()
+        console.log('[Main] ✅ Settings handlers registered successfully!')
       } catch (settingsError) {
         console.error('[Main] ❌ CRITICAL: Failed to register Settings handlers:', settingsError)
       }

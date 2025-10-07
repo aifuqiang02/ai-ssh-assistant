@@ -1308,34 +1308,46 @@ const checkLoginStatus = () => {
 }
 
 // 存储模式变化处理
-const onStorageModeChange = () => {
+const onStorageModeChange = async () => {
   if (storageMode.value !== 'local' && !userInfo.value) {
     showLoginModal.value = true
+    return
   }
-  saveSettings()
+  
+  // 设置存储模式
+  await window.electronAPI.settings.setStorageMode(storageMode.value)
+  console.log('[Settings] Storage mode changed to:', storageMode.value)
+  
+  await saveSettings()
 }
 
 // 登录成功处理
-const onLoginSuccess = (user: any) => {
+const onLoginSuccess = async (user: any) => {
   userInfo.value = user
   console.log('Login successful:', user)
   
-  // 设置当前用户到 Settings Manager
-  if (user && user.id) {
-    console.log('[Settings] 登录成功，设置用户ID:', user.id)
-    window.electronAPI.settings.setUser(user.id)
+  // 设置云端存储配置
+  if (user && user.token) {
+    const cloudConfig = {
+      apiEndpoint: process.env.VUE_APP_API_ENDPOINT || 'http://localhost:3000',
+      userToken: user.token
+    }
+    await window.electronAPI.settings.setCloudConfig(cloudConfig)
+    console.log('[Settings] 登录成功，云端配置已设置')
   }
   
+  // 如果是云端或混合模式，设置存储模式
   if (storageMode.value !== 'local') {
+    await window.electronAPI.settings.setStorageMode(storageMode.value)
     initializeStorageManager()
   }
   
-  // 重新加载设置（从数据库）
-  loadSettings()
+  // 重新加载设置（从云端/混合存储）
+  await loadSettings()
 }
 
 // 退出登录
-const logout = () => {
+const logout = async () => {
   localStorage.removeItem('userToken')
   localStorage.removeItem('userInfo')
   sessionStorage.removeItem('userToken')
@@ -1343,22 +1355,32 @@ const logout = () => {
   userInfo.value = null
   storageMode.value = 'local'
   
-  // 清除用户ID，切换到文件存储
-  console.log('[Settings] 用户登出，切换到文件存储')
-  window.electronAPI.settings.setUser(null)
+  // 清除云端配置，切换到本地存储
+  console.log('[Settings] 用户登出，切换到本地存储')
+  await window.electronAPI.settings.setCloudConfig(null)
+  await window.electronAPI.settings.setStorageMode('local')
   
-  saveSettings()
+  await saveSettings()
 }
 
 // 手动同步
 const manualSync = async () => {
-  if (!userInfo.value || storageMode.value === 'local') return
+  if (!userInfo.value || storageMode.value === 'local') {
+    showErrorNotification('仅在云端或混合存储模式下可用')
+    return
+  }
   
   syncLoading.value = true
   try {
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    lastSyncTime.value = new Date().toLocaleString()
-    showSuccessNotification('同步成功')
+    const result = await window.electronAPI.settings.sync()
+    if (result.success) {
+      lastSyncTime.value = new Date().toLocaleString()
+      showSuccessNotification('同步成功')
+      // 重新加载设置
+      await loadSettings()
+    } else {
+      showErrorNotification(`同步失败: ${result.message}`)
+    }
   } catch (error) {
     console.error('Sync error:', error)
     showErrorNotification('同步失败')
@@ -1899,19 +1921,25 @@ watch([mode, colorScheme, themeFontSize], () => {
 })
 
 onMounted(async () => {
-  // 检查登录状态并设置当前用户
+  // 检查登录状态
   checkLoginStatus()
-  
-  if (userInfo.value && userInfo.value.id) {
-    console.log('[Settings] 用户已登录，设置用户ID:', userInfo.value.id)
-    window.electronAPI.settings.setUser(userInfo.value.id)
-  } else {
-    console.log('[Settings] 用户未登录，使用文件存储')
-    window.electronAPI.settings.setUser(null)
-  }
   
   await loadSettings()
   initializeAIProviders()
+  
+  // 根据登录状态和存储模式配置云端存储
+  if (userInfo.value && userInfo.value.token) {
+    const cloudConfig = {
+      apiEndpoint: process.env.VUE_APP_API_ENDPOINT || 'http://localhost:3000',
+      userToken: userInfo.value.token
+    }
+    await window.electronAPI.settings.setCloudConfig(cloudConfig)
+    console.log('[Settings] 用户已登录，云端配置已设置')
+  } else {
+    await window.electronAPI.settings.setCloudConfig(null)
+    console.log('[Settings] 用户未登录，使用本地存储')
+  }
+  
   console.log('SettingsView mounted')
 })
 </script>

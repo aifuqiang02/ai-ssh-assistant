@@ -158,9 +158,11 @@ const api = {
     get: () => ipcRenderer.invoke('settings:get'),
     save: (settings: any) => ipcRenderer.invoke('settings:save', settings),
     reset: () => ipcRenderer.invoke('settings:reset'),
-    export: () => ipcRenderer.invoke('settings:export'),
-    import: (settingsJson: string) => ipcRenderer.invoke('settings:import', settingsJson),
-    setUser: (userId: string | null) => ipcRenderer.send('settings:set-user', userId),
+    export: (exportPath: string) => ipcRenderer.invoke('settings:export', exportPath),
+    import: (importPath: string) => ipcRenderer.invoke('settings:import', importPath),
+    sync: () => ipcRenderer.invoke('settings:sync'),
+    setStorageMode: (mode: 'local' | 'cloud' | 'hybrid') => ipcRenderer.invoke('settings:set-storage-mode', mode),
+    setCloudConfig: (config: { apiEndpoint: string; userToken: string } | null) => ipcRenderer.invoke('settings:set-cloud-config', config),
     migrateFromLocalStorage: (localData: any) => ipcRenderer.invoke('settings:migrate-from-localstorage', localData)
   }
 }
@@ -282,10 +284,12 @@ export type ElectronAPI = {
     get: () => Promise<any>
     save: (settings: any) => Promise<{ success: boolean }>
     reset: () => Promise<any>
-    export: () => Promise<string>
-    import: (settingsJson: string) => Promise<{ success: boolean }>
-    setUser: (userId: string | null) => void
-    migrateFromLocalStorage: (localData: any) => Promise<{ success: boolean }>
+    export: (exportPath: string) => Promise<{ success: boolean }>
+    import: (importPath: string) => Promise<any>
+    sync: () => Promise<{ success: boolean; message: string }>
+    setStorageMode: (mode: 'local' | 'cloud' | 'hybrid') => Promise<{ success: boolean }>
+    setCloudConfig: (config: { apiEndpoint: string; userToken: string } | null) => Promise<{ success: boolean }>
+    migrateFromLocalStorage: (localData: any) => Promise<{ success: boolean; settings: any }>
   }
 }
 
