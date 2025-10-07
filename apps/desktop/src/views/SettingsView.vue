@@ -1292,9 +1292,14 @@ const onScroll = () => {
   }
 }
 
+// 获取用户 Token
+const getUserToken = (): string | null => {
+  return localStorage.getItem('userToken') || sessionStorage.getItem('userToken')
+}
+
 // 检查登录状态
 const checkLoginStatus = () => {
-  const token = localStorage.getItem('userToken') || sessionStorage.getItem('userToken')
+  const token = getUserToken()
   const savedUserInfo = localStorage.getItem('userInfo') || sessionStorage.getItem('userInfo')
   
   if (token && savedUserInfo) {
@@ -1319,13 +1324,14 @@ const onStorageModeChange = async () => {
   console.log('[Settings] Storage mode changed to:', storageMode.value)
   
   // 如果切换到云端或混合模式，且已登录，设置云端配置
-  if ((storageMode.value === 'cloud' || storageMode.value === 'hybrid') && userInfo.value && userInfo.value.token) {
+  const userToken = getUserToken()
+  if ((storageMode.value === 'cloud' || storageMode.value === 'hybrid') && userToken) {
     const cloudConfig = {
       apiEndpoint: process.env.VUE_APP_API_ENDPOINT || 'http://localhost:3000',
-      userToken: userInfo.value.token
+      userToken: userToken
     }
     await window.electronAPI.settings.setCloudConfig(cloudConfig)
-    console.log('[Settings] 云端配置已设置')
+    console.log('[Settings] 云端配置已设置，token:', userToken.substring(0, 10) + '...')
   } else if (storageMode.value === 'local') {
     // 切换到本地模式，清除云端配置
     await window.electronAPI.settings.setCloudConfig(null)
@@ -1340,14 +1346,15 @@ const onLoginSuccess = async (user: any) => {
   userInfo.value = user
   console.log('Login successful:', user)
   
-  // 设置云端存储配置
-  if (user && user.token) {
+  // 设置云端存储配置（token 存储在 localStorage/sessionStorage 中）
+  const userToken = getUserToken()
+  if (userToken) {
     const cloudConfig = {
       apiEndpoint: process.env.VUE_APP_API_ENDPOINT || 'http://localhost:3000',
-      userToken: user.token
+      userToken: userToken
     }
     await window.electronAPI.settings.setCloudConfig(cloudConfig)
-    console.log('[Settings] 登录成功，云端配置已设置')
+    console.log('[Settings] 登录成功，云端配置已设置，token:', userToken.substring(0, 10) + '...')
   }
   
   // 如果是云端或混合模式，设置存储模式
@@ -1958,13 +1965,14 @@ onMounted(async () => {
   await window.electronAPI.settings.setStorageMode(storageMode.value)
   
   // 如果是云端或混合模式，且用户已登录，设置云端配置
-  if ((storageMode.value === 'cloud' || storageMode.value === 'hybrid') && userInfo.value && userInfo.value.token) {
+  const userToken = getUserToken()
+  if ((storageMode.value === 'cloud' || storageMode.value === 'hybrid') && userToken) {
     const cloudConfig = {
       apiEndpoint: process.env.VUE_APP_API_ENDPOINT || 'http://localhost:3000',
-      userToken: userInfo.value.token
+      userToken: userToken
     }
     await window.electronAPI.settings.setCloudConfig(cloudConfig)
-    console.log('[Settings] 云端配置已设置，存储模式:', storageMode.value)
+    console.log('[Settings] 云端配置已设置，存储模式:', storageMode.value, ', token:', userToken.substring(0, 10) + '...')
   } else if (storageMode.value === 'local') {
     await window.electronAPI.settings.setCloudConfig(null)
     console.log('[Settings] 本地存储模式')

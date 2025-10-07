@@ -288,6 +288,7 @@ export class SettingsStorageService {
    * 保存设置（根据存储模式）
    */
   async saveSettings(settings: UserSettings): Promise<void> {
+    console.log('[SettingsStorage] this:', this)
     console.log('[SettingsStorage] Saving settings, mode:', this.storageMode)
     // 更新时间戳
     settings.lastUpdated = new Date().toISOString()
@@ -295,7 +296,7 @@ export class SettingsStorageService {
     switch (this.storageMode) {
       case 'local':
         // 仅本地存储
-        console.log('[SettingsStorage] Saving to local file')
+        console.log('[SettingsStorage] Saving to local file .1')
         await this.writeToLocalFile(settings)
         break
         
@@ -304,23 +305,23 @@ export class SettingsStorageService {
         console.log('[SettingsStorage] Saving to cloud')
         const cloudSuccess = await this.writeToCloud(settings)
         if (!cloudSuccess) {
-          console.warn('[SettingsStorage] Cloud write failed, saving to local')
+          console.warn('[SettingsStorage] Cloud write failed, saving to local .2')
           await this.writeToLocalFile(settings)
         }
         break
         
       case 'hybrid':
         // 混合模式：同时保存到本地和云端
-        console.log('[SettingsStorage] Saving to both local and cloud')
+        console.log('[SettingsStorage] Saving to both local and cloud .3')
         await this.writeToLocalFile(settings)
         // 云端保存失败不影响本地
         await this.writeToCloud(settings).catch(err => {
-          console.error('[SettingsStorage] Cloud sync failed:', err)
+          console.error('[SettingsStorage] Cloud sync failed: .4', err)
         })
         break
     }
     
-    console.log('[SettingsStorage] Settings saved successfully')
+    console.log('[SettingsStorage] Settings saved successfully .5')
   }
   
   /**
