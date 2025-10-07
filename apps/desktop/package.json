@@ -11,6 +11,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build && electron-builder",
+    "build:skip-check": "vite build && electron-builder",
     "build:dir": "vite build && electron-builder --dir",
     "build:win": "vite build && electron-builder --win",
     "build:mac": "vite build && electron-builder --mac",
@@ -36,7 +37,6 @@
     "bootstrap-icons": "^1.11.2",
     "bootstrap-vue-next": "^0.15.0",
     "dayjs": "^1.11.10",
-    "electron": "27.3.11",
     "highlight.js": "^11.11.1",
     "lodash-es": "^4.17.21",
     "marked": "^16.3.0",
@@ -56,6 +56,7 @@
     "@vitejs/plugin-vue": "^4.5.0",
     "@vue/tsconfig": "^0.4.0",
     "autoprefixer": "^10.4.16",
+    "electron": "27.3.11",
     "electron-builder": "^24.6.4",
     "eslint-config-prettier": "^9.0.0",
     "postcss": "^8.4.32",
