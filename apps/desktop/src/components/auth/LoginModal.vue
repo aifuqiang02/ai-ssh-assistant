@@ -133,7 +133,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import apiService from '../../services/api.service'
-import { useStorageStore } from '../../stores/storage'
 
 interface Props {
   show: boolean
@@ -226,13 +225,7 @@ const handleLogin = async () => {
       // 设置API服务的token
       apiService.setToken(accessToken)
 
-      // 通知存储管理器用户已认证 - 自动切换到云端存储
-      const storageStore = useStorageStore()
-      await storageStore.setUserAuthenticated({
-        id: user.id,
-        email: user.email ?? undefined,
-        username: user.username ?? undefined
-      })
+      // ✅ 服务架构会自动根据 token 切换到云端模式
 
       emit('login-success', user)
       closeModal()
@@ -303,13 +296,7 @@ const handleRegister = async () => {
           // 设置API服务的token
           apiService.setToken(accessToken)
 
-          // 通知存储管理器用户已认证 - 自动切换到云端存储
-          const storageStore = useStorageStore()
-          await storageStore.setUserAuthenticated({
-            id: user.id,
-            email: user.email ?? undefined,
-            username: user.username ?? undefined
-          })
+          // ✅ 服务架构会自动根据 token 切换到云端模式
 
           emit('login-success', user)
           closeModal()

@@ -974,7 +974,8 @@ import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { storeToRefs } from 'pinia'
 import LoginModal from '../components/auth/LoginModal.vue'
 import ProviderIcon from '../components/common/ProviderIcon.vue'
-import { useThemeStore } from '../stores/theme'
+import { useTheme } from '../composables/useTheme'
+import { settingsService } from '../services/settings.service'
 import { 
   DEFAULT_PROVIDERS, 
   PROVIDER_STATS,
@@ -1004,9 +1005,9 @@ const settingsSections = [
   { id: 'about', label: '关于', icon: 'bi bi-info-circle' }
 ]
 
-// 主题 Store
-const themeStore = useThemeStore()
-const { mode, colorScheme, fontSize: themeFontSize } = storeToRefs(themeStore)
+// 主题 Composable
+const theme = useTheme()
+const { mode, colorScheme, fontSize: themeFontSize } = theme
 
 // 导航相关
 const activeSection = ref('appearance')
@@ -1014,7 +1015,8 @@ const contentContainer = ref<HTMLElement | null>(null)
 const isScrolling = ref(false)
 
 // 基础设置
-const theme = ref<'light' | 'dark' | 'auto'>('auto')
+// 注意：theme 相关的状态已经从 useTheme() composable 中获取
+// mode, colorScheme, themeFontSize 已经在上面解构
 const fontSize = ref<'small' | 'medium' | 'large'>('medium')
 const selectedColorScheme = ref<'blue' | 'green' | 'purple' | 'orange' | 'red'>('blue')
 
@@ -1056,7 +1058,7 @@ const capabilityFilter = ref<'all' | 'vision' | 'image' | 'functionCall'>('all')
 const sortBy = ref<'default' | 'name' | 'status' | 'models'>('default')
 
 // 可用的颜色方案
-const availableColorSchemes = computed(() => themeStore.getAvailableColorSchemes())
+const availableColorSchemes = computed(() => theme.getAvailableColorSchemes())
 
 // 服务商分类配置
 const providerCategories = computed(() => [
@@ -1411,18 +1413,18 @@ const manualSync = async () => {
 
 // 主题变化处理
 const onThemeChange = () => {
-  themeStore.setMode(theme.value)
+  theme.setMode(mode.value)
   showSuccessNotification('主题模式已更新')
 }
 
 const onColorSchemeChange = (scheme: 'blue' | 'green' | 'purple' | 'orange' | 'red') => {
   selectedColorScheme.value = scheme
-  themeStore.setColorScheme(scheme)
+  theme.setColorScheme(scheme)
   showSuccessNotification('颜色方案已更新')
 }
 
 const onFontSizeChange = () => {
-  themeStore.setFontSize(fontSize.value)
+  theme.setFontSize(fontSize.value)
   showSuccessNotification('字体大小已更新')
 }
 
@@ -1458,7 +1460,7 @@ const saveSettings = async () => {
   // 将响应式对象转换为纯 JSON 对象（避免 IPC 序列化错误）
   const settings = {
     appearance: {
-    theme: theme.value,
+    theme: mode.value,
     fontSize: fontSize.value,
       colorScheme: selectedColorScheme.value
     },
@@ -1495,23 +1497,17 @@ const saveSettings = async () => {
   }
   
   try {
-    // ✅ 统一接口：只需传 userId，StorageManager 自动处理模式
-    const userId = getUserId()
-    if (!userId) {
-      console.warn('[Settings] No userId, skipping save')
-      return
-    }
-    
-    await window.electronAPI.settings.save(userId, settings)
+    // ✅ 使用 settingsService，自动处理 userId
+    await settingsService.saveSettings(settings)
     console.log('[Settings] Settings saved successfully')
     
     // ✅ 保存元配置到 localStorage
     localStorage.setItem('storageMode', storageMode.value)
     
-    // 更新主题 Store
-  themeStore.setMode(theme.value)
-  themeStore.setColorScheme(selectedColorScheme.value)
-  themeStore.setFontSize(fontSize.value)
+    // 更新主题 Composable
+  theme.setMode(mode.value)
+  theme.setColorScheme(selectedColorScheme.value)
+  theme.setFontSize(fontSize.value)
   
     // 触发设置更新事件
     window.dispatchEvent(new CustomEvent('settings-updated'))
@@ -1524,21 +1520,17 @@ const saveSettings = async () => {
 // 加载设置
 const loadSettings = async () => {
   try {
-    // 从主题 Store 加载主题设置
-    theme.value = mode.value
+    // 从主题 Composable 加载主题设置（mode, colorScheme, themeFontSize 已经从 composable 解构）
     fontSize.value = themeFontSize.value
     selectedColorScheme.value = colorScheme.value
     
-    // ✅ 统一接口：只需传 userId，StorageManager 自动处理模式
-    const userId = getUserId()
-    
-    // 从存储加载设置
-    const settings = await window.electronAPI.settings.get(userId)
+    // ✅ 使用 settingsService，自动处理 userId
+    const settings = await settingsService.getSettings()
     
     if (settings) {
       // 外观设置
       if (settings.appearance) {
-        theme.value = settings.appearance.theme || 'auto'
+        mode.value = settings.appearance.theme || 'auto'
         fontSize.value = settings.appearance.fontSize || 'medium'
         selectedColorScheme.value = settings.appearance.colorScheme || 'blue'
       }
@@ -1571,27 +1563,30 @@ const loadSettings = async () => {
         
         // 合并数据库配置和默认配置
         aiProviders.value = DEFAULT_PROVIDERS.map(defaultProvider => {
-          const savedProvider = settings.aiProviders.find((p: any) => p.id === defaultProvider.id)
+          const savedProvider = settings.aiProviders?.find((p: any) => p.id === defaultProvider.id)
           
           if (savedProvider) {
             console.log(`[Settings] ✅ 恢复 ${savedProvider.id} 配置，模型数量:`, savedProvider.models?.length || 0)
             return {
               ...defaultProvider,
               ...savedProvider,
+              // 确保必填属性存在
+              apiKey: savedProvider.apiKey || (defaultProvider as any).apiKey || '',
+              isDefault: (savedProvider as any).isDefault ?? false,
               // 【关键】保留数据库中保存的模型列表
               models: savedProvider.models && savedProvider.models.length > 0
                 ? savedProvider.models
                 : defaultProvider.models
-            }
+            } as any
           }
           
           return {
             ...defaultProvider,
-            apiKey: '',
+            apiKey: (defaultProvider as any).apiKey || '',
             enabled: false,
             isDefault: false
-          }
-        })
+          } as any
+        }) as any
         
         console.log('[Settings] ✅ AI Providers 加载完成')
       } else {
@@ -1644,15 +1639,14 @@ const migrateFromLocalStorage = async () => {
         data.aiProviderConfigs = JSON.parse(localProviders)
       }
       
-      // 调用迁移 API
-      await window.electronAPI.settings.migrateFromLocalStorage(data.appSettings || {})
-      
-      // 如果有 AI 服务商配置，单独保存
-      if (data.aiProviderConfigs) {
-        const settings = await window.electronAPI.settings.get()
-        settings.aiProviders = data.aiProviderConfigs
-        await window.electronAPI.settings.save(settings)
+      // ✅ 使用 settingsService 保存迁移的数据
+      const migratedSettings = {
+        ...data.appSettings,
+        aiProviders: data.aiProviderConfigs
       }
+      
+      // 保存到新架构（自动处理 userId）
+      await settingsService.saveSettings(migratedSettings)
       
       // 迁移成功后清除 localStorage
       localStorage.removeItem('appSettings')
@@ -1903,15 +1897,8 @@ const saveAIProviderConfigs = async () => {
   try {
     console.log('[Settings] 💾 开始保存 AI Provider 配置...')
     
-    // ✅ 统一接口：只需传 userId，StorageManager 自动处理模式
-    const userId = getUserId()
-    if (!userId) {
-      console.warn('[Settings] No userId, skipping AI provider save')
-      return
-    }
-    
-    // 获取当前设置
-    const currentSettings = await window.electronAPI.settings.get(userId)
+    // ✅ 使用 settingsService，自动处理 userId
+    const currentSettings = await settingsService.getSettings()
     
     // 创建纯 JSON 对象（避免响应式代理）
     const cleanProviders = aiProviders.value.map(provider => {
@@ -1950,8 +1937,8 @@ const saveAIProviderConfigs = async () => {
       lastUpdated: new Date().toISOString()
     }
     
-    // 保存到存储
-    await window.electronAPI.settings.save(userId, JSON.parse(JSON.stringify(updatedSettings)))
+    // ✅ 保存到存储（使用 settingsService，自动处理 userId）
+    await settingsService.saveSettings(JSON.parse(JSON.stringify(updatedSettings)))
     
     console.log('[Settings] ✅ AI Provider 配置保存成功')
     
@@ -1968,9 +1955,9 @@ watch(aiProviders, () => {
   saveAIProviderConfigs()
 }, { deep: true })
 
-// 监听主题 Store 变化
+// 监听主题 Composable 变化，同步到本地状态
 watch([mode, colorScheme, themeFontSize], () => {
-  theme.value = mode.value
+  // mode 已经是从 composable 解构出来的，无需再赋值
   fontSize.value = themeFontSize.value
   selectedColorScheme.value = colorScheme.value
 })

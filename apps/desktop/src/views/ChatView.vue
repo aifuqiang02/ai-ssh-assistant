@@ -40,7 +40,7 @@ import { useRoute } from 'vue-router'
 import AIChatSession, { type Message } from '../components/chat/AIChatSession.vue'
 import type { AIProvider, AIModel } from '../types/ai-providers'
 import { chatCompletion, type ChatMessage as APIChatMessage } from '../services/ai-api.service'
-import { useChatStore } from '../stores/chat'
+import { chatService } from '../services/chat.service'
 
 interface SelectedModel {
   providerId: string
@@ -49,7 +49,9 @@ interface SelectedModel {
 
 // 路由和会话管理
 const route = useRoute()
-const chatStore = useChatStore()
+
+// Chat 树数据
+const chatTree = ref<any[]>([])
 
 // 响应式数据
 const messages = ref<Message[]>([])
@@ -241,7 +243,7 @@ watch(currentSessionId, async (newSessionId, oldSessionId) => {
       }
       return null
     }
-    const session = findSessionInTree(chatStore.chatTree, newSessionId)
+    const session = findSessionInTree(chatTree.value, newSessionId)
     if (session) {
       currentSessionName.value = session.name || session.title || 'AI 对话'
     }
@@ -285,10 +287,20 @@ const loadModelConfiguration = async () => {
   }
 }
 
+// 加载 Chat 树
+const loadChatTree = async () => {
+  try {
+    chatTree.value = await chatService.getChatTree()
+  } catch (err) {
+    console.error('加载 Chat 树失败:', err)
+  }
+}
+
 // 生命周期
 onMounted(async () => {
   loadModelConfiguration()
-  await chatStore.loadChatTree()
+  // ✅ 直接使用 chatService
+  await loadChatTree()
 })
 </script>
 

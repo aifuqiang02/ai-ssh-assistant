@@ -308,7 +308,8 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
-import { useSSHStore } from '@/stores/ssh'
+import { sshService } from '@/services/ssh.service'
+import { findNode } from '@/utils/tree-utils'
 
 interface FileItem {
   name: string
@@ -330,9 +331,20 @@ interface DownloadTask {
   cancelled?: boolean
 }
 
-// 路由和 Store
+// 路由
 const route = useRoute()
-const sshStore = useSSHStore()
+
+// SSH 树数据
+const sshTree = ref<any[]>([])
+
+// 加载 SSH 树
+const loadSSHTree = async () => {
+  try {
+    sshTree.value = await sshService.getSSHTree()
+  } catch (err) {
+    console.error('加载 SSH 树失败:', err)
+  }
+}
 
 // 从 URL 参数获取连接信息
 const actualConnectionId = computed(() => {
@@ -355,10 +367,10 @@ const nodeId = computed(() => {
   return route.query.nodeId as string
 })
 
-// 从 store 获取节点配置
+// 从 SSH 树获取节点配置
 const getNodeConfig = () => {
   if (!nodeId.value) return null
-  const node = sshStore.findNode(nodeId.value, sshStore.sshTree)
+  const node = findNode(nodeId.value, sshTree.value)
   if (!node || node.type !== 'connection') return null
   
   return {
@@ -1232,7 +1244,10 @@ watch(() => actualConnectionId.value, (newId) => {
 })
 
 // 生命周期
-onMounted(() => {
+onMounted(async () => {
+  // ✅ 加载 SSH 树
+  await loadSSHTree()
+  
   if (actualConnectionId.value) {
     // 如果已经有连接ID（从侧边栏传入），直接使用
     currentConnectionId.value = actualConnectionId.value

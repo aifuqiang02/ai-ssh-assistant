@@ -131,7 +131,8 @@ import { Terminal } from '@xterm/xterm'
 import { FitAddon } from '@xterm/addon-fit'
 import { WebLinksAddon } from '@xterm/addon-web-links'
 import '@xterm/xterm/css/xterm.css'
-import { useSSHStore } from '@/stores/ssh'
+import { sshService } from '@/services/ssh.service'
+import { findNode } from '@/utils/tree-utils'
 import AIChatSessionWithTools from '@/components/chat/AIChatSessionWithTools.vue'
 import type { AIProvider, AIModel } from '@/types/ai-providers'
 import { chatCompletion, type ChatMessage as APIChatMessage } from '@/services/ai-api.service'
@@ -143,9 +144,20 @@ const props = defineProps<{
   connectionName?: string
 }>()
 
-// 路由和 Store
+// 路由
 const route = useRoute()
-const sshStore = useSSHStore()
+
+// SSH 树数据
+const sshTree = ref<any[]>([])
+
+// 加载 SSH 树
+const loadSSHTree = async () => {
+  try {
+    sshTree.value = await sshService.getSSHTree()
+  } catch (err) {
+    console.error('加载 SSH 树失败:', err)
+  }
+}
 
 // 从 URL 参数获取连接信息
 const actualConnectionId = computed(() => {
@@ -161,10 +173,10 @@ const nodeId = computed(() => {
   return route.query.nodeId as string
 })
 
-// 从 store 获取节点配置
+// 从 SSH 树获取节点配置
 const getNodeConfig = () => {
   if (!nodeId.value) return null
-  const node = sshStore.findNode(nodeId.value, sshStore.sshTree)
+  const node = findNode(nodeId.value, sshTree.value)
   if (!node || node.type !== 'connection') return null
   
   return {
@@ -546,7 +558,10 @@ watch(() => actualConnectionId.value, (newId) => {
 const isInitialized = ref(false)
 
 // 生命周期
-onMounted(() => {
+onMounted(async () => {
+  // ✅ 加载 SSH 树
+  await loadSSHTree()
+  
   // 确保 DOM 已经渲染
   nextTick(() => {
     if (terminalContainer.value && !isInitialized.value) {

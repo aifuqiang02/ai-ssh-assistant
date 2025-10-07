@@ -185,7 +185,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { storeToRefs } from 'pinia'
-import { useThemeStore } from '../../stores/theme'
+import { useTheme } from '../../composables/useTheme'
 import type { AIProvider, AIModel as AIProviderModel } from '../../types/ai-providers'
 
 // 定义 emits
@@ -193,9 +193,9 @@ const emit = defineEmits<{
   'open-settings': []
 }>()
 
-// 主题 Store
-const themeStore = useThemeStore()
-const { mode, currentTheme } = storeToRefs(themeStore)
+// 主题 Composable
+const theme = useTheme()
+const { mode, currentTheme } = theme
 
 // 响应式数据
 const activeMenu = ref<string | null>(null)
@@ -460,7 +460,7 @@ const closeWindow = () => {
 
 // 主题切换
 const toggleTheme = () => {
-  themeStore.toggleMode()
+  theme.toggleMode()
   console.log('Theme toggled to:', mode.value)
 }
 

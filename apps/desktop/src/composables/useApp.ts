@@ -1,52 +1,30 @@
-import { defineStore } from 'pinia'
+/**
+ * 应用状态管理 Composable
+ * 替代原 App Store
+ */
+
 import { ref, computed } from 'vue'
 
-export const useAppStore = defineStore('app', () => {
-  // 应用状态
-  const isInitialized = ref(false)
-  const isLoading = ref(false)
-  const currentRoute = ref('/')
-  const sidebarCollapsed = ref(false)
-  
-  // 应用设置
-  const settings = ref({
-    language: 'zh-CN',
-    autoSave: true,
-    notifications: true,
-    theme: 'auto'
-  })
-  
-  // 错误状态
-  const error = ref<string | null>(null)
-  const errors = ref<string[]>([])
-  
+// 全局状态（单例模式）
+const isInitialized = ref(false)
+const isLoading = ref(false)
+const currentRoute = ref('/')
+const sidebarCollapsed = ref(false)
+
+const settings = ref({
+  language: 'zh-CN',
+  autoSave: true,
+  notifications: true,
+  theme: 'auto'
+})
+
+const error = ref<string | null>(null)
+const errors = ref<string[]>([])
+
+export function useApp() {
   // 计算属性
   const hasErrors = computed(() => errors.value.length > 0)
   const isReady = computed(() => isInitialized.value && !isLoading.value)
-  
-  // 初始化应用
-  const initialize = async () => {
-    if (isInitialized.value) return
-    
-    try {
-      isLoading.value = true
-      
-      // 加载用户设置
-      await loadSettings()
-      
-      // 初始化其他服务
-      await initializeServices()
-      
-      isInitialized.value = true
-      console.log('App initialized successfully')
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : '应用初始化失败'
-      addError(errorMessage)
-      console.error('App initialization failed:', err)
-    } finally {
-      isLoading.value = false
-    }
-  }
   
   // 加载设置
   const loadSettings = async () => {
@@ -79,6 +57,30 @@ export const useAppStore = defineStore('app', () => {
     // 这里可以初始化各种服务
     // 例如：WebSocket 连接、数据库连接等
     return Promise.resolve()
+  }
+  
+  // 初始化应用
+  const initialize = async () => {
+    if (isInitialized.value) return
+    
+    try {
+      isLoading.value = true
+      
+      // 加载用户设置
+      await loadSettings()
+      
+      // 初始化其他服务
+      await initializeServices()
+      
+      isInitialized.value = true
+      console.log('App initialized successfully')
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : '应用初始化失败'
+      addError(errorMessage)
+      console.error('App initialization failed:', err)
+    } finally {
+      isLoading.value = false
+    }
   }
   
   // 更新设置
@@ -124,11 +126,9 @@ export const useAppStore = defineStore('app', () => {
   
   // 打开设置页面
   const openSettings = () => {
-    // 导航到设置页面
     console.log('Opening settings...')
     
     // 在组件外部无法直接使用 useRouter，需要在调用的地方处理路由
-    // 这里我们发出一个事件或者设置一个状态标记
     currentRoute.value = '/settings'
     
     // 触发自定义事件来通知路由变化
@@ -175,10 +175,5 @@ export const useAppStore = defineStore('app', () => {
     openSettings,
     reset
   }
-}, {
-  persist: {
-    key: 'ai-ssh-assistant-app',
-    storage: localStorage,
-    paths: ['settings', 'sidebarCollapsed']
-  }
-})
+}
+

@@ -1,20 +1,23 @@
-import { defineStore } from 'pinia'
+/**
+ * 主题管理 Composable
+ * 替代原 Theme Store
+ */
+
 import { ref, computed, watch } from 'vue'
 
 type ThemeMode = 'light' | 'dark' | 'auto'
 type ColorScheme = 'blue' | 'green' | 'purple' | 'orange' | 'red'
 
-export const useThemeStore = defineStore('theme', () => {
-  // 主题状态
-  const mode = ref<ThemeMode>('auto')
-  const colorScheme = ref<ColorScheme>('blue')
-  const fontSize = ref<'small' | 'medium' | 'large'>('medium')
-  const isDark = ref(false)
-  
-  // 动画设置
-  const animations = ref(true)
-  const transitions = ref(true)
-  
+// 全局状态（单例模式）
+const mode = ref<ThemeMode>('auto')
+const colorScheme = ref<ColorScheme>('blue')
+const fontSize = ref<'small' | 'medium' | 'large'>('medium')
+const isDark = ref(false)
+const animations = ref(true)
+const transitions = ref(true)
+const isInitialized = ref(false)
+
+export function useTheme() {
   // 计算属性
   const currentTheme = computed(() => {
     if (mode.value === 'auto') {
@@ -80,21 +83,6 @@ export const useThemeStore = defineStore('theme', () => {
     
     return vars
   })
-  
-  // 初始化主题
-  const initialize = () => {
-    // 从本地存储加载主题设置
-    loadThemeSettings()
-    
-    // 检测系统主题
-    detectSystemTheme()
-    
-    // 应用主题
-    applyTheme()
-    
-    // 监听系统主题变化
-    watchSystemTheme()
-  }
   
   // 加载主题设置
   const loadThemeSettings = () => {
@@ -175,6 +163,24 @@ export const useThemeStore = defineStore('theme', () => {
     }))
   }
   
+  // 初始化主题
+  const initialize = () => {
+    if (isInitialized.value) return
+    
+    loadThemeSettings()
+    detectSystemTheme()
+    applyTheme()
+    watchSystemTheme()
+    
+    // 监听主题变化并保存设置
+    watch([mode, colorScheme, fontSize, animations, transitions], () => {
+      applyTheme()
+      saveThemeSettings()
+    })
+    
+    isInitialized.value = true
+  }
+  
   // 切换主题模式
   const toggleMode = () => {
     const modes: ThemeMode[] = ['light', 'dark', 'auto']
@@ -227,12 +233,6 @@ export const useThemeStore = defineStore('theme', () => {
     { value: 'red', label: '红色', color: '#ef4444' }
   ]
   
-  // 监听主题变化并保存设置
-  watch([mode, colorScheme, fontSize, animations, transitions], () => {
-    applyTheme()
-    saveThemeSettings()
-  })
-  
   return {
     // 状态
     mode,
@@ -258,10 +258,5 @@ export const useThemeStore = defineStore('theme', () => {
     getAvailableColorSchemes,
     applyTheme
   }
-}, {
-  persist: {
-    key: 'ai-ssh-assistant-theme',
-    storage: localStorage,
-    paths: ['mode', 'colorScheme', 'fontSize', 'animations', 'transitions']
-  }
-})
+}
+

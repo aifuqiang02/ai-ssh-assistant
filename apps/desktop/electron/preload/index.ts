@@ -177,6 +177,26 @@ const api = {
       ipcRenderer.invoke('storage:get-status'),
     sync: () => 
       ipcRenderer.invoke('storage:sync')
+  },
+
+  // Chat 服务 - 本地业务逻辑
+  chat: {
+    createSession: (userId: string, data: any) =>
+      ipcRenderer.invoke('chat:create-session', userId, data),
+    getSession: (userId: string, sessionId: string) =>
+      ipcRenderer.invoke('chat:get-session', userId, sessionId),
+    getSessions: (userId: string) =>
+      ipcRenderer.invoke('chat:get-sessions', userId),
+    updateSession: (userId: string, sessionId: string, data: any) =>
+      ipcRenderer.invoke('chat:update-session', userId, sessionId, data),
+    deleteSession: (userId: string, sessionId: string) =>
+      ipcRenderer.invoke('chat:delete-session', userId, sessionId),
+    sendMessage: (userId: string, sessionId: string, content: string) =>
+      ipcRenderer.invoke('chat:send-message', userId, sessionId, content),
+    getMessages: (userId: string, sessionId: string) =>
+      ipcRenderer.invoke('chat:get-messages', userId, sessionId),
+    deleteMessage: (userId: string, messageId: string) =>
+      ipcRenderer.invoke('chat:delete-message', userId, messageId)
   }
 }
 

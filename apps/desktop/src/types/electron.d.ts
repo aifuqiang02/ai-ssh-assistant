@@ -126,6 +126,32 @@ export interface ElectronAPI {
     getStatus: () => Promise<any>
     sync: () => Promise<any>
   }
+
+  // Chat 服务 - 本地业务逻辑
+  chat: {
+    // 树形结构
+    getChatTree?: (userId: string) => Promise<any[]>
+    
+    // 文件夹管理
+    createFolder?: (userId: string, data: any) => Promise<any>
+    updateFolder?: (userId: string, id: string, data: any) => Promise<any>
+    deleteFolder?: (userId: string, id: string) => Promise<void>
+    
+    // 会话管理
+    createSession: (userId: string, data: any) => Promise<any>
+    getSession: (userId: string, sessionId: string) => Promise<any>
+    getSessions: (userId: string) => Promise<any[]>
+    updateSession: (userId: string, sessionId: string, data: any) => Promise<any>
+    deleteSession: (userId: string, sessionId: string) => Promise<void>
+    
+    // 节点移动
+    moveNode?: (userId: string, data: any) => Promise<void>
+    
+    // 消息管理
+    sendMessage: (userId: string, sessionId: string, content: string) => Promise<any>
+    getMessages: (userId: string, sessionId: string) => Promise<any[]>
+    deleteMessage: (userId: string, messageId: string) => Promise<void>
+  }
 }
 
 // 全局类型声明
