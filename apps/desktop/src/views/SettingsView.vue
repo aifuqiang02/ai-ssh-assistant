@@ -1318,6 +1318,20 @@ const onStorageModeChange = async () => {
   await window.electronAPI.settings.setStorageMode(storageMode.value)
   console.log('[Settings] Storage mode changed to:', storageMode.value)
   
+  // 如果切换到云端或混合模式，且已登录，设置云端配置
+  if ((storageMode.value === 'cloud' || storageMode.value === 'hybrid') && userInfo.value && userInfo.value.token) {
+    const cloudConfig = {
+      apiEndpoint: process.env.VUE_APP_API_ENDPOINT || 'http://localhost:3000',
+      userToken: userInfo.value.token
+    }
+    await window.electronAPI.settings.setCloudConfig(cloudConfig)
+    console.log('[Settings] 云端配置已设置')
+  } else if (storageMode.value === 'local') {
+    // 切换到本地模式，清除云端配置
+    await window.electronAPI.settings.setCloudConfig(null)
+    console.log('[Settings] 已清除云端配置')
+  }
+  
   await saveSettings()
 }
 
