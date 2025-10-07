@@ -239,16 +239,19 @@ export class SettingsStorageService {
    * 获取设置（根据存储模式）
    */
   async getSettings(): Promise<UserSettings> {
+    console.log('[SettingsStorage] Getting settings, mode:', this.storageMode)
     let settings: UserSettings | null = null
     
     switch (this.storageMode) {
       case 'local':
         // 仅本地存储
+        console.log('[SettingsStorage] Using local file storage')
         settings = await this.readFromLocalFile()
         break
         
       case 'cloud':
         // 仅云端存储（失败时降级到本地）
+        console.log('[SettingsStorage] Using cloud storage')
         settings = await this.readFromCloud()
         if (!settings) {
           console.warn('[SettingsStorage] Cloud read failed, falling back to local')
@@ -258,6 +261,7 @@ export class SettingsStorageService {
         
       case 'hybrid':
         // 混合模式：优先云端，同步到本地
+        console.log('[SettingsStorage] Using hybrid storage')
         settings = await this.readFromCloud()
         if (settings) {
           // 云端读取成功，同步到本地
@@ -271,6 +275,7 @@ export class SettingsStorageService {
     
     // 如果没有设置，返回默认值
     if (!settings) {
+      console.log('[SettingsStorage] No settings found, using defaults')
       settings = this.getDefaultSettings()
       // 保存默认设置
       await this.saveSettings(settings)
@@ -283,17 +288,20 @@ export class SettingsStorageService {
    * 保存设置（根据存储模式）
    */
   async saveSettings(settings: UserSettings): Promise<void> {
+    console.log('[SettingsStorage] Saving settings, mode:', this.storageMode)
     // 更新时间戳
     settings.lastUpdated = new Date().toISOString()
     
     switch (this.storageMode) {
       case 'local':
         // 仅本地存储
+        console.log('[SettingsStorage] Saving to local file')
         await this.writeToLocalFile(settings)
         break
         
       case 'cloud':
         // 仅云端存储（失败时保存到本地）
+        console.log('[SettingsStorage] Saving to cloud')
         const cloudSuccess = await this.writeToCloud(settings)
         if (!cloudSuccess) {
           console.warn('[SettingsStorage] Cloud write failed, saving to local')
@@ -303,6 +311,7 @@ export class SettingsStorageService {
         
       case 'hybrid':
         // 混合模式：同时保存到本地和云端
+        console.log('[SettingsStorage] Saving to both local and cloud')
         await this.writeToLocalFile(settings)
         // 云端保存失败不影响本地
         await this.writeToCloud(settings).catch(err => {
@@ -310,6 +319,8 @@ export class SettingsStorageService {
         })
         break
     }
+    
+    console.log('[SettingsStorage] Settings saved successfully')
   }
   
   /**
