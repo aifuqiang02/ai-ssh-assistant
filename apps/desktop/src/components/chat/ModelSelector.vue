@@ -221,6 +221,8 @@ const openSettings = () => {
 }
 
 const loadProviders = async () => {
+  console.log('[ModelSelector] 🔄 开始加载 AI Providers...')
+  
   // 从默认配置初始化
   aiProviders.value = DEFAULT_PROVIDERS.map(provider => ({
     ...provider,
@@ -238,6 +240,8 @@ const loadProviders = async () => {
   try {
     const settings = await window.electronAPI.settings.get()
     if (settings?.aiProviders && settings.aiProviders.length > 0) {
+      console.log(`[ModelSelector] 📦 从数据库加载到 ${settings.aiProviders.length} 个服务商`)
+      
       const savedConfigs = settings.aiProviders
       aiProviders.value = aiProviders.value.map(provider => {
         const savedConfig = savedConfigs.find((c: any) => c.id === provider.id)
@@ -253,6 +257,9 @@ const loadProviders = async () => {
                 enabled: true
               }))
           
+          const enabledModelsCount = models.filter((m: any) => m.enabled !== false).length
+          console.log(`[ModelSelector]   - ${provider.id}: ${models.length} 个模型, ${enabledModelsCount} 个已启用`)
+          
           return {
             ...provider,
             models,
@@ -266,16 +273,18 @@ const loadProviders = async () => {
         }
         return provider
       })
-      console.log('[ModelSelector] 已从数据库加载 AI 服务商配置')
+      console.log('[ModelSelector] ✅ AI Providers 加载完成')
+    } else {
+      console.log('[ModelSelector] ⚠️ 数据库中无 AI Providers 配置')
     }
   } catch (error) {
-    console.error('[ModelSelector] Failed to load AI provider configs:', error)
+    console.error('[ModelSelector] ❌ 加载 AI Providers 失败:', error)
   }
 }
 
 // 监听设置更新事件
 const handleSettingsUpdate = () => {
-  console.log('[ModelSelector] 检测到设置更新，重新加载配置')
+  console.log('[ModelSelector] 📢 检测到设置更新事件，重新加载配置')
   loadProviders()
 }
 

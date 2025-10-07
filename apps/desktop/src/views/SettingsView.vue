@@ -1562,12 +1562,44 @@ const loadSettings = async () => {
         maxHistoryMessages.value = settings.aiAssistant.maxHistoryMessages || 50
       }
       
-      // AI 服务商配置（如果数据库中有，使用数据库的；否则从 localStorage 迁移）
+      // AI 服务商配置（优先使用数据库数据）
       if (settings.aiProviders && settings.aiProviders.length > 0) {
-        // 数据库中已有配置，直接使用
-        aiProviders.value = settings.aiProviders
+        console.log('[Settings] 📦 从数据库加载 AI Providers，数量:', settings.aiProviders.length)
+        
+        // 合并数据库配置和默认配置
+        aiProviders.value = DEFAULT_PROVIDERS.map(defaultProvider => {
+          const savedProvider = settings.aiProviders.find((p: any) => p.id === defaultProvider.id)
+          
+          if (savedProvider) {
+            console.log(`[Settings] ✅ 恢复 ${savedProvider.id} 配置，模型数量:`, savedProvider.models?.length || 0)
+            return {
+              ...defaultProvider,
+              ...savedProvider,
+              // 【关键】保留数据库中保存的模型列表
+              models: savedProvider.models && savedProvider.models.length > 0
+                ? savedProvider.models
+                : defaultProvider.models
+            }
+          }
+          
+          return {
+            ...defaultProvider,
+            apiKey: '',
+            enabled: false,
+            isDefault: false
+          }
+        })
+        
+        console.log('[Settings] ✅ AI Providers 加载完成')
       } else {
-        // 数据库中没有，尝试从 initializeAIProviders 恢复（会从 localStorage 加载）
+        console.log('[Settings] ⚠️ 数据库中无 AI Providers 配置，使用默认配置')
+        // 初始化默认配置
+        aiProviders.value = DEFAULT_PROVIDERS.map(provider => ({
+          ...provider,
+          apiKey: '',
+          enabled: false,
+          isDefault: false
+        }))
       }
       
       // 高级设置
@@ -1649,49 +1681,7 @@ watch([
   saveSettings()
 }, { deep: true })
 
-// AI 服务商相关函数
-const initializeAIProviders = () => {
-  // 从默认配置初始化
-  aiProviders.value = DEFAULT_PROVIDERS.map(provider => ({
-    ...provider,
-    apiKey: '',
-    enabled: false,
-    isDefault: false
-  }))
-  
-  // 从 localStorage 加载已保存的配置
-  try {
-    const saved = localStorage.getItem('aiProviderConfigs')
-    if (saved) {
-      const savedConfigs = JSON.parse(saved)
-      aiProviders.value = aiProviders.value.map(provider => {
-        const savedConfig = savedConfigs.find((c: any) => c.id === provider.id)
-        if (savedConfig) {
-          // 恢复配置，包括模型列表
-          const providerWithConfig = {
-            ...provider,
-            apiKey: savedConfig.apiKey ? decryptApiKey(savedConfig.apiKey) : '',
-            endpoint: savedConfig.endpoint || provider.endpoint,
-            enabled: savedConfig.enabled || false,
-            isDefault: savedConfig.isDefault || false,
-            config: savedConfig.config || provider.config,
-            // 【修复】优先使用 savedConfig.models，保留用户刷新获取的模型列表
-            models: (savedConfig.models && savedConfig.models.length > 0) 
-              ? savedConfig.models 
-              : provider.models
-          }
-          
-          return providerWithConfig
-        }
-        return provider
-      })
-      
-      console.log('✅ 已加载 AI Provider 配置，包括模型 enabled 状态')
-    }
-  } catch (error) {
-    console.error('Failed to load AI provider configs:', error)
-  }
-}
+// AI 服务商相关函数（已废弃，逻辑已整合到 loadSettings 中）
 
 const toggleProvider = (providerId: string) => {
   const index = expandedProviders.value.indexOf(providerId)
@@ -1745,6 +1735,7 @@ const refreshModelList = async (provider: AIProvider) => {
     return
   }
   
+  console.log(`[Settings] 🔄 开始刷新 ${provider.id} 的模型列表...`)
   fetchingModels.value[provider.id] = true
   
   try {
@@ -1759,27 +1750,34 @@ const refreshModelList = async (provider: AIProvider) => {
       const existingModels = provider.models || []
       const fetchedModels = result.models
       
+      console.log(`[Settings] 📥 获取到 ${fetchedModels.length} 个模型，现有 ${existingModels.length} 个`)
+      
       // 保留用户对现有模型的 enabled 配置，新模型默认禁用
       const mergedModels = fetchedModels.map(fetchedModel => {
         const existing = existingModels.find(m => m.id === fetchedModel.id)
+        const enabled = existing?.enabled !== undefined ? existing.enabled : false
         return {
           ...fetchedModel,
-          enabled: existing?.enabled !== undefined ? existing.enabled : false  // 新模型默认禁用
+          enabled  // 新模型默认禁用
         }
       })
+      
+      console.log(`[Settings] ✅ 合并后模型数量: ${mergedModels.length}`)
       
       // 更新模型列表
       provider.models = mergedModels
       
       // 自动保存
-      saveAIProviderConfigs()
+      console.log(`[Settings] 💾 正在保存 ${provider.id} 的模型列表...`)
+      await saveAIProviderConfigs()
       
       showNotification(`成功获取 ${mergedModels.length} 个模型`, 'success')
     } else {
+      console.error(`[Settings] ❌ 刷新模型失败:`, result.error)
       showNotification(result.error || '获取模型列表失败', 'error')
     }
   } catch (error: any) {
-    console.error('Failed to refresh model list:', error)
+    console.error('[Settings] ❌ 刷新模型列表失败:', error)
     showNotification('刷新模型列表失败: ' + error.message, 'error')
   } finally {
     fetchingModels.value[provider.id] = false
@@ -1802,7 +1800,11 @@ const toggleModelDetails = (providerId: string) => {
 }
 
 const onModelToggle = (providerId: string, modelId: string) => {
-  console.log(`模型切换: ${providerId} - ${modelId}`)
+  const provider = aiProviders.value.find(p => p.id === providerId)
+  const model = provider?.models.find(m => m.id === modelId)
+  
+  console.log(`[Settings] 🔄 模型状态切换: ${providerId}/${modelId}, enabled: ${model?.enabled}`)
+  
   // watch 会自动触发保存
 }
 
@@ -1896,30 +1898,39 @@ const formatContextWindow = (tokens: number): string => {
 
 const saveAIProviderConfigs = async () => {
   try {
+    console.log('[Settings] 💾 开始保存 AI Provider 配置...')
+    
     // 获取当前设置
     const currentSettings = await window.electronAPI.settings.get()
     
     // 创建纯 JSON 对象（避免响应式代理）
-    const cleanProviders = aiProviders.value.map(provider => ({
-      id: provider.id,
-      name: provider.name,
-      apiKey: provider.apiKey || '',
-      endpoint: provider.endpoint,
-      enabled: provider.enabled,
-      isDefault: provider.isDefault,
-      config: provider.config ? JSON.parse(JSON.stringify(provider.config)) : undefined,
-      models: provider.models?.map(model => ({
-        id: model.id,
-        name: model.name,
-        description: model.description,
-        providerId: model.providerId,
-        contextWindow: model.contextWindow,
-        capabilities: model.capabilities,
-        price: model.price,
-        recommended: model.recommended,
-        enabled: model.enabled !== false
-      }))
-    }))
+    const cleanProviders = aiProviders.value.map(provider => {
+      const enabledModelsCount = provider.models?.filter(m => m.enabled !== false).length || 0
+      console.log(`[Settings]   - ${provider.id}: ${provider.models?.length || 0} 个模型, ${enabledModelsCount} 个已启用`)
+      
+      return {
+        id: provider.id,
+        name: provider.name,
+        apiKey: provider.apiKey || '',
+        endpoint: provider.endpoint,
+        enabled: provider.enabled,
+        isDefault: provider.isDefault,
+        config: provider.config ? JSON.parse(JSON.stringify(provider.config)) : undefined,
+        models: provider.models?.map(model => ({
+          id: model.id,
+          name: model.name,
+          description: model.description,
+          providerId: model.providerId,
+          contextWindow: model.contextWindow,
+          capabilities: model.capabilities,
+          price: model.price,
+          recommended: model.recommended,
+          enabled: model.enabled !== false
+        }))
+      }
+    })
+    
+    console.log(`[Settings] 📦 准备保存 ${cleanProviders.length} 个服务商配置`)
     
     // 更新 AI 服务商配置（使用纯 JSON 对象）
     const updatedSettings = {
@@ -1931,12 +1942,13 @@ const saveAIProviderConfigs = async () => {
     // 保存到数据库
     await window.electronAPI.settings.save(JSON.parse(JSON.stringify(updatedSettings)))
     
-    console.log('[Settings] AI Provider configs saved successfully')
+    console.log('[Settings] ✅ AI Provider 配置保存成功')
     
     // 触发自定义事件通知其他组件配置已更新
+    console.log('[Settings] 📢 触发 ai-provider-configs-updated 事件')
     window.dispatchEvent(new CustomEvent('ai-provider-configs-updated'))
   } catch (error) {
-    console.error('[Settings] Failed to save AI provider configs:', error)
+    console.error('[Settings] ❌ 保存 AI Provider 配置失败:', error)
   }
 }
 
@@ -1956,9 +1968,8 @@ onMounted(async () => {
   // 检查登录状态
   checkLoginStatus()
   
-  // 加载设置
+  // 加载设置（包括 AI Providers）
   await loadSettings()
-  initializeAIProviders()
   
   // 应用存储模式（从设置中加载）
   console.log('[Settings] 当前存储模式:', storageMode.value)
