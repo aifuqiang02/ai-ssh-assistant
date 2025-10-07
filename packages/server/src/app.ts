@@ -20,6 +20,7 @@ import { chatRoutes } from './routes/chat.routes.js'
 import { aiRoutes } from './routes/ai.routes.js'
 import { fileRoutes } from './routes/file.routes.js'
 import { systemRoutes } from './routes/system.routes.js'
+import { settingsRoutes } from './routes/settings.routes.js'
 
 export async function buildApp(): Promise<FastifyInstance> {
   const app = Fastify({
@@ -219,6 +220,7 @@ export async function buildApp(): Promise<FastifyInstance> {
   await app.register(aiRoutes, { prefix: '/api/v1/ai' })
   await app.register(fileRoutes, { prefix: '/api/v1/files' })
   await app.register(systemRoutes, { prefix: '/api/v1/system' })
+  await app.register(settingsRoutes, { prefix: '/api/v1' })
 
   // 404 处理
   app.setNotFoundHandler({

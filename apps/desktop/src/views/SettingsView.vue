@@ -1327,7 +1327,7 @@ const onStorageModeChange = async () => {
   const userToken = getUserToken()
   if ((storageMode.value === 'cloud' || storageMode.value === 'hybrid') && userToken) {
     const cloudConfig = {
-      apiEndpoint: import.meta.env.VITE_API_ENDPOINT || 'http://localhost:3000',
+      apiEndpoint: import.meta.env.VITE_API_ENDPOINT || 'http://localhost:3000/api/v1',
       userToken: userToken
     }
     await window.electronAPI.settings.setCloudConfig(cloudConfig)
@@ -1350,7 +1350,7 @@ const onLoginSuccess = async (user: any) => {
   const userToken = getUserToken()
   if (userToken) {
     const cloudConfig = {
-      apiEndpoint: import.meta.env.VITE_API_ENDPOINT || 'http://localhost:3000',
+      apiEndpoint: import.meta.env.VITE_API_ENDPOINT || 'http://localhost:3000/api/v1',
       userToken: userToken
     }
     await window.electronAPI.settings.setCloudConfig(cloudConfig)
@@ -1968,7 +1968,7 @@ onMounted(async () => {
   const userToken = getUserToken()
   if ((storageMode.value === 'cloud' || storageMode.value === 'hybrid') && userToken) {
     const cloudConfig = {
-      apiEndpoint: import.meta.env.VITE_API_ENDPOINT || 'http://localhost:3000',
+      apiEndpoint: import.meta.env.VITE_API_ENDPOINT || 'http://localhost:3000/api/v1',
       userToken: userToken
     }
     await window.electronAPI.settings.setCloudConfig(cloudConfig)
