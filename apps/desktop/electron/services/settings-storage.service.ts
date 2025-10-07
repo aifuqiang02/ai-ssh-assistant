@@ -186,7 +186,7 @@ export class SettingsStorageService {
     }
     
     try {
-      const response = await axios.get(`${this.cloudConfig.apiEndpoint}/api/settings`, {
+      const response = await axios.get(`${this.cloudConfig.apiEndpoint}/settings`, {
         headers: {
           'Authorization': `Bearer ${this.cloudConfig.userToken}`
         },
@@ -216,7 +216,7 @@ export class SettingsStorageService {
     
     try {
       await axios.post(
-        `${this.cloudConfig.apiEndpoint}/api/settings`,
+        `${this.cloudConfig.apiEndpoint}/settings`,
         { settings },
         {
           headers: {
