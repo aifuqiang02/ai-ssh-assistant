@@ -20,7 +20,7 @@ export default defineConfig({
             minify: process.env.NODE_ENV === 'production',
             outDir: 'dist-electron/main',
             rollupOptions: {
-              external: ['sqlite3', 'better-sqlite3', 'ssh2']
+              external: ['sqlite3', 'better-sqlite3', 'ssh2', '@ai-ssh/database', '@prisma/client']
             }
           }
         }
@@ -37,7 +37,7 @@ export default defineConfig({
             minify: process.env.NODE_ENV === 'production',
             outDir: 'dist-electron/preload',
             rollupOptions: {
-              external: ['sqlite3', 'better-sqlite3']
+              external: ['sqlite3', 'better-sqlite3', '@ai-ssh/database', '@prisma/client']
             }
           }
         }

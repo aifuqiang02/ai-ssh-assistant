@@ -73,7 +73,7 @@ class Application {
       
       try {
         console.log('[Main] 开始初始化 StorageManager...')
-        const { StorageManager } = await import('@repo/database')
+        const { StorageManager } = await import('@ai-ssh/database')
         
         // 从环境变量或配置文件读取存储模式
         const storageMode = process.env.STORAGE_MODE || 'local'

@@ -4,7 +4,7 @@
  */
 
 import { ipcMain, app } from 'electron'
-import type { StorageManager } from '@repo/database'
+import type { StorageManager } from '@ai-ssh/database'
 import fs from 'fs/promises'
 import path from 'path'
 
