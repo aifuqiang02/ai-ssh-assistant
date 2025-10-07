@@ -185,22 +185,41 @@ export class SettingsStorageService {
       return null
     }
     
+    const url = `${this.cloudConfig.apiEndpoint}/settings`
+    console.log('[SettingsStorage] 📤 GET Request:', url)
+    console.log('[SettingsStorage] Token present:', !!this.cloudConfig.userToken)
+    
     try {
-      const response = await axios.get(`${this.cloudConfig.apiEndpoint}/settings`, {
+      const response = await axios.get(url, {
         headers: {
           'Authorization': `Bearer ${this.cloudConfig.userToken}`
         },
         timeout: 5000
       })
       
+      console.log('[SettingsStorage] 📥 GET Response Status:', response.status)
+      console.log('[SettingsStorage] Response Data:', {
+        success: response.data?.success,
+        message: response.data?.message,
+        hasSettings: !!response.data?.settings
+      })
+      
       if (response.data && response.data.settings) {
-        console.log('[SettingsStorage] Settings loaded from cloud')
+        console.log('[SettingsStorage] ✅ Settings loaded from cloud')
         return response.data.settings
       }
       
+      console.log('[SettingsStorage] ⚠️ No settings in response')
       return null
-    } catch (error) {
-      console.error('[SettingsStorage] Failed to read from cloud:', error)
+    } catch (error: any) {
+      console.error('[SettingsStorage] ❌ GET Request Failed')
+      console.error('[SettingsStorage] Error details:', {
+        message: error.message,
+        code: error.code,
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        responseData: error.response?.data
+      })
       return null
     }
   }
@@ -214,9 +233,14 @@ export class SettingsStorageService {
       return false
     }
     
+    const url = `${this.cloudConfig.apiEndpoint}/settings`
+    console.log('[SettingsStorage] 📤 POST Request:', url)
+    console.log('[SettingsStorage] Token present:', !!this.cloudConfig.userToken)
+    console.log('[SettingsStorage] Settings size:', JSON.stringify(settings).length, 'bytes')
+    
     try {
-      await axios.post(
-        `${this.cloudConfig.apiEndpoint}/settings`,
+      const response = await axios.post(
+        url,
         { settings },
         {
           headers: {
@@ -227,10 +251,22 @@ export class SettingsStorageService {
         }
       )
       
-      console.log('[SettingsStorage] Settings saved to cloud')
+      console.log('[SettingsStorage] 📥 POST Response Status:', response.status)
+      console.log('[SettingsStorage] Response Data:', {
+        success: response.data?.success,
+        message: response.data?.message
+      })
+      console.log('[SettingsStorage] ✅ Settings saved to cloud')
       return true
-    } catch (error) {
-      console.error('[SettingsStorage] Failed to write to cloud:', error)
+    } catch (error: any) {
+      console.error('[SettingsStorage] ❌ POST Request Failed')
+      console.error('[SettingsStorage] Error details:', {
+        message: error.message,
+        code: error.code,
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        responseData: error.response?.data
+      })
       return false
     }
   }
