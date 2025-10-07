@@ -338,12 +338,18 @@ export class SettingsStorageService {
         break
         
       case 'cloud':
-        // 仅云端存储（失败时保存到本地）
+        // 云端存储（同时保留本地缓存）
         console.log('[SettingsStorage] Saving to cloud')
         const cloudSuccess = await this.writeToCloud(settings)
+        
+        // ✅ 无论云端是否成功，都保存到本地作为缓存
+        // 这样下次启动时能快速读取 storageMode 等关键配置
+        await this.writeToLocalFile(settings)
+        
         if (!cloudSuccess) {
-          console.warn('[SettingsStorage] Cloud write failed, saving to local .2')
-          await this.writeToLocalFile(settings)
+          console.warn('[SettingsStorage] Cloud write failed, using local cache')
+        } else {
+          console.log('[SettingsStorage] Cloud saved, local cache updated')
         }
         break
         

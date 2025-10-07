@@ -1963,10 +1963,18 @@ onMounted(async () => {
   // 检查登录状态
   checkLoginStatus()
   
-  // 加载设置（包括 AI Providers）
-  await loadSettings()
+  // ✅ 修复循环依赖：先从本地文件预加载 storageMode
+  try {
+    const preloadSettings = await window.electronAPI.settings.get()
+    if (preloadSettings?.advanced?.storageMode) {
+      storageMode.value = preloadSettings.advanced.storageMode
+      console.log('[Settings] 📋 预加载存储模式:', storageMode.value)
+    }
+  } catch (error) {
+    console.warn('[Settings] 预加载存储模式失败，使用默认值:', error)
+  }
   
-  // ✅ 修复：先设置云端配置，再设置存储模式（避免自动降级）
+  // ✅ 在加载完整设置之前，先设置 storageMode 和 cloudConfig
   const userToken = getUserToken()
   console.log('[Settings] 当前存储模式:', storageMode.value, ', 已登录:', !!userToken)
   
@@ -1994,6 +2002,9 @@ onMounted(async () => {
     await window.electronAPI.settings.setCloudConfig(null)
     await window.electronAPI.settings.setStorageMode('local')
   }
+  
+  // ✅ 现在 storageMode 和 cloudConfig 都已正确设置，可以加载完整设置了
+  await loadSettings()
   
   console.log('SettingsView mounted')
 })
