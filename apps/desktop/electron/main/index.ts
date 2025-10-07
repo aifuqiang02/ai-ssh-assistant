@@ -68,28 +68,110 @@ class Application {
       // 注册开发者工具切换IPC处理器
       this.setupDevToolsIPC()
 
-      // 注册 Settings IPC 处理器（数据库版）
+      // 初始化 StorageManager 并注册 Settings IPC 处理器
       try {
         console.log('[Main] 初始化 StorageManager...')
         const { StorageManager } = await import('@ai-ssh/database')
-        const storageManager = new StorageManager()
-        console.log('[Main] ✅ StorageManager initialized')
         
-        console.log('[Main] 注册 Settings IPC 处理器...')
-        const { registerSettingsHandlers } = await import('../ipc/settings-handlers')
-        
-        registerSettingsHandlers(storageManager)
-        console.log('[Main] ✅ Settings handlers registered successfully!')
-      } catch (settingsError) {
-        console.error('[Main] ❌ CRITICAL: Failed to register Settings handlers:', settingsError)
-        // 降级：不传 StorageManager
-        try {
-          const { registerSettingsHandlers } = await import('../ipc/settings-handlers')
-          registerSettingsHandlers(null)
-          console.log('[Main] ⚠️ Settings handlers registered without database')
-        } catch (fallbackError) {
-          console.error('[Main] ❌ Failed to register settings handlers even without database:', fallbackError)
+        // ✅ 默认使用本地模式，登录后会动态切换到云端/混合模式
+        const storageConfig = {
+          mode: 'local' as const,
+          localOptions: {
+            enabled: true
+          }
         }
+        
+        const storageManager = new StorageManager(storageConfig)
+        await storageManager.connect()
+        console.log('[Main] ✅ StorageManager initialized in local mode')
+        
+        // 注册 Settings IPC 处理器
+        const { registerSettingsHandlers } = await import('../ipc/settings-handlers')
+        registerSettingsHandlers(storageManager)
+        console.log('[Main] ✅ Settings handlers registered')
+        
+        // ✅ 注册存储模式切换处理器
+        const { ipcMain } = await import('electron')
+        
+        // 切换到云端/混合模式（登录时调用）
+        ipcMain.handle('storage:switch-to-cloud', async (_, userToken: string) => {
+          try {
+            console.log('[Main] Switching to hybrid storage mode with token')
+            
+            // ✅ 重新创建 StorageManager 使用云端配置
+            const hybridConfig = {
+              mode: 'hybrid' as const,
+              cloudOptions: {
+                provider: 'postgresql' as const,
+                connectionString: process.env.DATABASE_URL || '',
+                userToken: userToken,
+                enabled: true
+              },
+              hybridOptions: {
+                primaryStorage: 'cloud' as const,
+                fallbackEnabled: true,
+                offlineMode: true,
+                syncStrategy: 'realtime' as const
+              }
+            }
+            
+            await storageManager.disconnect()
+            const newStorageManager = new StorageManager(hybridConfig)
+            await newStorageManager.connect()
+            
+            // 更新引用
+            Object.assign(storageManager, newStorageManager)
+            
+            // 触发同步
+            const syncResult = await storageManager.sync()
+            console.log('[Main] ✅ Switched to hybrid mode, sync result:', syncResult)
+            return { success: true, mode: 'hybrid' }
+          } catch (error) {
+            console.error('[Main] Failed to switch to cloud mode:', error)
+            throw error
+          }
+        })
+        
+        // 切换到本地模式（登出时调用）
+        ipcMain.handle('storage:switch-to-local', async () => {
+          try {
+            console.log('[Main] Switching to local storage mode')
+            await storageManager.switchMode('local')
+            console.log('[Main] ✅ Switched to local mode')
+            return { success: true, mode: 'local' }
+          } catch (error) {
+            console.error('[Main] Failed to switch to local mode:', error)
+            throw error
+          }
+        })
+        
+        // 获取当前存储状态
+        ipcMain.handle('storage:get-status', async () => {
+          try {
+            const status = await storageManager.getStatus()
+            return status
+          } catch (error) {
+            console.error('[Main] Failed to get storage status:', error)
+            throw error
+          }
+        })
+        
+        // 手动触发同步
+        ipcMain.handle('storage:sync', async () => {
+          try {
+            console.log('[Main] Manual sync triggered')
+            const result = await storageManager.sync()
+            console.log('[Main] Sync result:', result)
+            return result
+          } catch (error) {
+            console.error('[Main] Sync failed:', error)
+            throw error
+          }
+        })
+        
+      } catch (settingsError) {
+        console.error('[Main] ❌ CRITICAL: Failed to initialize StorageManager:', settingsError)
+        throw settingsError // 不再降级，必须有 StorageManager
       }
       
       // 动态导入其他 IPC 处理器

@@ -1342,10 +1342,20 @@ const onStorageModeChange = async () => {
 // 登录成功处理
 const onLoginSuccess = async (user: any) => {
   userInfo.value = user
-  console.log('Login successful:', user)
+  console.log('[Settings] Login successful:', user)
   
-  // ✅ 简化：登录成功后重新加载设置即可
-  // 云端配置会在 loadSettings 中根据 storageMode 和 token 自动构建
+  // ✅ 登录成功后，切换到云端/混合模式
+  const userToken = getUserToken()
+  if (userToken && storageMode.value !== 'local') {
+    try {
+      await window.electronAPI.storage.switchToCloud(userToken)
+      console.log('[Settings] ✅ 已切换到云端存储模式')
+    } catch (error) {
+      console.error('[Settings] 切换到云端模式失败:', error)
+    }
+  }
+  
+  // 重新加载设置
   await loadSettings()
   console.log('[Settings] ✅ 登录成功，设置已重新加载')
 }
@@ -1359,10 +1369,15 @@ const logout = async () => {
   userInfo.value = null
   storageMode.value = 'local'
   
-  // ✅ 简化：保存到 localStorage
-  localStorage.setItem('storageMode', 'local')
-  console.log('[Settings] 用户登出，切换到本地存储')
+  // ✅ 切换到本地存储模式
+  try {
+    await window.electronAPI.storage.switchToLocal()
+    console.log('[Settings] ✅ 用户登出，已切换到本地存储')
+  } catch (error) {
+    console.error('[Settings] 切换到本地模式失败:', error)
+  }
   
+  localStorage.setItem('storageMode', 'local')
   await saveSettings()
 }
 
@@ -1375,10 +1390,17 @@ const manualSync = async () => {
   
   syncLoading.value = true
   try {
-    // ✅ 简化：重新从云端加载设置
-    await loadSettings()
-    lastSyncTime.value = new Date().toLocaleString()
-    showSuccessNotification('同步成功')
+    // ✅ 使用 StorageManager 的 sync 功能
+    const result = await window.electronAPI.storage.sync()
+    console.log('[Settings] Sync result:', result)
+    
+    if (result.success) {
+      await loadSettings()
+      lastSyncTime.value = new Date().toLocaleString()
+      showSuccessNotification(`同步成功：${result.recordsSynced || 0} 条记录`)
+    } else {
+      showErrorNotification('同步失败')
+    }
   } catch (error) {
     console.error('Sync error:', error)
     showErrorNotification('同步失败')
@@ -1473,20 +1495,15 @@ const saveSettings = async () => {
   }
   
   try {
-    // ✅ 简化：构建请求选项
+    // ✅ 统一接口：只需传 userId，StorageManager 自动处理模式
     const userId = getUserId()
-    const userToken = getUserToken()
-    const options = (storageMode.value !== 'local' && userToken) ? {
-      userId,
-      storageMode: storageMode.value,
-      cloudConfig: {
-        apiEndpoint: import.meta.env.VITE_API_ENDPOINT || 'http://127.0.0.1:3000/api/v1',
-        userToken: userToken
-      }
-    } : { userId }  // 本地模式也需要 userId
+    if (!userId) {
+      console.warn('[Settings] No userId, skipping save')
+      return
+    }
     
-    await window.electronAPI.settings.save(settings, options)
-    console.log('[Settings] Settings saved successfully, mode:', storageMode.value)
+    await window.electronAPI.settings.save(userId, settings)
+    console.log('[Settings] Settings saved successfully')
     
     // ✅ 保存元配置到 localStorage
     localStorage.setItem('storageMode', storageMode.value)
@@ -1512,20 +1529,11 @@ const loadSettings = async () => {
     fontSize.value = themeFontSize.value
     selectedColorScheme.value = colorScheme.value
     
-    // ✅ 简化：构建请求选项
+    // ✅ 统一接口：只需传 userId，StorageManager 自动处理模式
     const userId = getUserId()
-    const userToken = getUserToken()
-    const options = (storageMode.value !== 'local' && userToken) ? {
-      userId,
-      storageMode: storageMode.value,
-      cloudConfig: {
-        apiEndpoint: import.meta.env.VITE_API_ENDPOINT || 'http://127.0.0.1:3000/api/v1',
-        userToken: userToken
-      }
-    } : { userId }  // 本地模式也需要 userId
     
     // 从存储加载设置
-    const settings = await window.electronAPI.settings.get(options)
+    const settings = await window.electronAPI.settings.get(userId)
     
     if (settings) {
       // 外观设置
@@ -1895,20 +1903,15 @@ const saveAIProviderConfigs = async () => {
   try {
     console.log('[Settings] 💾 开始保存 AI Provider 配置...')
     
-    // ✅ 简化：构建请求选项
+    // ✅ 统一接口：只需传 userId，StorageManager 自动处理模式
     const userId = getUserId()
-    const userToken = getUserToken()
-    const options = (storageMode.value !== 'local' && userToken) ? {
-      userId,
-      storageMode: storageMode.value,
-      cloudConfig: {
-        apiEndpoint: import.meta.env.VITE_API_ENDPOINT || 'http://127.0.0.1:3000/api/v1',
-        userToken: userToken
-      }
-    } : { userId }  // 本地模式也需要 userId
+    if (!userId) {
+      console.warn('[Settings] No userId, skipping AI provider save')
+      return
+    }
     
     // 获取当前设置
-    const currentSettings = await window.electronAPI.settings.get(options)
+    const currentSettings = await window.electronAPI.settings.get(userId)
     
     // 创建纯 JSON 对象（避免响应式代理）
     const cleanProviders = aiProviders.value.map(provider => {
@@ -1948,7 +1951,7 @@ const saveAIProviderConfigs = async () => {
     }
     
     // 保存到存储
-    await window.electronAPI.settings.save(JSON.parse(JSON.stringify(updatedSettings)), options)
+    await window.electronAPI.settings.save(userId, JSON.parse(JSON.stringify(updatedSettings)))
     
     console.log('[Settings] ✅ AI Provider 配置保存成功')
     

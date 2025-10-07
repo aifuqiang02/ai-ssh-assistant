@@ -153,18 +153,30 @@ const api = {
     return api.on(`menu:${action}`, callback)
   },
 
-  // 设置相关（简化版）
+  // 设置相关 - 统一接口，StorageManager 自动处理模式
   settings: {
-    get: (options?: { storageMode?: string; cloudConfig?: any }) => 
-      ipcRenderer.invoke('settings:get', options),
-    save: (settings: any, options?: { storageMode?: string; cloudConfig?: any }) => 
-      ipcRenderer.invoke('settings:save', settings, options),
-    reset: (options?: { storageMode?: string; cloudConfig?: any }) => 
-      ipcRenderer.invoke('settings:reset', options),
-    export: (exportPath: string, options?: { storageMode?: string; cloudConfig?: any }) => 
-      ipcRenderer.invoke('settings:export', exportPath, options),
-    import: (importPath: string, options?: { storageMode?: string; cloudConfig?: any }) => 
-      ipcRenderer.invoke('settings:import', importPath, options)
+    get: (userId?: string) => 
+      ipcRenderer.invoke('settings:get', userId),
+    save: (userId: string, settings: any) => 
+      ipcRenderer.invoke('settings:save', userId, settings),
+    reset: (userId?: string) => 
+      ipcRenderer.invoke('settings:reset', userId),
+    export: (userId: string, exportPath: string) => 
+      ipcRenderer.invoke('settings:export', userId, exportPath),
+    import: (userId: string, importPath: string) => 
+      ipcRenderer.invoke('settings:import', userId, importPath)
+  },
+
+  // 存储管理 - 动态模式切换
+  storage: {
+    switchToCloud: (userToken: string) => 
+      ipcRenderer.invoke('storage:switch-to-cloud', userToken),
+    switchToLocal: () => 
+      ipcRenderer.invoke('storage:switch-to-local'),
+    getStatus: () => 
+      ipcRenderer.invoke('storage:get-status'),
+    sync: () => 
+      ipcRenderer.invoke('storage:sync')
   }
 }
 
@@ -280,13 +292,21 @@ export type ElectronAPI = {
   onStatusUpdate: (callback: (status: any) => void) => () => void
   onMenuAction: (action: string, callback: (...args: any[]) => void) => () => void
   
-  // 设置相关（简化版）
+  // 设置相关 - 统一接口，StorageManager 自动处理模式
   settings: {
-    get: (options?: { storageMode?: string; cloudConfig?: any }) => Promise<any>
-    save: (settings: any, options?: { storageMode?: string; cloudConfig?: any }) => Promise<{ success: boolean }>
-    reset: (options?: { storageMode?: string; cloudConfig?: any }) => Promise<{ success: boolean }>
-    export: (exportPath: string, options?: { storageMode?: string; cloudConfig?: any }) => Promise<{ success: boolean }>
-    import: (importPath: string, options?: { storageMode?: string; cloudConfig?: any }) => Promise<{ success: boolean }>
+    get: (userId?: string) => Promise<any>
+    save: (userId: string, settings: any) => Promise<{ success: boolean }>
+    reset: (userId?: string) => Promise<{ success: boolean }>
+    export: (userId: string, exportPath: string) => Promise<{ success: boolean }>
+    import: (userId: string, importPath: string) => Promise<{ success: boolean; settings?: any }>
+  }
+
+  // 存储管理 - 动态模式切换
+  storage: {
+    switchToCloud: (userToken: string) => Promise<{ success: boolean; mode: string }>
+    switchToLocal: () => Promise<{ success: boolean; mode: string }>
+    getStatus: () => Promise<any>
+    sync: () => Promise<any>
   }
 }
 
@@ -300,11 +320,4 @@ if (process.contextIsolated) {
 } else {
   // @ts-ignore (define in dts)
   window.electronAPI = api as unknown as ElectronAPI
-}
-
-// 全局类型声明
-declare global {
-  interface Window {
-    electronAPI?: ElectronAPI
-  }
 }

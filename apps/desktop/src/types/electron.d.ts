@@ -108,12 +108,29 @@ export interface ElectronAPI {
   onNotification: (callback: (notification: any) => void) => () => void
   onStatusUpdate: (callback: (status: any) => void) => () => void
   onMenuAction: (action: string, callback: (...args: any[]) => void) => () => void
+  
+  // 设置相关 - 统一接口，StorageManager 自动处理模式
+  settings: {
+    get: (userId?: string) => Promise<any>
+    save: (userId: string, settings: any) => Promise<{ success: boolean }>
+    reset: (userId?: string) => Promise<{ success: boolean }>
+    export: (userId: string, exportPath: string) => Promise<{ success: boolean }>
+    import: (userId: string, importPath: string) => Promise<{ success: boolean; settings?: any }>
+  }
+
+  // 存储管理 - 动态模式切换
+  storage: {
+    switchToCloud: (userToken: string) => Promise<{ success: boolean; mode: string }>
+    switchToLocal: () => Promise<{ success: boolean; mode: string }>
+    getStatus: () => Promise<any>
+    sync: () => Promise<any>
+  }
 }
 
 // 全局类型声明
 declare global {
   interface Window {
-    electronAPI?: ElectronAPI
+    electronAPI: ElectronAPI
   }
 }
 
