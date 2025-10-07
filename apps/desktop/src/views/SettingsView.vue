@@ -581,7 +581,7 @@
             </div>
           </div>
         </section>
-
+      
         <!-- AI 助手设置 -->
         <section :id="'section-ai-assistant'" class="setting-section">
           <h2 class="section-title">
@@ -1319,23 +1319,26 @@ const onStorageModeChange = async () => {
     return
   }
   
-  // 设置存储模式
-  await window.electronAPI.settings.setStorageMode(storageMode.value)
-  console.log('[Settings] Storage mode changed to:', storageMode.value)
-  
-  // 如果切换到云端或混合模式，且已登录，设置云端配置
+  // ✅ 修复：先设置云端配置，再设置存储模式
   const userToken = getUserToken()
+  
   if ((storageMode.value === 'cloud' || storageMode.value === 'hybrid') && userToken) {
+    // 1️⃣ 先设置云端配置
     const cloudConfig = {
       apiEndpoint: import.meta.env.VITE_API_ENDPOINT || 'http://127.0.0.1:3000/api/v1',
       userToken: userToken
     }
     await window.electronAPI.settings.setCloudConfig(cloudConfig)
-    console.log('[Settings] 云端配置已设置，token:', userToken.substring(0, 10) + '...')
+    console.log('[Settings] ✅ 云端配置已设置，token:', userToken.substring(0, 10) + '...')
+    
+    // 2️⃣ 再设置存储模式
+    await window.electronAPI.settings.setStorageMode(storageMode.value)
+    console.log('[Settings] ✅ 存储模式已切换为:', storageMode.value)
   } else if (storageMode.value === 'local') {
-    // 切换到本地模式，清除云端配置
+    // 本地模式：清除云端配置
     await window.electronAPI.settings.setCloudConfig(null)
-    console.log('[Settings] 已清除云端配置')
+    await window.electronAPI.settings.setStorageMode('local')
+    console.log('[Settings] ✅ 已切换到本地存储模式')
   }
   
   await saveSettings()
@@ -1360,7 +1363,7 @@ const onLoginSuccess = async (user: any) => {
   // 如果是云端或混合模式，设置存储模式
   if (storageMode.value !== 'local') {
     await window.electronAPI.settings.setStorageMode(storageMode.value)
-    initializeStorageManager()
+    console.log('[Settings] ✅ 登录后存储模式已设置为:', storageMode.value)
   }
   
   // 重新加载设置（从云端/混合存储）
@@ -1395,8 +1398,8 @@ const manualSync = async () => {
   try {
     const result = await window.electronAPI.settings.sync()
     if (result.success) {
-      lastSyncTime.value = new Date().toLocaleString()
-      showSuccessNotification('同步成功')
+    lastSyncTime.value = new Date().toLocaleString()
+    showSuccessNotification('同步成功')
       // 重新加载设置
       await loadSettings()
     } else {
@@ -1454,32 +1457,23 @@ const showNotification = (message: string, type: 'success' | 'error' = 'success'
   }, 3000)
 }
 
-// 初始化存储管理器
-const initializeStorageManager = async () => {
-  try {
-    console.log('Initializing storage manager with mode:', storageMode.value)
-  } catch (error) {
-    console.error('Storage manager initialization error:', error)
-  }
-}
-
 // 保存设置
 const saveSettings = async () => {
   // 将响应式对象转换为纯 JSON 对象（避免 IPC 序列化错误）
   const settings = {
     appearance: {
-      theme: theme.value,
-      fontSize: fontSize.value,
+    theme: theme.value,
+    fontSize: fontSize.value,
       colorScheme: selectedColorScheme.value
     },
     ssh: {
       timeout: sshTimeout.value,
-      keepAlive: keepAlive.value,
+    keepAlive: keepAlive.value,
       defaultPort: defaultSSHPort.value
     },
     terminal: {
       fontSize: terminalFontSize.value,
-      cursorStyle: cursorStyle.value,
+    cursorStyle: cursorStyle.value,
       cursorBlink: cursorBlink.value
     },
     aiAssistant: {
@@ -1491,11 +1485,11 @@ const saveSettings = async () => {
     // 转换为纯 JSON，移除响应式代理和不可序列化的对象
     aiProviders: JSON.parse(JSON.stringify(aiProviders.value)),
     advanced: {
-      autoConnect: autoConnect.value,
-      saveCommandHistory: saveCommandHistory.value,
-      developerMode: developerMode.value,
-      storageMode: storageMode.value,
-      syncFrequency: syncFrequency.value
+    autoConnect: autoConnect.value,
+    saveCommandHistory: saveCommandHistory.value,
+    developerMode: developerMode.value,
+    storageMode: storageMode.value,
+    syncFrequency: syncFrequency.value
     },
     storage: {
       mode: storageMode.value
@@ -1509,10 +1503,10 @@ const saveSettings = async () => {
     console.log('[Settings] Settings saved successfully, mode:', storageMode.value)
     
     // 更新主题 Store
-    themeStore.setMode(theme.value)
-    themeStore.setColorScheme(selectedColorScheme.value)
-    themeStore.setFontSize(fontSize.value)
-    
+  themeStore.setMode(theme.value)
+  themeStore.setColorScheme(selectedColorScheme.value)
+  themeStore.setFontSize(fontSize.value)
+  
     // 触发设置更新事件
     window.dispatchEvent(new CustomEvent('settings-updated'))
   } catch (error) {
@@ -1594,12 +1588,12 @@ const loadSettings = async () => {
       } else {
         console.log('[Settings] ⚠️ 数据库中无 AI Providers 配置，使用默认配置')
         // 初始化默认配置
-        aiProviders.value = DEFAULT_PROVIDERS.map(provider => ({
-          ...provider,
-          apiKey: '',
-          enabled: false,
-          isDefault: false
-        }))
+  aiProviders.value = DEFAULT_PROVIDERS.map(provider => ({
+    ...provider,
+    apiKey: '',
+    enabled: false,
+    isDefault: false
+  }))
       }
       
       // 高级设置
@@ -1909,22 +1903,22 @@ const saveAIProviderConfigs = async () => {
       console.log(`[Settings]   - ${provider.id}: ${provider.models?.length || 0} 个模型, ${enabledModelsCount} 个已启用`)
       
       return {
-        id: provider.id,
-        name: provider.name,
-        apiKey: provider.apiKey || '',
-        endpoint: provider.endpoint,
-        enabled: provider.enabled,
-        isDefault: provider.isDefault,
+      id: provider.id,
+      name: provider.name,
+      apiKey: provider.apiKey || '',
+      endpoint: provider.endpoint,
+      enabled: provider.enabled,
+      isDefault: provider.isDefault,
         config: provider.config ? JSON.parse(JSON.stringify(provider.config)) : undefined,
-        models: provider.models?.map(model => ({
-          id: model.id,
-          name: model.name,
-          description: model.description,
-          providerId: model.providerId,
-          contextWindow: model.contextWindow,
-          capabilities: model.capabilities,
-          price: model.price,
-          recommended: model.recommended,
+      models: provider.models?.map(model => ({
+        id: model.id,
+        name: model.name,
+        description: model.description,
+        providerId: model.providerId,
+        contextWindow: model.contextWindow,
+        capabilities: model.capabilities,
+        price: model.price,
+        recommended: model.recommended,
           // 只有明确为 true 才保存为 true，否则为 false
           enabled: model.enabled === true
         }))
@@ -1972,28 +1966,33 @@ onMounted(async () => {
   // 加载设置（包括 AI Providers）
   await loadSettings()
   
-  // 应用存储模式（从设置中加载）
-  console.log('[Settings] 当前存储模式:', storageMode.value)
-  await window.electronAPI.settings.setStorageMode(storageMode.value)
-  
-  // 如果是云端或混合模式，且用户已登录，设置云端配置
+  // ✅ 修复：先设置云端配置，再设置存储模式（避免自动降级）
   const userToken = getUserToken()
+  console.log('[Settings] 当前存储模式:', storageMode.value, ', 已登录:', !!userToken)
+  
   if ((storageMode.value === 'cloud' || storageMode.value === 'hybrid') && userToken) {
+    // 1️⃣ 先设置云端配置
     const cloudConfig = {
       apiEndpoint: import.meta.env.VITE_API_ENDPOINT || 'http://127.0.0.1:3000/api/v1',
       userToken: userToken
     }
     await window.electronAPI.settings.setCloudConfig(cloudConfig)
-    console.log('[Settings] 云端配置已设置，存储模式:', storageMode.value, ', token:', userToken.substring(0, 10) + '...')
+    console.log('[Settings] ✅ 云端配置已设置，token:', userToken.substring(0, 10) + '...')
+    
+    // 2️⃣ 再设置存储模式
+    await window.electronAPI.settings.setStorageMode(storageMode.value)
+    console.log('[Settings] ✅ 存储模式已设置为:', storageMode.value)
   } else if (storageMode.value === 'local') {
+    // 本地模式：清除云端配置
     await window.electronAPI.settings.setCloudConfig(null)
-    console.log('[Settings] 本地存储模式')
-  } else {
-    // 用户选择了云端/混合模式但未登录
-    console.warn('[Settings] 存储模式为', storageMode.value, '但用户未登录，降级到本地存储')
-    storageMode.value = 'local'
     await window.electronAPI.settings.setStorageMode('local')
+    console.log('[Settings] ✅ 本地存储模式已启用')
+  } else {
+    // 用户选择了云端/混合模式但未登录，降级到本地
+    console.warn('[Settings] ⚠️ 存储模式为', storageMode.value, '但用户未登录，降级到本地存储')
+    storageMode.value = 'local'
     await window.electronAPI.settings.setCloudConfig(null)
+    await window.electronAPI.settings.setStorageMode('local')
   }
   
   console.log('SettingsView mounted')
