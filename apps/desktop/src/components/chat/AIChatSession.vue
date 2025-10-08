@@ -205,25 +205,33 @@
       style="width: 400px;"
     >
       <div class="panel-header px-6 py-4 border-b border-vscode-border sticky top-0 bg-vscode-sideBar-background z-10">
-        <h3 class="text-base font-semibold text-vscode-sideBarTitle-foreground flex items-center gap-2">
-          <i class="bi bi-chat-square-text"></i>
-          <span>角色设定</span>
-        </h3>
+        <div class="flex items-center justify-between">
+          <h3 class="text-base font-semibold text-vscode-sideBarTitle-foreground flex items-center gap-2">
+            <i class="bi bi-chat-square-text"></i>
+            <span>角色设定</span>
+          </h3>
+          <button
+            @click="openPromptOptimizer"
+            class="edit-button p-2 rounded-md hover:bg-vscode-list-hoverBackground transition-colors"
+            title="编辑提示词"
+          >
+            <i class="bi bi-pencil-square text-base"></i>
+          </button>
+        </div>
       </div>
 
       <div class="panel-content px-6 py-6">
-        <!-- 系统角色编辑区 -->
+        <!-- 系统角色显示区 -->
         <div class="setting-section mb-6">
           <label class="setting-label text-sm font-medium text-vscode-foreground mb-2 block">
             系统提示词
           </label>
-          <textarea
-            v-model="systemRole"
-            @input="handleSystemRoleChange"
-            placeholder="输入系统提示词，例如：你是一个专业的编程助手..."
-            class="form-textarea w-full px-3 py-2.5 border border-vscode-input-border rounded-md bg-vscode-input-background text-vscode-input-foreground text-sm resize-none focus:outline-none focus:border-vscode-focusBorder transition-colors"
-            rows="10"
-          ></textarea>
+          <div
+            class="prompt-display w-full px-3 py-2.5 border border-vscode-input-border rounded-md bg-vscode-input-background text-vscode-input-foreground text-sm min-h-[200px] whitespace-pre-wrap"
+          >
+            <span v-if="systemRole" class="leading-relaxed">{{ systemRole }}</span>
+            <span v-else class="text-vscode-descriptionForeground opacity-50">暂无系统提示词，点击右上角编辑图标进入提示词优化助手...</span>
+          </div>
         </div>
       </div>
     </div>
@@ -532,13 +540,14 @@ const handleClearMessages = () => {
   }
 }
 
-const handleSystemRoleChange = () => {
-  // 可以在这里触发保存事件
-}
-
 // 打开会话设置（跳转到会话设置页面）
 const openSettings = () => {
   router.push('/session-settings')
+}
+
+// 打开提示词优化助手
+const openPromptOptimizer = () => {
+  router.push('/prompt-optimizer')
 }
 
 // 生命周期

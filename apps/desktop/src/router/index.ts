@@ -65,6 +65,15 @@ const routes: RouteRecordRaw[] = [
     }
   },
   {
+    path: '/prompt-optimizer',
+    name: 'PromptOptimizer',
+    component: () => import('@/views/PromptOptimizerView.vue'),
+    meta: {
+      title: '提示词优化助手',
+      icon: 'bi-stars'
+    }
+  },
+  {
     path: '/about',
     name: 'About',
     component: () => import('@/views/AboutView.vue'),
