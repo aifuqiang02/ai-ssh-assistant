@@ -1,159 +1,387 @@
 <template>
-  <div class="ai-chat-session h-full flex flex-col">
-    <!-- 消息区域 -->
-    <div ref="messagesContainer" class="messages-area flex-1 overflow-y-auto scrollbar-thin">
-      <div class="messages-content p-4">
-        <!-- 空状态 -->
-        <div v-if="messages.length === 0" class="empty-state text-center text-vscode-fg-muted py-8">
-          <div class="empty-icon mb-4">
-            <i class="bi bi-chat-dots text-4xl opacity-50"></i>
+  <div class="ai-chat-session h-full flex">
+    <!-- 主聊天区域 -->
+    <div class="chat-main flex-1 flex flex-col">
+      <!-- 消息区域 -->
+      <div ref="messagesContainer" class="messages-area flex-1 overflow-y-auto scrollbar-thin">
+        <div class="messages-content max-w-4xl mx-auto px-4 py-6">
+          <!-- 空状态 -->
+          <div v-if="messages.length === 0" class="empty-state text-center text-vscode-fg-muted py-12">
+            <div class="empty-icon mb-6">
+              <i class="bi bi-chat-dots text-6xl opacity-30"></i>
+            </div>
+            <p class="text-base font-medium mb-2">{{ emptyStateText || '开始与 AI 助手对话' }}</p>
+            <p v-if="emptyStateSubtext" class="text-sm opacity-75">{{ emptyStateSubtext }}</p>
           </div>
-          <p class="text-sm">{{ emptyStateText || '开始与 AI 助手对话' }}</p>
-          <p v-if="emptyStateSubtext" class="text-xs mt-2 opacity-75">{{ emptyStateSubtext }}</p>
-        </div>
-        
-        <!-- 消息列表 -->
-        <div v-for="message in messages" :key="message.id" class="message mb-4">
-          <div 
-            :class="[
-              'message-bubble p-3 rounded-lg group relative border',
-              message.role === 'user' 
-                ? 'user-message ml-auto bg-vscode-accent border-vscode-accent max-w-3xl' 
-                : 'assistant-message bg-vscode-bg-light border-vscode-border text-vscode-fg'
-            ]"
-          >
-            <!-- 复制按钮 -->
-            <button
-              v-if="message.role === 'assistant' && message.content && showCopyButton"
-              @click="copyMessage(message.content, message.id)"
+          
+          <!-- 消息列表 - 参考 lobe-chat 设计 -->
+          <div v-for="message in messages" :key="message.id" class="message-item mb-6">
+            <div 
               :class="[
-                'copy-button absolute top-2 right-2 p-1.5 rounded transition-opacity',
-                'opacity-0 group-hover:opacity-100',
-                copiedMessageId === message.id 
-                  ? 'bg-green-500/20 text-green-400' 
-                  : 'bg-vscode-bg hover:bg-vscode-bg-lighter text-vscode-fg-muted hover:text-vscode-fg'
+                'message-container flex gap-3',
+                message.role === 'user' ? 'flex-row-reverse' : 'flex-row'
               ]"
-              :title="copiedMessageId === message.id ? '已复制' : '复制内容'"
             >
-              <i 
+              <!-- 头像 -->
+              <div class="message-avatar flex-shrink-0">
+                <div 
+                  :class="[
+                    'avatar w-9 h-9 rounded-full flex items-center justify-center text-sm font-medium',
+                    message.role === 'user' 
+                      ? 'bg-vscode-accent text-white' 
+                      : 'bg-vscode-bg-lighter text-vscode-fg border border-vscode-border'
+                  ]"
+                  :title="message.role === 'user' ? '你' : 'AI 助手'"
+                >
+                  <i :class="message.role === 'user' ? 'bi bi-person-fill' : 'bi bi-robot'"></i>
+                </div>
+              </div>
+
+              <!-- 消息内容容器 -->
+              <div 
                 :class="[
-                  'bi text-xs',
-                  copiedMessageId === message.id ? 'bi-check2' : 'bi-clipboard'
+                  'message-content-wrapper flex-1 min-w-0',
+                  message.role === 'user' ? 'max-w-2xl' : ''
                 ]"
-              ></i>
-            </button>
-            
-            <!-- 消息头部 -->
-            <div class="message-header text-xs font-medium mb-1 opacity-70">
-              {{ message.role === 'user' ? '你' : 'AI 助手' }}
-            </div>
-            
-            <!-- 消息内容 -->
-            <div 
-              v-if="message.role === 'user'"
-              class="message-content whitespace-pre-wrap text-sm pr-8"
-            >
-              {{ message.content }}
-            </div>
-            <!-- AI 消息：流式输出时显示纯文本，完成后渲染 Markdown -->
-            <div 
-              v-else-if="message.streaming"
-              class="message-content whitespace-pre-wrap text-sm pr-8 streaming-text"
-            >
-              {{ message.content }}<span class="cursor-blink">▋</span>
-            </div>
-            <div 
-              v-else
-              class="message-content markdown-content text-sm pr-8"
-              v-html="renderMarkdown(message.content)"
-            ></div>
-            
-            <!-- 时间戳 -->
-            <div class="message-timestamp text-xs opacity-50 mt-2">
-              {{ formatTime(message.timestamp) }}
+              >
+                <!-- 消息头部：名称和时间 -->
+                <div 
+                  :class="[
+                    'message-header flex items-center gap-2 mb-1.5',
+                    message.role === 'user' ? 'justify-end' : 'justify-start'
+                  ]"
+                >
+                  <span class="message-name text-xs font-medium text-vscode-fg opacity-90">
+                    {{ message.role === 'user' ? '你' : (currentModel?.name || 'AI 助手') }}
+                  </span>
+                  <span class="message-time text-xs opacity-50">
+                    {{ formatTime(message.timestamp) }}
+                  </span>
+                </div>
+
+                <!-- 消息气泡 -->
+                <div class="message-bubble-container group relative">
+                  <div 
+                    :class="[
+                      'message-bubble rounded-lg px-4 py-3 relative',
+                      message.role === 'user' 
+                        ? 'bg-vscode-button-background text-white user-bubble' 
+                        : 'bg-vscode-input-background border border-vscode-input-border assistant-bubble'
+                    ]"
+                  >
+                    <!-- 用户消息内容 -->
+                    <div 
+                      v-if="message.role === 'user'"
+                      class="message-text whitespace-pre-wrap break-words text-sm leading-relaxed"
+                    >
+                      {{ message.content }}
+                    </div>
+
+                    <!-- AI 消息：流式输出时显示纯文本 -->
+                    <div 
+                      v-else-if="message.streaming"
+                      class="message-text whitespace-pre-wrap break-words text-sm leading-relaxed streaming-text"
+                    >
+                      {{ message.content }}<span class="cursor-blink ml-0.5">▋</span>
+                    </div>
+
+                    <!-- AI 消息：完成后渲染 Markdown -->
+                    <div 
+                      v-else
+                      class="message-text markdown-content text-sm leading-relaxed"
+                      v-html="renderMarkdown(message.content)"
+                    ></div>
+                  </div>
+
+                  <!-- 消息操作栏 - 仅对 AI 消息显示 -->
+                  <div 
+                    v-if="message.role === 'assistant' && !message.streaming"
+                    class="message-actions mt-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <button
+                      @click="copyMessage(message.content, message.id)"
+                      class="action-button"
+                      :title="copiedMessageId === message.id ? '已复制' : '复制'"
+                    >
+                      <i :class="copiedMessageId === message.id ? 'bi bi-check2' : 'bi bi-clipboard'"></i>
+                    </button>
+                    <button
+                      v-if="showRegenerateButton"
+                      @click="$emit('regenerate', message.id)"
+                      class="action-button"
+                      title="重新生成"
+                    >
+                      <i class="bi bi-arrow-clockwise"></i>
+                    </button>
+                    <button
+                      v-if="showDeleteButton"
+                      @click="$emit('delete-message', message.id)"
+                      class="action-button"
+                      title="删除"
+                    >
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
+      
+      <!-- 输入区域 - 参考 lobe-chat 设计 -->
+      <div class="input-area border-t border-vscode-border bg-vscode-editor-background">
+        <div class="input-container max-w-4xl mx-auto px-4 py-3">
+          <!-- 输入框主体 -->
+          <div class="input-wrapper border border-vscode-input-border rounded-lg bg-vscode-input-background focus-within:border-vscode-focusBorder transition-colors">
+            <!-- 输入编辑器 -->
+            <textarea
+              ref="inputTextarea"
+              v-model="inputMessage"
+              @keydown="handleKeyDown"
+              @input="handleInput"
+              :disabled="isGenerating"
+              :placeholder="inputPlaceholder || '输入消息...'"
+              class="input-editor w-full px-4 py-3 bg-transparent border-none outline-none resize-none text-sm text-vscode-input-foreground placeholder-vscode-input-placeholderForeground"
+              :style="{ height: inputHeight + 'px' }"
+              :rows="1"
+            ></textarea>
+
+            <!-- 操作栏 -->
+            <div class="input-actions flex items-center justify-between px-4 pb-3 pt-1">
+              <!-- 左侧工具 -->
+              <div class="actions-left flex items-center gap-1">
+                <button 
+                  v-if="showClearButton"
+                  @click="handleClearMessages"
+                  class="action-tool-button"
+                  title="清空对话"
+                >
+                  <i class="bi bi-trash"></i>
+                </button>
+                <button 
+                  v-if="showModelSelector"
+                  @click="$emit('open-model-selector')"
+                  class="action-tool-button"
+                  :title="currentModel ? `当前: ${currentModel.name}` : '选择模型'"
+                >
+                  <i class="bi bi-cpu"></i>
+                </button>
+                <button 
+                  v-if="showSettingsButton"
+                  @click="toggleSettings"
+                  class="action-tool-button"
+                  title="会话设置"
+                >
+                  <i class="bi bi-sliders"></i>
+                </button>
+              </div>
+
+              <!-- 右侧：Token 计数和发送按钮 -->
+              <div class="actions-right flex items-center gap-3">
+                <span 
+                  v-if="showTokenCount && inputMessage.trim()"
+                  class="token-hint text-xs text-vscode-descriptionForeground"
+                >
+                  <i class="bi bi-coin text-xs"></i>
+                  ~{{ estimateTokens(inputMessage) }}
+                </span>
+                <button
+                  @click="handleSendMessage"
+                  :disabled="!canSend"
+                  :class="[
+                    'send-button flex items-center gap-1.5 px-4 py-2 rounded-md text-sm font-medium transition-all',
+                    canSend 
+                      ? 'bg-vscode-button-background text-vscode-button-foreground hover:bg-vscode-button-hoverBackground' 
+                      : 'bg-vscode-button-background opacity-40 cursor-not-allowed'
+                  ]"
+                >
+                  <i v-if="isGenerating" class="bi bi-hourglass-split animate-spin text-sm"></i>
+                  <i v-else class="bi bi-send-fill text-sm"></i>
+                  <span>{{ isGenerating ? '生成中' : '发送' }}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 底部提示 -->
+          <div v-if="showFootnote" class="footnote text-center mt-2">
+            <span class="text-xs text-vscode-descriptionForeground opacity-75">
+              按 <kbd class="kbd">Ctrl+Enter</kbd> 发送消息 · AI 可能会犯错，请检查重要信息
+            </span>
+          </div>
+        </div>
+      </div>
     </div>
-    
-    <!-- 输入区域 -->
-    <div class="input-area border-t border-vscode-border p-4">
-      <div class="input-container flex flex-col space-y-2">
-        <div class="input-row flex gap-2">
-          <textarea
-            v-if="multiline"
-            v-model="inputMessage"
-            @keydown.ctrl.enter="handleSendMessage"
-            @keydown.meta.enter="handleSendMessage"
-            :disabled="isGenerating"
-            :placeholder="inputPlaceholder"
-            class="input-field flex-1 resize-none form-input-full"
-            :rows="inputRows"
-          ></textarea>
-          <input
-            v-else
-            v-model="inputMessage"
-            @keyup.enter="handleSendMessage"
-            type="text"
-            :placeholder="inputPlaceholder"
-            :disabled="isGenerating"
-            class="input-field flex-1 px-3 py-2 border rounded-md bg-vscode-bg border-vscode-border text-vscode-fg placeholder-vscode-fg-muted disabled:opacity-50"
-          />
+
+    <!-- 右侧面板：系统角色设定 -->
+    <div 
+      v-if="showSystemRolePanel"
+      class="system-role-panel flex-shrink-0 w-80 border-l border-vscode-border bg-vscode-sideBar-background overflow-y-auto"
+    >
+      <div class="panel-header px-4 py-3 border-b border-vscode-border sticky top-0 bg-vscode-sideBar-background z-10">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-medium text-vscode-sideBarTitle-foreground flex items-center gap-2">
+            <i class="bi bi-chat-square-text"></i>
+            <span>系统提示词</span>
+          </h3>
           <button
-            @click="handleSendMessage"
-            :disabled="!inputMessage.trim() || isGenerating"
-            class="send-button px-4 py-2 bg-vscode-accent text-white rounded-md hover:bg-vscode-accent-hover disabled:opacity-50 flex items-center gap-2"
+            @click="toggleSystemRolePanel"
+            class="panel-close-button"
+            title="关闭面板"
           >
-            <i v-if="isGenerating" class="bi bi-hourglass-split animate-spin"></i>
-            <span>{{ isGenerating ? '生成中...' : '发送' }}</span>
+            <i class="bi bi-x-lg text-xs"></i>
           </button>
         </div>
-        
-        <!-- 工具栏 -->
-        <div v-if="showToolbar" class="toolbar flex items-center justify-between">
-          <div class="toolbar-left flex items-center space-x-2">
-            <button 
-              v-if="showAttachButton"
-              class="toolbar-button vscode-icon-button"
-              title="附加文件"
-              @click="$emit('attach-file')"
-            >
-              <i class="bi bi-paperclip"></i>
-            </button>
-            <button 
-              v-if="showClearButton"
-              class="toolbar-button vscode-icon-button"
-              title="清空对话"
-              @click="handleClearMessages"
-            >
-              <i class="bi bi-trash"></i>
-            </button>
+      </div>
+
+      <div class="panel-content px-4 py-4">
+        <!-- 系统角色编辑区 -->
+        <div class="system-role-editor">
+          <div class="editor-label text-xs font-medium text-vscode-foreground mb-2 opacity-70">
+            系统角色设定
           </div>
-          <div class="toolbar-right">
-            <span v-if="inputMessage.trim() && showTokenCount" class="token-count text-xs text-vscode-fg-muted">
-              <i class="bi bi-coin"></i>
-              约 {{ estimateTokens(inputMessage) }} tokens
-            </span>
+          <textarea
+            v-model="systemRole"
+            @input="handleSystemRoleChange"
+            placeholder="输入系统提示词，例如：你是一个专业的编程助手..."
+            class="system-role-textarea w-full px-3 py-2 border border-vscode-input-border rounded-md bg-vscode-input-background text-vscode-input-foreground text-sm resize-none focus:outline-none focus:border-vscode-focusBorder"
+            rows="8"
+          ></textarea>
+          <div class="editor-hint text-xs text-vscode-descriptionForeground mt-2">
+            系统提示词将影响 AI 的行为和回复风格
           </div>
         </div>
-        
-        <!-- 状态信息 -->
-        <div v-if="showStatusInfo && (currentModel || messages.length > 0)" class="status-info flex items-center justify-between text-xs text-vscode-fg-muted">
-          <div class="status-left flex items-center gap-3">
-            <span v-if="currentModel && currentProvider">
-              <i class="bi bi-cpu"></i>
-              {{ currentProvider.name }} - {{ currentModel.name }}
-            </span>
-            <span v-if="sessionName">
-              <i class="bi bi-bookmark"></i>
-              会话: {{ sessionName }}
-            </span>
-            <span v-if="messages.length > 0">
-              <i class="bi bi-chat-dots"></i>
-              {{ messages.length }} 条消息
-            </span>
+
+        <!-- 预设模板 -->
+        <div class="role-presets mt-6">
+          <div class="presets-label text-xs font-medium text-vscode-foreground mb-2 opacity-70">
+            预设模板
           </div>
+          <div class="presets-list space-y-2">
+            <button
+              v-for="preset in rolePresets"
+              :key="preset.id"
+              @click="applyPreset(preset)"
+              class="preset-button w-full text-left px-3 py-2 rounded-md border border-vscode-input-border hover:bg-vscode-list-hoverBackground transition-colors"
+            >
+              <div class="preset-name text-sm font-medium text-vscode-foreground mb-0.5">
+                {{ preset.name }}
+              </div>
+              <div class="preset-desc text-xs text-vscode-descriptionForeground line-clamp-2">
+                {{ preset.description }}
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 会话设置抽屉 -->
+    <div 
+      v-if="showSettingsDrawer"
+      class="settings-drawer fixed inset-0 z-50 flex items-end justify-center bg-black bg-opacity-50"
+      @click.self="closeSettings"
+    >
+      <div 
+        class="drawer-content bg-vscode-editor-background rounded-t-xl w-full max-w-4xl max-h-[80vh] overflow-hidden shadow-2xl"
+        @click.stop
+      >
+        <!-- 抽屉头部 -->
+        <div class="drawer-header px-6 py-4 border-b border-vscode-border flex items-center justify-between">
+          <h2 class="text-lg font-medium text-vscode-foreground">会话设置</h2>
+          <button
+            @click="closeSettings"
+            class="drawer-close-button"
+          >
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+
+        <!-- 抽屉内容 -->
+        <div class="drawer-body px-6 py-6 overflow-y-auto max-h-[calc(80vh-120px)]">
+          <div class="settings-grid grid grid-cols-2 gap-6">
+            <!-- 模型设置 -->
+            <div class="setting-section">
+              <h3 class="section-title">模型配置</h3>
+              <div class="setting-item">
+                <label class="setting-label">AI 服务商</label>
+                <div class="setting-value text-vscode-foreground">
+                  {{ currentProvider?.name || '未选择' }}
+                </div>
+              </div>
+              <div class="setting-item">
+                <label class="setting-label">AI 模型</label>
+                <div class="setting-value text-vscode-foreground">
+                  {{ currentModel?.name || '未选择' }}
+                </div>
+              </div>
+            </div>
+
+            <!-- 参数设置 -->
+            <div class="setting-section">
+              <h3 class="section-title">模型参数</h3>
+              <div class="setting-item">
+                <label class="setting-label">Temperature</label>
+                <input 
+                  type="range" 
+                  min="0" 
+                  max="2" 
+                  step="0.1"
+                  v-model="temperature"
+                  class="setting-range"
+                />
+                <div class="setting-value-display">{{ temperature }}</div>
+              </div>
+              <div class="setting-item">
+                <label class="setting-label">Max Tokens</label>
+                <input 
+                  type="number"
+                  v-model="maxTokens"
+                  class="setting-input"
+                  min="1"
+                  max="128000"
+                />
+              </div>
+            </div>
+
+            <!-- 会话信息 -->
+            <div class="setting-section col-span-2">
+              <h3 class="section-title">会话信息</h3>
+              <div class="setting-item">
+                <label class="setting-label">会话名称</label>
+                <input 
+                  type="text"
+                  v-model="sessionNameInput"
+                  @blur="handleSessionNameChange"
+                  placeholder="输入会话名称"
+                  class="setting-input"
+                />
+              </div>
+              <div class="setting-item">
+                <label class="setting-label">消息数量</label>
+                <div class="setting-value text-vscode-foreground">
+                  {{ messages.length }} 条消息
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 抽屉底部 -->
+        <div class="drawer-footer px-6 py-4 border-t border-vscode-border flex items-center justify-end gap-3">
+          <button
+            @click="closeSettings"
+            class="footer-button footer-button-secondary"
+          >
+            取消
+          </button>
+          <button
+            @click="saveSettings"
+            class="footer-button footer-button-primary"
+          >
+            保存设置
+          </button>
         </div>
       </div>
     </div>
@@ -161,8 +389,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, computed, onMounted, onBeforeUnmount, watch } from 'vue'
-import { chatCompletion, estimateRequestTokens, type ChatMessage as APIChatMessage } from '../../services/ai-api.service'
+import { ref, nextTick, computed, onMounted, watch } from 'vue'
+import { chatCompletion, type ChatMessage as APIChatMessage } from '../../services/ai-api.service'
 import type { AIProvider, AIModel } from '../../types/ai-providers'
 import { settingsService } from '../../services/settings.service'
 import { marked } from 'marked'
@@ -177,45 +405,47 @@ export interface Message {
   streaming?: boolean
 }
 
+// 角色预设接口
+interface RolePreset {
+  id: string
+  name: string
+  description: string
+  prompt: string
+}
+
 // 组件属性
 interface Props {
-  // 消息数据
   messages?: Message[]
-  // 当前选择的模型
   currentProvider?: AIProvider | null
   currentModel?: AIModel | null
-  // 会话信息
   sessionName?: string
   sessionId?: string
-  // UI 配置
-  multiline?: boolean
-  inputRows?: number
   inputPlaceholder?: string
   emptyStateText?: string
   emptyStateSubtext?: string
-  // 功能开关
   showCopyButton?: boolean
-  showToolbar?: boolean
-  showAttachButton?: boolean
+  showRegenerateButton?: boolean
+  showDeleteButton?: boolean
   showClearButton?: boolean
   showTokenCount?: boolean
-  showStatusInfo?: boolean
-  // 自动滚动
+  showFootnote?: boolean
+  showModelSelector?: boolean
+  showSettingsButton?: boolean
   autoScroll?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   messages: () => [],
-  multiline: false,
-  inputRows: 3,
   inputPlaceholder: '输入消息...',
   emptyStateText: '开始与 AI 助手对话',
   showCopyButton: true,
-  showToolbar: true,
-  showAttachButton: false,
+  showRegenerateButton: true,
+  showDeleteButton: false,
   showClearButton: true,
   showTokenCount: true,
-  showStatusInfo: true,
+  showFootnote: true,
+  showModelSelector: true,
+  showSettingsButton: true,
   autoScroll: true
 })
 
@@ -223,15 +453,30 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
   'send-message': [content: string]
   'clear-messages': []
-  'attach-file': []
+  'regenerate': [messageId: number]
+  'delete-message': [messageId: number]
   'update:messages': [messages: Message[]]
+  'open-model-selector': []
+  'update:session-name': [name: string]
 }>()
 
 // 响应式数据
 const inputMessage = ref('')
+const inputHeight = ref(44)
 const isGenerating = ref(false)
 const messagesContainer = ref<HTMLElement | null>(null)
+const inputTextarea = ref<HTMLTextAreaElement | null>(null)
 const copiedMessageId = ref<number | null>(null)
+
+// UI 状态
+const showSystemRolePanel = ref(false)
+const showSettingsDrawer = ref(false)
+
+// 系统角色和设置
+const systemRole = ref('')
+const temperature = ref(0.7)
+const maxTokens = ref(4096)
+const sessionNameInput = ref(props.sessionName || '')
 
 // 内部消息列表
 const internalMessages = ref<Message[]>([...props.messages])
@@ -241,44 +486,82 @@ watch(() => props.messages, (newMessages) => {
   internalMessages.value = [...newMessages]
 }, { deep: true })
 
+// 监听会话名称变化
+watch(() => props.sessionName, (newName) => {
+  sessionNameInput.value = newName || ''
+})
+
 // 计算属性
 const messages = computed(() => internalMessages.value)
+const canSend = computed(() => inputMessage.value.trim() && !isGenerating.value)
+
+// 角色预设模板
+const rolePresets: RolePreset[] = [
+  {
+    id: 'default',
+    name: '通用助手',
+    description: '友好、专业的 AI 助手',
+    prompt: '你是一个友好、专业的 AI 助手。请用清晰、准确的语言回答用户的问题。'
+  },
+  {
+    id: 'programmer',
+    name: '编程助手',
+    description: '专业的编程和技术顾问',
+    prompt: '你是一个专业的编程助手。擅长各种编程语言和开发工具，能提供高质量的代码示例和技术建议。'
+  },
+  {
+    id: 'translator',
+    name: '翻译助手',
+    description: '专业的中英文翻译',
+    prompt: '你是一个专业的翻译助手。请提供准确、流畅的翻译，并保持原文的语气和风格。'
+  },
+  {
+    id: 'writer',
+    name: '写作助手',
+    description: '创意写作和文案优化',
+    prompt: '你是一个创意写作助手。擅长各类文体写作，能够提供优质的文案建议和内容优化。'
+  }
+]
 
 // Markdown 渲染配置
 const renderer = new marked.Renderer()
-renderer.code = (code: string | any, language: string | any) => {
-  // 确保 code 和 language 都是字符串
-  const codeStr = String(code || '')
-  const langStr = String(language || '')
-  
+renderer.code = ({ text, lang }: { text: string; lang?: string }) => {
+  const codeStr = String(text || '')
+  const langStr = String(lang || '')
   const validLanguage = hljs.getLanguage(langStr) ? langStr : 'plaintext'
   const highlighted = hljs.highlight(codeStr, { language: validLanguage }).value
-  return `<pre class="hljs bg-vscode-bg-darker rounded p-3 my-2 overflow-x-auto"><code class="language-${validLanguage}">${highlighted}</code></pre>`
+  return `<pre class="hljs-code-block"><code class="language-${validLanguage}">${highlighted}</code></pre>`
 }
 
-marked.setOptions({
+marked.use({
   renderer,
   breaks: true,
-  gfm: true
+  gfm: true,
+  async: false
 })
 
 // 方法
 const renderMarkdown = (content: string): string => {
   try {
-    // 确保 content 是字符串
     const contentStr = String(content || '')
-    if (!contentStr.trim()) {
-      return contentStr
-    }
-    return marked(contentStr)
+    if (!contentStr.trim()) return contentStr
+    const result = marked(contentStr)
+    return typeof result === 'string' ? result : contentStr
   } catch (error) {
     console.error('Markdown rendering error:', error)
-    // 返回原始内容，但进行 HTML 转义以防止 XSS
     return String(content || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
   }
 }
 
 const formatTime = (date: Date): string => {
+  const now = new Date()
+  const diff = now.getTime() - date.getTime()
+  const minutes = Math.floor(diff / 60000)
+  
+  if (minutes < 1) return '刚刚'
+  if (minutes < 60) return `${minutes}分钟前`
+  if (minutes < 1440) return `${Math.floor(minutes / 60)}小时前`
+  
   return date.toLocaleTimeString('zh-CN', { 
     hour: '2-digit', 
     minute: '2-digit' 
@@ -287,7 +570,6 @@ const formatTime = (date: Date): string => {
 
 const scrollToBottom = async () => {
   if (!props.autoScroll) return
-  
   await nextTick()
   if (messagesContainer.value) {
     messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight
@@ -310,13 +592,29 @@ const estimateTokens = (text: string): number => {
   return Math.ceil(text.length / 4)
 }
 
+// 输入框自动调整高度
+const handleInput = () => {
+  if (!inputTextarea.value) return
+  
+  inputTextarea.value.style.height = 'auto'
+  const scrollHeight = inputTextarea.value.scrollHeight
+  inputHeight.value = Math.min(Math.max(scrollHeight, 44), 200)
+}
+
+const handleKeyDown = (e: KeyboardEvent) => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+    e.preventDefault()
+    handleSendMessage()
+  }
+}
+
 const handleSendMessage = async () => {
-  if (!inputMessage.value.trim() || isGenerating.value) return
+  if (!canSend.value) return
   
   const content = inputMessage.value.trim()
   inputMessage.value = ''
+  inputHeight.value = 44
   
-  // 发送消息事件
   emit('send-message', content)
   
   // 如果没有外部处理，则内部处理
@@ -326,7 +624,6 @@ const handleSendMessage = async () => {
 }
 
 const sendMessageInternal = async (content: string) => {
-  // 检查是否选择了模型
   if (!props.currentProvider || !props.currentModel) {
     const tipMessage: Message = {
       id: Date.now(),
@@ -373,13 +670,12 @@ const sendMessageInternal = async (content: string) => {
         content: msg.content
       }))
     
-    // 添加当前用户消息
-    apiMessages.push({
-      role: 'user',
-      content
-    })
+    // 添加系统角色（如果有）
+    const messages: APIChatMessage[] = systemRole.value 
+      ? [{ role: 'system', content: systemRole.value }, ...apiMessages, { role: 'user', content }]
+      : [...apiMessages, { role: 'user', content }]
     
-    // ✅ 使用 settingsService 获取 API 密钥配置（自动处理 userId）
+    // 获取 API 密钥配置
     const settings = await settingsService.getSettings()
     const configs = settings?.aiProviders || []
     const providerConfig = configs.find((p: any) => p.id === props.currentProvider?.id)
@@ -388,7 +684,6 @@ const sendMessageInternal = async (content: string) => {
       throw new Error('未找到 API 密钥配置')
     }
     
-    // 创建包含 API Key 的 provider 对象
     const providerWithApiKey = {
       ...props.currentProvider,
       apiKey: providerConfig.apiKey
@@ -399,12 +694,13 @@ const sendMessageInternal = async (content: string) => {
       providerWithApiKey,
       props.currentModel,
       {
-        messages: apiMessages,
-        stream: true
+        messages,
+        stream: true,
+        temperature: temperature.value,
+        maxTokens: maxTokens.value
       },
       (chunk) => {
         assistantMessage.content += chunk.content || ''
-        // 强制触发响应式更新
         internalMessages.value = [...internalMessages.value]
         scrollToBottom()
       }
@@ -428,10 +724,48 @@ const sendMessageInternal = async (content: string) => {
 }
 
 const handleClearMessages = () => {
-  emit('clear-messages')
-  if (props.messages.length === 0) {
-    internalMessages.value = []
-    emit('update:messages', internalMessages.value)
+  if (confirm('确定要清空所有消息吗？')) {
+    emit('clear-messages')
+    if (props.messages.length === 0) {
+      internalMessages.value = []
+      emit('update:messages', internalMessages.value)
+    }
+  }
+}
+
+// 系统角色面板
+const toggleSystemRolePanel = () => {
+  showSystemRolePanel.value = !showSystemRolePanel.value
+}
+
+const handleSystemRoleChange = () => {
+  // 可以在这里触发保存事件
+}
+
+const applyPreset = (preset: RolePreset) => {
+  systemRole.value = preset.prompt
+}
+
+// 设置抽屉
+const toggleSettings = () => {
+  showSettingsDrawer.value = !showSettingsDrawer.value
+}
+
+const closeSettings = () => {
+  showSettingsDrawer.value = false
+}
+
+const saveSettings = () => {
+  // 保存设置逻辑
+  if (sessionNameInput.value !== props.sessionName) {
+    emit('update:session-name', sessionNameInput.value)
+  }
+  closeSettings()
+}
+
+const handleSessionNameChange = () => {
+  if (sessionNameInput.value !== props.sessionName) {
+    emit('update:session-name', sessionNameInput.value)
   }
 }
 
@@ -440,7 +774,6 @@ onMounted(() => {
   scrollToBottom()
 })
 
-// 监听消息变化自动滚动
 watch(messages, () => {
   scrollToBottom()
 }, { deep: true })
@@ -449,36 +782,60 @@ watch(messages, () => {
 <style scoped>
 .ai-chat-session {
   background: var(--vscode-editor-background);
+  color: var(--vscode-editor-foreground);
 }
 
+/* 消息区域 */
 .messages-area {
   background: var(--vscode-editor-background);
 }
 
+.message-item {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 头像样式 */
+.message-avatar .avatar {
+  transition: transform 0.2s;
+}
+
+.message-avatar .avatar:hover {
+  transform: scale(1.05);
+}
+
+/* 消息气泡 */
 .message-bubble {
   word-wrap: break-word;
   word-break: break-word;
+  transition: box-shadow 0.2s;
 }
 
-.user-message {
+.user-bubble {
   background: var(--vscode-button-background);
-  color: #ffffff !important;
+  color: var(--vscode-button-foreground);
 }
 
-.user-message * {
-  color: #ffffff !important;
+.user-bubble * {
+  color: var(--vscode-button-foreground) !important;
 }
 
-.assistant-message {
+.assistant-bubble {
   background: var(--vscode-input-background);
-  border: 1px solid var(--vscode-input-border);
-  color: var(--vscode-editor-foreground);
+  border-color: var(--vscode-input-border);
 }
 
-.copy-button {
-  font-size: 12px;
-}
-
+/* 流式输出光标 */
 .streaming-text .cursor-blink {
   animation: blink 1s infinite;
 }
@@ -488,71 +845,237 @@ watch(messages, () => {
   51%, 100% { opacity: 0; }
 }
 
-.input-field {
+/* 消息操作按钮 */
+.action-button {
+  padding: 0.375rem 0.5rem;
+  border-radius: 0.375rem;
+  background: transparent;
+  border: none;
+  color: var(--vscode-foreground);
+  opacity: 0.6;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.875rem;
+}
+
+.action-button:hover {
+  opacity: 1;
+  background: var(--vscode-toolbar-hoverBackground);
+}
+
+/* 输入区域 */
+.input-editor {
+  min-height: 44px;
+  max-height: 200px;
+  line-height: 1.5;
+}
+
+.input-editor::placeholder {
+  color: var(--vscode-input-placeholderForeground);
+}
+
+/* 操作工具按钮 */
+.action-tool-button {
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  background: transparent;
+  border: none;
+  color: var(--vscode-foreground);
+  opacity: 0.7;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 1rem;
+}
+
+.action-tool-button:hover {
+  opacity: 1;
+  background: var(--vscode-toolbar-hoverBackground);
+}
+
+/* 发送按钮 */
+.send-button {
+  transition: all 0.2s;
+}
+
+.send-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Keyboard hint */
+.kbd {
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  background: var(--vscode-input-background);
+  border: 1px solid var(--vscode-input-border);
+  font-size: 0.75rem;
+  font-family: monospace;
+}
+
+/* 系统角色面板 */
+.system-role-panel {
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+}
+
+.panel-close-button {
+  padding: 0.375rem;
+  border-radius: 0.25rem;
+  background: transparent;
+  border: none;
+  color: var(--vscode-foreground);
+  opacity: 0.7;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.panel-close-button:hover {
+  opacity: 1;
+  background: var(--vscode-toolbar-hoverBackground);
+}
+
+.system-role-textarea {
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+.preset-button {
+  background: var(--vscode-input-background);
+  transition: all 0.2s;
+}
+
+.preset-button:hover {
+  background: var(--vscode-list-hoverBackground);
+  border-color: var(--vscode-focusBorder);
+}
+
+/* 设置抽屉 */
+.settings-drawer {
+  animation: fadeIn 0.2s ease-out;
+}
+
+.drawer-content {
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.drawer-close-button {
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  background: transparent;
+  border: none;
+  color: var(--vscode-foreground);
+  opacity: 0.7;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.drawer-close-button:hover {
+  opacity: 1;
+  background: var(--vscode-toolbar-hoverBackground);
+}
+
+.section-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--vscode-foreground);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--vscode-input-border);
+}
+
+.setting-item {
+  margin-bottom: 1rem;
+}
+
+.setting-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--vscode-foreground);
+  opacity: 0.8;
+  margin-bottom: 0.5rem;
+}
+
+.setting-value {
+  font-size: 0.875rem;
+}
+
+.setting-input,
+.setting-range {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
   background: var(--vscode-input-background);
   border: 1px solid var(--vscode-input-border);
   color: var(--vscode-input-foreground);
+  font-size: 0.875rem;
 }
 
-.input-field:focus {
+.setting-input:focus,
+.setting-range:focus {
   outline: none;
   border-color: var(--vscode-focusBorder);
 }
 
-.send-button {
+.setting-value-display {
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--vscode-descriptionForeground);
+}
+
+.footer-button {
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.footer-button-secondary {
+  background: transparent;
+  color: var(--vscode-foreground);
+  border: 1px solid var(--vscode-input-border);
+}
+
+.footer-button-secondary:hover {
+  background: var(--vscode-toolbar-hoverBackground);
+}
+
+.footer-button-primary {
   background: var(--vscode-button-background);
   color: var(--vscode-button-foreground);
 }
 
-.send-button:hover:not(:disabled) {
+.footer-button-primary:hover {
   background: var(--vscode-button-hoverBackground);
 }
 
-.send-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.toolbar-button {
-  padding: 6px;
-  border-radius: 4px;
-  background: transparent;
-  border: none;
-  color: var(--vscode-icon-foreground);
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.toolbar-button:hover {
-  background: var(--vscode-toolbar-hoverBackground);
-}
-
-.status-info {
-  font-size: 11px;
-  color: var(--vscode-descriptionForeground);
-}
-
-.token-count {
-  font-size: 11px;
-  color: var(--vscode-descriptionForeground);
-}
-
 /* Markdown 样式 */
-.markdown-content :deep(pre) {
+.markdown-content :deep(pre.hljs-code-block) {
   background: var(--vscode-textCodeBlock-background);
   border: 1px solid var(--vscode-input-border);
-  border-radius: 4px;
-  padding: 12px;
-  margin: 8px 0;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin: 0.75rem 0;
   overflow-x: auto;
 }
 
 .markdown-content :deep(code) {
   background: var(--vscode-textCodeBlock-background);
-  padding: 2px 4px;
-  border-radius: 3px;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
   font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-  font-size: 0.9em;
+  font-size: 0.875em;
 }
 
 .markdown-content :deep(pre code) {
@@ -563,25 +1086,90 @@ watch(messages, () => {
 .markdown-content :deep(blockquote) {
   border-left: 4px solid var(--vscode-textBlockQuote-border);
   background: var(--vscode-textBlockQuote-background);
-  margin: 8px 0;
-  padding: 8px 16px;
+  margin: 0.75rem 0;
+  padding: 0.75rem 1rem;
+  border-radius: 0.375rem;
 }
 
 .markdown-content :deep(table) {
   border-collapse: collapse;
   width: 100%;
-  margin: 8px 0;
+  margin: 0.75rem 0;
+  border-radius: 0.375rem;
+  overflow: hidden;
 }
 
 .markdown-content :deep(th),
 .markdown-content :deep(td) {
   border: 1px solid var(--vscode-input-border);
-  padding: 8px 12px;
+  padding: 0.5rem 0.75rem;
   text-align: left;
 }
 
 .markdown-content :deep(th) {
   background: var(--vscode-input-background);
   font-weight: 600;
+}
+
+.markdown-content :deep(p) {
+  margin: 0.5rem 0;
+  line-height: 1.6;
+}
+
+.markdown-content :deep(ul),
+.markdown-content :deep(ol) {
+  margin: 0.5rem 0;
+  padding-left: 1.5rem;
+}
+
+.markdown-content :deep(li) {
+  margin: 0.25rem 0;
+}
+
+.markdown-content :deep(h1),
+.markdown-content :deep(h2),
+.markdown-content :deep(h3),
+.markdown-content :deep(h4),
+.markdown-content :deep(h5),
+.markdown-content :deep(h6) {
+  margin: 1rem 0 0.5rem;
+  font-weight: 600;
+}
+
+.markdown-content :deep(a) {
+  color: var(--vscode-textLink-foreground);
+  text-decoration: none;
+}
+
+.markdown-content :deep(a:hover) {
+  text-decoration: underline;
+}
+
+/* 工具提示 */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 滚动条样式 */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: var(--vscode-scrollbarSlider-background);
+  border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: var(--vscode-scrollbarSlider-hoverBackground);
 }
 </style>
