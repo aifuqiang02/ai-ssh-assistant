@@ -184,8 +184,8 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
-import { storeToRefs } from 'pinia'
 import { useTheme } from '../../composables/useTheme'
+import { settingsService } from '../../services/settings.service'
 import type { AIProvider, AIModel as AIProviderModel } from '../../types/ai-providers'
 
 // 定义 emits
@@ -226,26 +226,28 @@ const currentModel = ref<TitleBarModel>({
 // 可用模型列表（从实际配置加载）
 const availableModels = ref<TitleBarModel[]>([])
 
-// 从 localStorage 加载可用模型
-const loadAvailableModels = () => {
+// 从数据库加载可用模型
+const loadAvailableModels = async () => {
   try {
     console.log('=== AppTitleBar 加载可用模型 ===')
-    const configsStr = localStorage.getItem('aiProviderConfigs')
     
-    if (!configsStr) {
-      console.warn('未找到 AI Provider 配置')
+    // ✅ 使用 settingsService 获取配置（自动处理 userId）
+    const settings = await settingsService.getSettings()
+    
+    if (!settings?.aiProviders || settings.aiProviders.length === 0) {
+      console.warn('[AppTitleBar] 未找到 AI Provider 配置')
       availableModels.value = []
       return
     }
     
-    const configs: AIProvider[] = JSON.parse(configsStr)
+    const configs: AIProvider[] = settings.aiProviders
     const models: TitleBarModel[] = []
     
     // 遍历所有 provider，提取已启用的模型
     for (const provider of configs) {
-      // 跳过未配置 API Key 的 provider（Ollama 除外）
-      if (!provider.apiKey && provider.id !== 'ollama') {
-        console.log(`跳过未配置 API Key 的 provider: ${provider.name}`)
+      // 跳过未启用或未配置 API Key 的 provider（Ollama 除外）
+      if (!provider.enabled || (!provider.apiKey && provider.id !== 'ollama')) {
+        console.log(`[AppTitleBar] 跳过未启用/未配置的 provider: ${provider.name}`)
         continue
       }
       
@@ -253,7 +255,7 @@ const loadAvailableModels = () => {
         continue
       }
       
-      // 只添加已启用的模型
+      // 只添加已启用的模型（enabled !== false 表示启用）
       for (const model of provider.models) {
         if (model.enabled !== false) {
           // 生成短名称（截取前15个字符）
@@ -268,17 +270,19 @@ const loadAvailableModels = () => {
             providerId: provider.id,
             providerName: provider.name
           })
+          
+          console.log(`[AppTitleBar] 添加模型: ${provider.name} - ${model.name} (enabled: ${model.enabled})`)
         }
       }
     }
     
     availableModels.value = models
-    console.log(`已加载 ${models.length} 个可用模型`)
+    console.log(`[AppTitleBar] ✅ 已加载 ${models.length} 个可用模型`)
     
     // 加载当前选择的模型
     loadCurrentModel()
   } catch (error) {
-    console.error('加载可用模型失败:', error)
+    console.error('[AppTitleBar] ❌ 加载可用模型失败:', error)
     availableModels.value = []
   }
 }
@@ -307,8 +311,8 @@ const loadCurrentModel = () => {
 
 // 监听配置变化
 const handleStorageChange = (e: StorageEvent) => {
-  if (e.key === 'aiProviderConfigs' || e.key === 'selectedAIModel') {
-    console.log('🔄 [storage] 检测到配置变化，重新加载模型列表')
+  if (e.key === 'selectedAIModel') {
+    console.log('🔄 [storage] 检测到模型选择变化，重新加载')
     loadAvailableModels()
   }
 }
@@ -323,17 +327,24 @@ const handleProviderConfigsUpdated = () => {
   loadAvailableModels()
 }
 
+const handleSettingsUpdated = () => {
+  console.log('🔄 [settings-updated] 检测到设置更新，重新加载模型')
+  loadAvailableModels()
+}
+
 onMounted(() => {
   loadAvailableModels()
   window.addEventListener('storage', handleStorageChange)
   window.addEventListener('ai-model-changed', handleModelChange)
   window.addEventListener('ai-provider-configs-updated', handleProviderConfigsUpdated)
+  window.addEventListener('settings-updated', handleSettingsUpdated)
 })
 
 onBeforeUnmount(() => {
   window.removeEventListener('storage', handleStorageChange)
   window.removeEventListener('ai-model-changed', handleModelChange)
   window.removeEventListener('ai-provider-configs-updated', handleProviderConfigsUpdated)
+  window.removeEventListener('settings-updated', handleSettingsUpdated)
 })
 
 // 当前主题标签

@@ -132,6 +132,7 @@ import { FitAddon } from '@xterm/addon-fit'
 import { WebLinksAddon } from '@xterm/addon-web-links'
 import '@xterm/xterm/css/xterm.css'
 import { sshService } from '@/services/ssh.service'
+import { settingsService } from '@/services/settings.service'
 import { findNode } from '@/utils/tree-utils'
 import AIChatSessionWithTools from '@/components/chat/AIChatSessionWithTools.vue'
 import type { AIProvider, AIModel } from '@/types/ai-providers'
@@ -492,16 +493,22 @@ const toggleAIAssistant = () => {
 }
 
 // 加载AI模型配置
-const loadAIModelConfiguration = () => {
+const loadAIModelConfiguration = async () => {
   try {
     const saved = localStorage.getItem('selectedAIModel')
-    if (!saved) return
+    if (!saved) {
+      console.log('[TerminalView] 未找到已选择的模型')
+      return
+    }
     
     const savedModel = JSON.parse(saved)
-    const configsStr = localStorage.getItem('aiProviderConfigs')
+    console.log('[TerminalView] 尝试加载模型:', savedModel)
     
-    if (configsStr && savedModel) {
-      const configs = JSON.parse(configsStr)
+    // ✅ 使用 settingsService 获取配置（自动处理 userId）
+    const settings = await settingsService.getSettings()
+    const configs = settings?.aiProviders || []
+    
+    if (configs.length > 0 && savedModel) {
       const provider = configs.find((p: AIProvider) => p.id === savedModel.providerId)
       
       if (provider) {
@@ -509,12 +516,28 @@ const loadAIModelConfiguration = () => {
         if (model) {
           currentProvider.value = provider
           currentModel.value = model
+          console.log('[TerminalView] ✅ 已加载模型:', provider.name, '-', model.name)
+        } else {
+          console.warn('[TerminalView] ⚠️ 未找到模型:', savedModel.modelId)
         }
+      } else {
+        console.warn('[TerminalView] ⚠️ 未找到服务商:', savedModel.providerId)
       }
     }
   } catch (error) {
-    console.error('AI模型配置加载失败:', error)
+    console.error('[TerminalView] ❌ AI模型配置加载失败:', error)
   }
+}
+
+// 监听模型切换事件
+const handleModelChanged = () => {
+  console.log('[TerminalView] 🔄 检测到模型切换，重新加载')
+  loadAIModelConfiguration()
+}
+
+const handleSettingsUpdated = () => {
+  console.log('[TerminalView] 🔄 检测到设置更新，重新加载模型')
+  loadAIModelConfiguration()
 }
 
 // 注意：移除了 handleAISendMessage, handleAIClearMessages, handleAIUpdateMessages
@@ -578,6 +601,11 @@ onMounted(async () => {
   
   // 加载AI模型配置
   loadAIModelConfiguration()
+  
+  // 监听模型切换和设置更新事件
+  window.addEventListener('ai-model-changed', handleModelChanged)
+  window.addEventListener('settings-updated', handleSettingsUpdated)
+  window.addEventListener('ai-provider-configs-updated', handleSettingsUpdated)
 })
 
 // 当组件被 KeepAlive 激活时
@@ -603,6 +631,11 @@ onDeactivated(() => {
 onBeforeUnmount(() => {
   // 移除窗口大小监听器
   window.removeEventListener('resize', handleResize)
+  
+  // 移除模型切换事件监听
+  window.removeEventListener('ai-model-changed', handleModelChanged)
+  window.removeEventListener('settings-updated', handleSettingsUpdated)
+  window.removeEventListener('ai-provider-configs-updated', handleSettingsUpdated)
   
   // 清理事件监听器
   cleanupListeners()

@@ -35,12 +35,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, computed } from 'vue'
+import { ref, onMounted, onBeforeUnmount, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import AIChatSession, { type Message } from '../components/chat/AIChatSession.vue'
 import type { AIProvider, AIModel } from '../types/ai-providers'
 import { chatCompletion, type ChatMessage as APIChatMessage } from '../services/ai-api.service'
 import { chatService } from '../services/chat.service'
+import { settingsService } from '../services/settings.service'
 
 interface SelectedModel {
   providerId: string
@@ -112,8 +113,8 @@ const handleSendMessage = async (content: string) => {
       content
     })
     
-    // 从数据库获取 API 密钥
-    const settings = await window.electronAPI.settings.get()
+    // ✅ 使用 settingsService 获取 API 密钥（自动处理 userId）
+    const settings = await settingsService.getSettings()
     const configs = settings?.aiProviders || []
     const providerConfig = configs.find((p: any) => p.id === currentProvider.value?.id)
     
@@ -262,12 +263,16 @@ watch(selectedModel, () => {
 const loadModelConfiguration = async () => {
   try {
     const saved = localStorage.getItem('selectedAIModel')
-    if (!saved) return
+    if (!saved) {
+      console.log('[ChatView] 未找到已选择的模型')
+      return
+    }
     
     const savedModel = JSON.parse(saved)
+    console.log('[ChatView] 尝试加载模型:', savedModel)
     
-    // 从数据库获取配置
-    const settings = await window.electronAPI.settings.get()
+    // ✅ 使用 settingsService 获取配置（自动处理 userId）
+    const settings = await settingsService.getSettings()
     const configs = settings?.aiProviders || []
     
     if (configs.length > 0 && savedModel) {
@@ -279,12 +284,28 @@ const loadModelConfiguration = async () => {
           selectedModel.value = savedModel
           currentProvider.value = provider
           currentModel.value = model
+          console.log('[ChatView] ✅ 已加载模型:', provider.name, '-', model.name)
+        } else {
+          console.warn('[ChatView] ⚠️ 未找到模型:', savedModel.modelId)
         }
+      } else {
+        console.warn('[ChatView] ⚠️ 未找到服务商:', savedModel.providerId)
       }
     }
   } catch (error) {
-    console.error('模型配置加载失败:', error)
+    console.error('[ChatView] ❌ 模型配置加载失败:', error)
   }
+}
+
+// 监听模型切换事件
+const handleModelChanged = () => {
+  console.log('[ChatView] 🔄 检测到模型切换，重新加载')
+  loadModelConfiguration()
+}
+
+const handleSettingsUpdated = () => {
+  console.log('[ChatView] 🔄 检测到设置更新，重新加载模型')
+  loadModelConfiguration()
 }
 
 // 加载 Chat 树
@@ -301,6 +322,17 @@ onMounted(async () => {
   loadModelConfiguration()
   // ✅ 直接使用 chatService
   await loadChatTree()
+  
+  // 监听模型切换和设置更新事件
+  window.addEventListener('ai-model-changed', handleModelChanged)
+  window.addEventListener('settings-updated', handleSettingsUpdated)
+  window.addEventListener('ai-provider-configs-updated', handleSettingsUpdated)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('ai-model-changed', handleModelChanged)
+  window.removeEventListener('settings-updated', handleSettingsUpdated)
+  window.removeEventListener('ai-provider-configs-updated', handleSettingsUpdated)
 })
 </script>
 

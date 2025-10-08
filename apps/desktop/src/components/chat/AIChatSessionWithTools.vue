@@ -210,6 +210,7 @@ import { chatCompletion, type ChatMessage as APIChatMessage } from '@/services/a
 import { generateSystemPrompt } from '@/services/tools/system-prompt'
 import { parseToolUse, executeTool } from '@/services/tools/tool-executor'
 import type { ToolResult } from '@/types/tools'
+import { settingsService } from '@/services/settings.service'
 
 // Props
 interface Props {
@@ -860,8 +861,8 @@ const sendMessageInternal = async (content: string) => {
     
     console.log('[Chat] API 消息总数:', apiMessages.length)
     
-    // 从数据库获取 API 密钥配置
-    const settings = await window.electronAPI.settings.get()
+    // ✅ 使用 settingsService 获取 API 密钥配置（自动处理 userId）
+    const settings = await settingsService.getSettings()
     const configs = settings?.aiProviders || []
     const providerConfig = configs.find((p: any) => p.id === props.currentProvider?.id)
     
@@ -870,7 +871,7 @@ const sendMessageInternal = async (content: string) => {
       throw new Error('未找到 API 密钥配置')
     }
     
-    console.log('[Chat] ✅ API 密钥已找到（从数据库加载）')
+    console.log('[Chat] ✅ API 密钥已找到（从 settingsService 加载）')
     
     const providerWithApiKey = {
       ...props.currentProvider,
@@ -1041,7 +1042,18 @@ const handleSettingsUpdate = () => {
   loadAISettings()
 }
 
+// 监听 props 变化
+watch(() => [props.currentProvider, props.currentModel], ([newProvider, newModel]) => {
+  console.log('[AIChatSessionWithTools] 🔄 检测到模型变化')
+  console.log('[AIChatSessionWithTools] 新的 Provider:', newProvider?.name)
+  console.log('[AIChatSessionWithTools] 新的 Model:', newModel?.name)
+}, { deep: true })
+
 onMounted(() => {
+  console.log('[AIChatSessionWithTools] 组件挂载')
+  console.log('[AIChatSessionWithTools] 当前 Provider:', props.currentProvider?.name)
+  console.log('[AIChatSessionWithTools] 当前 Model:', props.currentModel?.name)
+  
   loadAISettings()
   scrollToBottom()
   

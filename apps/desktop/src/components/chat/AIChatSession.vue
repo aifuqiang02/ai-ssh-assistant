@@ -164,6 +164,7 @@
 import { ref, nextTick, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import { chatCompletion, estimateRequestTokens, type ChatMessage as APIChatMessage } from '../../services/ai-api.service'
 import type { AIProvider, AIModel } from '../../types/ai-providers'
+import { settingsService } from '../../services/settings.service'
 import { marked } from 'marked'
 import hljs from 'highlight.js'
 
@@ -378,8 +379,8 @@ const sendMessageInternal = async (content: string) => {
       content
     })
     
-    // 从数据库获取 API 密钥配置
-    const settings = await window.electronAPI.settings.get()
+    // ✅ 使用 settingsService 获取 API 密钥配置（自动处理 userId）
+    const settings = await settingsService.getSettings()
     const configs = settings?.aiProviders || []
     const providerConfig = configs.find((p: any) => p.id === props.currentProvider?.id)
     

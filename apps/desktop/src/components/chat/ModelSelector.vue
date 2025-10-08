@@ -98,6 +98,7 @@
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { DEFAULT_PROVIDERS, type AIProvider, type AIModel } from '../../types/ai-providers'
 import { useRouter } from 'vue-router'
+import { settingsService } from '../../services/settings.service'
 
 interface SelectedModel {
   providerId: string
@@ -238,7 +239,8 @@ const loadProviders = async () => {
   
   // 从数据库加载已保存的配置
   try {
-    const settings = await window.electronAPI.settings.get()
+    // ✅ 使用 settingsService 获取配置（自动处理 userId）
+    const settings = await settingsService.getSettings()
     if (settings?.aiProviders && settings.aiProviders.length > 0) {
       console.log(`[ModelSelector] 📦 从数据库加载到 ${settings.aiProviders.length} 个服务商`)
       
@@ -250,13 +252,13 @@ const loadProviders = async () => {
           const models = savedConfig.models && savedConfig.models.length > 0
             ? savedConfig.models.map((savedModel: any) => ({
                 ...savedModel,
-                // 只有明确为 true 才启用，否则禁用
-                enabled: savedModel.enabled === true
+                // 只有明确为 false 才禁用，undefined 或 true 都视为启用
+                enabled: savedModel.enabled !== false
               }))
             : provider.models.map(model => ({
                 ...model,
-                // 如果数据库中没有模型，使用默认配置（保持原有 enabled 状态）
-                enabled: model.enabled === true
+                // 如果数据库中没有模型，使用默认配置
+                enabled: model.enabled !== false
               }))
           
           const enabledModelsCount = models.filter((m: any) => m.enabled !== false).length
