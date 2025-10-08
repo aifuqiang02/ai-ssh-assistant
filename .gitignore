@@ -191,3 +191,8 @@ Thumbs.db
 ssh-keys/
 certificates/
 secrets/
+
+# Reference projects (for UI/UX design reference only, not to be committed)
+lobe-chat/
+Chaterm-main/
+Roo-Code-main/
