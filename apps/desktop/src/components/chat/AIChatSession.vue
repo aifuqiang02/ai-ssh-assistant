@@ -115,7 +115,7 @@
       </div>
       
       <!-- 输入区域 - 参考 lobe-chat 设计 -->
-      <div class="input-area border-t border-vscode-border bg-vscode-editor-background">
+      <div class="input-area bg-vscode-editor-background">
         <div class="input-container max-w-4xl mx-auto px-4 py-3">
           <!-- 输入框主体 -->
           <div class="input-wrapper border border-vscode-input-border rounded-lg bg-vscode-input-background focus-within:border-vscode-focusBorder transition-colors">
