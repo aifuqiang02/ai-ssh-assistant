@@ -217,9 +217,6 @@
             class="form-textarea w-full px-3 py-2.5 border border-vscode-input-border rounded-md bg-vscode-input-background text-vscode-input-foreground text-sm resize-none focus:outline-none focus:border-vscode-focusBorder transition-colors"
             rows="10"
           ></textarea>
-          <p class="setting-hint text-xs text-vscode-descriptionForeground mt-2">
-            系统提示词将影响 AI 的行为和回复风格
-          </p>
         </div>
       </div>
     </div>
