@@ -587,17 +587,18 @@ watch(messages, () => {
 }
 
 .user-bubble {
-  background: var(--vscode-button-background);
-  color: var(--vscode-button-foreground);
+  background: var(--vscode-button-background, #0e639c);
+  color: var(--vscode-button-foreground, #ffffff);
 }
 
 .user-bubble * {
-  color: var(--vscode-button-foreground) !important;
+  color: var(--vscode-button-foreground, #ffffff) !important;
 }
 
 .assistant-bubble {
-  background: var(--vscode-textCodeBlock-background);
-  border: 1px solid var(--vscode-panel-border);
+  background: var(--vscode-input-background, #3c3c3c);
+  border: 1px solid var(--vscode-input-border, #6b6b6b);
+  color: var(--vscode-foreground, #cccccc);
 }
 
 /* 流式输出光标 */
