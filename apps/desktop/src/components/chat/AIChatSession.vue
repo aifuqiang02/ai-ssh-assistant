@@ -188,13 +188,6 @@
               </div>
             </div>
           </div>
-
-          <!-- 底部提示 -->
-          <div v-if="showFootnote" class="footnote text-center mt-2">
-            <span class="text-xs text-vscode-descriptionForeground opacity-75">
-              按 <kbd class="kbd">Ctrl+Enter</kbd> 发送消息 · AI 可能会犯错，请检查重要信息
-            </span>
-          </div>
         </div>
       </div>
     </div>
