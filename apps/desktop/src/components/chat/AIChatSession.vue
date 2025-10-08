@@ -214,61 +214,52 @@
       </div>
     </div>
 
-    <!-- 右侧面板：系统角色设定 -->
+    <!-- 右侧面板：角色设定 -->
     <div 
-      v-if="showSystemRolePanel"
-      class="system-role-panel flex-shrink-0 w-80 border-l border-vscode-border bg-vscode-sideBar-background overflow-y-auto"
+      class="role-settings-panel flex-shrink-0 border-l border-vscode-border bg-vscode-sideBar-background overflow-y-auto"
+      style="width: 400px;"
     >
-      <div class="panel-header px-4 py-3 border-b border-vscode-border sticky top-0 bg-vscode-sideBar-background z-10">
-        <div class="flex items-center justify-between">
-          <h3 class="text-sm font-medium text-vscode-sideBarTitle-foreground flex items-center gap-2">
-            <i class="bi bi-chat-square-text"></i>
-            <span>系统提示词</span>
-          </h3>
-          <button
-            @click="toggleSystemRolePanel"
-            class="panel-close-button"
-            title="关闭面板"
-          >
-            <i class="bi bi-x-lg text-xs"></i>
-          </button>
-        </div>
+      <div class="panel-header px-6 py-4 border-b border-vscode-border sticky top-0 bg-vscode-sideBar-background z-10">
+        <h3 class="text-base font-semibold text-vscode-sideBarTitle-foreground flex items-center gap-2">
+          <i class="bi bi-chat-square-text"></i>
+          <span>角色设定</span>
+        </h3>
       </div>
 
-      <div class="panel-content px-4 py-4">
+      <div class="panel-content px-6 py-6">
         <!-- 系统角色编辑区 -->
-        <div class="system-role-editor">
-          <div class="editor-label text-xs font-medium text-vscode-foreground mb-2 opacity-70">
-            系统角色设定
-          </div>
+        <div class="setting-section mb-6">
+          <label class="setting-label text-sm font-medium text-vscode-foreground mb-2 block">
+            系统提示词
+          </label>
           <textarea
             v-model="systemRole"
             @input="handleSystemRoleChange"
             placeholder="输入系统提示词，例如：你是一个专业的编程助手..."
-            class="system-role-textarea w-full px-3 py-2 border border-vscode-input-border rounded-md bg-vscode-input-background text-vscode-input-foreground text-sm resize-none focus:outline-none focus:border-vscode-focusBorder"
-            rows="8"
+            class="form-textarea w-full px-3 py-2.5 border border-vscode-input-border rounded-md bg-vscode-input-background text-vscode-input-foreground text-sm resize-none focus:outline-none focus:border-vscode-focusBorder transition-colors"
+            rows="10"
           ></textarea>
-          <div class="editor-hint text-xs text-vscode-descriptionForeground mt-2">
+          <p class="setting-hint text-xs text-vscode-descriptionForeground mt-2">
             系统提示词将影响 AI 的行为和回复风格
-          </div>
+          </p>
         </div>
 
         <!-- 预设模板 -->
-        <div class="role-presets mt-6">
-          <div class="presets-label text-xs font-medium text-vscode-foreground mb-2 opacity-70">
+        <div class="setting-section">
+          <label class="setting-label text-sm font-medium text-vscode-foreground mb-3 block">
             预设模板
-          </div>
+          </label>
           <div class="presets-list space-y-2">
             <button
               v-for="preset in rolePresets"
               :key="preset.id"
               @click="applyPreset(preset)"
-              class="preset-button w-full text-left px-3 py-2 rounded-md border border-vscode-input-border hover:bg-vscode-list-hoverBackground transition-colors"
+              class="preset-button w-full text-left px-4 py-3 rounded-md border border-vscode-input-border bg-vscode-input-background hover:bg-vscode-list-hoverBackground hover:border-vscode-focusBorder transition-all"
             >
-              <div class="preset-name text-sm font-medium text-vscode-foreground mb-0.5">
+              <div class="preset-name text-sm font-medium text-vscode-foreground mb-1">
                 {{ preset.name }}
               </div>
-              <div class="preset-desc text-xs text-vscode-descriptionForeground line-clamp-2">
+              <div class="preset-desc text-xs text-vscode-descriptionForeground leading-relaxed">
                 {{ preset.description }}
               </div>
             </button>
@@ -361,9 +352,6 @@ const isGenerating = ref(false)
 const messagesContainer = ref<HTMLElement | null>(null)
 const inputTextarea = ref<HTMLTextAreaElement | null>(null)
 const copiedMessageId = ref<number | null>(null)
-
-// UI 状态
-const showSystemRolePanel = ref(false)
 
 // 系统角色和设置
 const systemRole = ref('')
@@ -620,11 +608,6 @@ const handleClearMessages = () => {
   }
 }
 
-// 系统角色面板
-const toggleSystemRolePanel = () => {
-  showSystemRolePanel.value = !showSystemRolePanel.value
-}
-
 const handleSystemRoleChange = () => {
   // 可以在这里触发保存事件
 }
@@ -781,40 +764,47 @@ watch(messages, () => {
   font-family: monospace;
 }
 
-/* 系统角色面板 */
-.system-role-panel {
-  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+/* 角色设定面板 - 与设置页面风格一致 */
+.role-settings-panel {
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.05);
 }
 
-.panel-close-button {
-  padding: 0.375rem;
-  border-radius: 0.25rem;
-  background: transparent;
-  border: none;
+.role-settings-panel .panel-header h3 {
+  font-weight: 600;
+}
+
+.role-settings-panel .setting-section {
+  margin-bottom: 1.5rem;
+}
+
+.role-settings-panel .setting-label {
+  font-size: 0.875rem;
+  font-weight: 500;
   color: var(--vscode-foreground);
-  opacity: 0.7;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.panel-close-button:hover {
   opacity: 1;
-  background: var(--vscode-toolbar-hoverBackground);
 }
 
-.system-role-textarea {
-  font-family: inherit;
+.role-settings-panel .setting-hint {
+  font-size: 0.8125rem;
   line-height: 1.5;
+  color: var(--vscode-descriptionForeground);
 }
 
-.preset-button {
-  background: var(--vscode-input-background);
-  transition: all 0.2s;
+.role-settings-panel .form-textarea {
+  font-family: inherit;
+  line-height: 1.6;
 }
 
-.preset-button:hover {
-  background: var(--vscode-list-hoverBackground);
-  border-color: var(--vscode-focusBorder);
+.role-settings-panel .preset-button {
+  cursor: pointer;
+}
+
+.role-settings-panel .preset-name {
+  font-weight: 500;
+}
+
+.role-settings-panel .preset-desc {
+  line-height: 1.5;
 }
 
 /* 设置抽屉 */
