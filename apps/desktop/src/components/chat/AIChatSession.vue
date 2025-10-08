@@ -15,11 +15,18 @@
           </div>
           
           <!-- 消息列表 - 参考 lobe-chat 设计 -->
-          <div v-for="message in messages" :key="message.id" class="message-item mb-6">
+          <div 
+            v-for="message in messages" 
+            :key="message.id" 
+            :class="[
+              'message-item mb-6',
+              message.role === 'user' ? 'flex justify-end' : ''
+            ]"
+          >
             <div 
               :class="[
                 'message-container flex gap-3',
-                message.role === 'user' ? 'flex-row-reverse justify-end' : 'flex-row'
+                message.role === 'user' ? 'flex-row-reverse' : 'flex-row'
               ]"
             >
               <!-- 头像 -->
