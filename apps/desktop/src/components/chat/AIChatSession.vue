@@ -228,28 +228,6 @@
             系统提示词将影响 AI 的行为和回复风格
           </p>
         </div>
-
-        <!-- 预设模板 -->
-        <div class="setting-section">
-          <label class="setting-label text-sm font-medium text-vscode-foreground mb-3 block">
-            预设模板
-          </label>
-          <div class="presets-list space-y-2">
-            <button
-              v-for="preset in rolePresets"
-              :key="preset.id"
-              @click="applyPreset(preset)"
-              class="preset-button w-full text-left px-4 py-3 rounded-md border border-vscode-input-border bg-vscode-input-background hover:bg-vscode-list-hoverBackground hover:border-vscode-focusBorder transition-all"
-            >
-              <div class="preset-name text-sm font-medium text-vscode-foreground mb-1">
-                {{ preset.name }}
-              </div>
-              <div class="preset-desc text-xs text-vscode-descriptionForeground leading-relaxed">
-                {{ preset.description }}
-              </div>
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -273,14 +251,6 @@ export interface Message {
   content: string
   timestamp: Date
   streaming?: boolean
-}
-
-// 角色预设接口
-interface RolePreset {
-  id: string
-  name: string
-  description: string
-  prompt: string
 }
 
 // 组件属性
@@ -354,34 +324,6 @@ watch(() => props.messages, (newMessages) => {
 // 计算属性
 const messages = computed(() => internalMessages.value)
 const canSend = computed(() => inputMessage.value.trim() && !isGenerating.value)
-
-// 角色预设模板
-const rolePresets: RolePreset[] = [
-  {
-    id: 'default',
-    name: '通用助手',
-    description: '友好、专业的 AI 助手',
-    prompt: '你是一个友好、专业的 AI 助手。请用清晰、准确的语言回答用户的问题。'
-  },
-  {
-    id: 'programmer',
-    name: '编程助手',
-    description: '专业的编程和技术顾问',
-    prompt: '你是一个专业的编程助手。擅长各种编程语言和开发工具，能提供高质量的代码示例和技术建议。'
-  },
-  {
-    id: 'translator',
-    name: '翻译助手',
-    description: '专业的中英文翻译',
-    prompt: '你是一个专业的翻译助手。请提供准确、流畅的翻译，并保持原文的语气和风格。'
-  },
-  {
-    id: 'writer',
-    name: '写作助手',
-    description: '创意写作和文案优化',
-    prompt: '你是一个创意写作助手。擅长各类文体写作，能够提供优质的文案建议和内容优化。'
-  }
-]
 
 // Markdown 渲染配置
 const renderer = new marked.Renderer()
@@ -595,10 +537,6 @@ const handleClearMessages = () => {
 
 const handleSystemRoleChange = () => {
   // 可以在这里触发保存事件
-}
-
-const applyPreset = (preset: RolePreset) => {
-  systemRole.value = preset.prompt
 }
 
 // 打开会话设置（跳转到会话设置页面）
