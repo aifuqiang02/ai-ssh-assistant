@@ -239,7 +239,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, computed, onMounted, watch } from 'vue'
+import { ref, nextTick, computed, onMounted, watch, inject } from 'vue'
 import { useRouter } from 'vue-router'
 import { chatCompletion, type ChatMessage as APIChatMessage } from '../../services/ai-api.service'
 import type { AIProvider, AIModel } from '../../types/ai-providers'
@@ -248,6 +248,9 @@ import { marked } from 'marked'
 import hljs from 'highlight.js'
 
 const router = useRouter()
+
+// 注入 openNewTab 方法
+const openNewTab = inject<(id: string, name: string, icon: string, path: string) => void>('openNewTab')
 
 // 消息接口
 export interface Message {
@@ -542,14 +545,16 @@ const handleClearMessages = () => {
 
 // 打开会话设置（在新标签页中打开）
 const openSettings = () => {
-  const url = router.resolve('/session-settings').href
-  window.open(url, '_blank')
+  if (openNewTab) {
+    openNewTab('session-settings', '会话设置', 'bi bi-sliders', '/session-settings')
+  }
 }
 
 // 打开提示词优化助手（在新标签页中打开）
 const openPromptOptimizer = () => {
-  const url = router.resolve('/prompt-optimizer').href
-  window.open(url, '_blank')
+  if (openNewTab) {
+    openNewTab('prompt-optimizer', '提示词优化助手', 'bi bi-stars', '/prompt-optimizer')
+  }
 }
 
 // 生命周期
