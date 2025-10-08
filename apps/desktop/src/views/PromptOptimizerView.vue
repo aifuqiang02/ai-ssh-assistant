@@ -45,7 +45,7 @@
         </section>
 
         <!-- 步骤2: 显示生成的提示词并测试 -->
-        <section v-if="generatedPrompt" class="setting-section">
+        <section class="setting-section">
           <h2 class="section-title">
             <i class="bi bi-2-circle"></i>
             生成的提示词
@@ -91,7 +91,7 @@
         </section>
 
         <!-- 步骤3: 测试结果与优化 -->
-        <section v-if="testResult" class="setting-section">
+        <section class="setting-section">
           <h2 class="section-title">
             <i class="bi bi-3-circle"></i>
             测试结果与优化
@@ -135,8 +135,12 @@
         </section>
 
         <!-- 操作按钮区 -->
-        <div v-if="generatedPrompt" class="action-bar">
-          <button @click="savePrompt" class="btn-success">
+        <div class="action-bar">
+          <button 
+            @click="savePrompt" 
+            :disabled="!generatedPrompt.trim()"
+            class="btn-success"
+          >
             <i class="bi bi-check-circle"></i>
             保存提示词
           </button>
@@ -582,9 +586,14 @@ onUnmounted(() => {
   color: white;
 }
 
-.btn-success:hover {
+.btn-success:hover:not(:disabled) {
   background: #229954;
   transform: translateY(-1px);
+}
+
+.btn-success:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .btn-secondary {
