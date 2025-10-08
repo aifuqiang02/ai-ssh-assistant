@@ -327,116 +327,117 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* ========== 布局 ========== */
 .prompt-optimizer-view {
   display: flex;
   height: 100vh;
-  background: var(--vscode-editor-background);
-  color: var(--vscode-editor-foreground);
+  background: var(--vscode-bg);
+  color: var(--vscode-fg);
 }
 
-/* 侧边栏 */
+/* ========== 左侧导航 ========== */
 .settings-sidebar {
-  width: 240px;
-  border-right: 1px solid var(--vscode-panel-border);
-  background: var(--vscode-sideBar-background);
+  width: 280px;
+  background: var(--vscode-bg-light);
+  border-right: 1px solid var(--vscode-border);
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
 }
 
 .sidebar-header {
-  padding: 1.5rem 1rem;
-  border-bottom: 1px solid var(--vscode-panel-border);
+  padding: 20px 20px 16px 20px;
+  border-bottom: 1px solid var(--vscode-border);
 }
 
 .sidebar-title {
   margin: 0;
-  font-size: 1.25rem;
+  font-size: 20px;
   font-weight: 600;
-  color: var(--vscode-sideBarTitle-foreground);
+  color: var(--vscode-fg);
 }
 
 .settings-nav {
   flex: 1;
   overflow-y: auto;
-  padding: 0.5rem;
+  padding: 8px 0;
 }
 
 .nav-item {
   display: flex;
   align-items: center;
-  padding: 0.75rem 1rem;
-  margin-bottom: 0.25rem;
-  border-radius: 0.375rem;
+  gap: 12px;
+  padding: 10px 20px;
   cursor: pointer;
   transition: all 0.2s;
-  color: var(--vscode-foreground);
+  color: var(--vscode-fg-muted);
+  user-select: none;
 }
 
 .nav-item:hover {
-  background: var(--vscode-list-hoverBackground);
+  background: var(--vscode-bg);
+  color: var(--vscode-fg);
 }
 
 .nav-item.active {
-  background: var(--vscode-list-activeSelectionBackground);
-  color: var(--vscode-list-activeSelectionForeground);
+  background: var(--vscode-bg);
+  color: var(--vscode-accent);
+  border-left: 2px solid var(--vscode-accent);
+  padding-left: 18px;
 }
 
 .nav-icon {
-  margin-right: 0.75rem;
-  font-size: 1rem;
+  font-size: 16px;
+  flex-shrink: 0;
 }
 
 .nav-label {
-  font-size: 0.875rem;
+  font-size: 14px;
   font-weight: 500;
 }
 
-/* 内容区域 */
+/* ========== 右侧内容 ========== */
 .settings-content {
   flex: 1;
   overflow-y: auto;
-  background: var(--vscode-editor-background);
+  scroll-behavior: smooth;
 }
 
 .content-inner {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 2rem;
+  max-width: 800px;
+  padding: 32px 48px;
 }
 
-/* 设置章节 */
 .setting-section {
-  margin-bottom: 3rem;
-  padding-bottom: 2rem;
-  border-bottom: 1px solid var(--vscode-panel-border);
-}
-
-.setting-section:last-child {
-  border-bottom: none;
+  margin-bottom: 48px;
 }
 
 .section-title {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  font-size: 1.5rem;
+  gap: 12px;
+  font-size: 24px;
   font-weight: 600;
-  margin: 0 0 0.5rem 0;
-  color: var(--vscode-foreground);
+  margin: 0 0 8px 0;
+  color: var(--vscode-fg);
+}
+
+.section-title i {
+  font-size: 22px;
+  color: var(--vscode-accent);
 }
 
 .section-description {
-  margin: 0 0 2rem 0;
-  color: var(--vscode-descriptionForeground);
-  font-size: 0.875rem;
+  margin: 0 0 24px 0;
+  color: var(--vscode-fg-muted);
+  font-size: 14px;
 }
 
-/* 设置行 */
 .setting-row {
   display: flex;
-  align-items: flex-start;
-  padding: 1.5rem 0;
-  border-bottom: 1px solid var(--vscode-panel-border);
+  gap: 32px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--vscode-border);
 }
 
 .setting-row:last-child {
@@ -445,54 +446,64 @@ onMounted(() => {
 
 .setting-left {
   flex: 1;
-  padding-right: 2rem;
+  min-width: 0;
+}
+
+.setting-right {
+  flex-shrink: 0;
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .setting-label {
   display: block;
-  font-size: 0.9375rem;
+  font-size: 14px;
   font-weight: 500;
-  margin-bottom: 0.25rem;
-  color: var(--vscode-foreground);
+  color: var(--vscode-fg);
+  margin-bottom: 4px;
 }
 
 .setting-hint {
+  font-size: 12px;
+  color: var(--vscode-fg-muted);
   margin: 0;
-  font-size: 0.8125rem;
-  color: var(--vscode-descriptionForeground);
   line-height: 1.5;
 }
 
-.setting-right {
-  flex: 1;
-  min-width: 0;
-}
-
-/* 表单控件 */
+/* ========== 表单控件 ========== */
 .form-input,
 .form-textarea,
 .prompt-textarea {
   width: 100%;
-  padding: 0.625rem 0.875rem;
-  border: 1px solid var(--vscode-input-border);
-  border-radius: 0.375rem;
-  background: var(--vscode-input-background);
-  color: var(--vscode-input-foreground);
-  font-size: 0.875rem;
+  padding: 8px 12px;
+  background: var(--vscode-input-bg);
+  border: 1px solid var(--vscode-border);
+  border-radius: 2px;
+  color: var(--vscode-fg);
+  font-size: 14px;
   font-family: inherit;
+  outline: none;
   transition: border-color 0.2s;
 }
 
 .form-input:focus,
 .form-textarea:focus,
 .prompt-textarea:focus {
-  outline: none;
-  border-color: var(--vscode-focusBorder);
+  border-color: var(--vscode-accent);
+}
+
+.form-input:hover,
+.form-textarea:hover,
+.prompt-textarea:hover {
+  border-color: var(--vscode-fg-muted);
 }
 
 .form-textarea,
 .prompt-textarea {
   resize: vertical;
+  min-height: 120px;
   line-height: 1.6;
 }
 
@@ -501,24 +512,26 @@ onMounted(() => {
 .btn-generate,
 .btn-add-example,
 .btn-restore {
-  padding: 0.5rem 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
   border: none;
-  border-radius: 0.375rem;
-  background: var(--vscode-button-background);
-  color: var(--vscode-button-foreground);
-  font-size: 0.875rem;
+  border-radius: 2px;
+  background: var(--vscode-accent);
+  color: white;
+  font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
-  display: inline-flex;
-  align-items: center;
 }
 
 .btn-optimize:hover,
 .btn-generate:hover,
 .btn-add-example:hover,
 .btn-restore:hover {
-  background: var(--vscode-button-hoverBackground);
+  opacity: 0.9;
+  transform: translateY(-1px);
 }
 
 .btn-optimize:disabled,
@@ -529,45 +542,47 @@ onMounted(() => {
 
 /* 示例对话 */
 .examples-list {
-  margin-bottom: 1rem;
+  margin-bottom: 16px;
 }
 
 .example-item {
-  padding: 1.5rem;
-  border: 1px solid var(--vscode-input-border);
-  border-radius: 0.5rem;
-  margin-bottom: 1rem;
-  background: var(--vscode-input-background);
+  padding: 20px;
+  border: 1px solid var(--vscode-border);
+  border-radius: 4px;
+  margin-bottom: 16px;
+  background: var(--vscode-input-bg);
 }
 
 .example-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 16px;
 }
 
 .example-number {
   font-weight: 600;
-  color: var(--vscode-foreground);
+  font-size: 14px;
+  color: var(--vscode-fg);
 }
 
 .btn-remove {
-  padding: 0.25rem 0.5rem;
+  padding: 4px 8px;
   border: none;
   background: transparent;
   color: var(--vscode-errorForeground);
   cursor: pointer;
-  border-radius: 0.25rem;
+  border-radius: 2px;
   transition: all 0.2s;
+  font-size: 13px;
 }
 
 .btn-remove:hover {
-  background: var(--vscode-list-errorForeground);
+  background: rgba(231, 76, 60, 0.1);
 }
 
 .example-field {
-  margin-bottom: 1rem;
+  margin-bottom: 16px;
 }
 
 .example-field:last-child {
@@ -576,26 +591,32 @@ onMounted(() => {
 
 .example-field label {
   display: block;
-  font-size: 0.8125rem;
+  font-size: 13px;
   font-weight: 500;
-  margin-bottom: 0.5rem;
-  color: var(--vscode-foreground);
+  margin-bottom: 8px;
+  color: var(--vscode-fg);
 }
 
 /* 版本历史 */
 .history-list {
-  margin-top: 1rem;
+  margin-top: 16px;
 }
 
 .history-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
-  border: 1px solid var(--vscode-input-border);
-  border-radius: 0.375rem;
-  margin-bottom: 0.75rem;
-  background: var(--vscode-input-background);
+  padding: 16px;
+  border: 1px solid var(--vscode-border);
+  border-radius: 4px;
+  margin-bottom: 12px;
+  background: var(--vscode-input-bg);
+  transition: all 0.2s;
+}
+
+.history-item:hover {
+  background: var(--vscode-bg-lighter);
+  border-color: var(--vscode-accent);
 }
 
 .history-info {
@@ -603,33 +624,34 @@ onMounted(() => {
 }
 
 .history-date {
-  font-size: 0.75rem;
-  color: var(--vscode-descriptionForeground);
-  margin-bottom: 0.25rem;
+  font-size: 12px;
+  color: var(--vscode-fg-muted);
+  margin-bottom: 4px;
 }
 
 .history-preview {
-  font-size: 0.875rem;
-  color: var(--vscode-foreground);
+  font-size: 13px;
+  color: var(--vscode-fg);
   opacity: 0.8;
 }
 
 .history-actions {
-  margin-left: 1rem;
+  margin-left: 16px;
 }
 
 .btn-restore {
-  padding: 0.375rem 0.75rem;
-  font-size: 0.8125rem;
+  padding: 6px 12px;
+  font-size: 13px;
 }
 
 .empty-history {
   text-align: center;
-  padding: 3rem;
-  color: var(--vscode-descriptionForeground);
+  padding: 48px;
+  color: var(--vscode-fg-muted);
+  font-size: 14px;
 }
 
-/* 滚动条 */
+/* ========== 滚动条 ========== */
 .settings-content::-webkit-scrollbar,
 .settings-nav::-webkit-scrollbar {
   width: 8px;
@@ -642,13 +664,13 @@ onMounted(() => {
 
 .settings-content::-webkit-scrollbar-thumb,
 .settings-nav::-webkit-scrollbar-thumb {
-  background: var(--vscode-scrollbarSlider-background);
+  background: var(--vscode-border);
   border-radius: 4px;
 }
 
 .settings-content::-webkit-scrollbar-thumb:hover,
 .settings-nav::-webkit-scrollbar-thumb:hover {
-  background: var(--vscode-scrollbarSlider-hoverBackground);
+  background: var(--vscode-fg-muted);
 }
 </style>
 
