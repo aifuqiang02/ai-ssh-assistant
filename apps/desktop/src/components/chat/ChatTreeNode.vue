@@ -501,10 +501,10 @@ const toggleActionMenu = () => {
   right: 0;
   top: 100%;
   margin-top: 4px;
-  background: var(--vscode-menu-background);
-  border: 1px solid var(--vscode-menu-border);
+  background: var(--vscode-menu-background, var(--vscode-sideBar-background, #252526));
+  border: 1px solid var(--vscode-menu-border, var(--vscode-panel-border, #454545));
   border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   min-width: 140px;
   padding: 4px 0;
   z-index: 1000;
