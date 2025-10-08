@@ -50,8 +50,8 @@
                     :class="[
                       'message-bubble rounded-lg px-4 py-3 relative',
                       message.role === 'user' 
-                        ? 'bg-vscode-button-background text-white user-bubble' 
-                        : 'bg-vscode-input-background border border-vscode-input-border assistant-bubble'
+                        ? 'user-bubble' 
+                        : 'assistant-bubble'
                     ]"
                   >
                     <!-- 用户消息内容 -->
@@ -596,8 +596,8 @@ watch(messages, () => {
 }
 
 .assistant-bubble {
-  background: var(--vscode-input-background);
-  border-color: var(--vscode-input-border);
+  background: var(--vscode-textCodeBlock-background);
+  border: 1px solid var(--vscode-panel-border);
 }
 
 /* 流式输出光标 */
