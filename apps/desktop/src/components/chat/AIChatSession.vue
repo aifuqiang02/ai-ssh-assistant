@@ -227,9 +227,9 @@
             系统提示词
           </label>
           <div
-            class="prompt-display w-full px-3 py-2.5 border border-vscode-input-border rounded-md bg-vscode-input-background text-vscode-input-foreground text-sm min-h-[200px] whitespace-pre-wrap"
+            class="prompt-display w-full text-vscode-input-foreground text-sm min-h-[200px] whitespace-pre-wrap leading-relaxed"
           >
-            <span v-if="systemRole" class="leading-relaxed">{{ systemRole }}</span>
+            <span v-if="systemRole">{{ systemRole }}</span>
             <span v-else class="text-vscode-descriptionForeground opacity-50">暂无系统提示词，点击右上角编辑图标进入提示词优化助手...</span>
           </div>
         </div>
