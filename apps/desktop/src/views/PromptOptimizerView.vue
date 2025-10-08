@@ -122,8 +122,23 @@
               <p class="setting-hint">基于当前提示词，AI 对您测试问题的回复</p>
             </div>
             <div class="setting-right">
-              <div class="test-result-box">
-                {{ testResult }}
+              <div class="result-container">
+                <div class="result-header">
+                  <span class="result-title">回复内容</span>
+                  <button
+                    v-if="testResult"
+                    @click="copyTestResult"
+                    class="btn-copy"
+                    :class="{ copied: isCopied }"
+                    :title="isCopied ? '已复制' : '复制回复内容'"
+                  >
+                    <i :class="['bi', isCopied ? 'bi-check-lg' : 'bi-clipboard']"></i>
+                    {{ isCopied ? '已复制' : '复制' }}
+                  </button>
+                </div>
+                <div class="test-result-box">
+                  {{ testResult }}
+                </div>
               </div>
             </div>
           </div>
@@ -206,6 +221,9 @@ const testResult = ref('')
 // 步骤3: 用户点评与优化
 const userFeedback = ref('')
 const isOptimizing = ref(false)
+
+// 复制功能
+const isCopied = ref(false)
 
 // 加载当前选中的 AI 模型
 const loadAIModelConfiguration = async () => {
@@ -413,6 +431,20 @@ const resetAll = () => {
     testQuestion.value = ''
     testResult.value = ''
     userFeedback.value = ''
+  }
+}
+
+// 方法：复制测试结果
+const copyTestResult = async () => {
+  try {
+    await navigator.clipboard.writeText(testResult.value)
+    isCopied.value = true
+    setTimeout(() => {
+      isCopied.value = false
+    }, 2000)
+  } catch (error) {
+    console.error('复制失败:', error)
+    alert('复制失败，请手动选择文本复制')
   }
 }
 
@@ -743,11 +775,62 @@ onUnmounted(() => {
 }
 
 /* ========== 结果展示区域 ========== */
+.result-container {
+  width: 100%;
+}
+
+.result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: var(--vscode-bg-lighter);
+  border: 1px solid var(--vscode-border);
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
+}
+
+.result-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--vscode-fg-muted);
+}
+
+.btn-copy {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  background: transparent;
+  color: var(--vscode-fg-muted);
+  border: 1px solid var(--vscode-border);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-copy:hover {
+  background: var(--vscode-bg);
+  color: var(--vscode-fg);
+  border-color: var(--vscode-accent);
+}
+
+.btn-copy.copied {
+  background: var(--vscode-accent);
+  color: #ffffff;
+  border-color: var(--vscode-accent);
+}
+
+.btn-copy i {
+  font-size: 12px;
+}
+
 .test-result-box {
   padding: 16px;
   background: var(--vscode-input-bg);
   border: 1px solid var(--vscode-border);
-  border-radius: 4px;
+  border-radius: 0 0 4px 4px;
   color: var(--vscode-fg);
   font-size: 14px;
   line-height: 1.8;
@@ -755,6 +838,8 @@ onUnmounted(() => {
   word-break: break-word;
   max-height: 400px;
   overflow-y: auto;
+  user-select: text;
+  cursor: text;
 }
 
 /* ========== 操作栏 ========== */
