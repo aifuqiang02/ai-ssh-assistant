@@ -112,41 +112,23 @@
 
           <div class="setting-row">
             <div class="setting-left">
-              <label class="setting-label">结果点评</label>
-              <p class="setting-hint">AI 将分析回复质量，并提供优化建议</p>
+              <label class="setting-label">您的点评</label>
+              <p class="setting-hint">请描述您对 AI 回复的评价和期望的改进方向</p>
             </div>
             <div class="setting-right">
-              <button
-                @click="analyzeResult"
-                :disabled="isAnalyzing"
-                class="btn-primary"
-              >
-                <i :class="['bi', isAnalyzing ? 'bi-hourglass-split' : 'bi-lightbulb']"></i>
-                {{ isAnalyzing ? '分析中...' : '获取点评与优化建议' }}
-              </button>
-            </div>
-          </div>
-
-          <!-- 点评结果 -->
-          <div v-if="analysisResult" class="setting-row">
-            <div class="setting-left">
-              <label class="setting-label">优化分析</label>
-              <p class="setting-hint">基于测试结果的分析和改进建议</p>
-            </div>
-            <div class="setting-right">
-              <div class="analysis-box">
-                <div class="analysis-section">
-                  <h4><i class="bi bi-chat-square-quote"></i> 回复评价</h4>
-                  <p>{{ analysisResult }}</p>
-                </div>
-              </div>
+              <textarea
+                v-model="userFeedback"
+                placeholder="例如：回复太简短了，希望能提供更详细的解释和具体的代码示例..."
+                class="form-textarea"
+                rows="5"
+              ></textarea>
               <button
                 @click="optimizePrompt"
-                :disabled="isOptimizing"
-                class="btn-primary mt-3"
+                :disabled="!userFeedback.trim() || isOptimizing"
+                class="btn-primary mt-2"
               >
-                <i :class="['bi', isOptimizing ? 'bi-hourglass-split' : 'bi-arrow-up-circle']"></i>
-                {{ isOptimizing ? '优化中...' : '应用优化建议' }}
+                <i :class="['bi', isOptimizing ? 'bi-hourglass-split' : 'bi-magic']"></i>
+                {{ isOptimizing ? '优化中...' : '优化提示词' }}
               </button>
             </div>
           </div>
@@ -188,9 +170,8 @@ const testQuestion = ref('')
 const isTesting = ref(false)
 const testResult = ref('')
 
-// 步骤3: 分析与优化
-const isAnalyzing = ref(false)
-const analysisResult = ref('')
+// 步骤3: 用户点评与优化
+const userFeedback = ref('')
 const isOptimizing = ref(false)
 
 // 加载当前选中的 AI 模型
@@ -322,41 +303,7 @@ const testPrompt = async () => {
   }
 }
 
-// 方法：分析测试结果
-const analyzeResult = async () => {
-  if (!checkModelAvailable()) return
-  
-  isAnalyzing.value = true
-  try {
-    const response = await chatCompletion(
-      currentProvider.value!,
-      currentModel.value!,
-      {
-        messages: [
-          {
-            role: 'system',
-            content: '你是一个专业的 AI 助手评估专家。你的任务是分析 AI 助手的回复质量，并提供改进建议。'
-          },
-          {
-            role: 'user',
-            content: `请评估以下 AI 助手的表现：\n\n【系统提示词】\n${generatedPrompt.value}\n\n【用户问题】\n${testQuestion.value}\n\n【AI 回复】\n${testResult.value}\n\n请从以下几个方面评估：\n1. 回复是否符合系统提示词的要求\n2. 回复的准确性和完整性\n3. 语气和风格是否恰当\n4. 有哪些可以改进的地方\n\n请提供详细的评估和改进建议。`
-          }
-        ],
-        stream: false,
-        temperature: 0.7
-      }
-    )
-    
-    analysisResult.value = response.content
-  } catch (error: any) {
-    console.error('分析失败:', error)
-    alert(`分析失败：${error.message}`)
-  } finally {
-    isAnalyzing.value = false
-  }
-}
-
-// 方法：优化提示词
+// 方法：根据用户点评优化提示词
 const optimizePrompt = async () => {
   if (!checkModelAvailable()) return
   
@@ -369,11 +316,29 @@ const optimizePrompt = async () => {
         messages: [
           {
             role: 'system',
-            content: '你是一个专业的提示词工程师。你的任务是根据评估反馈优化系统提示词。'
+            content: '你是一个专业的提示词工程师。你的任务是根据用户的反馈意见优化系统提示词，使其更好地满足用户的需求。'
           },
           {
             role: 'user',
-            content: `请优化以下系统提示词：\n\n【原始提示词】\n${generatedPrompt.value}\n\n【测试问题】\n${testQuestion.value}\n\n【AI 回复】\n${testResult.value}\n\n【评估反馈】\n${analysisResult.value}\n\n请基于评估反馈，生成一个改进后的系统提示词。要求：\n1. 保留原有的核心功能\n2. 针对性地解决评估中指出的问题\n3. 使提示词更加清晰和有效\n\n请直接返回优化后的提示词，不要包含任何解释。`
+            content: `请优化以下系统提示词：
+
+【当前提示词】
+${generatedPrompt.value}
+
+【测试问题】
+${testQuestion.value}
+
+【AI 回复】
+${testResult.value}
+
+【用户点评和改进要求】
+${userFeedback.value}
+
+请基于用户的点评和改进要求，生成一个优化后的系统提示词。要求：
+1. 保留原有提示词的核心功能和定位
+2. 针对性地解决用户提出的问题
+3. 确保优化后的提示词清晰、具体、有效
+4. 直接返回优化后的完整提示词内容，不要包含任何解释或其他文字`
           }
         ],
         stream: false,
@@ -383,9 +348,9 @@ const optimizePrompt = async () => {
     
     generatedPrompt.value = response.content.trim()
     
-    // 清空测试结果，提示用户重新测试
+    // 清空测试相关内容，提示用户重新测试
     testResult.value = ''
-    analysisResult.value = ''
+    userFeedback.value = ''
     testQuestion.value = ''
     alert('提示词已优化！建议重新测试以验证效果。')
   } catch (error: any) {
@@ -414,7 +379,7 @@ const resetAll = () => {
     generatedPrompt.value = ''
     testQuestion.value = ''
     testResult.value = ''
-    analysisResult.value = ''
+    userFeedback.value = ''
   }
 }
 
@@ -646,32 +611,6 @@ onUnmounted(() => {
   word-break: break-word;
   max-height: 400px;
   overflow-y: auto;
-}
-
-.analysis-box {
-  padding: 16px;
-  background: rgba(var(--vscode-accent-rgb, 0, 122, 204), 0.05);
-  border: 1px solid var(--vscode-accent);
-  border-radius: 4px;
-  margin-bottom: 8px;
-}
-
-.analysis-section h4 {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0 0 12px 0;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--vscode-accent);
-}
-
-.analysis-section p {
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.8;
-  color: var(--vscode-fg);
-  white-space: pre-wrap;
 }
 
 /* ========== 操作栏 ========== */
