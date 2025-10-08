@@ -300,24 +300,7 @@ export async function buildApp(): Promise<FastifyInstance> {
 
   // 优雅关闭钩子
   app.addHook('onClose', async () => {
-    logger.info('Application shutting down...')
-  })
-
-  // 请求日志钩子
-  app.addHook('onRequest', async (request) => {
-    logger.info({
-      ip: request.ip,
-      userAgent: request.headers['user-agent']
-    }, `${request.method} ${request.url}`)
-  })
-
-  // 响应日志钩子
-  app.addHook('onResponse', async (request, reply) => {
-    const responseTime = reply.elapsedTime
-    logger.info({
-      responseTime: `${responseTime.toFixed(2)}ms`,
-      contentLength: reply.getHeader('content-length')
-    }, `${request.method} ${request.url} - ${reply.statusCode}`)
+    // 应用关闭
   })
 
   return app

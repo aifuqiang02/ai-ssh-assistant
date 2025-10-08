@@ -24,8 +24,6 @@ export async function systemRoutes(fastify: FastifyInstance) {
     try {
       const { connectionId } = request.query
 
-      logger.info(`Getting system info for connection ${connectionId}`)
-
       // 模拟系统信息
       const systemInfo = {
         hostname: 'server-001',
@@ -124,7 +122,6 @@ export async function systemRoutes(fastify: FastifyInstance) {
     try {
       const { connectionId, interval = 60, duration = 3600 } = request.query
 
-      logger.info(`Getting performance data for connection ${connectionId}`)
 
       // 生成模拟性能数据
       const dataPoints = Math.floor(duration / interval)
@@ -216,7 +213,6 @@ export async function systemRoutes(fastify: FastifyInstance) {
     try {
       const { connectionId, sortBy = 'cpu', sortOrder = 'desc', limit = 50 } = request.query
 
-      logger.info(`Getting process list for connection ${connectionId}`)
 
       // 模拟进程列表
       const processes = [
@@ -329,7 +325,6 @@ export async function systemRoutes(fastify: FastifyInstance) {
     try {
       const { connectionId, filter } = request.query
 
-      logger.info(`Getting services for connection ${connectionId}, filter: ${filter}`)
 
       // 模拟服务列表
       const services = [

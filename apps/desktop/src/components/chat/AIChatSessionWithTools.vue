@@ -551,12 +551,6 @@ const scrollToBottom = () => {
  * 请求工具批准
  */
 const requestToolApproval = (toolName: string, params: any, description: string, messageId: number): Promise<ToolApprovalResponse> => {
-  console.log('[Chat] ========== 请求工具批准 ==========')
-  console.log('[Chat] 工具名称:', toolName)
-  console.log('[Chat] 参数:', params)
-  console.log('[Chat] 描述:', description)
-  console.log('[Chat] 消息ID:', messageId)
-  
   return new Promise((resolve) => {
     // 找到对应的消息并设置待批准状态
     const message = internalMessages.value.find(m => m.id === messageId)
@@ -569,13 +563,6 @@ const requestToolApproval = (toolName: string, params: any, description: string,
       
       nextTick(() => {
         scrollToBottom()
-        console.log('[Chat] 已设置消息为待批准状态，UI 已更新')
-        console.log('[Chat] 消息状态:', {
-          id: message.id,
-          toolApprovalPending: message.toolApprovalPending,
-          toolUse: message.toolUse,
-          streaming: message.streaming
-        })
       })
     } else {
       console.error('[Chat] 未找到消息:', messageId)
@@ -588,8 +575,6 @@ const requestToolApproval = (toolName: string, params: any, description: string,
  * 处理内联批准/拒绝
  */
 const handleInlineApproval = (messageId: number, approved: boolean) => {
-  console.log('[Chat] 用户响应:', approved ? '✅ 批准' : '❌ 拒绝')
-  
   // 找到对应的消息并清除待批准状态
   const message = internalMessages.value.find(m => m.id === messageId)
   if (message) {
@@ -609,12 +594,6 @@ const handleInlineApproval = (messageId: number, approved: boolean) => {
  * 执行工具调用
  */
 const executeToolCall = async (toolName: string, params: any, messageId: number): Promise<ToolResult> => {
-  console.log('[Chat] ========== 开始执行工具调用 ==========')
-  console.log('[Chat] 工具名称:', toolName)
-  console.log('[Chat] 参数:', params)
-  console.log('[Chat] 连接ID:', props.connectionId)
-  console.log('[Chat] enableTools:', props.enableTools)
-  
   // 定义无需确认的工具列表
   const alwaysAutoApproveTools = [
     'attempt_completion',     // 任务完成
@@ -636,14 +615,11 @@ const executeToolCall = async (toolName: string, params: any, messageId: number)
   // 针对 execute_ssh_command，使用风险等级判断
   if (toolName === 'execute_ssh_command' && params.command) {
     const commandRisk = assessCommandRisk(params.command)
-    console.log(`[Chat] 命令风险评估: "${params.command}" = 等级${commandRisk}`)
     
     // 如果命令风险等级 <= 设置的自动执行等级，则自动批准
     if (commandRisk <= aiSettings.value.commandRiskLevel) {
-      console.log(`[Chat] ✅ 命令风险等级${commandRisk} <= 设置等级${aiSettings.value.commandRiskLevel}，自动批准`)
       needsApproval = false
     } else {
-      console.log(`[Chat] ⚠️ 命令风险等级${commandRisk} > 设置等级${aiSettings.value.commandRiskLevel}，需要确认`)
       needsApproval = true
     }
   }
@@ -659,16 +635,10 @@ const executeToolCall = async (toolName: string, params: any, messageId: number)
       description = `AI 助手请求执行 SSH 命令 [风险等级${commandRisk}: ${riskLabel}]:\n${params.command}`
     }
 
-    console.log('[Chat] 描述:', description)
-    console.log('[Chat] 等待用户批准...')
-
     // 请求用户批准
     approval = await requestToolApproval(toolName, params, description, messageId)
 
-    console.log('[Chat] 用户响应:', approval)
-
     if (!approval.approved) {
-      console.log('[Chat] ❌ 用户拒绝')
       return {
         success: false,
         content: '',
@@ -676,18 +646,12 @@ const executeToolCall = async (toolName: string, params: any, messageId: number)
       }
     }
 
-    console.log('[Chat] ✅ 用户批准，准备执行')
-
     // 如果用户提供了反馈，修改参数
     if (approval.feedback) {
-      console.log('[Chat] 用户提供了反馈:', approval.feedback)
       if (toolName === 'execute_ssh_command') {
         params.command = `${params.command} # ${approval.feedback}`
-        console.log('[Chat] 修改后的命令:', params.command)
       }
     }
-  } else {
-    console.log('[Chat] 🚀 此工具无需确认，直接执行')
   }
 
   // 执行工具
@@ -700,22 +664,16 @@ const executeToolCall = async (toolName: string, params: any, messageId: number)
     }
   }
 
-  console.log('[Chat] 调用 executeTool...')
-
   const result = await executeTool(
     toolName,
     params,
     props.connectionId || '',
     (progress) => {
-      console.log('[Chat] 进度:', progress)
       toolExecutionProgress.value = progress
     }
   )
 
   toolExecutionProgress.value = ''
-
-  console.log('[Chat] 工具执行完成')
-  console.log('[Chat] 结果:', result)
 
   // 发出工具执行事件
   emit('tool-executed', toolName, result)
@@ -724,36 +682,19 @@ const executeToolCall = async (toolName: string, params: any, messageId: number)
 }
 
 const handleSendMessage = async () => {
-  console.log('[Chat] ========== 用户发送消息 ==========')
-  console.log('[Chat] 输入内容:', inputMessage.value)
-  console.log('[Chat] 是否正在生成:', isGenerating.value)
-  
   if (!inputMessage.value.trim() || isGenerating.value) {
-    console.log('[Chat] ⚠️ 消息为空或正在生成，跳过')
     return
   }
   
   const content = inputMessage.value.trim()
   inputMessage.value = ''
   
-  console.log('[Chat] 发送消息:', content)
-  console.log('[Chat] props.messages.length:', 0)
-  
   // 直接调用 sendMessageInternal 处理消息
-  console.log('[Chat] 直接调用 sendMessageInternal')
   await sendMessageInternal(content)
 }
 
 const sendMessageInternal = async (content: string) => {
-  console.log('[Chat] ========== sendMessageInternal 被调用 ==========')
-  console.log('[Chat] 消息内容:', content)
-  console.log('[Chat] 当前提供商:', props.currentProvider)
-  console.log('[Chat] 当前模型:', props.currentModel)
-  console.log('[Chat] 连接ID:', props.connectionId)
-  console.log('[Chat] 工具启用:', props.enableTools)
-  
   if (!props.currentProvider || !props.currentModel) {
-    console.log('[Chat] ❌ 没有选择 AI 模型')
     const tipMessage: Message = {
       id: Date.now(),
       role: 'assistant',
@@ -765,8 +706,6 @@ const sendMessageInternal = async (content: string) => {
     return
   }
   
-  console.log('[Chat] ✅ AI 模型已配置，开始处理消息')
-  
   // 添加用户消息
   const userMessage: Message = {
     id: Date.now(),
@@ -776,8 +715,6 @@ const sendMessageInternal = async (content: string) => {
   }
   internalMessages.value.push(userMessage)
   scrollToBottom()
-  
-  console.log('[Chat] 用户消息已添加，准备 AI 响应')
   
   // 准备 AI 响应消息
   const assistantMessage: Message = {
@@ -793,38 +730,29 @@ const sendMessageInternal = async (content: string) => {
   isGenerating.value = true
   
   try {
-    console.log('[Chat] 开始准备 API 请求')
-    
     // 准备 API 消息格式
     const apiMessages: APIChatMessage[] = []
 
     // 添加系统提示词（根据模式决定）
     if (props.enableTools && chatMode.value === 'agent') {
-      console.log('[Chat] Agent 模式：工具已启用，生成系统提示词')
       const systemPrompt = generateSystemPrompt({
         enableSSH: true,
         enableFileOps: true,
         serverInfo: props.serverInfo
       })
-      console.log('[Chat] 系统提示词长度:', systemPrompt.length)
       
       apiMessages.push({
         role: 'system',
         content: systemPrompt
       })
     } else if (chatMode.value === 'ask') {
-      console.log('[Chat] Ask 模式：仅回答问题，不执行工具')
       apiMessages.push({
         role: 'system',
         content: '你是一个乐于助人的 AI 助手。请专注于回答用户的问题，提供清晰准确的信息和建议。不要尝试执行任何工具或命令。'
       })
-    } else {
-      console.log('[Chat] ⚠️ 工具未启用，跳过系统提示词')
     }
 
     // 添加历史消息
-    console.log('[Chat] 添加历史消息，当前消息数:', internalMessages.value.length)
-    
     // 获取历史消息
     let historyMessages = internalMessages.value
       .filter(msg => !msg.streaming && msg.role !== 'system')
@@ -834,7 +762,6 @@ const sendMessageInternal = async (content: string) => {
       const maxMessages = aiSettings.value.maxHistoryMessages
       if (historyMessages.length > maxMessages) {
         historyMessages = historyMessages.slice(-maxMessages)
-        console.log('[Chat] 历史消息已限制为最近', maxMessages, '条')
       }
     }
     
@@ -859,9 +786,7 @@ const sendMessageInternal = async (content: string) => {
       content
     })
     
-    console.log('[Chat] API 消息总数:', apiMessages.length)
-    
-    // ✅ 使用 settingsService 获取 API 密钥配置（自动处理 userId）
+    // 使用 settingsService 获取 API 密钥配置（自动处理 userId）
     const settings = await settingsService.getSettings()
     const configs = settings?.aiProviders || []
     const providerConfig = configs.find((p: any) => p.id === props.currentProvider?.id)
@@ -871,19 +796,12 @@ const sendMessageInternal = async (content: string) => {
       throw new Error('未找到 API 密钥配置')
     }
     
-    console.log('[Chat] ✅ API 密钥已找到（从 settingsService 加载）')
-    
     const providerWithApiKey = {
       ...props.currentProvider,
       apiKey: providerConfig.apiKey
     }
     
-    console.log('[Chat] 准备调用 AI API...')
-    console.log('[Chat] 提供商:', props.currentProvider?.name)
-    console.log('[Chat] 模型:', props.currentModel?.id)
-    
     // 调用 AI API
-    console.log('[Chat] 🚀 调用 AI API (流式输出)...')
     
     // 创建 AbortController 用于取消请求
     abortController.value = new AbortController()
@@ -903,32 +821,15 @@ const sendMessageInternal = async (content: string) => {
       }
     )
     
-    console.log('[Chat] ✅ AI API 调用完成')
-    console.log('[Chat] 响应内容长度:', response.content?.length || 0)
-    
     // 完成流式输出
     assistantMessage.streaming = false
     assistantMessage.content = response.content
-    
-    console.log('[Chat] AI 完整响应:')
-    console.log(response.content)
 
     // 检查是否包含工具调用
-    console.log('[Chat] 检查是否包含工具调用...')
-    console.log('[Chat] enableTools:', props.enableTools)
-    console.log('[Chat] AI 响应内容长度:', assistantMessage.content.length)
-    
     if (props.enableTools) {
-      console.log('[Chat] 工具已启用，解析 AI 响应...')
       const toolUse = parseToolUse(assistantMessage.content)
       
-      console.log('[Chat] 解析结果:', toolUse)
-      
       if (toolUse) {
-        console.log('[Chat] ✅ 检测到工具调用!')
-        console.log('[Chat] 工具名:', toolUse.toolName)
-        console.log('[Chat] 参数:', toolUse.params)
-        
         // 保存工具调用信息
         assistantMessage.toolUse = {
           name: toolUse.toolName,
@@ -937,15 +838,11 @@ const sendMessageInternal = async (content: string) => {
 
         // 执行工具
         try {
-          console.log('[Chat] 开始执行工具...')
           const toolResult = await executeToolCall(toolUse.toolName, toolUse.params, assistantMessage.id)
           assistantMessage.toolResult = toolResult
-          
-          console.log('[Chat] 工具执行结果:', toolResult)
 
           // 如果工具执行成功，继续对话让 AI 处理结果
           if (toolResult.success && toolUse.toolName !== 'attempt_completion') {
-            console.log('[Chat] 工具执行成功，继续对话...')
             scrollToBottom()
 
             // 递归调用以处理工具结果
@@ -960,11 +857,7 @@ const sendMessageInternal = async (content: string) => {
             error: error.message
           }
         }
-      } else {
-        console.log('[Chat] ❌ 未检测到工具调用')
       }
-    } else {
-      console.log('[Chat] ⚠️ 工具未启用')
     }
 
     scrollToBottom()
@@ -988,16 +881,13 @@ const sendMessageInternal = async (content: string) => {
 
 // 停止生成
 const handleStopGeneration = () => {
-  console.log('[Chat] 用户请求停止生成')
   if (abortController.value) {
     abortController.value.abort()
-    console.log('[Chat] 已发送停止信号')
   }
 }
 
 // 清空输入
 const handleClearInput = () => {
-  console.log('[Chat] 清空输入')
   inputMessage.value = ''
   nextTick(() => {
     textareaRef.value?.focus()
@@ -1012,21 +902,22 @@ const handleKeyDown = (e: KeyboardEvent) => {
 }
 
 // 加载 AI 助手设置
-const loadAISettings = () => {
+const loadAISettings = async () => {
   try {
-    const savedSettings = localStorage.getItem('appSettings')
-    if (savedSettings) {
-      const settings = JSON.parse(savedSettings)
+    const settings = await settingsService.getSettings()
+    
+    if (settings) {
+      // ✅ 从正确的嵌套路径读取（settings.aiAssistant.*）
+      const aiAssistant = settings.aiAssistant || {}
       
-      // 加载设置
       aiSettings.value = {
-        autoApproveReadOnly: settings.autoApproveReadOnly !== undefined ? settings.autoApproveReadOnly : true,
-        commandRiskLevel: settings.commandRiskLevel !== undefined ? settings.commandRiskLevel : 2,
-        enableChatHistory: settings.enableChatHistory !== undefined ? settings.enableChatHistory : true,
-        maxHistoryMessages: settings.maxHistoryMessages || 50
+        autoApproveReadOnly: aiAssistant.autoApproveReadOnly !== undefined ? aiAssistant.autoApproveReadOnly : true,
+        commandRiskLevel: aiAssistant.commandRiskLevel !== undefined ? aiAssistant.commandRiskLevel : 2,
+        enableChatHistory: aiAssistant.enableChatHistory !== undefined ? aiAssistant.enableChatHistory : true,
+        maxHistoryMessages: aiAssistant.maxHistoryMessages || 50
       }
       
-      console.log('[Chat] AI 助手设置已加载:', aiSettings.value)
+      console.log('[Chat] AI 助手设置已加载，风险等级阈值:', aiSettings.value.commandRiskLevel)
     }
   } catch (error) {
     console.error('[Chat] 加载 AI 助手设置失败:', error)
@@ -1044,15 +935,10 @@ const handleSettingsUpdate = () => {
 
 // 监听 props 变化
 watch(() => [props.currentProvider, props.currentModel], ([newProvider, newModel]) => {
-  console.log('[AIChatSessionWithTools] 🔄 检测到模型变化')
-  console.log('[AIChatSessionWithTools] 新的 Provider:', newProvider?.name)
-  console.log('[AIChatSessionWithTools] 新的 Model:', newModel?.name)
+  // 模型变化时可以在这里处理
 }, { deep: true })
 
 onMounted(() => {
-  console.log('[AIChatSessionWithTools] 组件挂载')
-  console.log('[AIChatSessionWithTools] 当前 Provider:', props.currentProvider?.name)
-  console.log('[AIChatSessionWithTools] 当前 Model:', props.currentModel?.name)
   
   loadAISettings()
   scrollToBottom()

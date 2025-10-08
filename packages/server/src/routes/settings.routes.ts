@@ -27,18 +27,10 @@ export async function settingsRoutes(fastify: FastifyInstance) {
       const user = request.user as any
       const userId = user.userId
 
-      console.log('\n=== GET SETTINGS DEBUG ===')
-      console.log('[GET] userId:', userId)
-      logger.info(`[Settings API] Getting settings for user: ${userId}`)
-
       // 获取用户设置
       const settings = await settingsService.getUserSettings(userId)
-      console.log('[GET] Raw settings from DB:', settings)
-      console.log('[GET] settings.data:', settings?.data)
       
       if (!settings) {
-        console.log('[GET] ❌ No settings found in DB!')
-        logger.info(`[Settings API] No settings found for user ${userId}, returning empty object`)
         // 如果没有设置，返回空对象（首次使用）
         return reply.send({
           success: true,
@@ -46,10 +38,6 @@ export async function settingsRoutes(fastify: FastifyInstance) {
           settings: {}
         })
       }
-
-      console.log('[GET] ✅ Settings found!')
-      console.log('[GET] settings.data:', JSON.stringify(settings.data, null, 2))
-      logger.info(`[Settings API] Settings found for user ${userId}`)
       
       // 🔍 临时调试：直接返回原始数据看看
       return reply.send({
@@ -90,21 +78,14 @@ export async function settingsRoutes(fastify: FastifyInstance) {
     preHandler: [fastify.authenticate]
   }, async (request: FastifyRequest<SaveSettingsRequest>, reply: FastifyReply) => {
     try {
-      console.log('=== POST SETTINGS DEBUG ===')
       // 从 JWT token 中获取用户 ID
       const user = request.user as any
-      console.log('[POST] user object:', JSON.stringify(user, null, 2))
       const userId = user.userId
-      console.log('[POST] userId extracted:', userId)
       const { settings } = request.body
       
-      // 调试日志 - 查看接收到的数据
-      logger.info(`[Settings API] Saving settings for user: ${userId}`)
-
       // 保存用户设置
       const savedSettings = await settingsService.saveUserSettings(userId, settings)
 
-      logger.info(`[Settings API] Settings saved successfully for user ${userId}`)
       return reply.send({
         success: true,
         message: '保存设置成功',
@@ -137,12 +118,9 @@ export async function settingsRoutes(fastify: FastifyInstance) {
       const user = request.user as any
       const userId = user.userId
 
-      logger.info(`[Settings API] Deleting settings for user: ${userId}`)
-
       // 删除用户设置
       await settingsService.deleteUserSettings(userId)
 
-      logger.info(`[Settings API] Settings deleted successfully for user ${userId}`)
       return reply.send({
         success: true,
         message: '删除设置成功'

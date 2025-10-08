@@ -172,23 +172,14 @@ const closeDropdown = () => {
 }
 
 const isModelSelected = (providerId: string, modelId: string) => {
-  const result = props.modelValue?.providerId === providerId && props.modelValue?.modelId === modelId
-  console.log(`isModelSelected(${providerId}, ${modelId}):`, result, 'current:', props.modelValue)
-  return result
+  return props.modelValue?.providerId === providerId && props.modelValue?.modelId === modelId
 }
 
 const selectModel = (provider: AIProvider, model: AIModel) => {
-  console.log('=== 点击选择模型 ===')
-  console.log('Provider:', provider.name, provider.id)
-  console.log('Model:', model.name, model.id)
-  
   const selection: SelectedModel = {
     providerId: provider.id,
     modelId: model.id
   }
-  
-  console.log('创建选择对象:', JSON.stringify(selection))
-  console.log('当前 modelValue:', JSON.stringify(props.modelValue))
   
   emit('update:modelValue', selection)
   emit('change', provider, model)
@@ -198,8 +189,6 @@ const selectModel = (provider: AIProvider, model: AIModel) => {
   window.dispatchEvent(new CustomEvent('ai-model-changed', {
     detail: selection
   }))
-  
-  console.log('已触发 emit 和模型切换事件')
   
   // 延迟关闭下拉菜单，确保选择操作完成
   setTimeout(() => {
@@ -222,8 +211,6 @@ const openSettings = () => {
 }
 
 const loadProviders = async () => {
-  console.log('[ModelSelector] 🔄 开始加载 AI Providers...')
-  
   // 从默认配置初始化
   aiProviders.value = DEFAULT_PROVIDERS.map(provider => ({
     ...provider,
@@ -239,11 +226,9 @@ const loadProviders = async () => {
   
   // 从数据库加载已保存的配置
   try {
-    // ✅ 使用 settingsService 获取配置（自动处理 userId）
+    // 使用 settingsService 获取配置（自动处理 userId）
     const settings = await settingsService.getSettings()
     if (settings?.aiProviders && settings.aiProviders.length > 0) {
-      console.log(`[ModelSelector] 📦 从数据库加载到 ${settings.aiProviders.length} 个服务商`)
-      
       const savedConfigs = settings.aiProviders
       aiProviders.value = aiProviders.value.map(provider => {
         const savedConfig = savedConfigs.find((c: any) => c.id === provider.id)
@@ -261,9 +246,6 @@ const loadProviders = async () => {
                 enabled: model.enabled !== false
               }))
           
-          const enabledModelsCount = models.filter((m: any) => m.enabled !== false).length
-          console.log(`[ModelSelector]   - ${provider.id}: ${models.length} 个模型, ${enabledModelsCount} 个已启用`)
-          
           return {
             ...provider,
             models,
@@ -277,9 +259,6 @@ const loadProviders = async () => {
         }
         return provider
       })
-      console.log('[ModelSelector] ✅ AI Providers 加载完成')
-    } else {
-      console.log('[ModelSelector] ⚠️ 数据库中无 AI Providers 配置')
     }
   } catch (error) {
     console.error('[ModelSelector] ❌ 加载 AI Providers 失败:', error)
@@ -288,7 +267,6 @@ const loadProviders = async () => {
 
 // 监听设置更新事件
 const handleSettingsUpdate = () => {
-  console.log('[ModelSelector] 📢 检测到设置更新事件，重新加载配置')
   loadProviders()
 }
 

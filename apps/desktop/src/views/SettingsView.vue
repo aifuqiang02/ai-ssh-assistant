@@ -51,19 +51,19 @@
               <p class="setting-hint">自定义应用的主色调</p>
             </div>
             <div class="setting-right">
-              <div class="color-scheme-grid">
-            <div 
-              v-for="scheme in availableColorSchemes" 
-              :key="scheme.value"
-              @click="onColorSchemeChange(scheme.value)"
-                  :class="['color-scheme-item', { active: selectedColorScheme === scheme.value }]"
-                  :title="scheme.label"
+              <select 
+                v-model="selectedColorScheme" 
+                @change="onColorSchemeChange(selectedColorScheme)" 
+                class="form-select"
+              >
+                <option 
+                  v-for="scheme in availableColorSchemes" 
+                  :key="scheme.value"
+                  :value="scheme.value"
                 >
-                  <div class="color-preview" :style="{ backgroundColor: scheme.color }"></div>
-                  <span class="color-label">{{ scheme.label }}</span>
-                  <i v-if="selectedColorScheme === scheme.value" class="bi bi-check-circle-fill check-icon"></i>
-                </div>
-            </div>
+                  {{ scheme.label }}
+                </option>
+              </select>
           </div>
         </div>
         
@@ -81,36 +81,6 @@
           </select>
             </div>
         </div>
-
-        <!-- 主题预览 -->
-          <div class="setting-row">
-            <div class="setting-left">
-              <label class="setting-label">预览效果</label>
-              <p class="setting-hint">查看当前主题的效果</p>
-            </div>
-            <div class="setting-right">
-              <div class="theme-preview">
-                <div class="preview-header">
-                  <div class="preview-avatar" :style="{ backgroundColor: availableColorSchemes.find(s => s.value === selectedColorScheme)?.color }">
-                    <i class="bi bi-person"></i>
-                  </div>
-                  <div class="preview-info">
-                    <p class="preview-title">示例标题</p>
-                    <p class="preview-subtitle">这是一段示例文字</p>
-              </div>
-            </div>
-            <button 
-                  class="preview-button"
-              :style="{ 
-                    backgroundColor: availableColorSchemes.find(s => s.value === selectedColorScheme)?.color
-              }"
-            >
-                  <i class="bi bi-check-circle"></i>
-              示例按钮
-            </button>
-          </div>
-        </div>
-      </div>
         </section>
 
         <!-- AI 服务商设置 -->
@@ -160,21 +130,6 @@
 
             <!-- 高级过滤 -->
             <div class="advanced-filters">
-              <!-- 状态筛选 -->
-              <div class="filter-group">
-                <label class="filter-label">
-                  <i class="bi bi-funnel"></i>
-                  状态
-                </label>
-                <select v-model="statusFilter" class="filter-select">
-                  <option value="all">全部</option>
-                  <option value="enabled">已启用</option>
-                  <option value="configured">已配置</option>
-                  <option value="verified">已验证</option>
-                  <option value="unconfigured">未配置</option>
-                </select>
-              </div>
-
               <!-- 能力筛选 -->
               <div class="filter-group">
                 <label class="filter-label">
@@ -186,20 +141,6 @@
                   <option value="vision">视觉理解</option>
                   <option value="image">图像生成</option>
                   <option value="functionCall">函数调用</option>
-                </select>
-              </div>
-
-              <!-- 排序方式 -->
-              <div class="filter-group">
-                <label class="filter-label">
-                  <i class="bi bi-sort-down"></i>
-                  排序
-                </label>
-                <select v-model="sortBy" class="filter-select">
-                  <option value="default">默认顺序</option>
-                  <option value="name">名称 A-Z</option>
-                  <option value="status">状态优先</option>
-                  <option value="models">模型数量</option>
                 </select>
               </div>
 
@@ -1053,9 +994,7 @@ const fetchingModels = ref<Record<string, boolean>>({})
 // 过滤和搜索
 const providerSearchQuery = ref('')
 const selectedCategory = ref<'all' | 'international' | 'chinese' | 'platforms' | 'cloud' | 'opensource' | 'specialized'>('all')
-const statusFilter = ref<'all' | 'enabled' | 'configured' | 'verified' | 'unconfigured'>('all')
 const capabilityFilter = ref<'all' | 'vision' | 'image' | 'functionCall'>('all')
-const sortBy = ref<'default' | 'name' | 'status' | 'models'>('default')
 
 // 可用的颜色方案
 const availableColorSchemes = computed(() => theme.getAvailableColorSchemes())
@@ -1156,24 +1095,6 @@ const filteredProviders = computed(() => {
     })
   }
   
-  // 按状态过滤
-  if (statusFilter.value !== 'all') {
-    result = result.filter(provider => {
-      switch (statusFilter.value) {
-        case 'enabled':
-          return provider.enabled
-        case 'configured':
-          return provider.apiKey && provider.apiKey.length > 0
-        case 'verified':
-          return testResults.value[provider.id]?.success === true
-        case 'unconfigured':
-          return !provider.apiKey || provider.apiKey.length === 0
-        default:
-          return true
-      }
-    })
-  }
-  
   // 按能力过滤
   if (capabilityFilter.value !== 'all') {
     result = result.filter(provider => {
@@ -1192,31 +1113,6 @@ const filteredProviders = computed(() => {
     })
   }
   
-  // 排序
-  switch (sortBy.value) {
-    case 'name':
-      result.sort((a, b) => a.name.localeCompare(b.name, 'zh-CN'))
-      break
-    case 'status':
-      result.sort((a, b) => {
-        // 优先级: 已验证 > 已启用 > 已配置 > 未配置
-        const getStatusPriority = (p: AIProvider) => {
-          if (testResults.value[p.id]?.success) return 4
-          if (p.enabled) return 3
-          if (p.apiKey) return 2
-          return 1
-        }
-        return getStatusPriority(b) - getStatusPriority(a)
-      })
-      break
-    case 'models':
-      result.sort((a, b) => b.models.length - a.models.length)
-      break
-    default:
-      // 保持默认顺序
-      break
-  }
-  
   return result
 })
 
@@ -1224,18 +1120,14 @@ const filteredProviders = computed(() => {
 const isFiltersDefault = computed(() => {
   return providerSearchQuery.value === '' &&
          selectedCategory.value === 'all' &&
-         statusFilter.value === 'all' &&
-         capabilityFilter.value === 'all' &&
-         sortBy.value === 'default'
+         capabilityFilter.value === 'all'
 })
 
 // 重置所有筛选条件
 const resetFilters = () => {
   providerSearchQuery.value = ''
   selectedCategory.value = 'all'
-  statusFilter.value = 'all'
   capabilityFilter.value = 'all'
-  sortBy.value = 'default'
 }
 
 // 存储设置
@@ -1566,7 +1458,6 @@ const loadSettings = async () => {
           const savedProvider = settings.aiProviders?.find((p: any) => p.id === defaultProvider.id)
           
           if (savedProvider) {
-            console.log(`[Settings] ✅ 恢复 ${savedProvider.id} 配置，模型数量:`, savedProvider.models?.length || 0)
             return {
               ...defaultProvider,
               ...savedProvider,
@@ -1666,7 +1557,7 @@ const migrateFromLocalStorage = async () => {
 
 // 自动保存
 watch([
-  theme, fontSize, selectedColorScheme, sshTimeout, keepAlive, defaultSSHPort,
+  mode, fontSize, selectedColorScheme, sshTimeout, keepAlive, defaultSSHPort,
   terminalFontSize, cursorStyle, cursorBlink,
   // AI 助手设置
   autoApproveReadOnly, commandRiskLevel,
@@ -1903,7 +1794,6 @@ const saveAIProviderConfigs = async () => {
     // 创建纯 JSON 对象（避免响应式代理）
     const cleanProviders = aiProviders.value.map(provider => {
       const enabledModelsCount = provider.models?.filter(m => m.enabled !== false).length || 0
-      console.log(`[Settings]   - ${provider.id}: ${provider.models?.length || 0} 个模型, ${enabledModelsCount} 个已启用`)
       
       return {
       id: provider.id,

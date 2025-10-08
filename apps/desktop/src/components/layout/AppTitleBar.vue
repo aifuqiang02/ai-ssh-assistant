@@ -229,9 +229,7 @@ const availableModels = ref<TitleBarModel[]>([])
 // 从数据库加载可用模型
 const loadAvailableModels = async () => {
   try {
-    console.log('=== AppTitleBar 加载可用模型 ===')
-    
-    // ✅ 使用 settingsService 获取配置（自动处理 userId）
+    // 使用 settingsService 获取配置（自动处理 userId）
     const settings = await settingsService.getSettings()
     
     if (!settings?.aiProviders || settings.aiProviders.length === 0) {
@@ -247,7 +245,6 @@ const loadAvailableModels = async () => {
     for (const provider of configs) {
       // 跳过未启用或未配置 API Key 的 provider（Ollama 除外）
       if (!provider.enabled || (!provider.apiKey && provider.id !== 'ollama')) {
-        console.log(`[AppTitleBar] 跳过未启用/未配置的 provider: ${provider.name}`)
         continue
       }
       
@@ -270,14 +267,11 @@ const loadAvailableModels = async () => {
             providerId: provider.id,
             providerName: provider.name
           })
-          
-          console.log(`[AppTitleBar] 添加模型: ${provider.name} - ${model.name} (enabled: ${model.enabled})`)
         }
       }
     }
     
     availableModels.value = models
-    console.log(`[AppTitleBar] ✅ 已加载 ${models.length} 个可用模型`)
     
     // 加载当前选择的模型
     loadCurrentModel()
@@ -302,7 +296,6 @@ const loadCurrentModel = () => {
     
     if (found) {
       currentModel.value = found
-      console.log('已恢复选择的模型:', found.name)
     }
   } catch (error) {
     console.error('加载当前模型失败:', error)
@@ -312,23 +305,19 @@ const loadCurrentModel = () => {
 // 监听配置变化
 const handleStorageChange = (e: StorageEvent) => {
   if (e.key === 'selectedAIModel') {
-    console.log('🔄 [storage] 检测到模型选择变化，重新加载')
     loadAvailableModels()
   }
 }
 
 const handleModelChange = () => {
-  console.log('🔄 [ai-model-changed] 检测到模型切换事件，重新加载')
   loadAvailableModels()
 }
 
 const handleProviderConfigsUpdated = () => {
-  console.log('🔄 [ai-provider-configs-updated] 检测到 AI Provider 配置更新，重新加载')
   loadAvailableModels()
 }
 
 const handleSettingsUpdated = () => {
-  console.log('🔄 [settings-updated] 检测到设置更新，重新加载模型')
   loadAvailableModels()
 }
 
@@ -472,7 +461,6 @@ const closeWindow = () => {
 // 主题切换
 const toggleTheme = () => {
   theme.toggleMode()
-  console.log('Theme toggled to:', mode.value)
 }
 
 // 模型切换相关方法
@@ -481,16 +469,11 @@ const toggleModelDropdown = () => {
   
   // 打开下拉菜单时重新加载配置，确保显示最新的模型列表
   if (showModelDropdown.value) {
-    console.log('📋 打开模型选择器，重新加载配置')
     loadAvailableModels()
   }
 }
 
 const selectModel = (model: TitleBarModel) => {
-  console.log('=== AppTitleBar 模型切换 ===')
-  console.log('选择模型:', model.providerName, '-', model.name)
-  console.log('Provider ID:', model.providerId, 'Model ID:', model.id)
-  
   // 更新当前显示的模型
   currentModel.value = model
   showModelDropdown.value = false
@@ -502,20 +485,17 @@ const selectModel = (model: TitleBarModel) => {
   }
   
   localStorage.setItem('selectedAIModel', JSON.stringify(selection))
-  console.log('✅ 已保存模型选择:', JSON.stringify(selection))
   
   // 触发自定义事件通知其他组件
   window.dispatchEvent(new CustomEvent('ai-model-changed', {
     detail: selection
   }))
-  console.log('✅ 已触发 ai-model-changed 事件')
 }
 
 const openModelSettings = () => {
   showModelDropdown.value = false
   // 发出打开设置页面的事件
   emit('open-settings')
-  console.log('Opening model settings...')
 }
 
 // 点击外部关闭菜单和下拉框

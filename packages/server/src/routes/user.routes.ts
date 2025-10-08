@@ -83,7 +83,6 @@ export async function userRoutes(fastify: FastifyInstance) {
       const user = request.user as any
       const updates = request.body
 
-      logger.info(`User ${user.username} updating profile`, updates)
 
       // 模拟更新成功
       const updatedProfile = {
@@ -153,7 +152,6 @@ export async function userRoutes(fastify: FastifyInstance) {
         })
       }
 
-      logger.info(`User ${user.username} changed password`)
 
       return reply.send({
         success: true,
@@ -293,7 +291,6 @@ export async function userRoutes(fastify: FastifyInstance) {
       const user = request.user as any
       const { password } = request.body
 
-      logger.info(`User ${user.username} requested account deletion`)
 
       return reply.send({
         success: true,

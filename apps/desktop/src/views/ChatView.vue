@@ -174,7 +174,7 @@ const handleUpdateMessages = (newMessages: Message[]) => {
 
 // 附加文件处理
 const handleAttachFile = () => {
-  console.log('附加文件功能')
+  // 待实现
 }
 
 // 加载会话消息
@@ -195,7 +195,6 @@ const loadSessionMessages = async (sessionId: string) => {
     if (savedSessionName) {
       currentSessionName.value = savedSessionName
     }
-    console.log(`已加载会话 ${sessionId} 的消息:`, messages.value.length, '条')
   } catch (error) {
     console.error('加载会话消息失败:', error)
     messages.value = []
@@ -207,7 +206,6 @@ const saveSessionMessages = async (sessionId: string) => {
   try {
     localStorage.setItem(`chat-session-${sessionId}`, JSON.stringify(messages.value))
     localStorage.setItem(`chat-session-name-${sessionId}`, currentSessionName.value)
-    console.log(`已保存会话 ${sessionId} 的消息:`, messages.value.length, '条')
   } catch (error) {
     console.error('保存会话消息失败:', error)
   }
@@ -264,14 +262,12 @@ const loadModelConfiguration = async () => {
   try {
     const saved = localStorage.getItem('selectedAIModel')
     if (!saved) {
-      console.log('[ChatView] 未找到已选择的模型')
       return
     }
     
     const savedModel = JSON.parse(saved)
-    console.log('[ChatView] 尝试加载模型:', savedModel)
     
-    // ✅ 使用 settingsService 获取配置（自动处理 userId）
+    // 使用 settingsService 获取配置（自动处理 userId）
     const settings = await settingsService.getSettings()
     const configs = settings?.aiProviders || []
     
@@ -284,7 +280,6 @@ const loadModelConfiguration = async () => {
           selectedModel.value = savedModel
           currentProvider.value = provider
           currentModel.value = model
-          console.log('[ChatView] ✅ 已加载模型:', provider.name, '-', model.name)
         } else {
           console.warn('[ChatView] ⚠️ 未找到模型:', savedModel.modelId)
         }
@@ -299,12 +294,10 @@ const loadModelConfiguration = async () => {
 
 // 监听模型切换事件
 const handleModelChanged = () => {
-  console.log('[ChatView] 🔄 检测到模型切换，重新加载')
   loadModelConfiguration()
 }
 
 const handleSettingsUpdated = () => {
-  console.log('[ChatView] 🔄 检测到设置更新，重新加载模型')
   loadModelConfiguration()
 }
 

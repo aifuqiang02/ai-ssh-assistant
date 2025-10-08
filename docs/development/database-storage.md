@@ -179,32 +179,6 @@ const switchToLocal = async () => {
 }
 ```
 
-### 数据迁移
-
-**从本地迁移到云端**：
-```typescript
-// 1. 导出本地数据
-const localData = await window.electronAPI.settings.export('local-user', exportPath)
-
-// 2. 上传到云端
-await settingsService.import(userId, localData)
-
-// 3. 切换模式
-await window.electronAPI.storage.switchToCloud({ apiUrl, token })
-```
-
-**从云端迁移到本地**：
-```typescript
-// 1. 下载云端数据
-const cloudData = await settingsService.export(userId)
-
-// 2. 导入到本地
-await window.electronAPI.settings.import('local-user', cloudData)
-
-// 3. 切换模式
-await window.electronAPI.storage.switchToLocal()
-```
-
 ## 💾 本地数据库实现
 
 ### 主进程服务

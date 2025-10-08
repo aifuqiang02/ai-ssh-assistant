@@ -44,7 +44,6 @@ class SettingsService {
         }
       })
 
-      logger.info(`Settings saved for user: ${userId}`)
       return settings
     } catch (error) {
       console.error('[Settings Service] Save settings error:', error)
@@ -62,7 +61,6 @@ class SettingsService {
         where: { userId }
       })
 
-      logger.info(`Settings deleted for user: ${userId}`)
     } catch (error) {
       logger.error(`Failed to delete settings for user ${userId}:`, error)
       throw new Error('删除用户设置失败')

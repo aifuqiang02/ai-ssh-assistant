@@ -392,7 +392,6 @@ const handleReconnect = async () => {
   if (currentConnectionId.value && window.electronAPI) {
     try {
       await window.electronAPI.ssh.disconnect(currentConnectionId.value)
-      console.log('Disconnected old connection:', currentConnectionId.value)
     } catch (err) {
       console.warn('Failed to disconnect:', err)
     }

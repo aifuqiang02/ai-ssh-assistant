@@ -19,34 +19,17 @@ export async function executeSSHCommand(
   connectionId: string,
   command: string
 ): Promise<SSHCommandResult> {
-  console.log('[SSH Service] ============ 开始执行 SSH 命令 ============')
-  console.log('[SSH Service] 连接ID:', connectionId)
-  console.log('[SSH Service] 命令:', command)
-  
   try {
     // 检查是否在 Electron 环境中
-    console.log('[SSH Service] 检查 Electron API...')
-    console.log('[SSH Service] window.electronAPI 存在:', !!window.electronAPI)
-    
     if (!window.electronAPI) {
-      console.error('[SSH Service] ❌ Electron API 不可用')
       throw new Error('Electron API 不可用，请确保在 Electron 环境中运行')
     }
 
-    console.log('[SSH Service] ✅ Electron API 可用')
-    console.log('[SSH Service] 调用 window.electronAPI.ssh.execute...')
-    
     // 调用 Electron IPC
     const result = await window.electronAPI.ssh.execute(connectionId, command)
-    
-    console.log('[SSH Service] IPC 调用完成')
-    console.log('[SSH Service] 返回结果类型:', typeof result)
-    console.log('[SSH Service] 返回结果:', result)
-    console.log('[SSH Service] 返回结果的所有键:', result ? Object.keys(result) : 'null')
 
     // 处理 null 或 undefined
     if (!result) {
-      console.log('[SSH Service] ⚠️ 返回结果为空')
       return {
         success: false,
         output: '',
@@ -56,8 +39,6 @@ export async function executeSSHCommand(
 
     // 处理字符串结果
     if (typeof result === 'string') {
-      console.log('[SSH Service] 结果是字符串')
-      console.log('[SSH Service] ✅ 命令执行完成')
       return {
         success: true,
         output: result
@@ -66,52 +47,25 @@ export async function executeSSHCommand(
 
     // 处理对象结果
     if (typeof result === 'object') {
-      console.log('[SSH Service] 结果是对象，开始解析...')
-      console.log('[SSH Service] result.success:', result.success)
-      console.log('[SSH Service] result.output:', result.output)
-      console.log('[SSH Service] result.stdout:', result.stdout)
-      console.log('[SSH Service] result.error:', result.error)
-      console.log('[SSH Service] result.stderr:', result.stderr)
-      
       // 提取输出和错误
       const output = result.output || result.stdout || result.data || ''
       const error = result.error || result.stderr || result.message || ''
       const success = result.success !== false && !error
-      
-      console.log('[SSH Service] 解析后 - output:', output ? `存在 (${output.length} 字符)` : '空')
-      console.log('[SSH Service] 解析后 - error:', error ? `存在 (${error})` : '无')
-      console.log('[SSH Service] 解析后 - success:', success)
 
-      const finalResult = {
+      return {
         success: success,
         output: output ? output.toString() : '',
         error: error ? error.toString() : undefined
       }
-      
-      console.log('[SSH Service] ✅ 命令执行完成')
-      console.log('[SSH Service] 最终成功状态:', finalResult.success)
-      console.log('[SSH Service] 最终输出长度:', finalResult.output.length)
-      console.log('[SSH Service] 最终输出内容:', finalResult.output.substring(0, 200))
-      
-      return finalResult
     }
 
     // 其他情况
-    console.error('[SSH Service] ❌ 意外的结果格式')
-    console.error('[SSH Service] 结果类型:', typeof result)
-    console.error('[SSH Service] 结果值:', result)
-    
     return {
       success: false,
       output: '',
       error: `意外的结果格式: ${typeof result}`
     }
   } catch (error: any) {
-    console.error('[SSH Service] ❌ SSH 命令执行失败')
-    console.error('[SSH Service] 错误:', error)
-    console.error('[SSH Service] 错误消息:', error.message)
-    console.error('[SSH Service] 错误堆栈:', error.stack)
-    
     return {
       success: false,
       output: '',
@@ -204,4 +158,3 @@ declare global {
     }
   }
 }
-

@@ -34,7 +34,6 @@ export async function fileRoutes(fastify: FastifyInstance) {
     try {
       const { connectionId, path = '/', showHidden = false, sortBy = 'name', sortOrder = 'asc' } = request.query
 
-      logger.info(`Getting file list for connection ${connectionId}, path: ${path}`)
 
       // 模拟文件列表
       const files = [
@@ -173,7 +172,6 @@ export async function fileRoutes(fastify: FastifyInstance) {
         })
       }
 
-      logger.info(`Uploading file ${data.filename} to ${remotePath} on connection ${connectionId}`)
 
       // 模拟文件上传
       const uploadResult = {
@@ -225,7 +223,6 @@ export async function fileRoutes(fastify: FastifyInstance) {
     try {
       const { connectionId, filePath } = request.query
 
-      logger.info(`Downloading file ${filePath} from connection ${connectionId}`)
 
       // 模拟文件内容
       const fileContent = `这是来自服务器的文件内容：${filePath}\n生成时间：${new Date().toISOString()}`
@@ -272,7 +269,6 @@ export async function fileRoutes(fastify: FastifyInstance) {
     try {
       const { connectionId, filePath, force = false } = request.body
 
-      logger.info(`Deleting file ${filePath} from connection ${connectionId}, force: ${force}`)
 
       // 模拟删除操作
       const deleteResult = {
@@ -324,7 +320,6 @@ export async function fileRoutes(fastify: FastifyInstance) {
     try {
       const { connectionId, dirPath, permissions = '755' } = request.body
 
-      logger.info(`Creating directory ${dirPath} on connection ${connectionId} with permissions ${permissions}`)
 
       const createResult = {
         dirPath,
@@ -378,7 +373,6 @@ export async function fileRoutes(fastify: FastifyInstance) {
     try {
       const { connectionId, filePath, encoding = 'utf-8', maxSize = 1048576 } = request.query
 
-      logger.info(`Getting content of file ${filePath} from connection ${connectionId}`)
 
       // 模拟文件内容
       const content = `# 这是文件 ${filePath} 的内容

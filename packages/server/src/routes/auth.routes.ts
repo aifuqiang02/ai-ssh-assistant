@@ -119,7 +119,6 @@ export async function authRoutes(fastify: FastifyInstance) {
         updatedAt: user.updatedAt
       }
 
-      logger.info(`User ${user.username} (${email}) logged in successfully`)
 
       return reply.send({
         success: true,
@@ -217,7 +216,6 @@ export async function authRoutes(fastify: FastifyInstance) {
         password
       })
 
-      logger.info(`New user registered: ${username} (${email})`)
 
       return reply.status(201).send({
         success: true,
@@ -322,7 +320,6 @@ export async function authRoutes(fastify: FastifyInstance) {
   }, async (request: FastifyRequest, reply: FastifyReply) => {
     try {
       // 这里可以将令牌加入黑名单
-      logger.info(`User ${(request.user as any)?.username} logged out`)
 
       return reply.send({
         success: true,

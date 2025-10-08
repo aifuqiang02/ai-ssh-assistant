@@ -39,13 +39,8 @@ class RedisManager {
       RedisManager.instance = new Redis(config)
 
       // 设置事件监听器
-      RedisManager.instance.on('connect', () => {
-        logger.info('Redis connection established')
-      })
-
       RedisManager.instance.on('ready', () => {
         RedisManager.isConnected = true
-        logger.info('Redis is ready to receive commands')
       })
 
       RedisManager.instance.on('error', (error) => {
@@ -54,16 +49,10 @@ class RedisManager {
       })
 
       RedisManager.instance.on('close', () => {
-        logger.info('Redis connection closed')
         RedisManager.isConnected = false
       })
 
-      RedisManager.instance.on('reconnecting', () => {
-        logger.info('Redis reconnecting...')
-      })
-
       RedisManager.instance.on('end', () => {
-        logger.info('Redis connection ended')
         RedisManager.isConnected = false
       })
     }
@@ -76,7 +65,6 @@ class RedisManager {
    */
   static async connect(): Promise<void> {
     if (RedisManager.isConnected) {
-      logger.info('Redis is already connected')
       return
     }
 
@@ -86,8 +74,6 @@ class RedisManager {
       
       // 测试连接
       await client.ping()
-      
-      logger.info('Redis connected successfully')
     } catch (error) {
       logger.error({ error }, 'Failed to connect to Redis')
       // Redis 连接失败不应该阻止应用启动，只记录错误
@@ -100,7 +86,6 @@ class RedisManager {
    */
   static async disconnect(): Promise<void> {
     if (!RedisManager.instance) {
-      logger.info('Redis is not connected')
       return
     }
 
@@ -108,7 +93,6 @@ class RedisManager {
       await RedisManager.instance.disconnect()
       RedisManager.instance = null
       RedisManager.isConnected = false
-      logger.info('Redis disconnected successfully')
     } catch (error) {
       logger.error({ error }, 'Failed to disconnect from Redis')
       throw error

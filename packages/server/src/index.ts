@@ -8,11 +8,9 @@ async function startServer() {
   try {
     // 连接数据库
     await Database.connect()
-    logger.info('Database connected successfully')
 
     // 连接 Redis
     await RedisManager.connect()
-    logger.info('Redis connected successfully')
 
     // 构建应用
     const app = await buildApp()
@@ -23,26 +21,17 @@ async function startServer() {
       host: config.host
     })
 
-    logger.info(`🚀 Server running at ${address}`)
-    logger.info(`📚 API Documentation: ${address}/docs`)
-    logger.info(`🔍 Health Check: ${address}/health`)
-
     // 优雅关闭处理
     const gracefulShutdown = async (signal: string) => {
-      logger.info(`Received ${signal}, shutting down gracefully...`)
-      
       try {
         // 关闭服务器
         await app.close()
-        logger.info('Server closed')
 
         // 断开数据库连接
         await Database.disconnect()
-        logger.info('Database disconnected')
 
         // 断开 Redis 连接
         await RedisManager.disconnect()
-        logger.info('Redis disconnected')
 
         process.exit(0)
       } catch (error) {
@@ -74,4 +63,3 @@ async function startServer() {
 
 // 启动服务器
 startServer()
-

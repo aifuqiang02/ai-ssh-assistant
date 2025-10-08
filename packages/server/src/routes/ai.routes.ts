@@ -44,7 +44,6 @@ export async function aiRoutes(fastify: FastifyInstance) {
       const { message, context, model = 'gpt-3.5-turbo' } = request.body
       const user = request.user as any
 
-      logger.info(`AI chat request from user ${user.username}: ${message}`)
 
       // 模拟 AI 响应
       const responses = [
@@ -142,7 +141,6 @@ export async function aiRoutes(fastify: FastifyInstance) {
     try {
       const { input, context } = request.body
 
-      logger.info(`Command suggestion request: ${input}`)
 
       // 根据输入生成命令建议
       const suggestions = generateCommandSuggestions(input, context)
@@ -202,7 +200,6 @@ export async function aiRoutes(fastify: FastifyInstance) {
     try {
       const { data, type, options = {} } = request.body
 
-      logger.info(`Analysis request for type: ${type}`)
 
       // 模拟分析结果
       const analysis = {

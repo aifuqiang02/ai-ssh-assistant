@@ -24,7 +24,6 @@ class Database {
    */
   static async connect(): Promise<void> {
     if (Database.isConnected) {
-      logger.info('Database is already connected')
       return
     }
 
@@ -38,7 +37,6 @@ class Database {
       await client.$queryRaw`SELECT 1`
       
       Database.isConnected = true
-      logger.info('Database connected successfully')
     } catch (error) {
       logger.error({ error }, 'Failed to connect to database')
       throw error
@@ -50,7 +48,6 @@ class Database {
    */
   static async disconnect(): Promise<void> {
     if (!Database.isConnected || !Database.instance) {
-      logger.info('Database is not connected')
       return
     }
 
@@ -58,7 +55,6 @@ class Database {
       await Database.instance.$disconnect()
       Database.instance = null
       Database.isConnected = false
-      logger.info('Database disconnected successfully')
     } catch (error) {
       logger.error({ error }, 'Failed to disconnect from database')
       throw error
@@ -97,7 +93,6 @@ class Database {
     try {
       await Database.disconnect()
       await Database.connect()
-      logger.info('Database reconnected successfully')
     } catch (error) {
       logger.error({ error }, 'Failed to reconnect to database')
       throw error

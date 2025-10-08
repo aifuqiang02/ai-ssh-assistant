@@ -56,6 +56,7 @@ async function callOpenAI(
     stream: request.stream ?? false
   }
   
+  
   const response = await fetch(endpoint, {
     method: 'POST',
     headers: {
@@ -106,6 +107,7 @@ async function handleOpenAIStream(
   
   let fullContent = ''
   let totalTokens = 0
+  let actualModel = '' // 🔍 捕获实际使用的模型
   
   try {
     while (true) {
@@ -129,6 +131,11 @@ async function handleOpenAIStream(
             const parsed = JSON.parse(data)
             const content = parsed.choices[0]?.delta?.content || ''
             
+            // 捕获 model 字段（第一次出现时）
+            if (parsed.model && !actualModel) {
+              actualModel = parsed.model
+            }
+            
             if (content) {
               fullContent += content
               onChunk({ content, done: false })
@@ -145,7 +152,7 @@ async function handleOpenAIStream(
   
   return {
     content: fullContent,
-    model: '',
+    model: actualModel,
     usage: {
       promptTokens: 0,
       completionTokens: 0,
@@ -409,6 +416,65 @@ async function handleGoogleStream(
 }
 
 /**
+ * OpenRouter API 调用（需要特殊请求头）
+ */
+async function callOpenRouter(
+  provider: AIProvider,
+  model: AIModel,
+  request: ChatCompletionRequest,
+  onChunk?: (chunk: StreamChunk) => void
+): Promise<ChatCompletionResponse> {
+  const endpoint = `${provider.endpoint}/chat/completions`
+  
+  const body = {
+    model: model.id,
+    messages: request.messages,
+    temperature: request.temperature ?? 0.7,
+    max_tokens: request.maxTokens,
+    top_p: request.topP,
+    stream: request.stream ?? false
+  }
+  
+  
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${provider.apiKey}`,
+      'Content-Type': 'application/json',
+      // OpenRouter 特定请求头
+      'HTTP-Referer': 'https://ai-ssh-assistant.app',
+      'X-Title': 'AI SSH Assistant'
+    },
+    body: JSON.stringify(body),
+    signal: request.signal
+  })
+  
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}))
+    console.error('[OpenRouter] API 错误:', error)
+    throw new Error(error.error?.message || `HTTP ${response.status}: ${response.statusText}`)
+  }
+  
+  // 流式响应
+  if (request.stream && onChunk) {
+    return await handleOpenAIStream(response, onChunk)
+  }
+  
+  // 非流式响应
+  const data = await response.json()
+  return {
+    content: data.choices[0]?.message?.content || '',
+    model: data.model,
+    usage: {
+      promptTokens: data.usage?.prompt_tokens || 0,
+      completionTokens: data.usage?.completion_tokens || 0,
+      totalTokens: data.usage?.total_tokens || 0
+    },
+    finishReason: data.choices[0]?.finish_reason
+  }
+}
+
+/**
  * 通用 OpenAI 兼容 API 调用（用于通义千问、DeepSeek、Moonshot 等）
  */
 async function callGenericOpenAI(
@@ -556,6 +622,10 @@ export async function chatCompletion(
     
     case 'ollama':
       return await callOllama(provider, model, request, onChunk)
+    
+    // OpenRouter 聚合平台（支持多个模型）
+    case 'openrouter':
+      return await callOpenRouter(provider, model, request, onChunk)
     
     // 其他使用 OpenAI 兼容接口的服务商
     case 'qwen':

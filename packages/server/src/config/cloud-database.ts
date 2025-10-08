@@ -34,7 +34,6 @@ class CloudDatabase {
    */
   static async connect(): Promise<void> {
     if (CloudDatabase.isConnected) {
-      logger.info('Cloud database is already connected')
       return
     }
 
@@ -48,7 +47,6 @@ class CloudDatabase {
       await client.$queryRaw`SELECT 1`
       
       CloudDatabase.isConnected = true
-      logger.info('Cloud database connected successfully')
     } catch (error) {
       logger.error({ error }, 'Failed to connect to cloud database')
       throw error
@@ -60,7 +58,6 @@ class CloudDatabase {
    */
   static async disconnect(): Promise<void> {
     if (!CloudDatabase.isConnected || !CloudDatabase.instance) {
-      logger.info('Cloud database is not connected')
       return
     }
 
@@ -68,7 +65,6 @@ class CloudDatabase {
       await CloudDatabase.instance.$disconnect()
       CloudDatabase.instance = null
       CloudDatabase.isConnected = false
-      logger.info('Cloud database disconnected successfully')
     } catch (error) {
       logger.error({ error }, 'Failed to disconnect from cloud database')
       throw error
