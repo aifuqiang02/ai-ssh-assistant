@@ -587,12 +587,12 @@ watch(messages, () => {
 }
 
 .user-bubble {
-  background: var(--vscode-button-background, #0e639c);
-  color: var(--vscode-button-foreground, #ffffff);
+  background: var(--vscode-accent, #007acc);
+  color: #ffffff;
 }
 
 .user-bubble * {
-  color: var(--vscode-button-foreground, #ffffff) !important;
+  color: #ffffff !important;
 }
 
 .assistant-bubble {
