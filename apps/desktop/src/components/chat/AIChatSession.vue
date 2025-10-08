@@ -307,7 +307,7 @@ const emit = defineEmits<{
 
 // 响应式数据
 const inputMessage = ref('')
-const inputHeight = ref(44)
+const inputHeight = ref(54)
 const isGenerating = ref(false)
 const messagesContainer = ref<HTMLElement | null>(null)
 const inputTextarea = ref<HTMLTextAreaElement | null>(null)
@@ -405,7 +405,7 @@ const handleInput = () => {
   
   inputTextarea.value.style.height = 'auto'
   const scrollHeight = inputTextarea.value.scrollHeight
-  inputHeight.value = Math.min(Math.max(scrollHeight, 44), 200)
+  inputHeight.value = Math.min(Math.max(scrollHeight, 54), 200)
 }
 
 const handleKeyDown = (e: KeyboardEvent) => {
@@ -420,7 +420,7 @@ const handleSendMessage = async () => {
   
   const content = inputMessage.value.trim()
   inputMessage.value = ''
-  inputHeight.value = 44
+  inputHeight.value = 54
   
   emit('send-message', content)
   
@@ -647,7 +647,7 @@ watch(messages, () => {
 
 /* 输入区域 */
 .input-editor {
-  min-height: 44px;
+  min-height: 54px;
   max-height: 200px;
   line-height: 1.5;
 }
