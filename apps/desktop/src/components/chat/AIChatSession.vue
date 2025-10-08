@@ -57,7 +57,7 @@
                     <!-- 用户消息内容 -->
                     <div 
                       v-if="message.role === 'user'"
-                      class="message-text whitespace-pre-wrap break-words text-sm leading-relaxed"
+                      class="message-text whitespace-pre-wrap break-words text-sm leading-relaxed text-right"
                     >
                       {{ message.content }}
                     </div>
