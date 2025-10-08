@@ -69,6 +69,22 @@
               ></textarea>
             </div>
           </div>
+
+          <!-- 开场消息 -->
+          <div class="setting-row">
+            <div class="setting-left">
+              <label class="setting-label">开场消息</label>
+              <p class="setting-hint">进入会话时自动显示的欢迎消息</p>
+            </div>
+            <div class="setting-right">
+              <textarea
+                v-model="openingMessage"
+                placeholder="例如：你好！我是你的 AI 助手，有什么可以帮助你的吗？"
+                class="form-textarea"
+                rows="4"
+              ></textarea>
+            </div>
+          </div>
         </section>
 
         <!-- 高级设置 -->
@@ -137,6 +153,7 @@ const sessionName = ref('')
 
 // 系统提示词
 const systemRole = ref('')
+const openingMessage = ref('')
 
 // 高级设置
 const contextWindow = ref(10)
