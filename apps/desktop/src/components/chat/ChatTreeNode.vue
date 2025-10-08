@@ -517,12 +517,13 @@ const toggleActionMenu = () => {
   padding: 6px 12px;
   cursor: pointer;
   font-size: 13px;
-  color: var(--vscode-menu-foreground);
+  color: var(--vscode-menu-foreground, var(--vscode-foreground, #cccccc));
   transition: background-color 0.15s ease;
 }
 
 .action-item:hover {
-  background-color: var(--vscode-menu-selectionBackground);
+  background-color: var(--vscode-menu-selectionBackground, var(--vscode-list-hoverBackground, rgba(90, 93, 94, 0.31)));
+  color: var(--vscode-menu-selectionForeground, var(--vscode-foreground, #ffffff));
 }
 
 .action-item.danger {
@@ -537,10 +538,6 @@ const toggleActionMenu = () => {
   height: 1px;
   background: var(--vscode-menu-separatorBackground);
   margin: 4px 0;
-}
-
-.tree-node-children {
-  /* 子节点容器不需要额外样式 */
 }
 </style>
 
