@@ -48,7 +48,7 @@
                 <div class="message-bubble-container group relative">
                   <div 
                     :class="[
-                      'message-bubble rounded-lg px-4 py-3 relative',
+                      'message-bubble rounded-lg px-3 py-2 relative',
                       message.role === 'user' 
                         ? 'user-bubble' 
                         : 'assistant-bubble'
