@@ -1,10 +1,28 @@
 <template>
   <div class="prompt-optimizer-view">
+    <!-- 左侧导航树 -->
+    <div class="settings-sidebar">
+      <div class="sidebar-header">
+        <h3 class="sidebar-title">提示词优化助手</h3>
+      </div>
+      <nav class="settings-nav">
+        <div 
+          v-for="section in optimizerSections" 
+          :key="section.id"
+          :class="['nav-item', { active: activeSection === section.id }]"
+          @click="scrollToSection(section.id)"
+        >
+          <i :class="['nav-icon', section.icon]"></i>
+          <span class="nav-label">{{ section.label }}</span>
+        </div>
+      </nav>
+    </div>
+    
     <!-- 内容区域 -->
-    <div class="settings-content">
+    <div class="settings-content" ref="contentContainer" @scroll="onScroll">
       <div class="content-inner">
         <!-- 步骤1: 任务描述与生成提示词 -->
-        <section class="setting-section">
+        <section :id="'section-task'" class="setting-section">
           <h2 class="section-title">
             <i class="bi bi-1-circle"></i>
             描述您的任务
@@ -45,7 +63,7 @@
         </section>
 
         <!-- 步骤2: 显示生成的提示词并测试 -->
-        <section class="setting-section">
+        <section :id="'section-prompt'" class="setting-section">
           <h2 class="section-title">
             <i class="bi bi-2-circle"></i>
             生成的提示词
@@ -91,7 +109,7 @@
         </section>
 
         <!-- 步骤3: 测试结果与优化 -->
-        <section class="setting-section">
+        <section :id="'section-test'" class="setting-section">
           <h2 class="section-title">
             <i class="bi bi-3-circle"></i>
             测试结果与优化
@@ -159,6 +177,17 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { chatCompletion } from '../services/ai-api.service'
 import { settingsService } from '../services/settings.service'
 import { DEFAULT_PROVIDERS, type AIProvider, type AIModel } from '../types/ai-providers'
+
+// 左侧菜单配置
+const optimizerSections = [
+  { id: 'task', label: '任务描述', icon: 'bi bi-pencil-square' },
+  { id: 'prompt', label: '生成提示词', icon: 'bi bi-file-text' },
+  { id: 'test', label: '测试优化', icon: 'bi bi-check2-circle' }
+]
+
+const activeSection = ref('task')
+const contentContainer = ref<HTMLElement | null>(null)
+const isScrolling = ref(false)
 
 // AI 配置
 const currentProvider = ref<AIProvider | null>(null)
@@ -387,6 +416,51 @@ const resetAll = () => {
   }
 }
 
+// 左侧菜单导航方法
+const scrollToSection = (sectionId: string) => {
+  const element = document.getElementById(`section-${sectionId}`)
+  if (element && contentContainer.value) {
+    isScrolling.value = true
+    activeSection.value = sectionId
+    
+    const container = contentContainer.value
+    const offsetTop = element.offsetTop - 82
+    
+    container.scrollTo({
+      top: offsetTop,
+      behavior: 'smooth'
+    })
+    
+    setTimeout(() => {
+      isScrolling.value = false
+    }, 600)
+  }
+}
+
+const onScroll = () => {
+  if (isScrolling.value) return
+  
+  const container = contentContainer.value
+  if (!container) return
+  
+  const scrollTop = container.scrollTop
+  const sections = optimizerSections.map(s => ({
+    id: s.id,
+    element: document.getElementById(`section-${s.id}`)
+  }))
+  
+  for (let i = sections.length - 1; i >= 0; i--) {
+    const section = sections[i]
+    if (section.element) {
+      const offsetTop = section.element.offsetTop - 60
+      if (scrollTop >= offsetTop) {
+        activeSection.value = section.id
+        break
+      }
+    }
+  }
+}
+
 // 监听模型切换事件
 const handleModelChanged = () => {
   console.log('[PromptOptimizer] 🔄 检测到模型切换，重新加载')
@@ -422,6 +496,67 @@ onUnmounted(() => {
   height: 100vh;
   background: var(--vscode-bg);
   color: var(--vscode-fg);
+}
+
+/* ========== 左侧导航 ========== */
+.settings-sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: var(--vscode-bg-lighter);
+  border-right: 1px solid var(--vscode-border);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--vscode-border);
+}
+
+.sidebar-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--vscode-fg);
+}
+
+.settings-nav {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--vscode-fg-muted);
+  user-select: none;
+}
+
+.nav-item:hover {
+  background: var(--vscode-bg);
+  color: var(--vscode-fg);
+}
+
+.nav-item.active {
+  background: var(--vscode-bg);
+  color: var(--vscode-accent);
+  border-left: 2px solid var(--vscode-accent);
+  padding-left: 18px;
+}
+
+.nav-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.nav-label {
+  font-size: 14px;
+  font-weight: 500;
 }
 
 /* ========== 内容区域 ========== */
@@ -643,22 +778,26 @@ onUnmounted(() => {
 
 /* ========== 滚动条 ========== */
 .settings-content::-webkit-scrollbar,
+.settings-nav::-webkit-scrollbar,
 .test-result-box::-webkit-scrollbar {
   width: 8px;
 }
 
 .settings-content::-webkit-scrollbar-track,
+.settings-nav::-webkit-scrollbar-track,
 .test-result-box::-webkit-scrollbar-track {
   background: transparent;
 }
 
 .settings-content::-webkit-scrollbar-thumb,
+.settings-nav::-webkit-scrollbar-thumb,
 .test-result-box::-webkit-scrollbar-thumb {
   background: var(--vscode-border);
   border-radius: 4px;
 }
 
 .settings-content::-webkit-scrollbar-thumb:hover,
+.settings-nav::-webkit-scrollbar-thumb:hover,
 .test-result-box::-webkit-scrollbar-thumb:hover {
   background: var(--vscode-fg-muted);
 }
