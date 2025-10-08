@@ -1,6 +1,7 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
 import { logger } from '../utils/safe-logger.js'
 import { userService, UserResponse } from '../services/user.service.js'
+import { successResponseSchema } from '../schemas/common.schema.js'
 
 interface LoginBody {
   email: string
@@ -33,45 +34,7 @@ export async function authRoutes(fastify: FastifyInstance) {
           rememberMe: { type: 'boolean', default: false }
         }
       },
-      response: {
-        200: {
-          type: 'object',
-          properties: {
-            success: { type: 'boolean' },
-            message: { type: 'string' },
-            data: {
-              type: 'object',
-              properties: {
-                user: {
-                  type: 'object',
-                  properties: {
-                    id: { type: 'string' },
-                    uuid: { type: 'string' },
-                    username: { type: 'string' },
-                    email: { type: 'string' },
-                    avatar: { type: 'string' },
-                    role: { type: 'string' },
-                    isActive: { type: 'boolean' },
-                    createdAt: { type: 'string' },
-                    updatedAt: { type: 'string' }
-                  }
-                },
-                accessToken: { type: 'string' },
-                refreshToken: { type: 'string' },
-                expiresIn: { type: 'number' }
-              }
-            }
-          }
-        },
-        401: {
-          type: 'object',
-          properties: {
-            success: { type: 'boolean' },
-            message: { type: 'string' },
-            code: { type: 'string' }
-          }
-        }
-      }
+      response: successResponseSchema
     }
   }, async (request: FastifyRequest<{ Body: LoginBody }>, reply: FastifyReply) => {
     try {
@@ -192,34 +155,7 @@ export async function authRoutes(fastify: FastifyInstance) {
           password: { type: 'string', minLength: 6, maxLength: 100 }
         }
       },
-      response: {
-        201: {
-          type: 'object',
-          properties: {
-            success: { type: 'boolean' },
-            message: { type: 'string' },
-            data: {
-              type: 'object',
-              properties: {
-                user: {
-                  type: 'object',
-                  properties: {
-                    id: { type: 'string' },
-                    uuid: { type: 'string' },
-                    username: { type: 'string' },
-                    email: { type: 'string' },
-                    avatar: { type: 'string' },
-                    role: { type: 'string' },
-                    isActive: { type: 'boolean' },
-                    createdAt: { type: 'string' },
-                    updatedAt: { type: 'string' }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+      response: successResponseSchema
     }
   }, async (request: FastifyRequest<{ Body: RegisterBody }>, reply: FastifyReply) => {
     try {

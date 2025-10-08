@@ -105,5 +105,8 @@ class Database {
   }
 }
 
+// 导出 prisma 实例供其他模块使用
+export const prisma = Database.getInstance()
+
 export default Database
 

@@ -37,30 +37,30 @@ export interface IChatService {
 class ChatApiImpl extends BaseApiImpl implements IChatService {
   // 树形结构
   async getChatTree(): Promise<ChatTreeNode[]> {
-    return this.get('/api/chat/tree')
+    return this.get('/chat/tree')
   }
   
   // 文件夹管理
   async createFolder(data: CreateChatFolderDto): Promise<any> {
-    return this.post('/api/chat/folders', data)
+    return this.post('/chat/folders', data)
   }
   
   async updateFolder(id: string, data: UpdateChatFolderDto): Promise<any> {
-    return this.put(`/api/chat/folders/${id}`, data)
+    return this.put(`/chat/folders/${id}`, data)
   }
   
   async deleteFolder(id: string): Promise<void> {
-    await this.delete(`/api/chat/folders/${id}`)
+    await this.delete(`/chat/folders/${id}`)
   }
   
   // 会话管理
   async createSession(data: CreateChatSessionDto): Promise<any> {
-    return this.post('/api/chat/sessions', data)
+    return this.post('/chat/sessions', data)
   }
   
   async getSession(sessionId: string): Promise<ChatSession | null> {
     try {
-      return await this.get(`/api/chat/sessions/${sessionId}`)
+      return await this.get(`/chat/sessions/${sessionId}`)
     } catch (error: any) {
       if (error.message?.includes('404')) {
         return null
@@ -70,33 +70,33 @@ class ChatApiImpl extends BaseApiImpl implements IChatService {
   }
   
   async getSessions(): Promise<ChatSession[]> {
-    return this.get('/api/chat/sessions')
+    return this.get('/chat/sessions')
   }
   
   async updateSession(id: string, data: UpdateChatSessionDto): Promise<any> {
-    return this.put(`/api/chat/sessions/${id}`, data)
+    return this.put(`/chat/sessions/${id}`, data)
   }
   
   async deleteSession(id: string): Promise<void> {
-    await this.delete(`/api/chat/sessions/${id}`)
+    await this.delete(`/chat/sessions/${id}`)
   }
   
   // 节点移动
   async moveNode(data: MoveChatNodeDto): Promise<void> {
-    await this.put('/api/chat/move', data)
+    await this.put('/chat/move', data)
   }
   
   // 消息管理
   async sendMessage(sessionId: string, content: string): Promise<ChatMessage> {
-    return this.post('/api/chat/messages', { sessionId, content })
+    return this.post('/chat/messages', { sessionId, content })
   }
   
   async getMessages(sessionId: string): Promise<ChatMessage[]> {
-    return this.get('/api/chat/messages', { sessionId })
+    return this.get('/chat/messages', { sessionId })
   }
   
   async deleteMessage(messageId: string): Promise<void> {
-    await this.delete(`/api/chat/messages/${messageId}`)
+    await this.delete(`/chat/messages/${messageId}`)
   }
 }
 

@@ -1,6 +1,7 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
 import { logger } from '../utils/safe-logger.js'
 import { settingsService } from '../services/settings.service.js'
+import { successResponseSchema } from '../schemas/common.schema.js'
 
 // 不需要 GetSettingsRequest 接口，userId 从 token 中获取
 
@@ -17,24 +18,7 @@ export async function settingsRoutes(fastify: FastifyInstance) {
       description: '获取用户设置（从 JWT token 获取用户信息）',
       tags: ['设置'],
       security: [{ bearerAuth: [] }],
-      response: {
-        200: {
-          type: 'object',
-          properties: {
-            success: { type: 'boolean' },
-            message: { type: 'string' },
-            settings: { type: 'object' }
-          }
-        },
-        404: {
-          type: 'object',
-          properties: {
-            success: { type: 'boolean' },
-            message: { type: 'string' },
-            code: { type: 'string' }
-          }
-        }
-      }
+      response: successResponseSchema
     },
     preHandler: [fastify.authenticate]
   }, async (request: FastifyRequest, reply: FastifyReply) => {
@@ -43,12 +27,17 @@ export async function settingsRoutes(fastify: FastifyInstance) {
       const user = request.user as any
       const userId = user.userId
 
+      console.log('\n=== GET SETTINGS DEBUG ===')
+      console.log('[GET] userId:', userId)
       logger.info(`[Settings API] Getting settings for user: ${userId}`)
 
       // 获取用户设置
       const settings = await settingsService.getUserSettings(userId)
-
+      console.log('[GET] Raw settings from DB:', settings)
+      console.log('[GET] settings.data:', settings?.data)
+      
       if (!settings) {
+        console.log('[GET] ❌ No settings found in DB!')
         logger.info(`[Settings API] No settings found for user ${userId}, returning empty object`)
         // 如果没有设置，返回空对象（首次使用）
         return reply.send({
@@ -58,18 +47,24 @@ export async function settingsRoutes(fastify: FastifyInstance) {
         })
       }
 
+      console.log('[GET] ✅ Settings found!')
+      console.log('[GET] settings.data:', JSON.stringify(settings.data, null, 2))
       logger.info(`[Settings API] Settings found for user ${userId}`)
+      
+      // 🔍 临时调试：直接返回原始数据看看
       return reply.send({
         success: true,
         message: '获取设置成功',
         settings: settings.data
       })
-    } catch (error) {
+    } catch (error: any) {
+      console.error('[Settings API] Get settings error:', error)
       logger.error('[Settings API] Get settings error:', error)
       return reply.status(500).send({
         success: false,
-        message: '获取设置失败',
-        code: 'GET_SETTINGS_ERROR'
+        message: error.message || '获取设置失败',
+        code: 'GET_SETTINGS_ERROR',
+        error: process.env.NODE_ENV === 'development' ? error.stack : undefined
       })
     }
   })
@@ -84,28 +79,26 @@ export async function settingsRoutes(fastify: FastifyInstance) {
         type: 'object',
         required: ['settings'],
         properties: {
-          settings: { type: 'object' }
-        }
-      },
-      response: {
-        200: {
-          type: 'object',
-          properties: {
-            success: { type: 'boolean' },
-            message: { type: 'string' },
-            settings: { type: 'object' }
+          settings: { 
+            type: 'object',
+            additionalProperties: true
           }
         }
-      }
+      },
+      response: successResponseSchema
     },
     preHandler: [fastify.authenticate]
   }, async (request: FastifyRequest<SaveSettingsRequest>, reply: FastifyReply) => {
     try {
+      console.log('=== POST SETTINGS DEBUG ===')
       // 从 JWT token 中获取用户 ID
       const user = request.user as any
+      console.log('[POST] user object:', JSON.stringify(user, null, 2))
       const userId = user.userId
+      console.log('[POST] userId extracted:', userId)
       const { settings } = request.body
-
+      
+      // 调试日志 - 查看接收到的数据
       logger.info(`[Settings API] Saving settings for user: ${userId}`)
 
       // 保存用户设置
@@ -117,12 +110,14 @@ export async function settingsRoutes(fastify: FastifyInstance) {
         message: '保存设置成功',
         settings: savedSettings.data
       })
-    } catch (error) {
+    } catch (error: any) {
+      console.error('[Settings API] Save settings error:', error)
       logger.error('[Settings API] Save settings error:', error)
       return reply.status(500).send({
         success: false,
-        message: '保存设置失败',
-        code: 'SAVE_SETTINGS_ERROR'
+        message: error.message || '保存设置失败',
+        code: 'SAVE_SETTINGS_ERROR',
+        error: process.env.NODE_ENV === 'development' ? error.stack : undefined
       })
     }
   })
@@ -133,15 +128,7 @@ export async function settingsRoutes(fastify: FastifyInstance) {
       description: '删除用户设置（从 JWT token 获取用户信息）',
       tags: ['设置'],
       security: [{ bearerAuth: [] }],
-      response: {
-        200: {
-          type: 'object',
-          properties: {
-            success: { type: 'boolean' },
-            message: { type: 'string' }
-          }
-        }
-      }
+      response: successResponseSchema
     },
     preHandler: [fastify.authenticate]
   }, async (request: FastifyRequest, reply: FastifyReply) => {

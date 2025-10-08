@@ -84,89 +84,89 @@ export interface FileInfo {
 class SSHApiImpl extends BaseApiImpl implements ISSHService {
   // ======== 树形结构管理 ========
   async getSSHTree(): Promise<any[]> {
-    return this.get('/api/ssh/tree')
+    return this.get('/ssh/tree')
   }
   
   async createFolder(data: any): Promise<any> {
-    return this.post('/api/ssh/folders', data)
+    return this.post('/ssh/folders', data)
   }
   
   async updateFolder(id: string, data: any): Promise<any> {
-    return this.put(`/api/ssh/folders/${id}`, data)
+    return this.put(`/ssh/folders/${id}`, data)
   }
   
   async deleteFolder(id: string): Promise<void> {
-    await this.delete(`/api/ssh/folders/${id}`)
+    await this.delete(`/ssh/folders/${id}`)
   }
   
   async createConnection(data: any): Promise<any> {
-    return this.post('/api/ssh/connections', data)
+    return this.post('/ssh/connections', data)
   }
   
   async updateConnection(id: string, data: any): Promise<any> {
-    return this.put(`/api/ssh/connections/${id}`, data)
+    return this.put(`/ssh/connections/${id}`, data)
   }
   
   async deleteConnection(id: string): Promise<void> {
-    await this.delete(`/api/ssh/connections/${id}`)
+    await this.delete(`/ssh/connections/${id}`)
   }
   
   async moveNode(data: any): Promise<void> {
-    await this.post('/api/ssh/move', data)
+    await this.post('/ssh/move', data)
   }
   
   // ======== 运行时连接管理 ========
   async connect(config: SSHConfig): Promise<SSHConnection> {
     // ✅ 后端从 token 中解析 userId
-    return this.post('/api/ssh/connect', config)
+    return this.post('/ssh/connect', config)
   }
   
   async disconnect(id: string): Promise<void> {
     // ✅ 后端从 token 中解析 userId
-    await this.post(`/api/ssh/disconnect/${id}`)
+    await this.post(`/ssh/disconnect/${id}`)
   }
   
   async getConnections(): Promise<SSHConnection[]> {
     // ✅ 后端从 token 中解析 userId
-    return this.get('/api/ssh/connections')
+    return this.get('/ssh/connections')
   }
   
   async saveConnection(config: SSHConfig): Promise<SSHConfig> {
     // ✅ 后端从 token 中解析 userId
-    return this.post('/api/ssh/save-connection', config)
+    return this.post('/ssh/save-connection', config)
   }
   
   async testConnection(config: SSHConfig): Promise<TestResult> {
     // ✅ 后端从 token 中解析 userId
-    return this.post('/api/ssh/test', config)
+    return this.post('/ssh/test', config)
   }
   
   async execute(id: string, command: string): Promise<CommandResult> {
-    return this.post(`/api/ssh/execute/${id}`, { command })
+    return this.post(`/ssh/execute/${id}`, { command })
   }
   
   async write(id: string, data: string): Promise<void> {
-    await this.post(`/api/ssh/write/${id}`, { data })
+    await this.post(`/ssh/write/${id}`, { data })
   }
   
   async listFiles(id: string, remotePath: string): Promise<FileInfo[]> {
-    return this.get(`/api/ssh/files/${id}`, { path: remotePath })
+    return this.get(`/ssh/files/${id}`, { path: remotePath })
   }
   
   async uploadFile(id: string, localPath: string, remotePath: string): Promise<void> {
-    await this.post(`/api/ssh/upload/${id}`, { localPath, remotePath })
+    await this.post(`/ssh/upload/${id}`, { localPath, remotePath })
   }
   
   async downloadFile(id: string, remotePath: string, localPath: string): Promise<void> {
-    await this.post(`/api/ssh/download/${id}`, { remotePath, localPath })
+    await this.post(`/ssh/download/${id}`, { remotePath, localPath })
   }
   
   async deleteFile(id: string, remotePath: string, isDirectory: boolean): Promise<void> {
-    await this.delete(`/api/ssh/files/${id}`, { path: remotePath, isDirectory })
+    await this.delete(`/ssh/files/${id}`, { path: remotePath, isDirectory })
   }
   
   async createDirectory(id: string, remotePath: string): Promise<void> {
-    await this.post(`/api/ssh/mkdir/${id}`, { path: remotePath })
+    await this.post(`/ssh/mkdir/${id}`, { path: remotePath })
   }
 }
 

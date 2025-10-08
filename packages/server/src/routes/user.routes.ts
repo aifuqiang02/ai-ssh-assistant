@@ -1,5 +1,6 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
 import { logger } from '../utils/safe-logger.js'
+import { successResponseSchema } from '../schemas/common.schema.js'
 
 interface UpdateProfileBody {
   username?: string
@@ -23,29 +24,7 @@ export async function userRoutes(fastify: FastifyInstance) {
       description: '获取当前用户信息',
       tags: ['用户'],
       security: [{ bearerAuth: [] }],
-      response: {
-        200: {
-          type: 'object',
-          properties: {
-            success: { type: 'boolean' },
-            data: {
-              type: 'object',
-              properties: {
-                id: { type: 'string' },
-                username: { type: 'string' },
-                email: { type: 'string' },
-                firstName: { type: 'string' },
-                lastName: { type: 'string' },
-                bio: { type: 'string' },
-                avatar: { type: 'string' },
-                role: { type: 'string' },
-                createdAt: { type: 'string' },
-                lastLogin: { type: 'string' }
-              }
-            }
-          }
-        }
-      }
+      response: successResponseSchema
     },
     preHandler: [fastify.authenticate]
   }, async (request: FastifyRequest, reply: FastifyReply) => {

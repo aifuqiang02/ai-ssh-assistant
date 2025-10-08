@@ -1,4 +1,4 @@
-import { prisma } from '@ai-ssh/database'
+import { prisma } from '../config/database.js'
 import { logger } from '../utils/safe-logger.js'
 
 interface UserSettings {
@@ -21,8 +21,9 @@ class SettingsService {
 
       return settings
     } catch (error) {
+      console.error('[Settings Service] Get settings error:', error)
       logger.error(`Failed to get settings for user ${userId}:`, error)
-      throw new Error('获取用户设置失败')
+      throw error  // 抛出原始错误以便查看详细信息
     }
   }
 
@@ -46,8 +47,9 @@ class SettingsService {
       logger.info(`Settings saved for user: ${userId}`)
       return settings
     } catch (error) {
+      console.error('[Settings Service] Save settings error:', error)
       logger.error(`Failed to save settings for user ${userId}:`, error)
-      throw new Error('保存用户设置失败')
+      throw error  // 抛出原始错误以便查看详细信息
     }
   }
 

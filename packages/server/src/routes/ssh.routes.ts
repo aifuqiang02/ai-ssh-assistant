@@ -1,6 +1,7 @@
 import { FastifyPluginAsync } from 'fastify'
 import { SSHService } from '../services/ssh.service.js'
 import Database from '../config/database.js'
+import { successResponseSchema } from '../schemas/common.schema.js'
 
 export const sshRoutes: FastifyPluginAsync = async (fastify) => {
   const prisma = Database.getInstance()
@@ -12,15 +13,7 @@ export const sshRoutes: FastifyPluginAsync = async (fastify) => {
     schema: {
       tags: ['SSH'],
       summary: '获取用户的 SSH 树形结构',
-      response: {
-        200: {
-          type: 'object',
-          properties: {
-            success: { type: 'boolean' },
-            data: { type: 'array' }
-          }
-        }
-      }
+      response: successResponseSchema
     }
   }, async (request, reply) => {
     const userId = (request.user as any).userId
@@ -47,19 +40,7 @@ export const sshRoutes: FastifyPluginAsync = async (fastify) => {
           order: { type: 'number' }
         }
       },
-      response: {
-        201: {
-          type: 'object',
-          properties: {
-            success: { type: 'boolean' },
-            message: { type: 'string' },
-            data: {
-              type: 'object',
-              additionalProperties: true
-            }
-          }
-        }
-      }
+      response: successResponseSchema
     }
   }, async (request, reply) => {
     const userId = (request.user as any).userId
@@ -311,22 +292,7 @@ export const sshRoutes: FastifyPluginAsync = async (fastify) => {
           passphrase: { type: 'string', nullable: true }
         }
       },
-      response: {
-        200: {
-          type: 'object',
-          properties: {
-            success: { type: 'boolean' },
-            message: { type: 'string' },
-            data: {
-              type: 'object',
-              properties: {
-                connected: { type: 'boolean' },
-                error: { type: 'string', nullable: true }
-              }
-            }
-          }
-        }
-      }
+      response: successResponseSchema
     }
   }, async (request, reply) => {
     const data = request.body as any

@@ -1,5 +1,6 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
 import { logger } from '../utils/safe-logger.js'
+import { successResponseSchema } from '../schemas/common.schema.js'
 
 export async function aiRoutes(fastify: FastifyInstance) {
   // AI 聊天

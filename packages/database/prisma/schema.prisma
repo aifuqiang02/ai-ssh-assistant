@@ -26,9 +26,6 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // 用户设置 - JSON 格式存储
-  settings  Json?    // 存储用户偏好设置
-
   // 关联关系
   sshFolders     SSHFolder[]
   sshConnections SSHConnection[]
@@ -36,8 +33,23 @@ model User {
   chatSessions   ChatSession[]
   messages       Message[]
   commandLogs    CommandLog[]
+  userSettings   UserSettings?
 
   @@map("users")
+}
+
+// 用户设置表
+model UserSettings {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  data      Json     // 存储所有用户设置（JSON格式）
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 关联用户
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_settings")
 }
 
 enum UserRole {

@@ -47,18 +47,22 @@ export interface ModelConfig {
 class SettingsApiImpl extends BaseApiImpl implements ISettingsService {
   async getSettings(): Promise<AppSettings> {
     // ✅ 无需传 userId，后端从 token 中解析
-    return this.get('/api/settings')
+    const response: any = await this.get('/settings')
+    // 后端返回格式: { success, message, settings }
+    // 需要手动提取 settings 字段
+    return response.settings || response
   }
   
   async saveSettings(settings: AppSettings): Promise<{ success: boolean }> {
     // ✅ 无需传 userId，后端从 token 中解析
-    await this.post('/api/settings', settings)
+    // 注意：后端期望的格式是 { settings: {...} }
+    await this.post('/settings', { settings })
     return { success: true }
   }
   
   async resetSettings(): Promise<{ success: boolean }> {
     // ✅ 无需传 userId，后端从 token 中解析
-    await this.delete('/api/settings')
+    await this.delete('/settings')
     return { success: true }
   }
   

@@ -29,10 +29,11 @@ ai-ssh-assistant/
 │       │   └── ipc/      # IPC 处理器
 │       └── src/          # Vue 渲染进程
 │           ├── components/
-│           ├── stores/   # Pinia 状态管理
-│           ├── services/ # API 服务
-│           ├── router/   # Vue Router
-│           └── views/    # 页面视图
+│           ├── composables/ # Vue Composables（替代 Pinia Store）
+│           ├── services/    # 双模式服务层（Local/API）
+│           ├── router/      # Vue Router
+│           ├── utils/       # 工具函数
+│           └── views/       # 页面视图
 ├── packages/
 │   ├── database/         # 数据库层（Prisma）
 │   │   ├── prisma/       # Prisma schema & migrations
@@ -52,12 +53,14 @@ ai-ssh-assistant/
 
 ### 技术栈
 
-- **前端**: Vue 3 + TypeScript + Pinia + TailwindCSS
-- **桌面**: Electron
+- **前端**: Vue 3 + TypeScript + Composables + TailwindCSS
+- **桌面**: Electron + IPC
+- **本地存储**: better-sqlite3
 - **后端**: Fastify + TypeScript
-- **数据库**: SQLite (开发) / PostgreSQL (生产)
+- **数据库**: PostgreSQL
 - **ORM**: Prisma
 - **缓存**: Redis
+- **架构**: 双模式服务架构（Local IPC / Remote API）
 
 ---
 
@@ -273,108 +276,303 @@ graph TD
 
 1. **需求分析**: 明确功能需求和用户场景
 2. **数据建模** (如需要): 设计数据库表结构
-3. **API 设计**: 定义 RESTful API 接口
-4. **后端实现**: 编写 Service 和 Route
-5. **前端实现**: 创建组件和页面
-6. **状态管理**: 使用 Pinia 管理状态
-7. **IPC 通信** (如需要): 添加 Electron IPC 处理
-8. **测试**: 单元测试和集成测试
-9. **文档**: 更新 API 文档和用户文档
+3. **服务接口设计**: 定义统一的服务接口
+4. **本地实现**: 
+   - 在主进程实现 SQLite 数据访问
+   - 注册 IPC 处理器
+5. **云端实现**: 
+   - 编写后端 Service 和 Route
+   - 实现 Prisma 数据访问
+6. **前端服务层**: 实现双模式服务（Local/API）
+7. **UI 实现**: 创建 Vue 组件和页面
+8. **状态管理**: 使用 Vue Composables 管理全局状态
+9. **测试**: 单元测试和集成测试
+10. **文档**: 更新 API 文档和用户文档
 
 ---
 
-## 示例：添加一个新的 API 功能
+## 示例：添加一个新的功能模块
 
-假设我们要添加一个 **服务器标签管理** 功能。
+假设我们要添加一个 **笔记管理** 功能，支持本地和云端两种模式。
 
-### 步骤 1: 设计数据模型
+### 步骤 1: 定义服务接口
 
-编辑 `packages/database/prisma/schema.prisma`:
-
-```prisma
-model ServerTag {
-  id        String   @id @default(cuid())
-  name      String
-  color     String   @default("#3B82F6") // 标签颜色
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  servers   ServerConnection[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([userId, name])
-  @@map("server_tags")
-}
-
-model ServerConnection {
-  // ... 现有字段 ...
-  tags      ServerTag[]
-}
-```
-
-运行迁移：
-
-```bash
-cd packages/database
-pnpm prisma migrate dev --name add_server_tags
-pnpm prisma generate
-```
-
-### 步骤 2: 添加 TypeScript 类型
-
-在 `packages/shared/src/types/index.ts` 中添加：
+创建 `apps/desktop/src/services/note.service.ts`:
 
 ```typescript
-export interface ServerTag {
+import { BaseApiImpl, BaseLocalImpl, createService } from './base'
+
+// 1. 定义数据类型
+export interface Note {
   id: string
-  name: string
-  color: string
+  title: string
+  content: string
   userId: string
   createdAt: Date
   updatedAt: Date
 }
 
-export interface CreateServerTagDto {
-  name: string
-  color?: string
+export interface CreateNoteDto {
+  title: string
+  content: string
 }
 
-export interface UpdateServerTagDto {
-  name?: string
-  color?: string
+export interface UpdateNoteDto {
+  title?: string
+  content?: string
+}
+
+// 2. 定义服务接口
+export interface INoteService {
+  getAll(): Promise<Note[]>
+  getById(id: string): Promise<Note | null>
+  create(data: CreateNoteDto): Promise<Note>
+  update(id: string, data: UpdateNoteDto): Promise<Note>
+  delete(id: string): Promise<void>
+}
+
+// 3. 云端 API 实现
+class NoteApiImpl extends BaseApiImpl implements INoteService {
+  async getAll(): Promise<Note[]> {
+    return this.get('/notes')
+  }
+
+  async getById(id: string): Promise<Note | null> {
+    try {
+      return await this.get(`/notes/${id}`)
+    } catch {
+      return null
+    }
+  }
+
+  async create(data: CreateNoteDto): Promise<Note> {
+    return this.post('/notes', data)
+  }
+
+  async update(id: string, data: UpdateNoteDto): Promise<Note> {
+    return this.put(`/notes/${id}`, data)
+  }
+
+  async delete(id: string): Promise<void> {
+    await this.delete(`/notes/${id}`)
+  }
+}
+
+// 4. 本地 IPC 实现
+class NoteLocalImpl extends BaseLocalImpl implements INoteService {
+  async getAll(): Promise<Note[]> {
+    return window.electronAPI.note.getAll(this.getUserId())
+  }
+
+  async getById(id: string): Promise<Note | null> {
+    return window.electronAPI.note.getById(id)
+  }
+
+  async create(data: CreateNoteDto): Promise<Note> {
+    return window.electronAPI.note.create(this.getUserId(), data)
+  }
+
+  async update(id: string, data: UpdateNoteDto): Promise<Note> {
+    return window.electronAPI.note.update(id, data)
+  }
+
+  async delete(id: string): Promise<void> {
+    return window.electronAPI.note.delete(id)
+  }
+}
+
+// 5. 导出服务实例（自动选择实现）
+export const noteService: INoteService = createService(
+  NoteLocalImpl,
+  NoteApiImpl
+)
+```
+
+### 步骤 2: 实现本地存储
+
+创建 `apps/desktop/electron/services/note.service.ts`:
+
+```typescript
+import Database from 'better-sqlite3'
+
+export class NoteService {
+  private db: Database.Database
+
+  constructor(dbPath: string) {
+    this.db = new Database(dbPath)
+    this.initTables()
+  }
+
+  private initTables() {
+    this.db.exec(`
+      CREATE TABLE IF NOT EXISTS notes (
+        id TEXT PRIMARY KEY,
+        title TEXT NOT NULL,
+        content TEXT NOT NULL,
+        userId TEXT NOT NULL,
+        createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
+        updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
+      )
+    `)
+  }
+
+  getAll(userId: string) {
+    const stmt = this.db.prepare('SELECT * FROM notes WHERE userId = ? ORDER BY updatedAt DESC')
+    return stmt.all(userId)
+  }
+
+  getById(id: string) {
+    const stmt = this.db.prepare('SELECT * FROM notes WHERE id = ?')
+    return stmt.get(id) || null
+  }
+
+  create(userId: string, data: { title: string; content: string }) {
+    const id = `note_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    const stmt = this.db.prepare(`
+      INSERT INTO notes (id, title, content, userId)
+      VALUES (?, ?, ?, ?)
+    `)
+    stmt.run(id, data.title, data.content, userId)
+    return this.getById(id)
+  }
+
+  update(id: string, data: { title?: string; content?: string }) {
+    const updates: string[] = []
+    const values: any[] = []
+
+    if (data.title !== undefined) {
+      updates.push('title = ?')
+      values.push(data.title)
+    }
+    if (data.content !== undefined) {
+      updates.push('content = ?')
+      values.push(data.content)
+    }
+
+    if (updates.length === 0) return this.getById(id)
+
+    updates.push('updatedAt = CURRENT_TIMESTAMP')
+    values.push(id)
+
+    const stmt = this.db.prepare(`
+      UPDATE notes SET ${updates.join(', ')} WHERE id = ?
+    `)
+    stmt.run(...values)
+    return this.getById(id)
+  }
+
+  delete(id: string) {
+    const stmt = this.db.prepare('DELETE FROM notes WHERE id = ?')
+    stmt.run(id)
+  }
 }
 ```
 
-### 步骤 3: 创建 Service
+### 步骤 3: 注册 IPC 处理器
 
-创建 `packages/server/src/services/server-tag.service.ts`:
+创建 `apps/desktop/electron/ipc/note-handlers.ts`:
 
 ```typescript
-import { PrismaClient } from '../../../database/src/generated/client-postgresql/index.js'
-import type { CreateServerTagDto, UpdateServerTagDto, ServerTag } from '@ai-ssh/shared'
+import { ipcMain } from 'electron'
+import { NoteService } from '../services/note.service'
 
-export class ServerTagService {
-  private prisma: PrismaClient
+export function registerNoteHandlers(noteService: NoteService) {
+  ipcMain.handle('note:getAll', async (_, userId: string) => {
+    return noteService.getAll(userId)
+  })
 
-  constructor(prisma: PrismaClient) {
-    this.prisma = prisma
+  ipcMain.handle('note:getById', async (_, id: string) => {
+    return noteService.getById(id)
+  })
+
+  ipcMain.handle('note:create', async (_, userId: string, data: any) => {
+    return noteService.create(userId, data)
+  })
+
+  ipcMain.handle('note:update', async (_, id: string, data: any) => {
+    return noteService.update(id, data)
+  })
+
+  ipcMain.handle('note:delete', async (_, id: string) => {
+    return noteService.delete(id)
+  })
+}
+```
+
+在 `apps/desktop/electron/main/index.ts` 中注册：
+
+```typescript
+import { NoteService } from '../services/note.service'
+import { registerNoteHandlers } from '../ipc/note-handlers'
+
+// 初始化服务
+const noteService = new NoteService(dbPath)
+
+// 注册处理器
+registerNoteHandlers(noteService)
+```
+
+### 步骤 4: 更新 Preload 脚本
+
+在 `apps/desktop/electron/preload/index.ts` 中添加：
+
+```typescript
+contextBridge.exposeInMainWorld('electronAPI', {
+  // ... 现有 API ...
+  
+  note: {
+    getAll: (userId: string) => ipcRenderer.invoke('note:getAll', userId),
+    getById: (id: string) => ipcRenderer.invoke('note:getById', id),
+    create: (userId: string, data: any) => ipcRenderer.invoke('note:create', userId, data),
+    update: (id: string, data: any) => ipcRenderer.invoke('note:update', id, data),
+    delete: (id: string) => ipcRenderer.invoke('note:delete', id)
   }
+})
+```
 
-  /**
-   * 获取用户的所有标签
-   */
-  async getUserTags(userId: string): Promise<ServerTag[]> {
-    return this.prisma.serverTag.findMany({
+### 步骤 5: 更新类型定义
+
+在 `apps/desktop/src/types/electron.d.ts` 中添加：
+
+```typescript
+export interface ElectronAPI {
+  // ... 现有定义 ...
+  
+  note: {
+    getAll: (userId: string) => Promise<Note[]>
+    getById: (id: string) => Promise<Note | null>
+    create: (userId: string, data: CreateNoteDto) => Promise<Note>
+    update: (id: string, data: UpdateNoteDto) => Promise<Note>
+    delete: (id: string) => Promise<void>
+  }
+}
+```
+
+### 步骤 6: 实现云端服务
+
+创建 `packages/server/src/services/note.service.ts`:
+
+```typescript
+import { PrismaClient } from '@ai-ssh/database'
+
+export class NoteService {
+  constructor(private prisma: PrismaClient) {}
+
+  async getAll(userId: string) {
+    return this.prisma.note.findMany({
       where: { userId },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { updatedAt: 'desc' }
     })
   }
 
-  /**
-   * 创建标签
-   */
-  async createTag(userId: string, data: CreateServerTagDto): Promise<ServerTag> {
-    return this.prisma.serverTag.create({
+  async getById(id: string) {
+    return this.prisma.note.findUnique({
+      where: { id }
+    })
+  }
+
+  async create(userId: string, data: { title: string; content: string }) {
+    return this.prisma.note.create({
       data: {
         ...data,
         userId
@@ -382,536 +580,168 @@ export class ServerTagService {
     })
   }
 
-  /**
-   * 更新标签
-   */
-  async updateTag(id: string, userId: string, data: UpdateServerTagDto): Promise<ServerTag> {
-    // 验证标签所有权
-    await this.validateTagOwnership(id, userId)
-    
-    return this.prisma.serverTag.update({
+  async update(id: string, data: { title?: string; content?: string }) {
+    return this.prisma.note.update({
       where: { id },
       data
     })
   }
 
-  /**
-   * 删除标签
-   */
-  async deleteTag(id: string, userId: string): Promise<void> {
-    await this.validateTagOwnership(id, userId)
-    
-    await this.prisma.serverTag.delete({
+  async delete(id: string) {
+    await this.prisma.note.delete({
       where: { id }
     })
-  }
-
-  /**
-   * 验证标签所有权
-   */
-  private async validateTagOwnership(id: string, userId: string): Promise<void> {
-    const tag = await this.prisma.serverTag.findUnique({
-      where: { id }
-    })
-
-    if (!tag) {
-      throw new Error('标签不存在')
-    }
-
-    if (tag.userId !== userId) {
-      throw new Error('无权操作此标签')
-    }
   }
 }
 ```
 
-### 步骤 4: 创建 Route
+### 步骤 7: 创建 API 路由
 
-创建 `packages/server/src/routes/server-tag.routes.ts`:
+创建 `packages/server/src/routes/note.routes.ts`:
 
 ```typescript
 import { FastifyPluginAsync } from 'fastify'
-import { ServerTagService } from '../services/server-tag.service.js'
+import { NoteService } from '../services/note.service'
 
-const serverTagRoutes: FastifyPluginAsync = async (fastify) => {
-  const serverTagService = new ServerTagService(fastify.prisma)
+const noteRoutes: FastifyPluginAsync = async (fastify) => {
+  const noteService = new NoteService(fastify.prisma)
 
-  // 获取用户的所有标签
-  fastify.get('/tags', {
-    onRequest: [fastify.authenticate],
-    schema: {
-      tags: ['ServerTag'],
-      summary: '获取用户的所有标签',
-      response: {
-        200: {
-          type: 'object',
-          properties: {
-            success: { type: 'boolean' },
-            data: {
-              type: 'array',
-              items: {
-                type: 'object',
-                properties: {
-                  id: { type: 'string' },
-                  name: { type: 'string' },
-                  color: { type: 'string' },
-                  userId: { type: 'string' },
-                  createdAt: { type: 'string' },
-                  updatedAt: { type: 'string' }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }, async (request, reply) => {
-    const userId = request.user.id
-    const tags = await serverTagService.getUserTags(userId)
-    
-    return reply.send({
-      success: true,
-      data: tags
-    })
+  // 获取所有笔记
+  fastify.get('/notes', {
+    onRequest: [fastify.authenticate]
+  }, async (request) => {
+    const notes = await noteService.getAll(request.user.id)
+    return { success: true, data: notes }
   })
 
-  // 创建标签
-  fastify.post('/tags', {
-    onRequest: [fastify.authenticate],
-    schema: {
-      tags: ['ServerTag'],
-      summary: '创建新标签',
-      body: {
-        type: 'object',
-        required: ['name'],
-        properties: {
-          name: { type: 'string', minLength: 1, maxLength: 50 },
-          color: { type: 'string', pattern: '^#[0-9A-Fa-f]{6}$' }
-        }
-      },
-      response: {
-        201: {
-          type: 'object',
-          properties: {
-            success: { type: 'boolean' },
-            message: { type: 'string' },
-            data: { type: 'object' }
-          }
-        }
-      }
-    }
-  }, async (request, reply) => {
-    const userId = request.user.id
-    const data = request.body as any
-    
-    const tag = await serverTagService.createTag(userId, data)
-    
-    return reply.status(201).send({
-      success: true,
-      message: '标签创建成功',
-      data: tag
-    })
-  })
-
-  // 更新标签
-  fastify.put('/tags/:id', {
-    onRequest: [fastify.authenticate],
-    schema: {
-      tags: ['ServerTag'],
-      summary: '更新标签',
-      params: {
-        type: 'object',
-        properties: {
-          id: { type: 'string' }
-        }
-      },
-      body: {
-        type: 'object',
-        properties: {
-          name: { type: 'string', minLength: 1, maxLength: 50 },
-          color: { type: 'string', pattern: '^#[0-9A-Fa-f]{6}$' }
-        }
-      }
-    }
-  }, async (request, reply) => {
-    const userId = request.user.id
+  // 获取单个笔记
+  fastify.get('/notes/:id', {
+    onRequest: [fastify.authenticate]
+  }, async (request) => {
     const { id } = request.params as any
-    const data = request.body as any
-    
-    const tag = await serverTagService.updateTag(id, userId, data)
-    
-    return reply.send({
-      success: true,
-      message: '标签更新成功',
-      data: tag
-    })
+    const note = await noteService.getById(id)
+    return { success: true, data: note }
   })
 
-  // 删除标签
-  fastify.delete('/tags/:id', {
-    onRequest: [fastify.authenticate],
-    schema: {
-      tags: ['ServerTag'],
-      summary: '删除标签',
-      params: {
-        type: 'object',
-        properties: {
-          id: { type: 'string' }
-        }
-      }
-    }
+  // 创建笔记
+  fastify.post('/notes', {
+    onRequest: [fastify.authenticate]
   }, async (request, reply) => {
-    const userId = request.user.id
+    const note = await noteService.create(request.user.id, request.body as any)
+    return reply.status(201).send({ success: true, data: note })
+  })
+
+  // 更新笔记
+  fastify.put('/notes/:id', {
+    onRequest: [fastify.authenticate]
+  }, async (request) => {
     const { id } = request.params as any
-    
-    await serverTagService.deleteTag(id, userId)
-    
-    return reply.send({
-      success: true,
-      message: '标签删除成功'
-    })
+    const note = await noteService.update(id, request.body as any)
+    return { success: true, data: note }
+  })
+
+  // 删除笔记
+  fastify.delete('/notes/:id', {
+    onRequest: [fastify.authenticate]
+  }, async (request) => {
+    const { id } = request.params as any
+    await noteService.delete(id)
+    return { success: true }
   })
 }
 
-export default serverTagRoutes
-```
-
-### 步骤 5: 注册路由
-
-在 `packages/server/src/app.ts` 中注册路由：
-
-```typescript
-import serverTagRoutes from './routes/server-tag.routes.js'
-
-// ... 现有代码 ...
-
-// 注册路由
-app.register(serverTagRoutes, { prefix: '/api/v1' })
-```
-
-### 步骤 6: 创建前端 API 服务
-
-在 `apps/desktop/src/services/api.service.ts` 中添加方法：
-
-```typescript
-export class ApiService {
-  // ... 现有方法 ...
-
-  /**
-   * 获取用户的所有标签
-   */
-  async getTags(): Promise<ServerTag[]> {
-    const response = await this.get<{ success: boolean; data: ServerTag[] }>('/tags')
-    return response.data
-  }
-
-  /**
-   * 创建标签
-   */
-  async createTag(data: CreateServerTagDto): Promise<ServerTag> {
-    const response = await this.post<{ success: boolean; data: ServerTag }>('/tags', data)
-    return response.data
-  }
-
-  /**
-   * 更新标签
-   */
-  async updateTag(id: string, data: UpdateServerTagDto): Promise<ServerTag> {
-    const response = await this.put<{ success: boolean; data: ServerTag }>(`/tags/${id}`, data)
-    return response.data
-  }
-
-  /**
-   * 删除标签
-   */
-  async deleteTag(id: string): Promise<void> {
-    await this.delete(`/tags/${id}`)
-  }
-}
-```
-
-### 步骤 7: 创建 Pinia Store
-
-创建 `apps/desktop/src/stores/serverTag.ts`:
-
-```typescript
-import { defineStore } from 'pinia'
-import { ref } from 'vue'
-import { apiService } from '../services/api.service'
-import type { ServerTag, CreateServerTagDto, UpdateServerTagDto } from '@ai-ssh/shared'
-
-export const useServerTagStore = defineStore('serverTag', () => {
-  const tags = ref<ServerTag[]>([])
-  const loading = ref(false)
-  const error = ref<string | null>(null)
-
-  /**
-   * 加载所有标签
-   */
-  const loadTags = async () => {
-    loading.value = true
-    error.value = null
-    
-    try {
-      tags.value = await apiService.getTags()
-    } catch (err: any) {
-      error.value = err.message || '加载标签失败'
-      throw err
-    } finally {
-      loading.value = false
-    }
-  }
-
-  /**
-   * 创建标签
-   */
-  const createTag = async (data: CreateServerTagDto) => {
-    loading.value = true
-    error.value = null
-    
-    try {
-      const newTag = await apiService.createTag(data)
-      tags.value.unshift(newTag)
-      return newTag
-    } catch (err: any) {
-      error.value = err.message || '创建标签失败'
-      throw err
-    } finally {
-      loading.value = false
-    }
-  }
-
-  /**
-   * 更新标签
-   */
-  const updateTag = async (id: string, data: UpdateServerTagDto) => {
-    loading.value = true
-    error.value = null
-    
-    try {
-      const updatedTag = await apiService.updateTag(id, data)
-      const index = tags.value.findIndex(t => t.id === id)
-      if (index !== -1) {
-        tags.value[index] = updatedTag
-      }
-      return updatedTag
-    } catch (err: any) {
-      error.value = err.message || '更新标签失败'
-      throw err
-    } finally {
-      loading.value = false
-    }
-  }
-
-  /**
-   * 删除标签
-   */
-  const deleteTag = async (id: string) => {
-    loading.value = true
-    error.value = null
-    
-    try {
-      await apiService.deleteTag(id)
-      tags.value = tags.value.filter(t => t.id !== id)
-    } catch (err: any) {
-      error.value = err.message || '删除标签失败'
-      throw err
-    } finally {
-      loading.value = false
-    }
-  }
-
-  return {
-    tags,
-    loading,
-    error,
-    loadTags,
-    createTag,
-    updateTag,
-    deleteTag
-  }
-})
+export default noteRoutes
 ```
 
 ### 步骤 8: 创建 UI 组件
 
-创建 `apps/desktop/src/components/server/ServerTagManager.vue`:
+创建 `apps/desktop/src/views/NotesView.vue`:
 
 ```vue
 <template>
-  <div class="server-tag-manager">
+  <div class="notes-view">
     <div class="header">
-      <h3 class="text-lg font-semibold">服务器标签</h3>
-      <button @click="showCreateDialog = true" class="btn-primary">
-        + 新建标签
-      </button>
+      <h2>我的笔记</h2>
+      <button @click="createNote" class="btn-primary">+ 新建笔记</button>
     </div>
 
-    <!-- 标签列表 -->
-    <div class="tag-list">
+    <div class="notes-list">
       <div
-        v-for="tag in tags"
-        :key="tag.id"
-        class="tag-item"
-        :style="{ borderColor: tag.color }"
+        v-for="note in notes"
+        :key="note.id"
+        class="note-item"
+        @click="editNote(note)"
       >
-        <div class="tag-info">
-          <span class="tag-color" :style="{ backgroundColor: tag.color }"></span>
-          <span class="tag-name">{{ tag.name }}</span>
-        </div>
-        <div class="tag-actions">
-          <button @click="editTag(tag)" class="btn-icon">
-            <IconEdit />
-          </button>
-          <button @click="confirmDelete(tag)" class="btn-icon">
-            <IconDelete />
-          </button>
-        </div>
+        <h3>{{ note.title }}</h3>
+        <p>{{ note.content.substring(0, 100) }}...</p>
+        <span class="date">{{ formatDate(note.updatedAt) }}</span>
       </div>
     </div>
-
-    <!-- 创建/编辑对话框 -->
-    <Dialog v-model:visible="showCreateDialog" title="创建标签">
-      <form @submit.prevent="handleSubmit">
-        <div class="form-group">
-          <label>标签名称</label>
-          <input v-model="formData.name" type="text" required />
-        </div>
-        <div class="form-group">
-          <label>标签颜色</label>
-          <input v-model="formData.color" type="color" />
-        </div>
-        <div class="form-actions">
-          <button type="button" @click="showCreateDialog = false" class="btn-secondary">
-            取消
-          </button>
-          <button type="submit" class="btn-primary">
-            {{ editingTag ? '更新' : '创建' }}
-          </button>
-        </div>
-      </form>
-    </Dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useServerTagStore } from '../../stores/serverTag'
-import type { ServerTag } from '@ai-ssh/shared'
+import { noteService } from '@/services/note.service'
+import type { Note } from '@/services/note.service'
 
-const serverTagStore = useServerTagStore()
+const notes = ref<Note[]>([])
 
-const showCreateDialog = ref(false)
-const editingTag = ref<ServerTag | null>(null)
-const formData = ref({
-  name: '',
-  color: '#3B82F6'
+onMounted(async () => {
+  // 自动使用本地或云端服务
+  notes.value = await noteService.getAll()
 })
 
-const { tags, loadTags } = serverTagStore
-
-onMounted(() => {
-  loadTags()
-})
-
-const handleSubmit = async () => {
-  try {
-    if (editingTag.value) {
-      await serverTagStore.updateTag(editingTag.value.id, formData.value)
-    } else {
-      await serverTagStore.createTag(formData.value)
-    }
-    
-    showCreateDialog.value = false
-    resetForm()
-  } catch (err) {
-    console.error('操作失败:', err)
-  }
+const createNote = async () => {
+  const note = await noteService.create({
+    title: '新笔记',
+    content: ''
+  })
+  notes.value.unshift(note)
 }
 
-const editTag = (tag: ServerTag) => {
-  editingTag.value = tag
-  formData.value = {
-    name: tag.name,
-    color: tag.color
-  }
-  showCreateDialog.value = true
+const editNote = (note: Note) => {
+  // 打开编辑器
 }
 
-const confirmDelete = async (tag: ServerTag) => {
-  if (confirm(`确定要删除标签 "${tag.name}" 吗？`)) {
-    try {
-      await serverTagStore.deleteTag(tag.id)
-    } catch (err) {
-      console.error('删除失败:', err)
-    }
-  }
-}
-
-const resetForm = () => {
-  editingTag.value = null
-  formData.value = {
-    name: '',
-    color: '#3B82F6'
-  }
+const formatDate = (date: Date) => {
+  return new Date(date).toLocaleString()
 }
 </script>
-
-<style scoped>
-.server-tag-manager {
-  padding: 20px;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.tag-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.tag-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px;
-  border: 2px solid;
-  border-radius: 8px;
-  background: white;
-}
-
-.tag-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.tag-color {
-  width: 20px;
-  height: 20px;
-  border-radius: 4px;
-}
-
-.tag-actions {
-  display: flex;
-  gap: 8px;
-}
-</style>
 ```
 
-### 步骤 9: 测试
+### 步骤 9: 添加数据库迁移（云端）
 
-使用 Postman 或前端界面测试所有 API 端点：
+在 `packages/database/prisma/schema.prisma` 中添加：
 
-- `GET /api/v1/tags` - 获取标签列表
-- `POST /api/v1/tags` - 创建标签
-- `PUT /api/v1/tags/:id` - 更新标签
-- `DELETE /api/v1/tags/:id` - 删除标签
+```prisma
+model Note {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@map("notes")
+}
+```
+
+运行迁移：
+
+```bash
+cd packages/database
+pnpm prisma migrate dev --name add_notes
+pnpm prisma generate
+```
+
+### 步骤 10: 测试
+
+- **本地模式**：直接使用，无需登录
+- **云端模式**：登录后自动同步到服务器
+- 所有操作都通过 `noteService` 统一接口
 
 ---
 
@@ -1641,3 +1471,7 @@ docker-compose exec redis redis-cli INFO
 ## 许可证
 
 MIT License
+
+---
+
+**最后更新**: 2025-10-07

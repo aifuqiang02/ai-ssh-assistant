@@ -1,12 +1,184 @@
 # 项目最佳实践
 
-本文档记录了开发过程中遇到的常见问题和解决方案，帮助避免重复犯错。
+本文档记录了基于新架构的开发最佳实践和常见问题解决方案。
 
 ## 目录
+- [服务架构实践](#服务架构实践)
+- [本地存储最佳实践](#本地存储最佳实践)
 - [API 响应序列化问题](#api-响应序列化问题)
-- [认证 Token 存储](#认证-token-存储)
-- [Prisma 数据返回](#prisma-数据返回)
-- [SSH 连接事件监听清理](#ssh-连接事件监听清理)
+- [用户认证与 Token](#用户认证与-token)
+- [IPC 通信规范](#ipc-通信规范)
+- [Electron 事件监听清理](#electron-事件监听清理)
+
+---
+
+## 服务架构实践
+
+### 统一服务接口模式
+
+**核心原则**：每个业务模块都应该定义统一的服务接口，并提供本地和云端两种实现。
+
+#### ✅ 正确做法
+
+```typescript
+// 1. 定义统一接口
+export interface IChatService {
+  getChatTree(): Promise<ChatTreeNode[]>
+  createSession(data: CreateChatSessionDto): Promise<any>
+  // ...
+}
+
+// 2. 云端实现
+class ChatApiImpl extends BaseApiImpl implements IChatService {
+  async getChatTree() {
+    return this.get('/chat/tree')  // 自动处理 JWT Token
+  }
+}
+
+// 3. 本地实现
+class ChatLocalImpl extends BaseLocalImpl implements IChatService {
+  async getChatTree() {
+    return window.electronAPI.chat.getChatTree(this.getUserId())
+  }
+}
+
+// 4. 导出服务（自动选择）
+export const chatService = createService(ChatLocalImpl, ChatApiImpl)
+```
+
+#### ❌ 错误做法
+
+```typescript
+// ❌ 直接在组件中判断模式
+const loadData = async () => {
+  if (isLocalMode) {
+    data.value = await window.electronAPI.chat.getTree()
+  } else {
+    data.value = await fetch('/api/chat/tree').then(r => r.json())
+  }
+}
+
+// ❌ 使用 Pinia Store（已废弃）
+const chatStore = useChatStore()
+await chatStore.loadSessions()
+```
+
+### userId 处理原则
+
+**重要**：userId 应该由服务层自动处理，组件无需关心。
+
+#### ✅ 正确做法
+
+```typescript
+// 前端调用 - 无需传递 userId
+const sessions = await chatService.getSessions()
+
+// 服务层自动处理
+class ChatLocalImpl {
+  async getSessions() {
+    // 自动获取 userId
+    const userId = this.getUserId()  // 本地模式返回 'local-user'
+    return window.electronAPI.chat.getSessions(userId)
+  }
+}
+
+class ChatApiImpl {
+  async getSessions() {
+    // JWT Token 中自动包含 userId，后端自动提取
+    return this.get('/chat/sessions')
+  }
+}
+```
+
+#### ❌ 错误做法
+
+```typescript
+// ❌ 组件中手动获取 userId
+const userId = localStorage.getItem('userId')
+await chatService.getSessions(userId)
+
+// ❌ API 调用中传递 userId
+this.post('/chat/sessions', { userId, ...data })
+```
+
+### API 路径规范
+
+**规则**：API 路径不要重复 `/api` 前缀。
+
+#### ✅ 正确做法
+
+```typescript
+// BaseApiImpl 已包含 /api/v1 前缀
+class ChatApiImpl extends BaseApiImpl {
+  async getChatTree() {
+    return this.get('/chat/tree')  // ✅ 最终: /api/v1/chat/tree
+  }
+}
+```
+
+#### ❌ 错误做法
+
+```typescript
+class ChatApiImpl extends BaseApiImpl {
+  async getChatTree() {
+    return this.get('/api/chat/tree')  // ❌ 错误: /api/v1/api/chat/tree
+  }
+}
+```
+
+---
+
+## 本地存储最佳实践
+
+### SQLite 数据库操作
+
+#### 表结构规范
+
+```sql
+CREATE TABLE IF NOT EXISTS table_name (
+  id TEXT PRIMARY KEY,
+  userId TEXT NOT NULL,
+  -- 业务字段
+  createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
+  updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 为 userId 创建索引
+CREATE INDEX IF NOT EXISTS idx_table_userId ON table_name(userId);
+```
+
+#### 准备语句（Prepared Statement）
+
+**始终使用准备语句**防止 SQL 注入：
+
+```typescript
+// ✅ 正确 - 使用准备语句
+getAll(userId: string) {
+  const stmt = this.db.prepare('SELECT * FROM notes WHERE userId = ?')
+  return stmt.all(userId)
+}
+
+// ❌ 错误 - 字符串拼接
+getAll(userId: string) {
+  return this.db.exec(`SELECT * FROM notes WHERE userId = '${userId}'`)
+}
+```
+
+### IPC 处理器命名规范
+
+**规则**：使用 `模块:操作` 格式。
+
+```typescript
+// ✅ 正确
+ipcMain.handle('chat:getChatTree', ...)
+ipcMain.handle('chat:createSession', ...)
+ipcMain.handle('ssh:connect', ...)
+ipcMain.handle('ssh:disconnect', ...)
+
+// ❌ 错误
+ipcMain.handle('getChatTree', ...)  // 缺少模块前缀
+ipcMain.handle('chat_get_tree', ...)  // 使用下划线
+```
 
 ---
 
@@ -100,105 +272,229 @@ return reply.status(201).send({
 
 ---
 
-## 认证 Token 存储
+## 用户认证与 Token
 
-### 问题描述
-项目中使用自定义的 token 存储 key（`userToken`），而不是常见的 `token`，导致 API 请求时提示"未登录"。
+### Token 管理原则
 
-### 错误示例
-```typescript
-// ❌ 错误：使用错误的 key
-const token = localStorage.getItem('token')
-```
-
-### 正确做法
-```typescript
-// ✅ 正确：使用项目中定义的 key
-const token = localStorage.getItem('userToken') || sessionStorage.getItem('userToken')
-```
+**重要**：Token 存储和使用应该由服务层自动处理，组件无需手动管理。
 
 ### Token 存储位置
-查看 `apps/desktop/src/stores/storage.ts` 中的定义：
+
+项目使用 `userToken` 作为存储 key：
 
 ```typescript
-// 登录时
-storage.setItem('userToken', token)
+// 登录成功后存储
+localStorage.setItem('userToken', token)  // 或 sessionStorage
 
-// 获取时
+// 服务层自动获取
 const token = localStorage.getItem('userToken') || sessionStorage.getItem('userToken')
 ```
 
-### 最佳实践
+### 自动 Token 处理
 
-**1. 创建统一的 Token 工具函数**
+#### ✅ 推荐方式 - 使用服务层
 
-创建 `apps/desktop/src/utils/auth.ts`：
 ```typescript
-/**
- * 获取认证 Token
- */
-export function getAuthToken(): string | null {
-  return localStorage.getItem('userToken') || sessionStorage.getItem('userToken')
-}
+// 组件中 - 无需关心 Token
+import { chatService } from '@/services/chat.service'
 
-/**
- * 设置认证 Token
- */
-export function setAuthToken(token: string, remember: boolean = false): void {
-  const storage = remember ? localStorage : sessionStorage
-  storage.setItem('userToken', token)
-}
+const sessions = await chatService.getSessions()  // ✅ Token 自动处理
+```
 
-/**
- * 移除认证 Token
- */
-export function removeAuthToken(): void {
-  localStorage.removeItem('userToken')
-  sessionStorage.removeItem('userToken')
-}
+服务层实现：
 
-/**
- * 检查是否已登录
- */
-export function isAuthenticated(): boolean {
-  return !!getAuthToken()
+```typescript
+// BaseApiImpl 自动处理 Authorization header
+class BaseApiImpl {
+  protected async get(endpoint: string) {
+    const apiUrl = getApiUrl()
+    const token = getUserToken()  // 自动获取
+    
+    const response = await fetch(`${apiUrl}${endpoint}`, {
+      headers: {
+        'Authorization': token ? `Bearer ${token}` : '',
+        'Content-Type': 'application/json'
+      }
+    })
+    
+    return response.json()
+  }
 }
 ```
 
-**2. 在 API 请求中使用**
+#### ❌ 避免的方式
+
 ```typescript
-import { getAuthToken } from '@/utils/auth'
+// ❌ 组件中手动处理 Token
+const token = localStorage.getItem('userToken')
+const response = await fetch('/api/chat/sessions', {
+  headers: { 'Authorization': `Bearer ${token}` }
+})
 
-const token = getAuthToken()
+// ❌ 在每个请求中重复代码
 if (!token) {
-  throw new Error('未登录')
+  showLoginModal()
+  return
 }
+```
 
-const response = await fetch('http://localhost:3000/api/v1/...', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`
-  },
-  body: JSON.stringify(data)
+### 登录/登出流程
+
+**登录**：
+
+```vue
+<script setup>
+const handleLogin = async (credentials) => {
+  const response = await authService.login(credentials)
+  
+  // Token 自动存储到 localStorage/sessionStorage
+  if (response.token) {
+    localStorage.setItem('userToken', response.token)
+    
+    // 切换到云端模式（可选）
+    await window.electronAPI.storage.switchToCloud({
+      apiUrl: 'http://127.0.0.1:3000/api/v1',
+      token: response.token
+    })
+  }
+}
+</script>
+```
+
+**登出**：
+
+```vue
+<script setup>
+const handleLogout = async () => {
+  // 清除 Token
+  localStorage.removeItem('userToken')
+  sessionStorage.removeItem('userToken')
+  
+  // 切换到本地模式
+  await window.electronAPI.storage.switchToLocal()
+  
+  // 重新加载数据
+  await loadLocalData()
+}
+</script>
+```
+
+### Token 验证（后端）
+
+```typescript
+// packages/server/src/plugins/auth.ts
+fastify.decorate('authenticate', async (request, reply) => {
+  const token = request.headers.authorization?.replace('Bearer ', '')
+  
+  if (!token) {
+    return reply.status(401).send({ error: 'Unauthorized' })
+  }
+  
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    request.user = decoded  // { id, email, ... }
+  } catch (err) {
+    return reply.status(401).send({ error: 'Invalid token' })
+  }
+})
+
+// 路由中使用
+fastify.get('/chat/sessions', {
+  onRequest: [fastify.authenticate]  // 自动验证 Token
+}, async (request) => {
+  const userId = request.user.id  // 从 Token 中提取
+  // ...
 })
 ```
 
-**3. 使用 API Service 统一处理**
+### 检查清单
+- [ ] 登录后正确存储 Token
+- [ ] 使用服务层，避免手动处理 Token
+- [ ] 登出时清除 Token
+- [ ] 后端正确验证 Token
+- [ ] Token 过期时引导用户重新登录
 
-在 `apps/desktop/src/services/api.service.ts` 中已经有封装，直接使用：
+---
+
+## IPC 通信规范
+
+### Preload 脚本规范
+
+**关键点**：使用 `contextBridge` 暴露安全的 API。
+
 ```typescript
-import apiService from '@/services/api.service'
+// apps/desktop/electron/preload/index.ts
+import { contextBridge, ipcRenderer } from 'electron'
 
-// API Service 会自动处理 token
-const response = await apiService.post('/ssh/test-connection', data)
+contextBridge.exposeInMainWorld('electronAPI', {
+  chat: {
+    getChatTree: (userId: string) => 
+      ipcRenderer.invoke('chat:getChatTree', userId),
+    
+    createSession: (userId: string, data: any) => 
+      ipcRenderer.invoke('chat:createSession', userId, data)
+  },
+  
+  ssh: {
+    connect: (config: any) => 
+      ipcRenderer.invoke('ssh:connect', config),
+    
+    disconnect: (id: string) => 
+      ipcRenderer.invoke('ssh:disconnect', id)
+  }
+})
+```
+
+### 类型定义规范
+
+**同步更新**类型定义文件：
+
+```typescript
+// apps/desktop/src/types/electron.d.ts
+export interface ElectronAPI {
+  chat: {
+    getChatTree: (userId: string) => Promise<ChatTreeNode[]>
+    createSession: (userId: string, data: CreateChatSessionDto) => Promise<any>
+  }
+  
+  ssh: {
+    connect: (config: SSHConfig) => Promise<SSHConnection>
+    disconnect: (id: string) => Promise<void>
+  }
+}
+
+declare global {
+  interface Window {
+    electronAPI: ElectronAPI
+  }
+}
+```
+
+### IPC 错误处理
+
+```typescript
+// ✅ 正确 - 完整的错误处理
+ipcMain.handle('chat:createSession', async (_, userId, data) => {
+  try {
+    return await chatService.createSession(userId, data)
+  } catch (error) {
+    console.error('[IPC] chat:createSession error:', error)
+    throw new Error(error.message || 'Failed to create session')
+  }
+})
+
+// ❌ 错误 - 不处理错误
+ipcMain.handle('chat:createSession', async (_, userId, data) => {
+  return chatService.createSession(userId, data)  // 错误会导致无响应
+})
 ```
 
 ### 检查清单
-- [ ] 使用正确的 token key（`userToken`）
-- [ ] 同时检查 localStorage 和 sessionStorage
-- [ ] 使用统一的工具函数而不是直接访问 storage
-- [ ] 在所有 API 请求中包含 Authorization header
+- [ ] 使用 `contextBridge` 暴露 API
+- [ ] IPC 命名使用 `模块:操作` 格式
+- [ ] 类型定义与 Preload 同步
+- [ ] 完整的错误处理
+- [ ] 返回值符合类型定义
 
 ---
 
@@ -270,7 +566,7 @@ response: {
 
 ---
 
-## SSH 连接事件监听清理
+## Electron 事件监听清理
 
 ### 问题描述
 在 SSH 终端组件中，重新连接时如果不清理旧的事件监听器，会导致多个监听器叠加，造成输出重复显示（如多个 shell 提示符）。
@@ -610,8 +906,17 @@ console.log('Sending response:', responseData)
 - 查看 Response Headers 和 Response Body
 
 ### 4. 验证数据流
+
+**本地模式**：
 ```
-用户操作 → 前端组件 → Store → API Service → 后端路由 → Service 层 → Prisma → 数据库
+用户操作 → 前端组件 → Service → IPC → 主进程 → SQLite
+                ↓                              ↓
+            前端日志                        主进程日志
+```
+
+**云端模式**：
+```
+用户操作 → 前端组件 → Service → HTTP API → 后端路由 → Service 层 → Prisma → PostgreSQL
                 ↓                                      ↓
             前端日志                              后端日志
 ```
@@ -667,10 +972,20 @@ pnpm dev
 ---
 
 ## 相关文档
+
+### 项目架构文档
+- [Service Architecture](./service-architecture.md) - 服务架构详细说明
+- [Database Storage](./database-storage.md) - 数据存储架构
+- [Store Elimination](./store-elimination-complete.md) - Pinia Store 迁移指南
+- [Getting Started](./getting-started.md) - 开发入门指南
+
+### 技术文档
 - [Fastify Schema Validation](https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/)
 - [Prisma Client API](https://www.prisma.io/docs/reference/api-reference/prisma-client-reference)
 - [Vue 3 Composition API](https://vuejs.org/api/composition-api-setup.html)
+- [Electron IPC](https://www.electronjs.org/docs/latest/tutorial/ipc)
+- [better-sqlite3](https://github.com/WiseLibs/better-sqlite3/blob/master/docs/api.md)
 
 ---
 
-**最后更新**: 2025-09-30
+**最后更新**: 2025-10-07

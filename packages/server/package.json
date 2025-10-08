@@ -6,7 +6,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "tsx watch --clear-screen=false --ignore=node_modules/** src/index.ts",
+    "dev:clean": "rimraf node_modules/.tsx && tsx watch --clear-screen=false src/index.ts",
+    "dev:debug": "tsx watch --inspect=9229 --clear-screen=false src/index.ts",
+    "debug": "node --inspect --import tsx/esm src/index.ts",
     "build": "tsc --skipLibCheck && tsc-alias",
     "start": "node dist/index.js",
     "test": "vitest",

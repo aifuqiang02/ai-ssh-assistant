@@ -93,7 +93,16 @@ export async function apiRequest<T = any>(
     return undefined as T
   }
   
-  return response.json()
+  const result = await response.json()
+  
+  // ✅ 自动提取后端统一响应格式中的 data 字段
+  // 后端格式: { success: true, data: ... }
+  // 注意：某些接口（如 settings）使用不同的字段名，需要在具体 service 中处理
+  if (result && typeof result === 'object' && 'data' in result && result.success === true) {
+    return result.data as T
+  }
+  
+  return result as T
 }
 
 // ============= 服务工厂 =============

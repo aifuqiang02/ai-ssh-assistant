@@ -75,6 +75,7 @@
   "build": {
     "appId": "com.ai-ssh-assistant.desktop",
     "productName": "AI SSH Assistant",
+    "npmRebuild": false,
     "directories": {
       "output": "release/${version}"
     },

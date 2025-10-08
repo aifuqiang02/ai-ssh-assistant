@@ -1,5 +1,6 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
 import { logger } from '../utils/safe-logger.js'
+import { successResponseSchema } from '../schemas/common.schema.js'
 
 export async function systemRoutes(fastify: FastifyInstance) {
   // 获取系统信息

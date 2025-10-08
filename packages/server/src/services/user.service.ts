@@ -69,17 +69,21 @@ export class UserService {
           password: hashedPassword,
           role,
           isActive: true,
-          settings: {
-            theme: 'dark',
-            language: 'zh-CN',
-            notifications: {
-              email: true,
-              push: true,
-              desktop: true
-            },
-            privacy: {
-              profileVisible: true,
-              activityVisible: false
+          userSettings: {
+            create: {
+              data: {
+                theme: 'dark',
+                language: 'zh-CN',
+                notifications: {
+                  email: true,
+                  push: true,
+                  desktop: true
+                },
+                privacy: {
+                  profileVisible: true,
+                  activityVisible: false
+                }
+              }
             }
           }
         }

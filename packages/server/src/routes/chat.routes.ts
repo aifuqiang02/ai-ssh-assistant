@@ -1,6 +1,7 @@
 import { FastifyPluginAsync } from 'fastify'
 import { ChatService } from '../services/chat.service.js'
 import Database from '../config/database.js'
+import { successResponseSchema } from '../schemas/common.schema.js'
 
 export const chatRoutes: FastifyPluginAsync = async (fastify) => {
   const prisma = Database.getInstance()
@@ -12,15 +13,7 @@ export const chatRoutes: FastifyPluginAsync = async (fastify) => {
     schema: {
       tags: ['Chat'],
       summary: '获取用户的聊天树形结构',
-      response: {
-        200: {
-          type: 'object',
-          properties: {
-            success: { type: 'boolean' },
-            data: { type: 'array' }
-          }
-        }
-      }
+      response: successResponseSchema
     }
   }, async (request, reply) => {
     const userId = (request.user as any).userId
@@ -47,19 +40,7 @@ export const chatRoutes: FastifyPluginAsync = async (fastify) => {
           order: { type: 'number' }
         }
       },
-      response: {
-        201: {
-          type: 'object',
-          properties: {
-            success: { type: 'boolean' },
-            message: { type: 'string' },
-            data: {
-              type: 'object',
-              additionalProperties: true
-            }
-          }
-        }
-      }
+      response: successResponseSchema
     }
   }, async (request, reply) => {
     const userId = (request.user as any).userId
@@ -105,19 +86,7 @@ export const chatRoutes: FastifyPluginAsync = async (fastify) => {
           order: { type: 'number' }
         }
       },
-      response: {
-        200: {
-          type: 'object',
-          properties: {
-            success: { type: 'boolean' },
-            message: { type: 'string' },
-            data: {
-              type: 'object',
-              additionalProperties: true
-            }
-          }
-        }
-      }
+      response: successResponseSchema
     }
   }, async (request, reply) => {
     const userId = (request.user as any).userId
@@ -145,15 +114,7 @@ export const chatRoutes: FastifyPluginAsync = async (fastify) => {
           id: { type: 'string' }
         }
       },
-      response: {
-        200: {
-          type: 'object',
-          properties: {
-            success: { type: 'boolean' },
-            message: { type: 'string' }
-          }
-        }
-      }
+      response: successResponseSchema
     }
   }, async (request, reply) => {
     const userId = (request.user as any).userId
@@ -183,19 +144,7 @@ export const chatRoutes: FastifyPluginAsync = async (fastify) => {
           model: { type: 'string' }
         }
       },
-      response: {
-        201: {
-          type: 'object',
-          properties: {
-            success: { type: 'boolean' },
-            message: { type: 'string' },
-            data: {
-              type: 'object',
-              additionalProperties: true
-            }
-          }
-        }
-      }
+      response: successResponseSchema
     }
   }, async (request, reply) => {
     const userId = (request.user as any).userId
@@ -231,19 +180,7 @@ export const chatRoutes: FastifyPluginAsync = async (fastify) => {
           model: { type: 'string' }
         }
       },
-      response: {
-        200: {
-          type: 'object',
-          properties: {
-            success: { type: 'boolean' },
-            message: { type: 'string' },
-            data: {
-              type: 'object',
-              additionalProperties: true
-            }
-          }
-        }
-      }
+      response: successResponseSchema
     }
   }, async (request, reply) => {
     const userId = (request.user as any).userId
@@ -271,15 +208,7 @@ export const chatRoutes: FastifyPluginAsync = async (fastify) => {
           id: { type: 'string' }
         }
       },
-      response: {
-        200: {
-          type: 'object',
-          properties: {
-            success: { type: 'boolean' },
-            message: { type: 'string' }
-          }
-        }
-      }
+      response: successResponseSchema
     }
   }, async (request, reply) => {
     const userId = (request.user as any).userId
@@ -308,19 +237,7 @@ export const chatRoutes: FastifyPluginAsync = async (fastify) => {
           order: { type: 'number' }
         }
       },
-      response: {
-        200: {
-          type: 'object',
-          properties: {
-            success: { type: 'boolean' },
-            message: { type: 'string' },
-            data: {
-              type: 'object',
-              additionalProperties: true
-            }
-          }
-        }
-      }
+      response: successResponseSchema
     }
   }, async (request, reply) => {
     const userId = (request.user as any).userId

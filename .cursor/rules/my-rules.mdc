@@ -1,10 +1,269 @@
 ---
-description:
+description: AI SSH Assistant 项目开发规则和最佳实践
 globs:
 alwaysApply: true
 ---
 
-1、不要怀疑因为没有编译或者没有重启，导致代码没有生效。
-2、任务完成后，提交并推送代码,git add .  git commit 说明内容尽量简短 git push
-3、登录token存储方式。localStorage.setItem('userToken', accessToken)
-4、
+# 项目开发规则
+
+## 🏗️ 架构原则
+
+### 1. 双模式服务架构
+- **必须**使用统一的服务接口，提供本地（Local IPC）和云端（Remote API）两种实现
+- **禁止**在组件中直接判断存储模式或直接调用 IPC/API
+- **使用** `createService(LocalImpl, ApiImpl)` 自动选择实现
+
+```typescript
+// ✅ 正确
+import { chatService } from '@/services/chat.service'
+const sessions = await chatService.getSessions()
+
+// ❌ 错误
+if (isLocalMode) {
+  await window.electronAPI.chat.getSessions()
+} else {
+  await fetch('/api/chat/sessions')
+}
+```
+
+### 2. 状态管理
+- **禁止**使用 Pinia Store（已完全废弃并删除）
+- **使用** Vue Composables 管理全局 UI 状态（如 `useApp`, `useTheme`）
+- **使用**直接服务调用获取业务数据
+- **存储目录已删除**: `apps/desktop/src/stores/` 不应再创建
+
+### 3. userId 处理
+- **禁止**组件手动获取或传递 userId
+- **必须**由服务层自动处理：
+  - 本地模式：固定使用 `'local-user'`
+  - 云端模式：从 JWT Token 自动提取
+
+```typescript
+// ✅ 正确 - 服务层自动处理
+class ChatLocalImpl {
+  async getSessions() {
+    const userId = this.getUserId()  // 自动返回 'local-user'
+    return window.electronAPI.chat.getSessions(userId)
+  }
+}
+
+// ❌ 错误 - 组件手动处理
+const userId = localStorage.getItem('userId')
+await chatService.getSessions(userId)
+```
+
+## 📝 代码规范
+
+### 1. API 路径规范
+- **禁止**在 API 实现中添加 `/api` 前缀（BaseApiImpl 已包含 `/api/v1`）
+- **格式**: `/模块/操作` 或 `/模块/:id`
+
+```typescript
+// ✅ 正确
+class ChatApiImpl extends BaseApiImpl {
+  async getChatTree() {
+    return this.get('/chat/tree')  // 最终: /api/v1/chat/tree
+  }
+}
+
+// ❌ 错误
+return this.get('/api/chat/tree')  // 错误: /api/v1/api/chat/tree
+```
+
+### 2. IPC 命名规范
+- **格式**: `模块:操作`
+- **示例**: `chat:getChatTree`, `ssh:connect`, `settings:save`
+
+```typescript
+// ✅ 正确
+ipcMain.handle('chat:getChatTree', ...)
+ipcMain.handle('ssh:connect', ...)
+
+// ❌ 错误
+ipcMain.handle('getChatTree', ...)  // 缺少模块前缀
+ipcMain.handle('chat_get_tree', ...)  // 使用下划线
+```
+
+### 3. 路由响应格式规范
+- **必须**使用统一的响应 Schema (`packages/server/src/schemas/common.schema.ts`)
+- **禁止**为每个路由重复定义详细的 response schema
+- **200 响应**统一使用 `successResponseSchema`（允许任意对象，避免序列化问题）
+
+```typescript
+// ✅ 正确
+import { successResponseSchema } from '../schemas/common.schema.js'
+
+fastify.get('/settings', {
+  schema: {
+    description: '获取用户设置',
+    tags: ['设置'],
+    response: successResponseSchema  // 统一使用
+  }
+}, async (request, reply) => {
+  return reply.send({
+    success: true,
+    message: '获取成功',
+    data: { /* 任意结构 */ }
+  })
+})
+
+// ❌ 错误 - 重复定义且可能导致序列化问题
+response: {
+  200: {
+    type: 'object',
+    properties: {
+      success: { type: 'boolean' },
+      data: { type: 'object' }  // 没有 additionalProperties: true
+    }
+  }
+}
+```
+
+**为什么使用统一 Schema？**
+- ✅ 避免 Fastify 序列化器因缺少 `additionalProperties: true` 而跳过字段
+- ✅ 统一管理，修改响应格式只需更新一个地方
+- ✅ 减少重复代码，提高可维护性
+- ✅ 允许动态字段，支持灵活的响应结构
+
+**可用的 Schema 选项**：
+- `successResponseSchema` - 仅 200 响应
+- `errorResponseSchema` - 错误响应（400/401/404/500）
+- `standardResponseSchema` - 完整响应（成功+错误）
+
+### 4. 类型定义同步
+- **必须**同步更新 `apps/desktop/src/types/electron.d.ts`
+- Preload 脚本每次添加新 API，都要更新类型定义
+
+### 5. Token 管理
+- **存储 key**: 固定使用 `'userToken'`（不是 `'token'`）
+- **存储位置**: `localStorage` 或 `sessionStorage`
+- **禁止**组件手动处理 Token，由服务层自动处理
+
+```typescript
+// ✅ 正确
+localStorage.setItem('userToken', accessToken)
+
+// ❌ 错误
+localStorage.setItem('token', accessToken)
+```
+
+## 🗄️ 数据存储规范
+
+### 1. 本地存储（SQLite）
+- **工具**: better-sqlite3
+- **表结构**:
+  ```sql
+  CREATE TABLE IF NOT EXISTS table_name (
+    id TEXT PRIMARY KEY,
+    userId TEXT NOT NULL,
+    -- 业务字段
+    createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
+  );
+  CREATE INDEX IF NOT EXISTS idx_table_userId ON table_name(userId);
+  ```
+- **必须**使用 Prepared Statement 防止 SQL 注入
+  ```typescript
+  // ✅ 正确
+  const stmt = this.db.prepare('SELECT * FROM notes WHERE userId = ?')
+  return stmt.all(userId)
+  
+  // ❌ 错误
+  return this.db.exec(`SELECT * FROM notes WHERE userId = '${userId}'`)
+  ```
+
+### 2. 云端存储（PostgreSQL）
+- **ORM**: Prisma
+- **位置**: `packages/database/prisma/schema.prisma`
+- **迁移**: `pnpm prisma migrate dev --name xxx`
+
+### 3. 服务实现位置
+- **本地服务**: `apps/desktop/electron/services/`
+- **IPC 处理器**: `apps/desktop/electron/ipc/`
+- **云端服务**: `packages/server/src/services/`
+- **API 路由**: `packages/server/src/routes/`
+- **前端服务**: `apps/desktop/src/services/`
+
+## 🔧 开发流程
+
+### 1. 添加新功能模块
+1. 定义服务接口 (`apps/desktop/src/services/your.service.ts`)
+2. 实现本地服务 (`apps/desktop/electron/services/your.service.ts`)
+3. 注册 IPC 处理器 (`apps/desktop/electron/ipc/your-handlers.ts`)
+4. 更新 Preload 脚本 (`apps/desktop/electron/preload/index.ts`)
+5. 更新类型定义 (`apps/desktop/src/types/electron.d.ts`)
+6. 实现云端服务 (`packages/server/src/services/your.service.ts`)
+7. 创建 API 路由 (`packages/server/src/routes/your.routes.ts`)
+8. 实现双模式服务（LocalImpl + ApiImpl）
+9. 创建 UI 组件
+
+### 2. Git 提交规范
+- **完成任务后必须提交**: `git add . && git commit -m "简短说明" && git push`
+- **commit 信息要简短明确**，说明做了什么
+- **不要**跳过 hooks（除非明确需要）
+- **不要** force push 到 main/master
+
+### 3. 调试技巧
+- **不要怀疑**代码未生效是因为没有编译或重启
+- **使用**详细日志记录关键节点
+- **验证数据流**:
+  - 本地: 组件 → Service → IPC → 主进程 → SQLite
+  - 云端: 组件 → Service → API → 后端 → Prisma → PostgreSQL
+
+## ⚠️ 常见错误避免
+
+### 1. 禁止的操作
+- ❌ 创建或使用 Pinia Store（已废弃）
+- ❌ 在组件中手动判断存储模式
+- ❌ 手动传递 userId 参数
+- ❌ 手动处理 Token
+- ❌ API 路径添加重复的 `/api` 前缀
+- ❌ 字符串拼接 SQL（使用 Prepared Statement）
+- ❌ 直接连接远程数据库（使用 API）
+- ❌ 为每个路由重复定义详细的 response schema
+- ❌ 在 response schema 中定义 `type: 'object'` 而不加 `additionalProperties: true`
+
+### 2. 必须的操作
+- ✅ 使用统一服务接口
+- ✅ 服务层自动处理 userId 和 Token
+- ✅ 同步更新类型定义
+- ✅ 使用 Prepared Statement
+- ✅ 完整的错误处理
+- ✅ 清理事件监听器
+- ✅ 路由使用统一的 `successResponseSchema`
+
+## 📚 参考文档
+
+- [Service Architecture](./docs/development/service-architecture.md) - 服务架构详细说明
+- [Database Storage](./docs/development/database-storage.md) - 数据存储架构
+- [Best Practices](./docs/development/best-practices.md) - 最佳实践
+- [Getting Started](./docs/development/getting-started.md) - 开发入门
+
+## 🔍 代码检查清单
+
+### 添加新功能前检查
+- [ ] 是否需要定义服务接口？
+- [ ] 是否需要本地和云端两种实现？
+- [ ] 类型定义是否同步更新？
+- [ ] IPC 命名是否符合规范？
+- [ ] API 路径是否正确（无重复前缀）？
+- [ ] 路由是否使用统一的 `successResponseSchema`？
+
+### 提交代码前检查
+- [ ] 是否有 TypeScript 错误？
+- [ ] 是否有 linter 错误？
+- [ ] userId 和 Token 是否由服务层处理？
+- [ ] 是否有未清理的事件监听器？
+- [ ] 是否有 SQL 注入风险？
+- [ ] 是否有硬编码的配置（应使用环境变量）？
+
+### 组件开发检查
+- [ ] 是否直接使用服务而非 Store？
+- [ ] 是否使用 Composables 管理全局状态？
+- [ ] 是否正确清理副作用（onBeforeUnmount）？
+- [ ] 是否有完整的错误处理？
+
+---
+
+**最后更新**: 2025-10-08
+**项目架构版本**: v2.0 (双模式服务架构)

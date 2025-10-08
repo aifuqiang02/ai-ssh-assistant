@@ -22,10 +22,14 @@ async function main() {
       username: 'admin',
       password: adminPassword,
       role: UserRole.ADMIN,
-      settings: {
-        theme: 'dark',
-        language: 'zh-CN',
-        defaultModel: 'gpt-4'
+      userSettings: {
+        create: {
+          data: {
+            theme: 'dark',
+            language: 'zh-CN',
+            defaultModel: 'gpt-4'
+          }
+        }
       }
     }
   })
@@ -41,10 +45,14 @@ async function main() {
       username: 'testuser',
       password: userPassword,
       role: UserRole.USER,
-      settings: {
-        theme: 'dark',
-        language: 'zh-CN',
-        defaultModel: 'gpt-3.5-turbo'
+      userSettings: {
+        create: {
+          data: {
+            theme: 'dark',
+            language: 'zh-CN',
+            defaultModel: 'gpt-3.5-turbo'
+          }
+        }
       }
     }
   })
