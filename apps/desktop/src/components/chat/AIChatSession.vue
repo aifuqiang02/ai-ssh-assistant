@@ -140,7 +140,7 @@
             ></textarea>
 
             <!-- 操作栏 -->
-            <div class="input-actions flex items-center justify-between px-4 pb-4 pt-1">
+            <div class="input-actions flex items-center justify-between px-4 pb-6 pt-1">
               <!-- 左侧工具 -->
               <div class="actions-left flex items-center gap-1">
                 <button 
