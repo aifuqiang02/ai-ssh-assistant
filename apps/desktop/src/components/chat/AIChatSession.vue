@@ -540,14 +540,16 @@ const handleClearMessages = () => {
   }
 }
 
-// 打开会话设置（跳转到会话设置页面）
+// 打开会话设置（在新标签页中打开）
 const openSettings = () => {
-  router.push('/session-settings')
+  const url = router.resolve('/session-settings').href
+  window.open(url, '_blank')
 }
 
-// 打开提示词优化助手
+// 打开提示词优化助手（在新标签页中打开）
 const openPromptOptimizer = () => {
-  router.push('/prompt-optimizer')
+  const url = router.resolve('/prompt-optimizer').href
+  window.open(url, '_blank')
 }
 
 // 生命周期
