@@ -56,6 +56,15 @@ const routes: RouteRecordRaw[] = [
     }
   },
   {
+    path: '/session-settings',
+    name: 'SessionSettings',
+    component: () => import('@/views/SessionSettingsView.vue'),
+    meta: {
+      title: '会话设置',
+      icon: 'bi-sliders'
+    }
+  },
+  {
     path: '/about',
     name: 'About',
     component: () => import('@/views/AboutView.vue'),
