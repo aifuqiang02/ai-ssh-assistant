@@ -399,11 +399,13 @@ ${userFeedback.value}
     
     generatedPrompt.value = response.content.trim()
     
-    // 清空测试相关内容，提示用户重新测试
-    testResult.value = ''
+    // 清空用户点评
     userFeedback.value = ''
-    testQuestion.value = ''
-    alert('提示词已优化！建议重新测试以验证效果。')
+    
+    // 自动重新测试优化后的提示词
+    if (testQuestion.value) {
+      await testPrompt()
+    }
   } catch (error: any) {
     console.error('优化失败:', error)
     alert(`优化失败：${error.message}`)
