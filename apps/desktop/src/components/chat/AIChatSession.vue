@@ -44,21 +44,6 @@
                   message.role === 'user' ? 'max-w-2xl' : ''
                 ]"
               >
-                <!-- 消息头部：名称和时间 -->
-                <div 
-                  :class="[
-                    'message-header flex items-center gap-2 mb-1.5',
-                    message.role === 'user' ? 'justify-end' : 'justify-start'
-                  ]"
-                >
-                  <span class="message-name text-xs font-medium text-vscode-fg opacity-90">
-                    {{ message.role === 'user' ? '你' : (currentModel?.name || 'AI 助手') }}
-                  </span>
-                  <span class="message-time text-xs opacity-50">
-                    {{ formatTime(message.timestamp) }}
-                  </span>
-                </div>
-
                 <!-- 消息气泡 -->
                 <div class="message-bubble-container group relative">
                   <div 
