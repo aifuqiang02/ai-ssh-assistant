@@ -169,9 +169,9 @@
                 </button>
                 <button 
                   v-if="showSettingsButton"
-                  @click="toggleSettings"
+                  @click="openSettings"
                   class="action-tool-button"
-                  title="会话设置"
+                  title="打开设置"
                 >
                   <i class="bi bi-sliders"></i>
                 </button>
@@ -278,113 +278,144 @@
     </div>
 
     <!-- 会话设置抽屉 -->
-    <div 
-      v-if="showSettingsDrawer"
-      class="settings-drawer fixed inset-0 z-50 flex items-end justify-center bg-black bg-opacity-50"
-      @click.self="closeSettings"
-    >
+    <Transition name="drawer">
       <div 
-        class="drawer-content bg-vscode-editor-background rounded-t-xl w-full max-w-4xl max-h-[80vh] overflow-hidden shadow-2xl"
-        @click.stop
+        v-if="showSessionSettings"
+        class="session-settings-overlay fixed inset-0 bg-black bg-opacity-50 z-50"
+        @click="closeSessionSettings"
       >
-        <!-- 抽屉头部 -->
-        <div class="drawer-header px-6 py-4 border-b border-vscode-border flex items-center justify-between">
-          <h2 class="text-lg font-medium text-vscode-foreground">会话设置</h2>
-          <button
-            @click="closeSettings"
-            class="drawer-close-button"
-          >
-            <i class="bi bi-x-lg"></i>
-          </button>
-        </div>
+        <div 
+          class="session-settings-drawer fixed bottom-0 left-0 right-0 bg-vscode-sideBar-background border-t border-vscode-border rounded-t-xl shadow-2xl"
+          @click.stop
+        >
+          <!-- 抽屉头部 -->
+          <div class="drawer-header px-6 py-4 border-b border-vscode-border flex items-center justify-between">
+            <h2 class="text-lg font-semibold text-vscode-foreground flex items-center gap-2">
+              <i class="bi bi-gear-fill"></i>
+              <span>会话设置</span>
+            </h2>
+            <button
+              @click="closeSessionSettings"
+              class="close-button p-2 rounded-md hover:bg-vscode-list-hoverBackground transition-colors"
+              title="关闭"
+            >
+              <i class="bi bi-x-lg text-lg"></i>
+            </button>
+          </div>
 
-        <!-- 抽屉内容 -->
-        <div class="drawer-body px-6 py-6 overflow-y-auto max-h-[calc(80vh-120px)]">
-          <div class="settings-grid grid grid-cols-2 gap-6">
-            <!-- 模型设置 -->
-            <div class="setting-section">
-              <h3 class="section-title">模型配置</h3>
+          <!-- 抽屉内容 -->
+          <div class="drawer-content px-6 py-6 max-h-96 overflow-y-auto">
+            <div class="settings-grid grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- 会话名称 -->
               <div class="setting-item">
-                <label class="setting-label">AI 服务商</label>
-                <div class="setting-value text-vscode-foreground">
-                  {{ currentProvider?.name || '未选择' }}
-                </div>
-              </div>
-              <div class="setting-item">
-                <label class="setting-label">AI 模型</label>
-                <div class="setting-value text-vscode-foreground">
-                  {{ currentModel?.name || '未选择' }}
-                </div>
-              </div>
-            </div>
-
-            <!-- 参数设置 -->
-            <div class="setting-section">
-              <h3 class="section-title">模型参数</h3>
-              <div class="setting-item">
-                <label class="setting-label">Temperature</label>
-                <input 
-                  type="range" 
-                  min="0" 
-                  max="2" 
-                  step="0.1"
-                  v-model="temperature"
-                  class="setting-range"
-                />
-                <div class="setting-value-display">{{ temperature }}</div>
-              </div>
-              <div class="setting-item">
-                <label class="setting-label">Max Tokens</label>
-                <input 
-                  type="number"
-                  v-model="maxTokens"
-                  class="setting-input"
-                  min="1"
-                  max="128000"
-                />
-              </div>
-            </div>
-
-            <!-- 会话信息 -->
-            <div class="setting-section col-span-2">
-              <h3 class="section-title">会话信息</h3>
-              <div class="setting-item">
-                <label class="setting-label">会话名称</label>
-                <input 
+                <label class="setting-label text-sm font-medium text-vscode-foreground mb-2 block">
+                  <i class="bi bi-chat-dots mr-2"></i>
+                  会话名称
+                </label>
+                <input
+                  v-model="sessionNameEdit"
+                  @blur="saveSessionName"
                   type="text"
-                  v-model="sessionNameInput"
-                  @blur="handleSessionNameChange"
-                  placeholder="输入会话名称"
-                  class="setting-input"
+                  placeholder="输入会话名称..."
+                  class="setting-input w-full px-3 py-2 border border-vscode-input-border rounded-md bg-vscode-input-background text-vscode-input-foreground text-sm focus:outline-none focus:border-vscode-focusBorder"
                 />
+                <p class="setting-hint text-xs text-vscode-descriptionForeground mt-1">
+                  为此会话设置一个易于识别的名称
+                </p>
               </div>
+
+              <!-- 温度参数 -->
               <div class="setting-item">
-                <label class="setting-label">消息数量</label>
-                <div class="setting-value text-vscode-foreground">
-                  {{ messages.length }} 条消息
+                <label class="setting-label text-sm font-medium text-vscode-foreground mb-2 block">
+                  <i class="bi bi-thermometer-half mr-2"></i>
+                  温度 (Temperature)
+                </label>
+                <div class="flex items-center gap-3">
+                  <input
+                    v-model.number="temperature"
+                    type="range"
+                    min="0"
+                    max="2"
+                    step="0.1"
+                    class="setting-slider flex-1"
+                  />
+                  <span class="temperature-value text-sm font-mono text-vscode-foreground bg-vscode-input-background px-2 py-1 rounded border border-vscode-input-border min-w-[3rem] text-center">
+                    {{ temperature.toFixed(1) }}
+                  </span>
                 </div>
+                <p class="setting-hint text-xs text-vscode-descriptionForeground mt-1">
+                  较低值使输出更确定，较高值使输出更随机（0-2）
+                </p>
+              </div>
+
+              <!-- 最大令牌数 -->
+              <div class="setting-item">
+                <label class="setting-label text-sm font-medium text-vscode-foreground mb-2 block">
+                  <i class="bi bi-file-text mr-2"></i>
+                  最大令牌数 (Max Tokens)
+                </label>
+                <div class="flex items-center gap-3">
+                  <input
+                    v-model.number="maxTokens"
+                    type="range"
+                    min="256"
+                    max="8192"
+                    step="256"
+                    class="setting-slider flex-1"
+                  />
+                  <span class="max-tokens-value text-sm font-mono text-vscode-foreground bg-vscode-input-background px-2 py-1 rounded border border-vscode-input-border min-w-[4rem] text-center">
+                    {{ maxTokens }}
+                  </span>
+                </div>
+                <p class="setting-hint text-xs text-vscode-descriptionForeground mt-1">
+                  控制 AI 响应的最大长度（256-8192）
+                </p>
+              </div>
+
+              <!-- 当前模型信息 -->
+              <div class="setting-item">
+                <label class="setting-label text-sm font-medium text-vscode-foreground mb-2 block">
+                  <i class="bi bi-cpu mr-2"></i>
+                  当前模型
+                </label>
+                <div class="model-info px-3 py-2 border border-vscode-input-border rounded-md bg-vscode-input-background text-sm">
+                  <div v-if="currentModel" class="flex items-center justify-between">
+                    <span class="text-vscode-foreground">{{ currentModel.name }}</span>
+                    <button
+                      @click="$emit('open-model-selector')"
+                      class="text-vscode-textLink-foreground hover:text-vscode-textLink-activeForeground text-xs"
+                    >
+                      <i class="bi bi-pencil mr-1"></i>更换
+                    </button>
+                  </div>
+                  <div v-else class="text-vscode-descriptionForeground">
+                    未选择模型
+                  </div>
+                </div>
+                <p class="setting-hint text-xs text-vscode-descriptionForeground mt-1">
+                  点击"更换"选择其他 AI 模型
+                </p>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- 抽屉底部 -->
-        <div class="drawer-footer px-6 py-4 border-t border-vscode-border flex items-center justify-end gap-3">
-          <button
-            @click="closeSettings"
-            class="footer-button footer-button-secondary"
-          >
-            取消
-          </button>
-          <button
-            @click="saveSettings"
-            class="footer-button footer-button-primary"
-          >
-            保存设置
-          </button>
+          <!-- 抽屉底部 -->
+          <div class="drawer-footer px-6 py-4 border-t border-vscode-border flex items-center justify-between bg-vscode-sideBar-background">
+            <div class="footer-hint text-xs text-vscode-descriptionForeground">
+              <i class="bi bi-info-circle mr-1"></i>
+              这些设置仅影响当前会话
+            </div>
+            <button
+              @click="closeSessionSettings"
+              class="done-button px-4 py-2 bg-vscode-button-background text-vscode-button-foreground rounded-md hover:bg-vscode-button-hoverBackground transition-colors text-sm font-medium"
+            >
+              <i class="bi bi-check-lg mr-1"></i>
+              完成
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </Transition>
   </div>
 </template>
 
@@ -470,13 +501,13 @@ const copiedMessageId = ref<number | null>(null)
 
 // UI 状态
 const showSystemRolePanel = ref(false)
-const showSettingsDrawer = ref(false)
+const showSessionSettings = ref(false)
 
 // 系统角色和设置
 const systemRole = ref('')
 const temperature = ref(0.7)
 const maxTokens = ref(4096)
-const sessionNameInput = ref(props.sessionName || '')
+const sessionNameEdit = ref('')
 
 // 内部消息列表
 const internalMessages = ref<Message[]>([...props.messages])
@@ -485,11 +516,6 @@ const internalMessages = ref<Message[]>([...props.messages])
 watch(() => props.messages, (newMessages) => {
   internalMessages.value = [...newMessages]
 }, { deep: true })
-
-// 监听会话名称变化
-watch(() => props.sessionName, (newName) => {
-  sessionNameInput.value = newName || ''
-})
 
 // 计算属性
 const messages = computed(() => internalMessages.value)
@@ -746,26 +772,21 @@ const applyPreset = (preset: RolePreset) => {
   systemRole.value = preset.prompt
 }
 
-// 设置抽屉
-const toggleSettings = () => {
-  showSettingsDrawer.value = !showSettingsDrawer.value
+// 打开会话设置
+const openSettings = () => {
+  sessionNameEdit.value = props.sessionName || ''
+  showSessionSettings.value = true
 }
 
-const closeSettings = () => {
-  showSettingsDrawer.value = false
+// 关闭会话设置
+const closeSessionSettings = () => {
+  showSessionSettings.value = false
 }
 
-const saveSettings = () => {
-  // 保存设置逻辑
-  if (sessionNameInput.value !== props.sessionName) {
-    emit('update:session-name', sessionNameInput.value)
-  }
-  closeSettings()
-}
-
-const handleSessionNameChange = () => {
-  if (sessionNameInput.value !== props.sessionName) {
-    emit('update:session-name', sessionNameInput.value)
+// 保存会话名称
+const saveSessionName = () => {
+  if (sessionNameEdit.value.trim()) {
+    emit('update:session-name', sessionNameEdit.value.trim())
   }
 }
 
@@ -1171,5 +1192,100 @@ watch(messages, () => {
 
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
   background: var(--vscode-scrollbarSlider-hoverBackground);
+}
+
+/* 会话设置抽屉 */
+.session-settings-overlay {
+  display: flex;
+  align-items: flex-end;
+  backdrop-filter: blur(2px);
+}
+
+.session-settings-drawer {
+  max-height: 70vh;
+  animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.drawer-enter-active,
+.drawer-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.drawer-enter-from,
+.drawer-leave-to {
+  opacity: 0;
+}
+
+.drawer-enter-active .session-settings-drawer,
+.drawer-leave-active .session-settings-drawer {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.drawer-enter-from .session-settings-drawer,
+.drawer-leave-to .session-settings-drawer {
+  transform: translateY(100%);
+}
+
+.setting-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--vscode-input-border);
+  outline: none;
+  cursor: pointer;
+}
+
+.setting-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--vscode-button-background);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.setting-slider::-webkit-slider-thumb:hover {
+  background: var(--vscode-button-hoverBackground);
+  transform: scale(1.1);
+}
+
+.setting-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--vscode-button-background);
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.setting-slider::-moz-range-thumb:hover {
+  background: var(--vscode-button-hoverBackground);
+  transform: scale(1.1);
+}
+
+.close-button {
+  color: var(--vscode-foreground);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.close-button:hover {
+  color: var(--vscode-errorForeground);
 }
 </style>
