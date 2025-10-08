@@ -169,7 +169,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
+import { chatCompletion } from '../services/ai-api.service'
+import { settingsService } from '../services/settings.service'
+import { DEFAULT_PROVIDERS, type AIProvider, type AIModel } from '../types/ai-providers'
+
+// AI 配置
+const currentProvider = ref<AIProvider | null>(null)
+const currentModel = ref<AIModel | null>(null)
 
 // 步骤1: 任务描述与生成
 const taskDescription = ref('')
@@ -186,16 +193,96 @@ const isAnalyzing = ref(false)
 const analysisResult = ref('')
 const isOptimizing = ref(false)
 
+// 加载当前选中的 AI 模型
+const loadAIModelConfiguration = async () => {
+  try {
+    const saved = localStorage.getItem('selectedAIModel')
+    if (!saved) {
+      console.warn('[PromptOptimizer] 未找到已选择的模型')
+      return false
+    }
+    
+    const savedModel = JSON.parse(saved)
+    const settings = await settingsService.getSettings()
+    const configs = settings?.aiProviders || []
+    
+    if (configs.length > 0 && savedModel) {
+      // 合并配置与默认 provider
+      const savedConfig = configs.find((p: any) => p.id === savedModel.providerId)
+      const defaultProvider = DEFAULT_PROVIDERS.find(p => p.id === savedModel.providerId)
+      
+      if (savedConfig && defaultProvider) {
+        // 合并 provider 数据
+        const provider: AIProvider = {
+          ...defaultProvider,
+          apiKey: savedConfig.apiKey || '',
+          enabled: savedConfig.enabled !== undefined ? savedConfig.enabled : false,
+          isDefault: false,
+          models: savedConfig.models && savedConfig.models.length > 0 
+            ? savedConfig.models.map((configModel: any) => {
+                const defaultModel = defaultProvider.models.find(m => m.id === configModel.id)
+                return defaultModel ? {
+                  ...defaultModel,
+                  enabled: configModel.enabled !== undefined ? configModel.enabled : true
+                } : configModel
+              })
+            : defaultProvider.models
+        }
+        
+        const model = provider.models?.find(m => m.id === savedModel.modelId)
+        if (model) {
+          currentProvider.value = provider
+          currentModel.value = model
+          console.log('[PromptOptimizer] ✅ 已加载模型:', provider.name, '-', model.name)
+          return true
+        }
+      }
+    }
+    return false
+  } catch (error) {
+    console.error('[PromptOptimizer] ❌ AI模型配置加载失败:', error)
+    return false
+  }
+}
+
+// 检查模型是否可用
+const checkModelAvailable = (): boolean => {
+  if (!currentProvider.value || !currentModel.value) {
+    alert('请先在设置中配置并选择 AI 模型')
+    return false
+  }
+  return true
+}
+
 // 方法：生成基础提示词
 const generatePrompt = async () => {
+  if (!checkModelAvailable()) return
+  
   isGenerating.value = true
   try {
-    // TODO: 调用 AI API 生成提示词
-    // 模拟 API 调用
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    generatedPrompt.value = `你是一个专业的助手。基于用户的任务描述：${taskDescription.value}\n\n你需要提供准确、详细且有帮助的回答。请保持专业、友好的语气，并在适当时提供具体示例。`
-  } catch (error) {
+    const response = await chatCompletion(
+      currentProvider.value!,
+      currentModel.value!,
+      {
+        messages: [
+          {
+            role: 'system',
+            content: '你是一个专业的提示词工程师。你的任务是根据用户描述的任务需求，生成一个高质量、清晰、有效的系统提示词（system prompt）。提示词应该明确定义 AI 助手的角色、职责和行为准则。'
+          },
+          {
+            role: 'user',
+            content: `请为以下任务生成一个专业的系统提示词：\n\n${taskDescription.value}\n\n要求：\n1. 明确定义 AI 助手的角色\n2. 说明具体的任务和职责\n3. 提供清晰的行为准则\n4. 语言简洁专业\n\n请直接返回生成的提示词内容，不要包含任何解释或其他文字。`
+          }
+        ],
+        stream: false,
+        temperature: 0.7
+      }
+    )
+    
+    generatedPrompt.value = response.content.trim()
+  } catch (error: any) {
     console.error('生成提示词失败:', error)
+    alert(`生成失败：${error.message}`)
   } finally {
     isGenerating.value = false
   }
@@ -203,14 +290,33 @@ const generatePrompt = async () => {
 
 // 方法：测试提示词
 const testPrompt = async () => {
+  if (!checkModelAvailable()) return
+  
   isTesting.value = true
   try {
-    // TODO: 使用当前提示词调用 AI API 测试
-    // 模拟 API 调用
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    testResult.value = `这是一个模拟的 AI 回复。实际实现时，这里将显示使用当前提示词对问题"${testQuestion.value}"的真实 AI 回复。`
-  } catch (error) {
+    const response = await chatCompletion(
+      currentProvider.value!,
+      currentModel.value!,
+      {
+        messages: [
+          {
+            role: 'system',
+            content: generatedPrompt.value
+          },
+          {
+            role: 'user',
+            content: testQuestion.value
+          }
+        ],
+        stream: false,
+        temperature: 0.7
+      }
+    )
+    
+    testResult.value = response.content
+  } catch (error: any) {
     console.error('测试失败:', error)
+    alert(`测试失败：${error.message}`)
   } finally {
     isTesting.value = false
   }
@@ -218,14 +324,33 @@ const testPrompt = async () => {
 
 // 方法：分析测试结果
 const analyzeResult = async () => {
+  if (!checkModelAvailable()) return
+  
   isAnalyzing.value = true
   try {
-    // TODO: 调用 AI API 分析测试结果
-    // 模拟 API 调用
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    analysisResult.value = `分析结果：AI 的回复基本符合预期，但可以在以下方面改进：\n1. 回复可以更加详细\n2. 可以增加更多实际示例\n3. 语气可以更加专业`
-  } catch (error) {
+    const response = await chatCompletion(
+      currentProvider.value!,
+      currentModel.value!,
+      {
+        messages: [
+          {
+            role: 'system',
+            content: '你是一个专业的 AI 助手评估专家。你的任务是分析 AI 助手的回复质量，并提供改进建议。'
+          },
+          {
+            role: 'user',
+            content: `请评估以下 AI 助手的表现：\n\n【系统提示词】\n${generatedPrompt.value}\n\n【用户问题】\n${testQuestion.value}\n\n【AI 回复】\n${testResult.value}\n\n请从以下几个方面评估：\n1. 回复是否符合系统提示词的要求\n2. 回复的准确性和完整性\n3. 语气和风格是否恰当\n4. 有哪些可以改进的地方\n\n请提供详细的评估和改进建议。`
+          }
+        ],
+        stream: false,
+        temperature: 0.7
+      }
+    )
+    
+    analysisResult.value = response.content
+  } catch (error: any) {
     console.error('分析失败:', error)
+    alert(`分析失败：${error.message}`)
   } finally {
     isAnalyzing.value = false
   }
@@ -233,19 +358,39 @@ const analyzeResult = async () => {
 
 // 方法：优化提示词
 const optimizePrompt = async () => {
+  if (!checkModelAvailable()) return
+  
   isOptimizing.value = true
   try {
-    // TODO: 基于分析结果优化提示词
-    // 模拟 API 调用
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    generatedPrompt.value = generatedPrompt.value + '\n\n请确保您的回复详细且包含实际示例，保持专业的语气。'
+    const response = await chatCompletion(
+      currentProvider.value!,
+      currentModel.value!,
+      {
+        messages: [
+          {
+            role: 'system',
+            content: '你是一个专业的提示词工程师。你的任务是根据评估反馈优化系统提示词。'
+          },
+          {
+            role: 'user',
+            content: `请优化以下系统提示词：\n\n【原始提示词】\n${generatedPrompt.value}\n\n【测试问题】\n${testQuestion.value}\n\n【AI 回复】\n${testResult.value}\n\n【评估反馈】\n${analysisResult.value}\n\n请基于评估反馈，生成一个改进后的系统提示词。要求：\n1. 保留原有的核心功能\n2. 针对性地解决评估中指出的问题\n3. 使提示词更加清晰和有效\n\n请直接返回优化后的提示词，不要包含任何解释。`
+          }
+        ],
+        stream: false,
+        temperature: 0.7
+      }
+    )
+    
+    generatedPrompt.value = response.content.trim()
     
     // 清空测试结果，提示用户重新测试
     testResult.value = ''
     analysisResult.value = ''
+    testQuestion.value = ''
     alert('提示词已优化！建议重新测试以验证效果。')
-  } catch (error) {
+  } catch (error: any) {
     console.error('优化失败:', error)
+    alert(`优化失败：${error.message}`)
   } finally {
     isOptimizing.value = false
   }
@@ -254,8 +399,12 @@ const optimizePrompt = async () => {
 // 方法：保存提示词
 const savePrompt = () => {
   // TODO: 保存提示词到会话设置
+  // 可以通过路由传递或使用 localStorage
   console.log('保存提示词:', generatedPrompt.value)
-  alert('提示词已保存！')
+  
+  // 临时存储到 localStorage
+  localStorage.setItem('optimizedPrompt', generatedPrompt.value)
+  alert('提示词已保存到临时存储！\n\n提示：您可以在会话设置中使用这个提示词。')
 }
 
 // 方法：重置所有内容
@@ -268,6 +417,33 @@ const resetAll = () => {
     analysisResult.value = ''
   }
 }
+
+// 监听模型切换事件
+const handleModelChanged = () => {
+  console.log('[PromptOptimizer] 🔄 检测到模型切换，重新加载')
+  loadAIModelConfiguration()
+}
+
+const handleSettingsUpdated = () => {
+  console.log('[PromptOptimizer] 🔄 检测到设置更新，重新加载模型')
+  loadAIModelConfiguration()
+}
+
+// 生命周期
+onMounted(async () => {
+  await loadAIModelConfiguration()
+  
+  // 监听事件
+  window.addEventListener('ai-model-changed', handleModelChanged)
+  window.addEventListener('settings-updated', handleSettingsUpdated)
+  window.addEventListener('ai-provider-configs-updated', handleSettingsUpdated)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('ai-model-changed', handleModelChanged)
+  window.removeEventListener('settings-updated', handleSettingsUpdated)
+  window.removeEventListener('ai-provider-configs-updated', handleSettingsUpdated)
+})
 </script>
 
 <style scoped>
