@@ -40,8 +40,8 @@
               <!-- 消息内容容器 -->
               <div 
                 :class="[
-                  'message-content-wrapper flex-1 min-w-0',
-                  message.role === 'user' ? 'max-w-2xl' : ''
+                  'message-content-wrapper',
+                  message.role === 'user' ? 'max-w-lg' : 'max-w-3xl'
                 ]"
               >
                 <!-- 消息气泡 -->
