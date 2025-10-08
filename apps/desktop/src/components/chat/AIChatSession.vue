@@ -19,7 +19,7 @@
             <div 
               :class="[
                 'message-container flex gap-3',
-                message.role === 'user' ? 'flex-row-reverse' : 'flex-row'
+                message.role === 'user' ? 'flex-row-reverse justify-end' : 'flex-row'
               ]"
             >
               <!-- 头像 -->
