@@ -1,15 +1,5 @@
 <template>
   <div class="chat-view h-full flex flex-col bg-vscode-bg-light">
-    <!-- 聊天头部 -->
-    <div class="chat-header p-4 border-b bg-vscode-bg-light border-vscode-border">
-      <div class="header-content">
-        <div class="header-text">
-          <h2 class="text-xl font-bold text-vscode-fg">{{ currentSessionName }}</h2>
-          <p class="text-vscode-fg-muted">{{ currentSessionId ? '会话对话' : '与 AI 助手进行对话' }}</p>
-        </div>
-      </div>
-    </div>
-    
     <!-- AI 会话组件 -->
     <div class="flex-1 overflow-hidden">
       <AIChatSession
