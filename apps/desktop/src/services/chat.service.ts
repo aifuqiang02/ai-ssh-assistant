@@ -104,24 +104,25 @@ class ChatApiImpl extends BaseApiImpl implements IChatService {
 class ChatLocalImpl extends BaseLocalImpl implements IChatService {
   // 树形结构
   async getChatTree(): Promise<ChatTreeNode[]> {
-    // TODO: 实现本地 IPC 调用
-    return this.electronAPI.chat.getChatTree?.(this.getUserId()) || []
+    return this.electronAPI.chat.getChatTree(this.getUserId())
   }
   
   // 文件夹管理
   async createFolder(data: CreateChatFolderDto): Promise<any> {
-    // TODO: 实现本地 IPC 调用
-    return this.electronAPI.chat.createFolder?.(this.getUserId(), data)
+    return this.electronAPI.chat.createFolder(this.getUserId(), data)
   }
   
   async updateFolder(id: string, data: UpdateChatFolderDto): Promise<any> {
-    // TODO: 实现本地 IPC 调用
-    return this.electronAPI.chat.updateFolder?.(this.getUserId(), id, data)
+    return this.electronAPI.chat.updateFolder(this.getUserId(), id, data)
   }
   
   async deleteFolder(id: string): Promise<void> {
-    // TODO: 实现本地 IPC 调用
-    return this.electronAPI.chat.deleteFolder?.(this.getUserId(), id)
+    await this.electronAPI.chat.deleteFolder(this.getUserId(), id)
+  }
+  
+  // 节点移动
+  async moveNode(data: MoveChatNodeDto): Promise<void> {
+    await this.electronAPI.chat.moveNode(this.getUserId(), data)
   }
   
   // 会话管理
@@ -143,12 +144,6 @@ class ChatLocalImpl extends BaseLocalImpl implements IChatService {
   
   async deleteSession(id: string): Promise<void> {
     return this.electronAPI.chat.deleteSession(this.getUserId(), id)
-  }
-  
-  // 节点移动
-  async moveNode(data: MoveChatNodeDto): Promise<void> {
-    // TODO: 实现本地 IPC 调用
-    return this.electronAPI.chat.moveNode?.(this.getUserId(), data)
   }
   
   // 消息管理

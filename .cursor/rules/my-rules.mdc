@@ -186,6 +186,23 @@ localStorage.setItem('token', accessToken)
 
 ## 🔧 开发流程
 
+### 0. 任务完成行为规范
+- **禁止**在完成任务后自动执行重启命令（如 `pnpm dev`）
+- **必须**在任务完成后告知用户需要手动重启
+- **提示格式**: "✅ 修改完成！请手动执行 `pnpm dev` 重启应用以查看效果。"
+- **原因**: 
+  - 用户可能需要查看代码或进行其他操作
+  - 避免频繁重启导致的进程混乱
+  - 让用户掌控开发流程节奏
+
+```typescript
+// ✅ 正确 - 告知用户手动重启
+console.log('✅ 修改完成！请手动执行 `pnpm dev` 重启应用。')
+
+// ❌ 错误 - 自动重启
+await runCommand('pnpm dev')
+```
+
 ### 1. 添加新功能模块
 1. 定义服务接口 (`apps/desktop/src/services/your.service.ts`)
 2. 实现本地服务 (`apps/desktop/electron/services/your.service.ts`)

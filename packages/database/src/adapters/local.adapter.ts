@@ -32,18 +32,22 @@ export class LocalStorageAdapter extends BaseStorageAdapter {
 
   async connect(): Promise<void> {
     try {
+      console.log('🔌 正在连接本地数据库...')
+      console.log('📁 数据库文件路径:', process.env.DATABASE_URL || 'file:./local.db')
+      
       await this.prisma.$connect()
       this.isConnected = true
-      console.log('Local database connected')
+      console.log('✅ Local database connected')
       
       // 自动初始化数据库表（如果不存在）
+      console.log('🔍 开始检查数据库表...')
       await this.initializeDatabase()
       
       if (this.options.syncEnabled) {
         this.startAutoSync()
       }
     } catch (error) {
-      console.error('Failed to connect to local database:', error)
+      console.error('❌ Failed to connect to local database:', error)
       throw error
     }
   }
@@ -54,14 +58,25 @@ export class LocalStorageAdapter extends BaseStorageAdapter {
    */
   private async initializeDatabase(): Promise<void> {
     try {
-      // 尝试查询 user_settings 表，如果不存在会抛出错误
-      await this.prisma.$queryRaw`SELECT name FROM sqlite_master WHERE type='table' AND name='user_settings'`
-      console.log('✅ Database tables already exist')
-    } catch (error) {
-      console.log('📋 Initializing database tables...')
+      console.log('🔎 检查 user_settings 表是否存在...')
+      // 检查 user_settings 表是否存在
+      const result = await this.prisma.$queryRaw<Array<{ name: string }>>`
+        SELECT name FROM sqlite_master WHERE type='table' AND name='user_settings'
+      `
+      
+      console.log('📊 查询结果:', result)
+      
+      if (result && result.length > 0) {
+        console.log('✅ Database tables already exist')
+        return
+      }
+      
+      console.log('📋 表不存在，开始初始化数据库表...')
+      console.log('⏳ 这可能需要几秒钟...')
       
       // 创建所有必需的表
       try {
+        console.log('1️⃣ 创建 users 表...')
         // 创建 users 表
         await this.prisma.$executeRaw`
           CREATE TABLE IF NOT EXISTS users (
@@ -78,7 +93,9 @@ export class LocalStorageAdapter extends BaseStorageAdapter {
             settings TEXT
           )
         `
+        console.log('   ✓ users 表创建成功')
         
+        console.log('2️⃣ 创建 user_settings 表...')
         // 创建 user_settings 表
         await this.prisma.$executeRaw`
           CREATE TABLE IF NOT EXISTS user_settings (
@@ -90,7 +107,9 @@ export class LocalStorageAdapter extends BaseStorageAdapter {
             FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
           )
         `
+        console.log('   ✓ user_settings 表创建成功')
         
+        console.log('3️⃣ 创建 ssh_connections 表...')
         // 创建 ssh_connections 表
         await this.prisma.$executeRaw`
           CREATE TABLE IF NOT EXISTS ssh_connections (
@@ -114,7 +133,9 @@ export class LocalStorageAdapter extends BaseStorageAdapter {
             FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
           )
         `
+        console.log('   ✓ ssh_connections 表创建成功')
         
+        console.log('4️⃣ 创建 chat_sessions 表...')
         // 创建 chat_sessions 表
         await this.prisma.$executeRaw`
           CREATE TABLE IF NOT EXISTS chat_sessions (
@@ -131,7 +152,9 @@ export class LocalStorageAdapter extends BaseStorageAdapter {
             FOREIGN KEY (sshConnectionId) REFERENCES ssh_connections(id)
           )
         `
+        console.log('   ✓ chat_sessions 表创建成功')
         
+        console.log('5️⃣ 创建 messages 表...')
         // 创建 messages 表
         await this.prisma.$executeRaw`
           CREATE TABLE IF NOT EXISTS messages (
@@ -154,7 +177,9 @@ export class LocalStorageAdapter extends BaseStorageAdapter {
             FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
           )
         `
+        console.log('   ✓ messages 表创建成功')
         
+        console.log('6️⃣ 创建 command_logs 表...')
         // 创建 command_logs 表
         await this.prisma.$executeRaw`
           CREATE TABLE IF NOT EXISTS command_logs (
@@ -172,12 +197,36 @@ export class LocalStorageAdapter extends BaseStorageAdapter {
             FOREIGN KEY (sshConnectionId) REFERENCES ssh_connections(id)
           )
         `
+        console.log('   ✓ command_logs 表创建成功')
         
-        console.log('✅ Database tables initialized successfully')
-      } catch (initError) {
-        console.error('Failed to initialize database tables:', initError)
-        // 不抛出错误，允许应用继续运行
+        console.log('👤 创建默认本地用户...')
+        // 创建默认的本地用户（如果不存在）
+        await this.prisma.$executeRaw`
+          INSERT OR IGNORE INTO users (id, uuid, username, role, isActive, createdAt, updatedAt)
+          VALUES (
+            'local-user',
+            'local-user-uuid',
+            'Local User',
+            'USER',
+            1,
+            CURRENT_TIMESTAMP,
+            CURRENT_TIMESTAMP
+          )
+        `
+        console.log('   ✓ 默认用户创建成功')
+        
+        console.log('🎉 ===============================================')
+        console.log('✅ 数据库初始化完成！')
+        console.log('✅ 所有表创建成功')
+        console.log('✅ 默认本地用户已创建 (local-user)')
+        console.log('🎉 ===============================================')
+      } catch (createError) {
+        console.error('❌ Failed to create tables:', createError)
+        throw createError
       }
+    } catch (error) {
+      console.error('❌ Failed to check/initialize database:', error)
+      throw error
     }
   }
 
@@ -204,8 +253,14 @@ export class LocalStorageAdapter extends BaseStorageAdapter {
     let enrichedData = {
       ...data,
       createdAt: new Date(),
-      updatedAt: new Date(),
-      syncStatus: 'pending' // 标记为待同步
+      updatedAt: new Date()
+    }
+    
+    // 只对支持同步的模型添加 syncStatus
+    // User 和 UserSettings 不需要同步状态
+    const syncableModels = ['SshConnection', 'ChatSession', 'Message', 'CommandLog']
+    if (syncableModels.includes(model)) {
+      enrichedData.syncStatus = 'pending'
     }
     
     // 处理 SQLite 的 JSON 字段序列化
@@ -244,11 +299,16 @@ export class LocalStorageAdapter extends BaseStorageAdapter {
       throw new Error(`Model ${model} not found`)
     }
     
-    // 更新时间戳和同步状态
+    // 更新时间戳
     let updateData = {
       ...options.data,
-      updatedAt: new Date(),
-      syncStatus: 'pending'
+      updatedAt: new Date()
+    }
+    
+    // 只对支持同步的模型添加 syncStatus
+    const syncableModels = ['SshConnection', 'ChatSession', 'Message', 'CommandLog']
+    if (syncableModels.includes(model)) {
+      updateData.syncStatus = 'pending'
     }
     
     // 处理 SQLite 的 JSON 字段序列化

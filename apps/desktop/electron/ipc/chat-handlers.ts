@@ -9,6 +9,61 @@ import { getChatLocalService } from '../services/chat.service'
 export function registerChatHandlers() {
   const chatService = getChatLocalService()
 
+  // 获取聊天树
+  ipcMain.handle('chat:get-chat-tree', async (event, userId: string) => {
+    try {
+      console.log('[IPC] chat:get-chat-tree', { userId })
+      return chatService.getChatTree(userId)
+    } catch (error) {
+      console.error('[IPC] chat:get-chat-tree error:', error)
+      throw error
+    }
+  })
+
+  // 创建文件夹
+  ipcMain.handle('chat:create-folder', async (event, userId: string, data: any) => {
+    try {
+      console.log('[IPC] chat:create-folder', { userId, data })
+      return chatService.createFolder(userId, data)
+    } catch (error) {
+      console.error('[IPC] chat:create-folder error:', error)
+      throw error
+    }
+  })
+
+  // 更新文件夹
+  ipcMain.handle('chat:update-folder', async (event, userId: string, folderId: string, data: any) => {
+    try {
+      console.log('[IPC] chat:update-folder', { userId, folderId, data })
+      return chatService.updateFolder(userId, folderId, data)
+    } catch (error) {
+      console.error('[IPC] chat:update-folder error:', error)
+      throw error
+    }
+  })
+
+  // 删除文件夹
+  ipcMain.handle('chat:delete-folder', async (event, userId: string, folderId: string) => {
+    try {
+      console.log('[IPC] chat:delete-folder', { userId, folderId })
+      return chatService.deleteFolder(userId, folderId)
+    } catch (error) {
+      console.error('[IPC] chat:delete-folder error:', error)
+      throw error
+    }
+  })
+
+  // 移动节点
+  ipcMain.handle('chat:move-node', async (event, userId: string, data: any) => {
+    try {
+      console.log('[IPC] chat:move-node', { userId, data })
+      return chatService.moveNode(userId, data.nodeId, data.targetFolderId, data.order || 0)
+    } catch (error) {
+      console.error('[IPC] chat:move-node error:', error)
+      throw error
+    }
+  })
+
   // 创建会话
   ipcMain.handle('chat:create-session', async (event, userId: string, data: any) => {
     try {

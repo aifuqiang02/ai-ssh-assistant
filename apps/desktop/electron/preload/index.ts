@@ -181,6 +181,16 @@ const api = {
 
   // Chat 服务 - 本地业务逻辑
   chat: {
+    getChatTree: (userId: string) =>
+      ipcRenderer.invoke('chat:get-chat-tree', userId),
+    createFolder: (userId: string, data: any) =>
+      ipcRenderer.invoke('chat:create-folder', userId, data),
+    updateFolder: (userId: string, folderId: string, data: any) =>
+      ipcRenderer.invoke('chat:update-folder', userId, folderId, data),
+    deleteFolder: (userId: string, folderId: string) =>
+      ipcRenderer.invoke('chat:delete-folder', userId, folderId),
+    moveNode: (userId: string, data: any) =>
+      ipcRenderer.invoke('chat:move-node', userId, data),
     createSession: (userId: string, data: any) =>
       ipcRenderer.invoke('chat:create-session', userId, data),
     getSession: (userId: string, sessionId: string) =>
