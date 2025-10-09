@@ -232,7 +232,8 @@ const loadAvailableModels = async () => {
     // 使用 settingsService 获取配置（自动处理 userId）
     const settings = await settingsService.getSettings()
     
-    if (!settings?.aiProviders || settings.aiProviders.length === 0) {
+    // 确保 aiProviders 是数组
+    if (!settings?.aiProviders || !Array.isArray(settings.aiProviders) || settings.aiProviders.length === 0) {
       console.warn('[AppTitleBar] 未找到 AI Provider 配置')
       availableModels.value = []
       return

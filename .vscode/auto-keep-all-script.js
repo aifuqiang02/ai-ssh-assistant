@@ -41,6 +41,16 @@
       button2.click();
       clicked = true;
     }
+
+    const buttons = document.querySelectorAll('.anysphere-text-button');
+    for (const button of buttons) {
+        const span = button.querySelector('span');
+        if (span && span.textContent.trim() === 'Review next file') {
+            console.log('✅ 成功点击 "Review next file" 按钮！');
+            button.click();
+            return;
+        }
+    }
   }
 
     return clicked;

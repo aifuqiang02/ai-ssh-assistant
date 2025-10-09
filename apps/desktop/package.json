@@ -1,6 +1,6 @@
 {
   "name": "@ai-ssh/desktop",
-  "version": "1.0.1",
+  "version": "1.0.8",
   "description": "AI SSH Assistant Desktop Application",
   "main": "dist-electron/main/index.js",
   "private": true,
@@ -76,19 +76,28 @@
     "appId": "com.ai-ssh-assistant.desktop",
     "productName": "AI SSH Assistant",
     "npmRebuild": false,
+    "asar": true,
     "directories": {
       "output": "release/${version}"
     },
     "files": [
       "dist",
-      "dist-electron"
+      "dist-electron",
+      {
+        "from": "../../node_modules/.pnpm/ssh2@1.17.0/node_modules",
+        "to": "node_modules"
+      },
+      {
+        "from": "../../node_modules/.pnpm/safer-buffer@2.1.2/node_modules/safer-buffer",
+        "to": "node_modules/safer-buffer"
+      },
+      {
+        "from": "../../node_modules/.pnpm/tweetnacl@0.14.5/node_modules/tweetnacl",
+        "to": "node_modules/tweetnacl"
+      }
     ],
     "asarUnpack": [
-      "node_modules/ssh2/**/*",
-      "node_modules/ssh2-streams/**/*",
-      "node_modules/asn1/**/*",
-      "node_modules/bcrypt-pbkdf/**/*",
-      "node_modules/cpu-features/**/*"
+      "**/node_modules/**/*"
     ],
     "mac": {
       "target": [
