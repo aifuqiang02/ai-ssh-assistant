@@ -46,47 +46,6 @@
           </div>
         </section>
 
-        <!-- 系统提示词 -->
-        <section :id="'section-system-prompt'" class="setting-section">
-          <h2 class="section-title">
-            <i class="bi bi-chat-square-text"></i>
-            系统提示词
-          </h2>
-          <p class="section-description">配置 AI 助手的角色和行为</p>
-
-          <!-- 系统角色 -->
-          <div class="setting-row">
-            <div class="setting-left">
-              <label class="setting-label">系统角色</label>
-              <p class="setting-hint">定义 AI 助手的角色和行为方式</p>
-            </div>
-            <div class="setting-right">
-              <textarea
-                v-model="systemRole"
-                placeholder="例如：你是一个专业的编程助手..."
-                class="form-textarea"
-                rows="6"
-              ></textarea>
-            </div>
-          </div>
-
-          <!-- 开场消息 -->
-          <div class="setting-row">
-            <div class="setting-left">
-              <label class="setting-label">开场消息</label>
-              <p class="setting-hint">进入会话时自动显示的欢迎消息</p>
-            </div>
-            <div class="setting-right">
-              <textarea
-                v-model="openingMessage"
-                placeholder="例如：你好！我是你的 AI 助手，有什么可以帮助你的吗？"
-                class="form-textarea"
-                rows="4"
-              ></textarea>
-            </div>
-          </div>
-        </section>
-
         <!-- 高级设置 -->
         <section :id="'section-advanced'" class="setting-section">
           <h2 class="section-title">
@@ -140,7 +99,6 @@ const router = useRouter()
 // 设置章节
 const settingsSections = [
   { id: 'basic', label: '基本信息', icon: 'bi bi-info-circle' },
-  { id: 'system-prompt', label: '系统提示词', icon: 'bi bi-chat-square-text' },
   { id: 'advanced', label: '高级设置', icon: 'bi bi-gear-wide-connected' }
 ]
 
@@ -150,10 +108,6 @@ const isScrolling = ref(false)
 
 // 基本信息
 const sessionName = ref('')
-
-// 系统提示词
-const systemRole = ref('')
-const openingMessage = ref('')
 
 // 高级设置
 const contextWindow = ref(10)
