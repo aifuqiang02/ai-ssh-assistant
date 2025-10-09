@@ -24,10 +24,20 @@ export type User = $Result.DefaultSelection<Prisma.$UserPayload>
  */
 export type UserSettings = $Result.DefaultSelection<Prisma.$UserSettingsPayload>
 /**
+ * Model SSHFolder
+ * 
+ */
+export type SSHFolder = $Result.DefaultSelection<Prisma.$SSHFolderPayload>
+/**
  * Model SSHConnection
  * 
  */
 export type SSHConnection = $Result.DefaultSelection<Prisma.$SSHConnectionPayload>
+/**
+ * Model ChatFolder
+ * 
+ */
+export type ChatFolder = $Result.DefaultSelection<Prisma.$ChatFolderPayload>
 /**
  * Model ChatSession
  * 
@@ -188,6 +198,16 @@ export class PrismaClient<
   get userSettings(): Prisma.UserSettingsDelegate<ExtArgs>;
 
   /**
+   * `prisma.sSHFolder`: Exposes CRUD operations for the **SSHFolder** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more SSHFolders
+    * const sSHFolders = await prisma.sSHFolder.findMany()
+    * ```
+    */
+  get sSHFolder(): Prisma.SSHFolderDelegate<ExtArgs>;
+
+  /**
    * `prisma.sSHConnection`: Exposes CRUD operations for the **SSHConnection** model.
     * Example usage:
     * ```ts
@@ -196,6 +216,16 @@ export class PrismaClient<
     * ```
     */
   get sSHConnection(): Prisma.SSHConnectionDelegate<ExtArgs>;
+
+  /**
+   * `prisma.chatFolder`: Exposes CRUD operations for the **ChatFolder** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ChatFolders
+    * const chatFolders = await prisma.chatFolder.findMany()
+    * ```
+    */
+  get chatFolder(): Prisma.ChatFolderDelegate<ExtArgs>;
 
   /**
    * `prisma.chatSession`: Exposes CRUD operations for the **ChatSession** model.
@@ -669,7 +699,9 @@ export namespace Prisma {
   export const ModelName: {
     User: 'User',
     UserSettings: 'UserSettings',
+    SSHFolder: 'SSHFolder',
     SSHConnection: 'SSHConnection',
+    ChatFolder: 'ChatFolder',
     ChatSession: 'ChatSession',
     Message: 'Message',
     CommandLog: 'CommandLog'
@@ -688,7 +720,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "user" | "userSettings" | "sSHConnection" | "chatSession" | "message" | "commandLog"
+      modelProps: "user" | "userSettings" | "sSHFolder" | "sSHConnection" | "chatFolder" | "chatSession" | "message" | "commandLog"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -832,6 +864,76 @@ export namespace Prisma {
           }
         }
       }
+      SSHFolder: {
+        payload: Prisma.$SSHFolderPayload<ExtArgs>
+        fields: Prisma.SSHFolderFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SSHFolderFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SSHFolderPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SSHFolderFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SSHFolderPayload>
+          }
+          findFirst: {
+            args: Prisma.SSHFolderFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SSHFolderPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SSHFolderFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SSHFolderPayload>
+          }
+          findMany: {
+            args: Prisma.SSHFolderFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SSHFolderPayload>[]
+          }
+          create: {
+            args: Prisma.SSHFolderCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SSHFolderPayload>
+          }
+          createMany: {
+            args: Prisma.SSHFolderCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SSHFolderCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SSHFolderPayload>[]
+          }
+          delete: {
+            args: Prisma.SSHFolderDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SSHFolderPayload>
+          }
+          update: {
+            args: Prisma.SSHFolderUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SSHFolderPayload>
+          }
+          deleteMany: {
+            args: Prisma.SSHFolderDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SSHFolderUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.SSHFolderUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SSHFolderPayload>
+          }
+          aggregate: {
+            args: Prisma.SSHFolderAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSSHFolder>
+          }
+          groupBy: {
+            args: Prisma.SSHFolderGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SSHFolderGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SSHFolderCountArgs<ExtArgs>
+            result: $Utils.Optional<SSHFolderCountAggregateOutputType> | number
+          }
+        }
+      }
       SSHConnection: {
         payload: Prisma.$SSHConnectionPayload<ExtArgs>
         fields: Prisma.SSHConnectionFieldRefs
@@ -899,6 +1001,76 @@ export namespace Prisma {
           count: {
             args: Prisma.SSHConnectionCountArgs<ExtArgs>
             result: $Utils.Optional<SSHConnectionCountAggregateOutputType> | number
+          }
+        }
+      }
+      ChatFolder: {
+        payload: Prisma.$ChatFolderPayload<ExtArgs>
+        fields: Prisma.ChatFolderFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ChatFolderFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChatFolderPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ChatFolderFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChatFolderPayload>
+          }
+          findFirst: {
+            args: Prisma.ChatFolderFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChatFolderPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ChatFolderFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChatFolderPayload>
+          }
+          findMany: {
+            args: Prisma.ChatFolderFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChatFolderPayload>[]
+          }
+          create: {
+            args: Prisma.ChatFolderCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChatFolderPayload>
+          }
+          createMany: {
+            args: Prisma.ChatFolderCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ChatFolderCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChatFolderPayload>[]
+          }
+          delete: {
+            args: Prisma.ChatFolderDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChatFolderPayload>
+          }
+          update: {
+            args: Prisma.ChatFolderUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChatFolderPayload>
+          }
+          deleteMany: {
+            args: Prisma.ChatFolderDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ChatFolderUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.ChatFolderUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChatFolderPayload>
+          }
+          aggregate: {
+            args: Prisma.ChatFolderAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateChatFolder>
+          }
+          groupBy: {
+            args: Prisma.ChatFolderGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ChatFolderGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ChatFolderCountArgs<ExtArgs>
+            result: $Utils.Optional<ChatFolderCountAggregateOutputType> | number
           }
         }
       }
@@ -1273,14 +1445,18 @@ export namespace Prisma {
    */
 
   export type UserCountOutputType = {
+    sshFolders: number
     sshConnections: number
+    chatFolders: number
     chatSessions: number
     messages: number
     commandLogs: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    sshFolders?: boolean | UserCountOutputTypeCountSshFoldersArgs
     sshConnections?: boolean | UserCountOutputTypeCountSshConnectionsArgs
+    chatFolders?: boolean | UserCountOutputTypeCountChatFoldersArgs
     chatSessions?: boolean | UserCountOutputTypeCountChatSessionsArgs
     messages?: boolean | UserCountOutputTypeCountMessagesArgs
     commandLogs?: boolean | UserCountOutputTypeCountCommandLogsArgs
@@ -1300,8 +1476,22 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
+  export type UserCountOutputTypeCountSshFoldersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SSHFolderWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
   export type UserCountOutputTypeCountSshConnectionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: SSHConnectionWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountChatFoldersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ChatFolderWhereInput
   }
 
   /**
@@ -1323,6 +1513,46 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountCommandLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: CommandLogWhereInput
+  }
+
+
+  /**
+   * Count Type SSHFolderCountOutputType
+   */
+
+  export type SSHFolderCountOutputType = {
+    children: number
+    connections: number
+  }
+
+  export type SSHFolderCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    children?: boolean | SSHFolderCountOutputTypeCountChildrenArgs
+    connections?: boolean | SSHFolderCountOutputTypeCountConnectionsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * SSHFolderCountOutputType without action
+   */
+  export type SSHFolderCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SSHFolderCountOutputType
+     */
+    select?: SSHFolderCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * SSHFolderCountOutputType without action
+   */
+  export type SSHFolderCountOutputTypeCountChildrenArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SSHFolderWhereInput
+  }
+
+  /**
+   * SSHFolderCountOutputType without action
+   */
+  export type SSHFolderCountOutputTypeCountConnectionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SSHConnectionWhereInput
   }
 
 
@@ -1363,6 +1593,46 @@ export namespace Prisma {
    */
   export type SSHConnectionCountOutputTypeCountCommandLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: CommandLogWhereInput
+  }
+
+
+  /**
+   * Count Type ChatFolderCountOutputType
+   */
+
+  export type ChatFolderCountOutputType = {
+    children: number
+    sessions: number
+  }
+
+  export type ChatFolderCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    children?: boolean | ChatFolderCountOutputTypeCountChildrenArgs
+    sessions?: boolean | ChatFolderCountOutputTypeCountSessionsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * ChatFolderCountOutputType without action
+   */
+  export type ChatFolderCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChatFolderCountOutputType
+     */
+    select?: ChatFolderCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * ChatFolderCountOutputType without action
+   */
+  export type ChatFolderCountOutputTypeCountChildrenArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ChatFolderWhereInput
+  }
+
+  /**
+   * ChatFolderCountOutputType without action
+   */
+  export type ChatFolderCountOutputTypeCountSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ChatSessionWhereInput
   }
 
 
@@ -1613,7 +1883,9 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     settings?: boolean
+    sshFolders?: boolean | User$sshFoldersArgs<ExtArgs>
     sshConnections?: boolean | User$sshConnectionsArgs<ExtArgs>
+    chatFolders?: boolean | User$chatFoldersArgs<ExtArgs>
     chatSessions?: boolean | User$chatSessionsArgs<ExtArgs>
     messages?: boolean | User$messagesArgs<ExtArgs>
     commandLogs?: boolean | User$commandLogsArgs<ExtArgs>
@@ -1650,7 +1922,9 @@ export namespace Prisma {
   }
 
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    sshFolders?: boolean | User$sshFoldersArgs<ExtArgs>
     sshConnections?: boolean | User$sshConnectionsArgs<ExtArgs>
+    chatFolders?: boolean | User$chatFoldersArgs<ExtArgs>
     chatSessions?: boolean | User$chatSessionsArgs<ExtArgs>
     messages?: boolean | User$messagesArgs<ExtArgs>
     commandLogs?: boolean | User$commandLogsArgs<ExtArgs>
@@ -1662,7 +1936,9 @@ export namespace Prisma {
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "User"
     objects: {
+      sshFolders: Prisma.$SSHFolderPayload<ExtArgs>[]
       sshConnections: Prisma.$SSHConnectionPayload<ExtArgs>[]
+      chatFolders: Prisma.$ChatFolderPayload<ExtArgs>[]
       chatSessions: Prisma.$ChatSessionPayload<ExtArgs>[]
       messages: Prisma.$MessagePayload<ExtArgs>[]
       commandLogs: Prisma.$CommandLogPayload<ExtArgs>[]
@@ -2044,7 +2320,9 @@ export namespace Prisma {
    */
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    sshFolders<T extends User$sshFoldersArgs<ExtArgs> = {}>(args?: Subset<T, User$sshFoldersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SSHFolderPayload<ExtArgs>, T, "findMany"> | Null>
     sshConnections<T extends User$sshConnectionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sshConnectionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SSHConnectionPayload<ExtArgs>, T, "findMany"> | Null>
+    chatFolders<T extends User$chatFoldersArgs<ExtArgs> = {}>(args?: Subset<T, User$chatFoldersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChatFolderPayload<ExtArgs>, T, "findMany"> | Null>
     chatSessions<T extends User$chatSessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$chatSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChatSessionPayload<ExtArgs>, T, "findMany"> | Null>
     messages<T extends User$messagesArgs<ExtArgs> = {}>(args?: Subset<T, User$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany"> | Null>
     commandLogs<T extends User$commandLogsArgs<ExtArgs> = {}>(args?: Subset<T, User$commandLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommandLogPayload<ExtArgs>, T, "findMany"> | Null>
@@ -2401,6 +2679,26 @@ export namespace Prisma {
   }
 
   /**
+   * User.sshFolders
+   */
+  export type User$sshFoldersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SSHFolder
+     */
+    select?: SSHFolderSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SSHFolderInclude<ExtArgs> | null
+    where?: SSHFolderWhereInput
+    orderBy?: SSHFolderOrderByWithRelationInput | SSHFolderOrderByWithRelationInput[]
+    cursor?: SSHFolderWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SSHFolderScalarFieldEnum | SSHFolderScalarFieldEnum[]
+  }
+
+  /**
    * User.sshConnections
    */
   export type User$sshConnectionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2418,6 +2716,26 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: SSHConnectionScalarFieldEnum | SSHConnectionScalarFieldEnum[]
+  }
+
+  /**
+   * User.chatFolders
+   */
+  export type User$chatFoldersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChatFolder
+     */
+    select?: ChatFolderSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChatFolderInclude<ExtArgs> | null
+    where?: ChatFolderWhereInput
+    orderBy?: ChatFolderOrderByWithRelationInput | ChatFolderOrderByWithRelationInput[]
+    cursor?: ChatFolderWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ChatFolderScalarFieldEnum | ChatFolderScalarFieldEnum[]
   }
 
   /**
@@ -3442,6 +3760,1066 @@ export namespace Prisma {
 
 
   /**
+   * Model SSHFolder
+   */
+
+  export type AggregateSSHFolder = {
+    _count: SSHFolderCountAggregateOutputType | null
+    _avg: SSHFolderAvgAggregateOutputType | null
+    _sum: SSHFolderSumAggregateOutputType | null
+    _min: SSHFolderMinAggregateOutputType | null
+    _max: SSHFolderMaxAggregateOutputType | null
+  }
+
+  export type SSHFolderAvgAggregateOutputType = {
+    order: number | null
+  }
+
+  export type SSHFolderSumAggregateOutputType = {
+    order: number | null
+  }
+
+  export type SSHFolderMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    order: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    userId: string | null
+    parentId: string | null
+  }
+
+  export type SSHFolderMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    order: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    userId: string | null
+    parentId: string | null
+  }
+
+  export type SSHFolderCountAggregateOutputType = {
+    id: number
+    name: number
+    order: number
+    createdAt: number
+    updatedAt: number
+    userId: number
+    parentId: number
+    _all: number
+  }
+
+
+  export type SSHFolderAvgAggregateInputType = {
+    order?: true
+  }
+
+  export type SSHFolderSumAggregateInputType = {
+    order?: true
+  }
+
+  export type SSHFolderMinAggregateInputType = {
+    id?: true
+    name?: true
+    order?: true
+    createdAt?: true
+    updatedAt?: true
+    userId?: true
+    parentId?: true
+  }
+
+  export type SSHFolderMaxAggregateInputType = {
+    id?: true
+    name?: true
+    order?: true
+    createdAt?: true
+    updatedAt?: true
+    userId?: true
+    parentId?: true
+  }
+
+  export type SSHFolderCountAggregateInputType = {
+    id?: true
+    name?: true
+    order?: true
+    createdAt?: true
+    updatedAt?: true
+    userId?: true
+    parentId?: true
+    _all?: true
+  }
+
+  export type SSHFolderAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SSHFolder to aggregate.
+     */
+    where?: SSHFolderWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SSHFolders to fetch.
+     */
+    orderBy?: SSHFolderOrderByWithRelationInput | SSHFolderOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SSHFolderWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SSHFolders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SSHFolders.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned SSHFolders
+    **/
+    _count?: true | SSHFolderCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: SSHFolderAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: SSHFolderSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SSHFolderMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SSHFolderMaxAggregateInputType
+  }
+
+  export type GetSSHFolderAggregateType<T extends SSHFolderAggregateArgs> = {
+        [P in keyof T & keyof AggregateSSHFolder]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSSHFolder[P]>
+      : GetScalarType<T[P], AggregateSSHFolder[P]>
+  }
+
+
+
+
+  export type SSHFolderGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SSHFolderWhereInput
+    orderBy?: SSHFolderOrderByWithAggregationInput | SSHFolderOrderByWithAggregationInput[]
+    by: SSHFolderScalarFieldEnum[] | SSHFolderScalarFieldEnum
+    having?: SSHFolderScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SSHFolderCountAggregateInputType | true
+    _avg?: SSHFolderAvgAggregateInputType
+    _sum?: SSHFolderSumAggregateInputType
+    _min?: SSHFolderMinAggregateInputType
+    _max?: SSHFolderMaxAggregateInputType
+  }
+
+  export type SSHFolderGroupByOutputType = {
+    id: string
+    name: string
+    order: number
+    createdAt: Date
+    updatedAt: Date
+    userId: string
+    parentId: string | null
+    _count: SSHFolderCountAggregateOutputType | null
+    _avg: SSHFolderAvgAggregateOutputType | null
+    _sum: SSHFolderSumAggregateOutputType | null
+    _min: SSHFolderMinAggregateOutputType | null
+    _max: SSHFolderMaxAggregateOutputType | null
+  }
+
+  type GetSSHFolderGroupByPayload<T extends SSHFolderGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SSHFolderGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SSHFolderGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SSHFolderGroupByOutputType[P]>
+            : GetScalarType<T[P], SSHFolderGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SSHFolderSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    order?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    userId?: boolean
+    parentId?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    parent?: boolean | SSHFolder$parentArgs<ExtArgs>
+    children?: boolean | SSHFolder$childrenArgs<ExtArgs>
+    connections?: boolean | SSHFolder$connectionsArgs<ExtArgs>
+    _count?: boolean | SSHFolderCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["sSHFolder"]>
+
+  export type SSHFolderSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    order?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    userId?: boolean
+    parentId?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    parent?: boolean | SSHFolder$parentArgs<ExtArgs>
+  }, ExtArgs["result"]["sSHFolder"]>
+
+  export type SSHFolderSelectScalar = {
+    id?: boolean
+    name?: boolean
+    order?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    userId?: boolean
+    parentId?: boolean
+  }
+
+  export type SSHFolderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    parent?: boolean | SSHFolder$parentArgs<ExtArgs>
+    children?: boolean | SSHFolder$childrenArgs<ExtArgs>
+    connections?: boolean | SSHFolder$connectionsArgs<ExtArgs>
+    _count?: boolean | SSHFolderCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type SSHFolderIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    parent?: boolean | SSHFolder$parentArgs<ExtArgs>
+  }
+
+  export type $SSHFolderPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "SSHFolder"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+      parent: Prisma.$SSHFolderPayload<ExtArgs> | null
+      children: Prisma.$SSHFolderPayload<ExtArgs>[]
+      connections: Prisma.$SSHConnectionPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      order: number
+      createdAt: Date
+      updatedAt: Date
+      userId: string
+      parentId: string | null
+    }, ExtArgs["result"]["sSHFolder"]>
+    composites: {}
+  }
+
+  type SSHFolderGetPayload<S extends boolean | null | undefined | SSHFolderDefaultArgs> = $Result.GetResult<Prisma.$SSHFolderPayload, S>
+
+  type SSHFolderCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<SSHFolderFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: SSHFolderCountAggregateInputType | true
+    }
+
+  export interface SSHFolderDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['SSHFolder'], meta: { name: 'SSHFolder' } }
+    /**
+     * Find zero or one SSHFolder that matches the filter.
+     * @param {SSHFolderFindUniqueArgs} args - Arguments to find a SSHFolder
+     * @example
+     * // Get one SSHFolder
+     * const sSHFolder = await prisma.sSHFolder.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SSHFolderFindUniqueArgs>(args: SelectSubset<T, SSHFolderFindUniqueArgs<ExtArgs>>): Prisma__SSHFolderClient<$Result.GetResult<Prisma.$SSHFolderPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one SSHFolder that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {SSHFolderFindUniqueOrThrowArgs} args - Arguments to find a SSHFolder
+     * @example
+     * // Get one SSHFolder
+     * const sSHFolder = await prisma.sSHFolder.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SSHFolderFindUniqueOrThrowArgs>(args: SelectSubset<T, SSHFolderFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SSHFolderClient<$Result.GetResult<Prisma.$SSHFolderPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first SSHFolder that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SSHFolderFindFirstArgs} args - Arguments to find a SSHFolder
+     * @example
+     * // Get one SSHFolder
+     * const sSHFolder = await prisma.sSHFolder.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SSHFolderFindFirstArgs>(args?: SelectSubset<T, SSHFolderFindFirstArgs<ExtArgs>>): Prisma__SSHFolderClient<$Result.GetResult<Prisma.$SSHFolderPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first SSHFolder that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SSHFolderFindFirstOrThrowArgs} args - Arguments to find a SSHFolder
+     * @example
+     * // Get one SSHFolder
+     * const sSHFolder = await prisma.sSHFolder.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SSHFolderFindFirstOrThrowArgs>(args?: SelectSubset<T, SSHFolderFindFirstOrThrowArgs<ExtArgs>>): Prisma__SSHFolderClient<$Result.GetResult<Prisma.$SSHFolderPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more SSHFolders that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SSHFolderFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all SSHFolders
+     * const sSHFolders = await prisma.sSHFolder.findMany()
+     * 
+     * // Get first 10 SSHFolders
+     * const sSHFolders = await prisma.sSHFolder.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const sSHFolderWithIdOnly = await prisma.sSHFolder.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SSHFolderFindManyArgs>(args?: SelectSubset<T, SSHFolderFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SSHFolderPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a SSHFolder.
+     * @param {SSHFolderCreateArgs} args - Arguments to create a SSHFolder.
+     * @example
+     * // Create one SSHFolder
+     * const SSHFolder = await prisma.sSHFolder.create({
+     *   data: {
+     *     // ... data to create a SSHFolder
+     *   }
+     * })
+     * 
+     */
+    create<T extends SSHFolderCreateArgs>(args: SelectSubset<T, SSHFolderCreateArgs<ExtArgs>>): Prisma__SSHFolderClient<$Result.GetResult<Prisma.$SSHFolderPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many SSHFolders.
+     * @param {SSHFolderCreateManyArgs} args - Arguments to create many SSHFolders.
+     * @example
+     * // Create many SSHFolders
+     * const sSHFolder = await prisma.sSHFolder.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SSHFolderCreateManyArgs>(args?: SelectSubset<T, SSHFolderCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many SSHFolders and returns the data saved in the database.
+     * @param {SSHFolderCreateManyAndReturnArgs} args - Arguments to create many SSHFolders.
+     * @example
+     * // Create many SSHFolders
+     * const sSHFolder = await prisma.sSHFolder.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many SSHFolders and only return the `id`
+     * const sSHFolderWithIdOnly = await prisma.sSHFolder.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SSHFolderCreateManyAndReturnArgs>(args?: SelectSubset<T, SSHFolderCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SSHFolderPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a SSHFolder.
+     * @param {SSHFolderDeleteArgs} args - Arguments to delete one SSHFolder.
+     * @example
+     * // Delete one SSHFolder
+     * const SSHFolder = await prisma.sSHFolder.delete({
+     *   where: {
+     *     // ... filter to delete one SSHFolder
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SSHFolderDeleteArgs>(args: SelectSubset<T, SSHFolderDeleteArgs<ExtArgs>>): Prisma__SSHFolderClient<$Result.GetResult<Prisma.$SSHFolderPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one SSHFolder.
+     * @param {SSHFolderUpdateArgs} args - Arguments to update one SSHFolder.
+     * @example
+     * // Update one SSHFolder
+     * const sSHFolder = await prisma.sSHFolder.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SSHFolderUpdateArgs>(args: SelectSubset<T, SSHFolderUpdateArgs<ExtArgs>>): Prisma__SSHFolderClient<$Result.GetResult<Prisma.$SSHFolderPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more SSHFolders.
+     * @param {SSHFolderDeleteManyArgs} args - Arguments to filter SSHFolders to delete.
+     * @example
+     * // Delete a few SSHFolders
+     * const { count } = await prisma.sSHFolder.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SSHFolderDeleteManyArgs>(args?: SelectSubset<T, SSHFolderDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SSHFolders.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SSHFolderUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many SSHFolders
+     * const sSHFolder = await prisma.sSHFolder.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SSHFolderUpdateManyArgs>(args: SelectSubset<T, SSHFolderUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one SSHFolder.
+     * @param {SSHFolderUpsertArgs} args - Arguments to update or create a SSHFolder.
+     * @example
+     * // Update or create a SSHFolder
+     * const sSHFolder = await prisma.sSHFolder.upsert({
+     *   create: {
+     *     // ... data to create a SSHFolder
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the SSHFolder we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SSHFolderUpsertArgs>(args: SelectSubset<T, SSHFolderUpsertArgs<ExtArgs>>): Prisma__SSHFolderClient<$Result.GetResult<Prisma.$SSHFolderPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of SSHFolders.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SSHFolderCountArgs} args - Arguments to filter SSHFolders to count.
+     * @example
+     * // Count the number of SSHFolders
+     * const count = await prisma.sSHFolder.count({
+     *   where: {
+     *     // ... the filter for the SSHFolders we want to count
+     *   }
+     * })
+    **/
+    count<T extends SSHFolderCountArgs>(
+      args?: Subset<T, SSHFolderCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SSHFolderCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a SSHFolder.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SSHFolderAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SSHFolderAggregateArgs>(args: Subset<T, SSHFolderAggregateArgs>): Prisma.PrismaPromise<GetSSHFolderAggregateType<T>>
+
+    /**
+     * Group by SSHFolder.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SSHFolderGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SSHFolderGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SSHFolderGroupByArgs['orderBy'] }
+        : { orderBy?: SSHFolderGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SSHFolderGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSSHFolderGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the SSHFolder model
+   */
+  readonly fields: SSHFolderFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for SSHFolder.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SSHFolderClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    parent<T extends SSHFolder$parentArgs<ExtArgs> = {}>(args?: Subset<T, SSHFolder$parentArgs<ExtArgs>>): Prisma__SSHFolderClient<$Result.GetResult<Prisma.$SSHFolderPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
+    children<T extends SSHFolder$childrenArgs<ExtArgs> = {}>(args?: Subset<T, SSHFolder$childrenArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SSHFolderPayload<ExtArgs>, T, "findMany"> | Null>
+    connections<T extends SSHFolder$connectionsArgs<ExtArgs> = {}>(args?: Subset<T, SSHFolder$connectionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SSHConnectionPayload<ExtArgs>, T, "findMany"> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the SSHFolder model
+   */ 
+  interface SSHFolderFieldRefs {
+    readonly id: FieldRef<"SSHFolder", 'String'>
+    readonly name: FieldRef<"SSHFolder", 'String'>
+    readonly order: FieldRef<"SSHFolder", 'Int'>
+    readonly createdAt: FieldRef<"SSHFolder", 'DateTime'>
+    readonly updatedAt: FieldRef<"SSHFolder", 'DateTime'>
+    readonly userId: FieldRef<"SSHFolder", 'String'>
+    readonly parentId: FieldRef<"SSHFolder", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * SSHFolder findUnique
+   */
+  export type SSHFolderFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SSHFolder
+     */
+    select?: SSHFolderSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SSHFolderInclude<ExtArgs> | null
+    /**
+     * Filter, which SSHFolder to fetch.
+     */
+    where: SSHFolderWhereUniqueInput
+  }
+
+  /**
+   * SSHFolder findUniqueOrThrow
+   */
+  export type SSHFolderFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SSHFolder
+     */
+    select?: SSHFolderSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SSHFolderInclude<ExtArgs> | null
+    /**
+     * Filter, which SSHFolder to fetch.
+     */
+    where: SSHFolderWhereUniqueInput
+  }
+
+  /**
+   * SSHFolder findFirst
+   */
+  export type SSHFolderFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SSHFolder
+     */
+    select?: SSHFolderSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SSHFolderInclude<ExtArgs> | null
+    /**
+     * Filter, which SSHFolder to fetch.
+     */
+    where?: SSHFolderWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SSHFolders to fetch.
+     */
+    orderBy?: SSHFolderOrderByWithRelationInput | SSHFolderOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SSHFolders.
+     */
+    cursor?: SSHFolderWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SSHFolders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SSHFolders.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SSHFolders.
+     */
+    distinct?: SSHFolderScalarFieldEnum | SSHFolderScalarFieldEnum[]
+  }
+
+  /**
+   * SSHFolder findFirstOrThrow
+   */
+  export type SSHFolderFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SSHFolder
+     */
+    select?: SSHFolderSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SSHFolderInclude<ExtArgs> | null
+    /**
+     * Filter, which SSHFolder to fetch.
+     */
+    where?: SSHFolderWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SSHFolders to fetch.
+     */
+    orderBy?: SSHFolderOrderByWithRelationInput | SSHFolderOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SSHFolders.
+     */
+    cursor?: SSHFolderWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SSHFolders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SSHFolders.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SSHFolders.
+     */
+    distinct?: SSHFolderScalarFieldEnum | SSHFolderScalarFieldEnum[]
+  }
+
+  /**
+   * SSHFolder findMany
+   */
+  export type SSHFolderFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SSHFolder
+     */
+    select?: SSHFolderSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SSHFolderInclude<ExtArgs> | null
+    /**
+     * Filter, which SSHFolders to fetch.
+     */
+    where?: SSHFolderWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SSHFolders to fetch.
+     */
+    orderBy?: SSHFolderOrderByWithRelationInput | SSHFolderOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing SSHFolders.
+     */
+    cursor?: SSHFolderWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SSHFolders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SSHFolders.
+     */
+    skip?: number
+    distinct?: SSHFolderScalarFieldEnum | SSHFolderScalarFieldEnum[]
+  }
+
+  /**
+   * SSHFolder create
+   */
+  export type SSHFolderCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SSHFolder
+     */
+    select?: SSHFolderSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SSHFolderInclude<ExtArgs> | null
+    /**
+     * The data needed to create a SSHFolder.
+     */
+    data: XOR<SSHFolderCreateInput, SSHFolderUncheckedCreateInput>
+  }
+
+  /**
+   * SSHFolder createMany
+   */
+  export type SSHFolderCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many SSHFolders.
+     */
+    data: SSHFolderCreateManyInput | SSHFolderCreateManyInput[]
+  }
+
+  /**
+   * SSHFolder createManyAndReturn
+   */
+  export type SSHFolderCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SSHFolder
+     */
+    select?: SSHFolderSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many SSHFolders.
+     */
+    data: SSHFolderCreateManyInput | SSHFolderCreateManyInput[]
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SSHFolderIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SSHFolder update
+   */
+  export type SSHFolderUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SSHFolder
+     */
+    select?: SSHFolderSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SSHFolderInclude<ExtArgs> | null
+    /**
+     * The data needed to update a SSHFolder.
+     */
+    data: XOR<SSHFolderUpdateInput, SSHFolderUncheckedUpdateInput>
+    /**
+     * Choose, which SSHFolder to update.
+     */
+    where: SSHFolderWhereUniqueInput
+  }
+
+  /**
+   * SSHFolder updateMany
+   */
+  export type SSHFolderUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update SSHFolders.
+     */
+    data: XOR<SSHFolderUpdateManyMutationInput, SSHFolderUncheckedUpdateManyInput>
+    /**
+     * Filter which SSHFolders to update
+     */
+    where?: SSHFolderWhereInput
+  }
+
+  /**
+   * SSHFolder upsert
+   */
+  export type SSHFolderUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SSHFolder
+     */
+    select?: SSHFolderSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SSHFolderInclude<ExtArgs> | null
+    /**
+     * The filter to search for the SSHFolder to update in case it exists.
+     */
+    where: SSHFolderWhereUniqueInput
+    /**
+     * In case the SSHFolder found by the `where` argument doesn't exist, create a new SSHFolder with this data.
+     */
+    create: XOR<SSHFolderCreateInput, SSHFolderUncheckedCreateInput>
+    /**
+     * In case the SSHFolder was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SSHFolderUpdateInput, SSHFolderUncheckedUpdateInput>
+  }
+
+  /**
+   * SSHFolder delete
+   */
+  export type SSHFolderDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SSHFolder
+     */
+    select?: SSHFolderSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SSHFolderInclude<ExtArgs> | null
+    /**
+     * Filter which SSHFolder to delete.
+     */
+    where: SSHFolderWhereUniqueInput
+  }
+
+  /**
+   * SSHFolder deleteMany
+   */
+  export type SSHFolderDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SSHFolders to delete
+     */
+    where?: SSHFolderWhereInput
+  }
+
+  /**
+   * SSHFolder.parent
+   */
+  export type SSHFolder$parentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SSHFolder
+     */
+    select?: SSHFolderSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SSHFolderInclude<ExtArgs> | null
+    where?: SSHFolderWhereInput
+  }
+
+  /**
+   * SSHFolder.children
+   */
+  export type SSHFolder$childrenArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SSHFolder
+     */
+    select?: SSHFolderSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SSHFolderInclude<ExtArgs> | null
+    where?: SSHFolderWhereInput
+    orderBy?: SSHFolderOrderByWithRelationInput | SSHFolderOrderByWithRelationInput[]
+    cursor?: SSHFolderWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SSHFolderScalarFieldEnum | SSHFolderScalarFieldEnum[]
+  }
+
+  /**
+   * SSHFolder.connections
+   */
+  export type SSHFolder$connectionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SSHConnection
+     */
+    select?: SSHConnectionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SSHConnectionInclude<ExtArgs> | null
+    where?: SSHConnectionWhereInput
+    orderBy?: SSHConnectionOrderByWithRelationInput | SSHConnectionOrderByWithRelationInput[]
+    cursor?: SSHConnectionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SSHConnectionScalarFieldEnum | SSHConnectionScalarFieldEnum[]
+  }
+
+  /**
+   * SSHFolder without action
+   */
+  export type SSHFolderDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SSHFolder
+     */
+    select?: SSHFolderSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SSHFolderInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model SSHConnection
    */
 
@@ -3479,6 +4857,7 @@ export namespace Prisma {
     updatedAt: Date | null
     meta: string | null
     userId: string | null
+    folderId: string | null
   }
 
   export type SSHConnectionMaxAggregateOutputType = {
@@ -3499,6 +4878,7 @@ export namespace Prisma {
     updatedAt: Date | null
     meta: string | null
     userId: string | null
+    folderId: string | null
   }
 
   export type SSHConnectionCountAggregateOutputType = {
@@ -3519,6 +4899,7 @@ export namespace Prisma {
     updatedAt: number
     meta: number
     userId: number
+    folderId: number
     _all: number
   }
 
@@ -3549,6 +4930,7 @@ export namespace Prisma {
     updatedAt?: true
     meta?: true
     userId?: true
+    folderId?: true
   }
 
   export type SSHConnectionMaxAggregateInputType = {
@@ -3569,6 +4951,7 @@ export namespace Prisma {
     updatedAt?: true
     meta?: true
     userId?: true
+    folderId?: true
   }
 
   export type SSHConnectionCountAggregateInputType = {
@@ -3589,6 +4972,7 @@ export namespace Prisma {
     updatedAt?: true
     meta?: true
     userId?: true
+    folderId?: true
     _all?: true
   }
 
@@ -3696,6 +5080,7 @@ export namespace Prisma {
     updatedAt: Date
     meta: string | null
     userId: string
+    folderId: string | null
     _count: SSHConnectionCountAggregateOutputType | null
     _avg: SSHConnectionAvgAggregateOutputType | null
     _sum: SSHConnectionSumAggregateOutputType | null
@@ -3735,7 +5120,9 @@ export namespace Prisma {
     updatedAt?: boolean
     meta?: boolean
     userId?: boolean
+    folderId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
+    folder?: boolean | SSHConnection$folderArgs<ExtArgs>
     chatSessions?: boolean | SSHConnection$chatSessionsArgs<ExtArgs>
     commandLogs?: boolean | SSHConnection$commandLogsArgs<ExtArgs>
     _count?: boolean | SSHConnectionCountOutputTypeDefaultArgs<ExtArgs>
@@ -3759,7 +5146,9 @@ export namespace Prisma {
     updatedAt?: boolean
     meta?: boolean
     userId?: boolean
+    folderId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
+    folder?: boolean | SSHConnection$folderArgs<ExtArgs>
   }, ExtArgs["result"]["sSHConnection"]>
 
   export type SSHConnectionSelectScalar = {
@@ -3780,22 +5169,26 @@ export namespace Prisma {
     updatedAt?: boolean
     meta?: boolean
     userId?: boolean
+    folderId?: boolean
   }
 
   export type SSHConnectionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
+    folder?: boolean | SSHConnection$folderArgs<ExtArgs>
     chatSessions?: boolean | SSHConnection$chatSessionsArgs<ExtArgs>
     commandLogs?: boolean | SSHConnection$commandLogsArgs<ExtArgs>
     _count?: boolean | SSHConnectionCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type SSHConnectionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
+    folder?: boolean | SSHConnection$folderArgs<ExtArgs>
   }
 
   export type $SSHConnectionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "SSHConnection"
     objects: {
       user: Prisma.$UserPayload<ExtArgs>
+      folder: Prisma.$SSHFolderPayload<ExtArgs> | null
       chatSessions: Prisma.$ChatSessionPayload<ExtArgs>[]
       commandLogs: Prisma.$CommandLogPayload<ExtArgs>[]
     }
@@ -3817,6 +5210,7 @@ export namespace Prisma {
       updatedAt: Date
       meta: string | null
       userId: string
+      folderId: string | null
     }, ExtArgs["result"]["sSHConnection"]>
     composites: {}
   }
@@ -4182,6 +5576,7 @@ export namespace Prisma {
   export interface Prisma__SSHConnectionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    folder<T extends SSHConnection$folderArgs<ExtArgs> = {}>(args?: Subset<T, SSHConnection$folderArgs<ExtArgs>>): Prisma__SSHFolderClient<$Result.GetResult<Prisma.$SSHFolderPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     chatSessions<T extends SSHConnection$chatSessionsArgs<ExtArgs> = {}>(args?: Subset<T, SSHConnection$chatSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChatSessionPayload<ExtArgs>, T, "findMany"> | Null>
     commandLogs<T extends SSHConnection$commandLogsArgs<ExtArgs> = {}>(args?: Subset<T, SSHConnection$commandLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommandLogPayload<ExtArgs>, T, "findMany"> | Null>
     /**
@@ -4230,6 +5625,7 @@ export namespace Prisma {
     readonly updatedAt: FieldRef<"SSHConnection", 'DateTime'>
     readonly meta: FieldRef<"SSHConnection", 'String'>
     readonly userId: FieldRef<"SSHConnection", 'String'>
+    readonly folderId: FieldRef<"SSHConnection", 'String'>
   }
     
 
@@ -4546,6 +5942,21 @@ export namespace Prisma {
   }
 
   /**
+   * SSHConnection.folder
+   */
+  export type SSHConnection$folderArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SSHFolder
+     */
+    select?: SSHFolderSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SSHFolderInclude<ExtArgs> | null
+    where?: SSHFolderWhereInput
+  }
+
+  /**
    * SSHConnection.chatSessions
    */
   export type SSHConnection$chatSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4601,6 +6012,1066 @@ export namespace Prisma {
 
 
   /**
+   * Model ChatFolder
+   */
+
+  export type AggregateChatFolder = {
+    _count: ChatFolderCountAggregateOutputType | null
+    _avg: ChatFolderAvgAggregateOutputType | null
+    _sum: ChatFolderSumAggregateOutputType | null
+    _min: ChatFolderMinAggregateOutputType | null
+    _max: ChatFolderMaxAggregateOutputType | null
+  }
+
+  export type ChatFolderAvgAggregateOutputType = {
+    order: number | null
+  }
+
+  export type ChatFolderSumAggregateOutputType = {
+    order: number | null
+  }
+
+  export type ChatFolderMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    order: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    userId: string | null
+    parentId: string | null
+  }
+
+  export type ChatFolderMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    order: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    userId: string | null
+    parentId: string | null
+  }
+
+  export type ChatFolderCountAggregateOutputType = {
+    id: number
+    name: number
+    order: number
+    createdAt: number
+    updatedAt: number
+    userId: number
+    parentId: number
+    _all: number
+  }
+
+
+  export type ChatFolderAvgAggregateInputType = {
+    order?: true
+  }
+
+  export type ChatFolderSumAggregateInputType = {
+    order?: true
+  }
+
+  export type ChatFolderMinAggregateInputType = {
+    id?: true
+    name?: true
+    order?: true
+    createdAt?: true
+    updatedAt?: true
+    userId?: true
+    parentId?: true
+  }
+
+  export type ChatFolderMaxAggregateInputType = {
+    id?: true
+    name?: true
+    order?: true
+    createdAt?: true
+    updatedAt?: true
+    userId?: true
+    parentId?: true
+  }
+
+  export type ChatFolderCountAggregateInputType = {
+    id?: true
+    name?: true
+    order?: true
+    createdAt?: true
+    updatedAt?: true
+    userId?: true
+    parentId?: true
+    _all?: true
+  }
+
+  export type ChatFolderAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ChatFolder to aggregate.
+     */
+    where?: ChatFolderWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ChatFolders to fetch.
+     */
+    orderBy?: ChatFolderOrderByWithRelationInput | ChatFolderOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ChatFolderWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ChatFolders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ChatFolders.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ChatFolders
+    **/
+    _count?: true | ChatFolderCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ChatFolderAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ChatFolderSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ChatFolderMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ChatFolderMaxAggregateInputType
+  }
+
+  export type GetChatFolderAggregateType<T extends ChatFolderAggregateArgs> = {
+        [P in keyof T & keyof AggregateChatFolder]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateChatFolder[P]>
+      : GetScalarType<T[P], AggregateChatFolder[P]>
+  }
+
+
+
+
+  export type ChatFolderGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ChatFolderWhereInput
+    orderBy?: ChatFolderOrderByWithAggregationInput | ChatFolderOrderByWithAggregationInput[]
+    by: ChatFolderScalarFieldEnum[] | ChatFolderScalarFieldEnum
+    having?: ChatFolderScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ChatFolderCountAggregateInputType | true
+    _avg?: ChatFolderAvgAggregateInputType
+    _sum?: ChatFolderSumAggregateInputType
+    _min?: ChatFolderMinAggregateInputType
+    _max?: ChatFolderMaxAggregateInputType
+  }
+
+  export type ChatFolderGroupByOutputType = {
+    id: string
+    name: string
+    order: number
+    createdAt: Date
+    updatedAt: Date
+    userId: string
+    parentId: string | null
+    _count: ChatFolderCountAggregateOutputType | null
+    _avg: ChatFolderAvgAggregateOutputType | null
+    _sum: ChatFolderSumAggregateOutputType | null
+    _min: ChatFolderMinAggregateOutputType | null
+    _max: ChatFolderMaxAggregateOutputType | null
+  }
+
+  type GetChatFolderGroupByPayload<T extends ChatFolderGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ChatFolderGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ChatFolderGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ChatFolderGroupByOutputType[P]>
+            : GetScalarType<T[P], ChatFolderGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ChatFolderSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    order?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    userId?: boolean
+    parentId?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    parent?: boolean | ChatFolder$parentArgs<ExtArgs>
+    children?: boolean | ChatFolder$childrenArgs<ExtArgs>
+    sessions?: boolean | ChatFolder$sessionsArgs<ExtArgs>
+    _count?: boolean | ChatFolderCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["chatFolder"]>
+
+  export type ChatFolderSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    order?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    userId?: boolean
+    parentId?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    parent?: boolean | ChatFolder$parentArgs<ExtArgs>
+  }, ExtArgs["result"]["chatFolder"]>
+
+  export type ChatFolderSelectScalar = {
+    id?: boolean
+    name?: boolean
+    order?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    userId?: boolean
+    parentId?: boolean
+  }
+
+  export type ChatFolderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    parent?: boolean | ChatFolder$parentArgs<ExtArgs>
+    children?: boolean | ChatFolder$childrenArgs<ExtArgs>
+    sessions?: boolean | ChatFolder$sessionsArgs<ExtArgs>
+    _count?: boolean | ChatFolderCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type ChatFolderIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    parent?: boolean | ChatFolder$parentArgs<ExtArgs>
+  }
+
+  export type $ChatFolderPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ChatFolder"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+      parent: Prisma.$ChatFolderPayload<ExtArgs> | null
+      children: Prisma.$ChatFolderPayload<ExtArgs>[]
+      sessions: Prisma.$ChatSessionPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      order: number
+      createdAt: Date
+      updatedAt: Date
+      userId: string
+      parentId: string | null
+    }, ExtArgs["result"]["chatFolder"]>
+    composites: {}
+  }
+
+  type ChatFolderGetPayload<S extends boolean | null | undefined | ChatFolderDefaultArgs> = $Result.GetResult<Prisma.$ChatFolderPayload, S>
+
+  type ChatFolderCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<ChatFolderFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: ChatFolderCountAggregateInputType | true
+    }
+
+  export interface ChatFolderDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ChatFolder'], meta: { name: 'ChatFolder' } }
+    /**
+     * Find zero or one ChatFolder that matches the filter.
+     * @param {ChatFolderFindUniqueArgs} args - Arguments to find a ChatFolder
+     * @example
+     * // Get one ChatFolder
+     * const chatFolder = await prisma.chatFolder.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ChatFolderFindUniqueArgs>(args: SelectSubset<T, ChatFolderFindUniqueArgs<ExtArgs>>): Prisma__ChatFolderClient<$Result.GetResult<Prisma.$ChatFolderPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one ChatFolder that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {ChatFolderFindUniqueOrThrowArgs} args - Arguments to find a ChatFolder
+     * @example
+     * // Get one ChatFolder
+     * const chatFolder = await prisma.chatFolder.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ChatFolderFindUniqueOrThrowArgs>(args: SelectSubset<T, ChatFolderFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ChatFolderClient<$Result.GetResult<Prisma.$ChatFolderPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first ChatFolder that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ChatFolderFindFirstArgs} args - Arguments to find a ChatFolder
+     * @example
+     * // Get one ChatFolder
+     * const chatFolder = await prisma.chatFolder.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ChatFolderFindFirstArgs>(args?: SelectSubset<T, ChatFolderFindFirstArgs<ExtArgs>>): Prisma__ChatFolderClient<$Result.GetResult<Prisma.$ChatFolderPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first ChatFolder that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ChatFolderFindFirstOrThrowArgs} args - Arguments to find a ChatFolder
+     * @example
+     * // Get one ChatFolder
+     * const chatFolder = await prisma.chatFolder.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ChatFolderFindFirstOrThrowArgs>(args?: SelectSubset<T, ChatFolderFindFirstOrThrowArgs<ExtArgs>>): Prisma__ChatFolderClient<$Result.GetResult<Prisma.$ChatFolderPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more ChatFolders that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ChatFolderFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ChatFolders
+     * const chatFolders = await prisma.chatFolder.findMany()
+     * 
+     * // Get first 10 ChatFolders
+     * const chatFolders = await prisma.chatFolder.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const chatFolderWithIdOnly = await prisma.chatFolder.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ChatFolderFindManyArgs>(args?: SelectSubset<T, ChatFolderFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChatFolderPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a ChatFolder.
+     * @param {ChatFolderCreateArgs} args - Arguments to create a ChatFolder.
+     * @example
+     * // Create one ChatFolder
+     * const ChatFolder = await prisma.chatFolder.create({
+     *   data: {
+     *     // ... data to create a ChatFolder
+     *   }
+     * })
+     * 
+     */
+    create<T extends ChatFolderCreateArgs>(args: SelectSubset<T, ChatFolderCreateArgs<ExtArgs>>): Prisma__ChatFolderClient<$Result.GetResult<Prisma.$ChatFolderPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many ChatFolders.
+     * @param {ChatFolderCreateManyArgs} args - Arguments to create many ChatFolders.
+     * @example
+     * // Create many ChatFolders
+     * const chatFolder = await prisma.chatFolder.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ChatFolderCreateManyArgs>(args?: SelectSubset<T, ChatFolderCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ChatFolders and returns the data saved in the database.
+     * @param {ChatFolderCreateManyAndReturnArgs} args - Arguments to create many ChatFolders.
+     * @example
+     * // Create many ChatFolders
+     * const chatFolder = await prisma.chatFolder.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ChatFolders and only return the `id`
+     * const chatFolderWithIdOnly = await prisma.chatFolder.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ChatFolderCreateManyAndReturnArgs>(args?: SelectSubset<T, ChatFolderCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChatFolderPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a ChatFolder.
+     * @param {ChatFolderDeleteArgs} args - Arguments to delete one ChatFolder.
+     * @example
+     * // Delete one ChatFolder
+     * const ChatFolder = await prisma.chatFolder.delete({
+     *   where: {
+     *     // ... filter to delete one ChatFolder
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ChatFolderDeleteArgs>(args: SelectSubset<T, ChatFolderDeleteArgs<ExtArgs>>): Prisma__ChatFolderClient<$Result.GetResult<Prisma.$ChatFolderPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one ChatFolder.
+     * @param {ChatFolderUpdateArgs} args - Arguments to update one ChatFolder.
+     * @example
+     * // Update one ChatFolder
+     * const chatFolder = await prisma.chatFolder.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ChatFolderUpdateArgs>(args: SelectSubset<T, ChatFolderUpdateArgs<ExtArgs>>): Prisma__ChatFolderClient<$Result.GetResult<Prisma.$ChatFolderPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more ChatFolders.
+     * @param {ChatFolderDeleteManyArgs} args - Arguments to filter ChatFolders to delete.
+     * @example
+     * // Delete a few ChatFolders
+     * const { count } = await prisma.chatFolder.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ChatFolderDeleteManyArgs>(args?: SelectSubset<T, ChatFolderDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ChatFolders.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ChatFolderUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ChatFolders
+     * const chatFolder = await prisma.chatFolder.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ChatFolderUpdateManyArgs>(args: SelectSubset<T, ChatFolderUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one ChatFolder.
+     * @param {ChatFolderUpsertArgs} args - Arguments to update or create a ChatFolder.
+     * @example
+     * // Update or create a ChatFolder
+     * const chatFolder = await prisma.chatFolder.upsert({
+     *   create: {
+     *     // ... data to create a ChatFolder
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ChatFolder we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ChatFolderUpsertArgs>(args: SelectSubset<T, ChatFolderUpsertArgs<ExtArgs>>): Prisma__ChatFolderClient<$Result.GetResult<Prisma.$ChatFolderPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of ChatFolders.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ChatFolderCountArgs} args - Arguments to filter ChatFolders to count.
+     * @example
+     * // Count the number of ChatFolders
+     * const count = await prisma.chatFolder.count({
+     *   where: {
+     *     // ... the filter for the ChatFolders we want to count
+     *   }
+     * })
+    **/
+    count<T extends ChatFolderCountArgs>(
+      args?: Subset<T, ChatFolderCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ChatFolderCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ChatFolder.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ChatFolderAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ChatFolderAggregateArgs>(args: Subset<T, ChatFolderAggregateArgs>): Prisma.PrismaPromise<GetChatFolderAggregateType<T>>
+
+    /**
+     * Group by ChatFolder.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ChatFolderGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ChatFolderGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ChatFolderGroupByArgs['orderBy'] }
+        : { orderBy?: ChatFolderGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ChatFolderGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetChatFolderGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ChatFolder model
+   */
+  readonly fields: ChatFolderFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ChatFolder.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ChatFolderClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    parent<T extends ChatFolder$parentArgs<ExtArgs> = {}>(args?: Subset<T, ChatFolder$parentArgs<ExtArgs>>): Prisma__ChatFolderClient<$Result.GetResult<Prisma.$ChatFolderPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
+    children<T extends ChatFolder$childrenArgs<ExtArgs> = {}>(args?: Subset<T, ChatFolder$childrenArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChatFolderPayload<ExtArgs>, T, "findMany"> | Null>
+    sessions<T extends ChatFolder$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, ChatFolder$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChatSessionPayload<ExtArgs>, T, "findMany"> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ChatFolder model
+   */ 
+  interface ChatFolderFieldRefs {
+    readonly id: FieldRef<"ChatFolder", 'String'>
+    readonly name: FieldRef<"ChatFolder", 'String'>
+    readonly order: FieldRef<"ChatFolder", 'Int'>
+    readonly createdAt: FieldRef<"ChatFolder", 'DateTime'>
+    readonly updatedAt: FieldRef<"ChatFolder", 'DateTime'>
+    readonly userId: FieldRef<"ChatFolder", 'String'>
+    readonly parentId: FieldRef<"ChatFolder", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ChatFolder findUnique
+   */
+  export type ChatFolderFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChatFolder
+     */
+    select?: ChatFolderSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChatFolderInclude<ExtArgs> | null
+    /**
+     * Filter, which ChatFolder to fetch.
+     */
+    where: ChatFolderWhereUniqueInput
+  }
+
+  /**
+   * ChatFolder findUniqueOrThrow
+   */
+  export type ChatFolderFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChatFolder
+     */
+    select?: ChatFolderSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChatFolderInclude<ExtArgs> | null
+    /**
+     * Filter, which ChatFolder to fetch.
+     */
+    where: ChatFolderWhereUniqueInput
+  }
+
+  /**
+   * ChatFolder findFirst
+   */
+  export type ChatFolderFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChatFolder
+     */
+    select?: ChatFolderSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChatFolderInclude<ExtArgs> | null
+    /**
+     * Filter, which ChatFolder to fetch.
+     */
+    where?: ChatFolderWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ChatFolders to fetch.
+     */
+    orderBy?: ChatFolderOrderByWithRelationInput | ChatFolderOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ChatFolders.
+     */
+    cursor?: ChatFolderWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ChatFolders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ChatFolders.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ChatFolders.
+     */
+    distinct?: ChatFolderScalarFieldEnum | ChatFolderScalarFieldEnum[]
+  }
+
+  /**
+   * ChatFolder findFirstOrThrow
+   */
+  export type ChatFolderFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChatFolder
+     */
+    select?: ChatFolderSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChatFolderInclude<ExtArgs> | null
+    /**
+     * Filter, which ChatFolder to fetch.
+     */
+    where?: ChatFolderWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ChatFolders to fetch.
+     */
+    orderBy?: ChatFolderOrderByWithRelationInput | ChatFolderOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ChatFolders.
+     */
+    cursor?: ChatFolderWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ChatFolders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ChatFolders.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ChatFolders.
+     */
+    distinct?: ChatFolderScalarFieldEnum | ChatFolderScalarFieldEnum[]
+  }
+
+  /**
+   * ChatFolder findMany
+   */
+  export type ChatFolderFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChatFolder
+     */
+    select?: ChatFolderSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChatFolderInclude<ExtArgs> | null
+    /**
+     * Filter, which ChatFolders to fetch.
+     */
+    where?: ChatFolderWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ChatFolders to fetch.
+     */
+    orderBy?: ChatFolderOrderByWithRelationInput | ChatFolderOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ChatFolders.
+     */
+    cursor?: ChatFolderWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ChatFolders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ChatFolders.
+     */
+    skip?: number
+    distinct?: ChatFolderScalarFieldEnum | ChatFolderScalarFieldEnum[]
+  }
+
+  /**
+   * ChatFolder create
+   */
+  export type ChatFolderCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChatFolder
+     */
+    select?: ChatFolderSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChatFolderInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ChatFolder.
+     */
+    data: XOR<ChatFolderCreateInput, ChatFolderUncheckedCreateInput>
+  }
+
+  /**
+   * ChatFolder createMany
+   */
+  export type ChatFolderCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ChatFolders.
+     */
+    data: ChatFolderCreateManyInput | ChatFolderCreateManyInput[]
+  }
+
+  /**
+   * ChatFolder createManyAndReturn
+   */
+  export type ChatFolderCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChatFolder
+     */
+    select?: ChatFolderSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many ChatFolders.
+     */
+    data: ChatFolderCreateManyInput | ChatFolderCreateManyInput[]
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChatFolderIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ChatFolder update
+   */
+  export type ChatFolderUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChatFolder
+     */
+    select?: ChatFolderSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChatFolderInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ChatFolder.
+     */
+    data: XOR<ChatFolderUpdateInput, ChatFolderUncheckedUpdateInput>
+    /**
+     * Choose, which ChatFolder to update.
+     */
+    where: ChatFolderWhereUniqueInput
+  }
+
+  /**
+   * ChatFolder updateMany
+   */
+  export type ChatFolderUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ChatFolders.
+     */
+    data: XOR<ChatFolderUpdateManyMutationInput, ChatFolderUncheckedUpdateManyInput>
+    /**
+     * Filter which ChatFolders to update
+     */
+    where?: ChatFolderWhereInput
+  }
+
+  /**
+   * ChatFolder upsert
+   */
+  export type ChatFolderUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChatFolder
+     */
+    select?: ChatFolderSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChatFolderInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ChatFolder to update in case it exists.
+     */
+    where: ChatFolderWhereUniqueInput
+    /**
+     * In case the ChatFolder found by the `where` argument doesn't exist, create a new ChatFolder with this data.
+     */
+    create: XOR<ChatFolderCreateInput, ChatFolderUncheckedCreateInput>
+    /**
+     * In case the ChatFolder was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ChatFolderUpdateInput, ChatFolderUncheckedUpdateInput>
+  }
+
+  /**
+   * ChatFolder delete
+   */
+  export type ChatFolderDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChatFolder
+     */
+    select?: ChatFolderSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChatFolderInclude<ExtArgs> | null
+    /**
+     * Filter which ChatFolder to delete.
+     */
+    where: ChatFolderWhereUniqueInput
+  }
+
+  /**
+   * ChatFolder deleteMany
+   */
+  export type ChatFolderDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ChatFolders to delete
+     */
+    where?: ChatFolderWhereInput
+  }
+
+  /**
+   * ChatFolder.parent
+   */
+  export type ChatFolder$parentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChatFolder
+     */
+    select?: ChatFolderSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChatFolderInclude<ExtArgs> | null
+    where?: ChatFolderWhereInput
+  }
+
+  /**
+   * ChatFolder.children
+   */
+  export type ChatFolder$childrenArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChatFolder
+     */
+    select?: ChatFolderSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChatFolderInclude<ExtArgs> | null
+    where?: ChatFolderWhereInput
+    orderBy?: ChatFolderOrderByWithRelationInput | ChatFolderOrderByWithRelationInput[]
+    cursor?: ChatFolderWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ChatFolderScalarFieldEnum | ChatFolderScalarFieldEnum[]
+  }
+
+  /**
+   * ChatFolder.sessions
+   */
+  export type ChatFolder$sessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChatSession
+     */
+    select?: ChatSessionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChatSessionInclude<ExtArgs> | null
+    where?: ChatSessionWhereInput
+    orderBy?: ChatSessionOrderByWithRelationInput | ChatSessionOrderByWithRelationInput[]
+    cursor?: ChatSessionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ChatSessionScalarFieldEnum | ChatSessionScalarFieldEnum[]
+  }
+
+  /**
+   * ChatFolder without action
+   */
+  export type ChatFolderDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChatFolder
+     */
+    select?: ChatFolderSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChatFolderInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model ChatSession
    */
 
@@ -4620,6 +7091,7 @@ export namespace Prisma {
     meta: string | null
     userId: string | null
     sshConnectionId: string | null
+    folderId: string | null
   }
 
   export type ChatSessionMaxAggregateOutputType = {
@@ -4632,6 +7104,7 @@ export namespace Prisma {
     meta: string | null
     userId: string | null
     sshConnectionId: string | null
+    folderId: string | null
   }
 
   export type ChatSessionCountAggregateOutputType = {
@@ -4644,6 +7117,7 @@ export namespace Prisma {
     meta: number
     userId: number
     sshConnectionId: number
+    folderId: number
     _all: number
   }
 
@@ -4658,6 +7132,7 @@ export namespace Prisma {
     meta?: true
     userId?: true
     sshConnectionId?: true
+    folderId?: true
   }
 
   export type ChatSessionMaxAggregateInputType = {
@@ -4670,6 +7145,7 @@ export namespace Prisma {
     meta?: true
     userId?: true
     sshConnectionId?: true
+    folderId?: true
   }
 
   export type ChatSessionCountAggregateInputType = {
@@ -4682,6 +7158,7 @@ export namespace Prisma {
     meta?: true
     userId?: true
     sshConnectionId?: true
+    folderId?: true
     _all?: true
   }
 
@@ -4767,6 +7244,7 @@ export namespace Prisma {
     meta: string | null
     userId: string
     sshConnectionId: string | null
+    folderId: string | null
     _count: ChatSessionCountAggregateOutputType | null
     _min: ChatSessionMinAggregateOutputType | null
     _max: ChatSessionMaxAggregateOutputType | null
@@ -4796,8 +7274,10 @@ export namespace Prisma {
     meta?: boolean
     userId?: boolean
     sshConnectionId?: boolean
+    folderId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     sshConnection?: boolean | ChatSession$sshConnectionArgs<ExtArgs>
+    folder?: boolean | ChatSession$folderArgs<ExtArgs>
     messages?: boolean | ChatSession$messagesArgs<ExtArgs>
     _count?: boolean | ChatSessionCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["chatSession"]>
@@ -4812,8 +7292,10 @@ export namespace Prisma {
     meta?: boolean
     userId?: boolean
     sshConnectionId?: boolean
+    folderId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     sshConnection?: boolean | ChatSession$sshConnectionArgs<ExtArgs>
+    folder?: boolean | ChatSession$folderArgs<ExtArgs>
   }, ExtArgs["result"]["chatSession"]>
 
   export type ChatSessionSelectScalar = {
@@ -4826,17 +7308,20 @@ export namespace Prisma {
     meta?: boolean
     userId?: boolean
     sshConnectionId?: boolean
+    folderId?: boolean
   }
 
   export type ChatSessionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     sshConnection?: boolean | ChatSession$sshConnectionArgs<ExtArgs>
+    folder?: boolean | ChatSession$folderArgs<ExtArgs>
     messages?: boolean | ChatSession$messagesArgs<ExtArgs>
     _count?: boolean | ChatSessionCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ChatSessionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     sshConnection?: boolean | ChatSession$sshConnectionArgs<ExtArgs>
+    folder?: boolean | ChatSession$folderArgs<ExtArgs>
   }
 
   export type $ChatSessionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4844,6 +7329,7 @@ export namespace Prisma {
     objects: {
       user: Prisma.$UserPayload<ExtArgs>
       sshConnection: Prisma.$SSHConnectionPayload<ExtArgs> | null
+      folder: Prisma.$ChatFolderPayload<ExtArgs> | null
       messages: Prisma.$MessagePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -4856,6 +7342,7 @@ export namespace Prisma {
       meta: string | null
       userId: string
       sshConnectionId: string | null
+      folderId: string | null
     }, ExtArgs["result"]["chatSession"]>
     composites: {}
   }
@@ -5222,6 +7709,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
     sshConnection<T extends ChatSession$sshConnectionArgs<ExtArgs> = {}>(args?: Subset<T, ChatSession$sshConnectionArgs<ExtArgs>>): Prisma__SSHConnectionClient<$Result.GetResult<Prisma.$SSHConnectionPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
+    folder<T extends ChatSession$folderArgs<ExtArgs> = {}>(args?: Subset<T, ChatSession$folderArgs<ExtArgs>>): Prisma__ChatFolderClient<$Result.GetResult<Prisma.$ChatFolderPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     messages<T extends ChatSession$messagesArgs<ExtArgs> = {}>(args?: Subset<T, ChatSession$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -5261,6 +7749,7 @@ export namespace Prisma {
     readonly meta: FieldRef<"ChatSession", 'String'>
     readonly userId: FieldRef<"ChatSession", 'String'>
     readonly sshConnectionId: FieldRef<"ChatSession", 'String'>
+    readonly folderId: FieldRef<"ChatSession", 'String'>
   }
     
 
@@ -5589,6 +8078,21 @@ export namespace Prisma {
      */
     include?: SSHConnectionInclude<ExtArgs> | null
     where?: SSHConnectionWhereInput
+  }
+
+  /**
+   * ChatSession.folder
+   */
+  export type ChatSession$folderArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChatFolder
+     */
+    select?: ChatFolderSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChatFolderInclude<ExtArgs> | null
+    where?: ChatFolderWhereInput
   }
 
   /**
@@ -7772,6 +10276,19 @@ export namespace Prisma {
   export type UserSettingsScalarFieldEnum = (typeof UserSettingsScalarFieldEnum)[keyof typeof UserSettingsScalarFieldEnum]
 
 
+  export const SSHFolderScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    order: 'order',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    userId: 'userId',
+    parentId: 'parentId'
+  };
+
+  export type SSHFolderScalarFieldEnum = (typeof SSHFolderScalarFieldEnum)[keyof typeof SSHFolderScalarFieldEnum]
+
+
   export const SSHConnectionScalarFieldEnum: {
     id: 'id',
     name: 'name',
@@ -7789,10 +10306,24 @@ export namespace Prisma {
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     meta: 'meta',
-    userId: 'userId'
+    userId: 'userId',
+    folderId: 'folderId'
   };
 
   export type SSHConnectionScalarFieldEnum = (typeof SSHConnectionScalarFieldEnum)[keyof typeof SSHConnectionScalarFieldEnum]
+
+
+  export const ChatFolderScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    order: 'order',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    userId: 'userId',
+    parentId: 'parentId'
+  };
+
+  export type ChatFolderScalarFieldEnum = (typeof ChatFolderScalarFieldEnum)[keyof typeof ChatFolderScalarFieldEnum]
 
 
   export const ChatSessionScalarFieldEnum: {
@@ -7804,7 +10335,8 @@ export namespace Prisma {
     config: 'config',
     meta: 'meta',
     userId: 'userId',
-    sshConnectionId: 'sshConnectionId'
+    sshConnectionId: 'sshConnectionId',
+    folderId: 'folderId'
   };
 
   export type ChatSessionScalarFieldEnum = (typeof ChatSessionScalarFieldEnum)[keyof typeof ChatSessionScalarFieldEnum]
@@ -7921,7 +10453,9 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     settings?: StringNullableFilter<"User"> | string | null
+    sshFolders?: SSHFolderListRelationFilter
     sshConnections?: SSHConnectionListRelationFilter
+    chatFolders?: ChatFolderListRelationFilter
     chatSessions?: ChatSessionListRelationFilter
     messages?: MessageListRelationFilter
     commandLogs?: CommandLogListRelationFilter
@@ -7940,7 +10474,9 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     settings?: SortOrderInput | SortOrder
+    sshFolders?: SSHFolderOrderByRelationAggregateInput
     sshConnections?: SSHConnectionOrderByRelationAggregateInput
+    chatFolders?: ChatFolderOrderByRelationAggregateInput
     chatSessions?: ChatSessionOrderByRelationAggregateInput
     messages?: MessageOrderByRelationAggregateInput
     commandLogs?: CommandLogOrderByRelationAggregateInput
@@ -7962,7 +10498,9 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     settings?: StringNullableFilter<"User"> | string | null
+    sshFolders?: SSHFolderListRelationFilter
     sshConnections?: SSHConnectionListRelationFilter
+    chatFolders?: ChatFolderListRelationFilter
     chatSessions?: ChatSessionListRelationFilter
     messages?: MessageListRelationFilter
     commandLogs?: CommandLogListRelationFilter
@@ -8058,6 +10596,82 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"UserSettings"> | Date | string
   }
 
+  export type SSHFolderWhereInput = {
+    AND?: SSHFolderWhereInput | SSHFolderWhereInput[]
+    OR?: SSHFolderWhereInput[]
+    NOT?: SSHFolderWhereInput | SSHFolderWhereInput[]
+    id?: StringFilter<"SSHFolder"> | string
+    name?: StringFilter<"SSHFolder"> | string
+    order?: IntFilter<"SSHFolder"> | number
+    createdAt?: DateTimeFilter<"SSHFolder"> | Date | string
+    updatedAt?: DateTimeFilter<"SSHFolder"> | Date | string
+    userId?: StringFilter<"SSHFolder"> | string
+    parentId?: StringNullableFilter<"SSHFolder"> | string | null
+    user?: XOR<UserRelationFilter, UserWhereInput>
+    parent?: XOR<SSHFolderNullableRelationFilter, SSHFolderWhereInput> | null
+    children?: SSHFolderListRelationFilter
+    connections?: SSHConnectionListRelationFilter
+  }
+
+  export type SSHFolderOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    order?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    userId?: SortOrder
+    parentId?: SortOrderInput | SortOrder
+    user?: UserOrderByWithRelationInput
+    parent?: SSHFolderOrderByWithRelationInput
+    children?: SSHFolderOrderByRelationAggregateInput
+    connections?: SSHConnectionOrderByRelationAggregateInput
+  }
+
+  export type SSHFolderWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: SSHFolderWhereInput | SSHFolderWhereInput[]
+    OR?: SSHFolderWhereInput[]
+    NOT?: SSHFolderWhereInput | SSHFolderWhereInput[]
+    name?: StringFilter<"SSHFolder"> | string
+    order?: IntFilter<"SSHFolder"> | number
+    createdAt?: DateTimeFilter<"SSHFolder"> | Date | string
+    updatedAt?: DateTimeFilter<"SSHFolder"> | Date | string
+    userId?: StringFilter<"SSHFolder"> | string
+    parentId?: StringNullableFilter<"SSHFolder"> | string | null
+    user?: XOR<UserRelationFilter, UserWhereInput>
+    parent?: XOR<SSHFolderNullableRelationFilter, SSHFolderWhereInput> | null
+    children?: SSHFolderListRelationFilter
+    connections?: SSHConnectionListRelationFilter
+  }, "id">
+
+  export type SSHFolderOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    order?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    userId?: SortOrder
+    parentId?: SortOrderInput | SortOrder
+    _count?: SSHFolderCountOrderByAggregateInput
+    _avg?: SSHFolderAvgOrderByAggregateInput
+    _max?: SSHFolderMaxOrderByAggregateInput
+    _min?: SSHFolderMinOrderByAggregateInput
+    _sum?: SSHFolderSumOrderByAggregateInput
+  }
+
+  export type SSHFolderScalarWhereWithAggregatesInput = {
+    AND?: SSHFolderScalarWhereWithAggregatesInput | SSHFolderScalarWhereWithAggregatesInput[]
+    OR?: SSHFolderScalarWhereWithAggregatesInput[]
+    NOT?: SSHFolderScalarWhereWithAggregatesInput | SSHFolderScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"SSHFolder"> | string
+    name?: StringWithAggregatesFilter<"SSHFolder"> | string
+    order?: IntWithAggregatesFilter<"SSHFolder"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"SSHFolder"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"SSHFolder"> | Date | string
+    userId?: StringWithAggregatesFilter<"SSHFolder"> | string
+    parentId?: StringNullableWithAggregatesFilter<"SSHFolder"> | string | null
+  }
+
   export type SSHConnectionWhereInput = {
     AND?: SSHConnectionWhereInput | SSHConnectionWhereInput[]
     OR?: SSHConnectionWhereInput[]
@@ -8079,7 +10693,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"SSHConnection"> | Date | string
     meta?: StringNullableFilter<"SSHConnection"> | string | null
     userId?: StringFilter<"SSHConnection"> | string
+    folderId?: StringNullableFilter<"SSHConnection"> | string | null
     user?: XOR<UserRelationFilter, UserWhereInput>
+    folder?: XOR<SSHFolderNullableRelationFilter, SSHFolderWhereInput> | null
     chatSessions?: ChatSessionListRelationFilter
     commandLogs?: CommandLogListRelationFilter
   }
@@ -8102,7 +10718,9 @@ export namespace Prisma {
     updatedAt?: SortOrder
     meta?: SortOrderInput | SortOrder
     userId?: SortOrder
+    folderId?: SortOrderInput | SortOrder
     user?: UserOrderByWithRelationInput
+    folder?: SSHFolderOrderByWithRelationInput
     chatSessions?: ChatSessionOrderByRelationAggregateInput
     commandLogs?: CommandLogOrderByRelationAggregateInput
   }
@@ -8128,7 +10746,9 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"SSHConnection"> | Date | string
     meta?: StringNullableFilter<"SSHConnection"> | string | null
     userId?: StringFilter<"SSHConnection"> | string
+    folderId?: StringNullableFilter<"SSHConnection"> | string | null
     user?: XOR<UserRelationFilter, UserWhereInput>
+    folder?: XOR<SSHFolderNullableRelationFilter, SSHFolderWhereInput> | null
     chatSessions?: ChatSessionListRelationFilter
     commandLogs?: CommandLogListRelationFilter
   }, "id">
@@ -8151,6 +10771,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     meta?: SortOrderInput | SortOrder
     userId?: SortOrder
+    folderId?: SortOrderInput | SortOrder
     _count?: SSHConnectionCountOrderByAggregateInput
     _avg?: SSHConnectionAvgOrderByAggregateInput
     _max?: SSHConnectionMaxOrderByAggregateInput
@@ -8179,6 +10800,83 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"SSHConnection"> | Date | string
     meta?: StringNullableWithAggregatesFilter<"SSHConnection"> | string | null
     userId?: StringWithAggregatesFilter<"SSHConnection"> | string
+    folderId?: StringNullableWithAggregatesFilter<"SSHConnection"> | string | null
+  }
+
+  export type ChatFolderWhereInput = {
+    AND?: ChatFolderWhereInput | ChatFolderWhereInput[]
+    OR?: ChatFolderWhereInput[]
+    NOT?: ChatFolderWhereInput | ChatFolderWhereInput[]
+    id?: StringFilter<"ChatFolder"> | string
+    name?: StringFilter<"ChatFolder"> | string
+    order?: IntFilter<"ChatFolder"> | number
+    createdAt?: DateTimeFilter<"ChatFolder"> | Date | string
+    updatedAt?: DateTimeFilter<"ChatFolder"> | Date | string
+    userId?: StringFilter<"ChatFolder"> | string
+    parentId?: StringNullableFilter<"ChatFolder"> | string | null
+    user?: XOR<UserRelationFilter, UserWhereInput>
+    parent?: XOR<ChatFolderNullableRelationFilter, ChatFolderWhereInput> | null
+    children?: ChatFolderListRelationFilter
+    sessions?: ChatSessionListRelationFilter
+  }
+
+  export type ChatFolderOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    order?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    userId?: SortOrder
+    parentId?: SortOrderInput | SortOrder
+    user?: UserOrderByWithRelationInput
+    parent?: ChatFolderOrderByWithRelationInput
+    children?: ChatFolderOrderByRelationAggregateInput
+    sessions?: ChatSessionOrderByRelationAggregateInput
+  }
+
+  export type ChatFolderWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: ChatFolderWhereInput | ChatFolderWhereInput[]
+    OR?: ChatFolderWhereInput[]
+    NOT?: ChatFolderWhereInput | ChatFolderWhereInput[]
+    name?: StringFilter<"ChatFolder"> | string
+    order?: IntFilter<"ChatFolder"> | number
+    createdAt?: DateTimeFilter<"ChatFolder"> | Date | string
+    updatedAt?: DateTimeFilter<"ChatFolder"> | Date | string
+    userId?: StringFilter<"ChatFolder"> | string
+    parentId?: StringNullableFilter<"ChatFolder"> | string | null
+    user?: XOR<UserRelationFilter, UserWhereInput>
+    parent?: XOR<ChatFolderNullableRelationFilter, ChatFolderWhereInput> | null
+    children?: ChatFolderListRelationFilter
+    sessions?: ChatSessionListRelationFilter
+  }, "id">
+
+  export type ChatFolderOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    order?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    userId?: SortOrder
+    parentId?: SortOrderInput | SortOrder
+    _count?: ChatFolderCountOrderByAggregateInput
+    _avg?: ChatFolderAvgOrderByAggregateInput
+    _max?: ChatFolderMaxOrderByAggregateInput
+    _min?: ChatFolderMinOrderByAggregateInput
+    _sum?: ChatFolderSumOrderByAggregateInput
+  }
+
+  export type ChatFolderScalarWhereWithAggregatesInput = {
+    AND?: ChatFolderScalarWhereWithAggregatesInput | ChatFolderScalarWhereWithAggregatesInput[]
+    OR?: ChatFolderScalarWhereWithAggregatesInput[]
+    NOT?: ChatFolderScalarWhereWithAggregatesInput | ChatFolderScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ChatFolder"> | string
+    name?: StringWithAggregatesFilter<"ChatFolder"> | string
+    order?: IntWithAggregatesFilter<"ChatFolder"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"ChatFolder"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"ChatFolder"> | Date | string
+    userId?: StringWithAggregatesFilter<"ChatFolder"> | string
+    parentId?: StringNullableWithAggregatesFilter<"ChatFolder"> | string | null
   }
 
   export type ChatSessionWhereInput = {
@@ -8194,8 +10892,10 @@ export namespace Prisma {
     meta?: StringNullableFilter<"ChatSession"> | string | null
     userId?: StringFilter<"ChatSession"> | string
     sshConnectionId?: StringNullableFilter<"ChatSession"> | string | null
+    folderId?: StringNullableFilter<"ChatSession"> | string | null
     user?: XOR<UserRelationFilter, UserWhereInput>
     sshConnection?: XOR<SSHConnectionNullableRelationFilter, SSHConnectionWhereInput> | null
+    folder?: XOR<ChatFolderNullableRelationFilter, ChatFolderWhereInput> | null
     messages?: MessageListRelationFilter
   }
 
@@ -8209,8 +10909,10 @@ export namespace Prisma {
     meta?: SortOrderInput | SortOrder
     userId?: SortOrder
     sshConnectionId?: SortOrderInput | SortOrder
+    folderId?: SortOrderInput | SortOrder
     user?: UserOrderByWithRelationInput
     sshConnection?: SSHConnectionOrderByWithRelationInput
+    folder?: ChatFolderOrderByWithRelationInput
     messages?: MessageOrderByRelationAggregateInput
   }
 
@@ -8227,8 +10929,10 @@ export namespace Prisma {
     meta?: StringNullableFilter<"ChatSession"> | string | null
     userId?: StringFilter<"ChatSession"> | string
     sshConnectionId?: StringNullableFilter<"ChatSession"> | string | null
+    folderId?: StringNullableFilter<"ChatSession"> | string | null
     user?: XOR<UserRelationFilter, UserWhereInput>
     sshConnection?: XOR<SSHConnectionNullableRelationFilter, SSHConnectionWhereInput> | null
+    folder?: XOR<ChatFolderNullableRelationFilter, ChatFolderWhereInput> | null
     messages?: MessageListRelationFilter
   }, "id">
 
@@ -8242,6 +10946,7 @@ export namespace Prisma {
     meta?: SortOrderInput | SortOrder
     userId?: SortOrder
     sshConnectionId?: SortOrderInput | SortOrder
+    folderId?: SortOrderInput | SortOrder
     _count?: ChatSessionCountOrderByAggregateInput
     _max?: ChatSessionMaxOrderByAggregateInput
     _min?: ChatSessionMinOrderByAggregateInput
@@ -8260,6 +10965,7 @@ export namespace Prisma {
     meta?: StringNullableWithAggregatesFilter<"ChatSession"> | string | null
     userId?: StringWithAggregatesFilter<"ChatSession"> | string
     sshConnectionId?: StringNullableWithAggregatesFilter<"ChatSession"> | string | null
+    folderId?: StringNullableWithAggregatesFilter<"ChatSession"> | string | null
   }
 
   export type MessageWhereInput = {
@@ -8467,7 +11173,9 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     settings?: string | null
+    sshFolders?: SSHFolderCreateNestedManyWithoutUserInput
     sshConnections?: SSHConnectionCreateNestedManyWithoutUserInput
+    chatFolders?: ChatFolderCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
     messages?: MessageCreateNestedManyWithoutUserInput
     commandLogs?: CommandLogCreateNestedManyWithoutUserInput
@@ -8486,7 +11194,9 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     settings?: string | null
+    sshFolders?: SSHFolderUncheckedCreateNestedManyWithoutUserInput
     sshConnections?: SSHConnectionUncheckedCreateNestedManyWithoutUserInput
+    chatFolders?: ChatFolderUncheckedCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
     messages?: MessageUncheckedCreateNestedManyWithoutUserInput
     commandLogs?: CommandLogUncheckedCreateNestedManyWithoutUserInput
@@ -8505,7 +11215,9 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     settings?: NullableStringFieldUpdateOperationsInput | string | null
+    sshFolders?: SSHFolderUpdateManyWithoutUserNestedInput
     sshConnections?: SSHConnectionUpdateManyWithoutUserNestedInput
+    chatFolders?: ChatFolderUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
     messages?: MessageUpdateManyWithoutUserNestedInput
     commandLogs?: CommandLogUpdateManyWithoutUserNestedInput
@@ -8524,7 +11236,9 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     settings?: NullableStringFieldUpdateOperationsInput | string | null
+    sshFolders?: SSHFolderUncheckedUpdateManyWithoutUserNestedInput
     sshConnections?: SSHConnectionUncheckedUpdateManyWithoutUserNestedInput
+    chatFolders?: ChatFolderUncheckedUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
     messages?: MessageUncheckedUpdateManyWithoutUserNestedInput
     commandLogs?: CommandLogUncheckedUpdateManyWithoutUserNestedInput
@@ -8628,6 +11342,82 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type SSHFolderCreateInput = {
+    id?: string
+    name: string
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutSshFoldersInput
+    parent?: SSHFolderCreateNestedOneWithoutChildrenInput
+    children?: SSHFolderCreateNestedManyWithoutParentInput
+    connections?: SSHConnectionCreateNestedManyWithoutFolderInput
+  }
+
+  export type SSHFolderUncheckedCreateInput = {
+    id?: string
+    name: string
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    userId: string
+    parentId?: string | null
+    children?: SSHFolderUncheckedCreateNestedManyWithoutParentInput
+    connections?: SSHConnectionUncheckedCreateNestedManyWithoutFolderInput
+  }
+
+  export type SSHFolderUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutSshFoldersNestedInput
+    parent?: SSHFolderUpdateOneWithoutChildrenNestedInput
+    children?: SSHFolderUpdateManyWithoutParentNestedInput
+    connections?: SSHConnectionUpdateManyWithoutFolderNestedInput
+  }
+
+  export type SSHFolderUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    children?: SSHFolderUncheckedUpdateManyWithoutParentNestedInput
+    connections?: SSHConnectionUncheckedUpdateManyWithoutFolderNestedInput
+  }
+
+  export type SSHFolderCreateManyInput = {
+    id?: string
+    name: string
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    userId: string
+    parentId?: string | null
+  }
+
+  export type SSHFolderUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SSHFolderUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
   export type SSHConnectionCreateInput = {
     id?: string
     name: string
@@ -8646,6 +11436,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     meta?: string | null
     user: UserCreateNestedOneWithoutSshConnectionsInput
+    folder?: SSHFolderCreateNestedOneWithoutConnectionsInput
     chatSessions?: ChatSessionCreateNestedManyWithoutSshConnectionInput
     commandLogs?: CommandLogCreateNestedManyWithoutSshConnectionInput
   }
@@ -8668,6 +11459,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     meta?: string | null
     userId: string
+    folderId?: string | null
     chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutSshConnectionInput
     commandLogs?: CommandLogUncheckedCreateNestedManyWithoutSshConnectionInput
   }
@@ -8690,6 +11482,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     meta?: NullableStringFieldUpdateOperationsInput | string | null
     user?: UserUpdateOneRequiredWithoutSshConnectionsNestedInput
+    folder?: SSHFolderUpdateOneWithoutConnectionsNestedInput
     chatSessions?: ChatSessionUpdateManyWithoutSshConnectionNestedInput
     commandLogs?: CommandLogUpdateManyWithoutSshConnectionNestedInput
   }
@@ -8712,6 +11505,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     meta?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
+    folderId?: NullableStringFieldUpdateOperationsInput | string | null
     chatSessions?: ChatSessionUncheckedUpdateManyWithoutSshConnectionNestedInput
     commandLogs?: CommandLogUncheckedUpdateManyWithoutSshConnectionNestedInput
   }
@@ -8734,6 +11528,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     meta?: string | null
     userId: string
+    folderId?: string | null
   }
 
   export type SSHConnectionUpdateManyMutationInput = {
@@ -8773,6 +11568,83 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     meta?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
+    folderId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ChatFolderCreateInput = {
+    id?: string
+    name: string
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutChatFoldersInput
+    parent?: ChatFolderCreateNestedOneWithoutChildrenInput
+    children?: ChatFolderCreateNestedManyWithoutParentInput
+    sessions?: ChatSessionCreateNestedManyWithoutFolderInput
+  }
+
+  export type ChatFolderUncheckedCreateInput = {
+    id?: string
+    name: string
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    userId: string
+    parentId?: string | null
+    children?: ChatFolderUncheckedCreateNestedManyWithoutParentInput
+    sessions?: ChatSessionUncheckedCreateNestedManyWithoutFolderInput
+  }
+
+  export type ChatFolderUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutChatFoldersNestedInput
+    parent?: ChatFolderUpdateOneWithoutChildrenNestedInput
+    children?: ChatFolderUpdateManyWithoutParentNestedInput
+    sessions?: ChatSessionUpdateManyWithoutFolderNestedInput
+  }
+
+  export type ChatFolderUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    children?: ChatFolderUncheckedUpdateManyWithoutParentNestedInput
+    sessions?: ChatSessionUncheckedUpdateManyWithoutFolderNestedInput
+  }
+
+  export type ChatFolderCreateManyInput = {
+    id?: string
+    name: string
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    userId: string
+    parentId?: string | null
+  }
+
+  export type ChatFolderUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ChatFolderUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ChatSessionCreateInput = {
@@ -8785,6 +11657,7 @@ export namespace Prisma {
     meta?: string | null
     user: UserCreateNestedOneWithoutChatSessionsInput
     sshConnection?: SSHConnectionCreateNestedOneWithoutChatSessionsInput
+    folder?: ChatFolderCreateNestedOneWithoutSessionsInput
     messages?: MessageCreateNestedManyWithoutSessionInput
   }
 
@@ -8798,6 +11671,7 @@ export namespace Prisma {
     meta?: string | null
     userId: string
     sshConnectionId?: string | null
+    folderId?: string | null
     messages?: MessageUncheckedCreateNestedManyWithoutSessionInput
   }
 
@@ -8811,6 +11685,7 @@ export namespace Prisma {
     meta?: NullableStringFieldUpdateOperationsInput | string | null
     user?: UserUpdateOneRequiredWithoutChatSessionsNestedInput
     sshConnection?: SSHConnectionUpdateOneWithoutChatSessionsNestedInput
+    folder?: ChatFolderUpdateOneWithoutSessionsNestedInput
     messages?: MessageUpdateManyWithoutSessionNestedInput
   }
 
@@ -8824,6 +11699,7 @@ export namespace Prisma {
     meta?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
     sshConnectionId?: NullableStringFieldUpdateOperationsInput | string | null
+    folderId?: NullableStringFieldUpdateOperationsInput | string | null
     messages?: MessageUncheckedUpdateManyWithoutSessionNestedInput
   }
 
@@ -8837,6 +11713,7 @@ export namespace Prisma {
     meta?: string | null
     userId: string
     sshConnectionId?: string | null
+    folderId?: string | null
   }
 
   export type ChatSessionUpdateManyMutationInput = {
@@ -8859,6 +11736,7 @@ export namespace Prisma {
     meta?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
     sshConnectionId?: NullableStringFieldUpdateOperationsInput | string | null
+    folderId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type MessageCreateInput = {
@@ -9118,10 +11996,22 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
+  export type SSHFolderListRelationFilter = {
+    every?: SSHFolderWhereInput
+    some?: SSHFolderWhereInput
+    none?: SSHFolderWhereInput
+  }
+
   export type SSHConnectionListRelationFilter = {
     every?: SSHConnectionWhereInput
     some?: SSHConnectionWhereInput
     none?: SSHConnectionWhereInput
+  }
+
+  export type ChatFolderListRelationFilter = {
+    every?: ChatFolderWhereInput
+    some?: ChatFolderWhereInput
+    none?: ChatFolderWhereInput
   }
 
   export type ChatSessionListRelationFilter = {
@@ -9152,7 +12042,15 @@ export namespace Prisma {
     nulls?: NullsOrder
   }
 
+  export type SSHFolderOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type SSHConnectionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ChatFolderOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -9306,6 +12204,65 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
+  export type SSHFolderNullableRelationFilter = {
+    is?: SSHFolderWhereInput | null
+    isNot?: SSHFolderWhereInput | null
+  }
+
+  export type SSHFolderCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    order?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    userId?: SortOrder
+    parentId?: SortOrder
+  }
+
+  export type SSHFolderAvgOrderByAggregateInput = {
+    order?: SortOrder
+  }
+
+  export type SSHFolderMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    order?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    userId?: SortOrder
+    parentId?: SortOrder
+  }
+
+  export type SSHFolderMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    order?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    userId?: SortOrder
+    parentId?: SortOrder
+  }
+
+  export type SSHFolderSumOrderByAggregateInput = {
+    order?: SortOrder
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[]
+    notIn?: number[]
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
   export type DateTimeNullableFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | null
@@ -9335,6 +12292,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     meta?: SortOrder
     userId?: SortOrder
+    folderId?: SortOrder
   }
 
   export type SSHConnectionAvgOrderByAggregateInput = {
@@ -9359,6 +12317,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     meta?: SortOrder
     userId?: SortOrder
+    folderId?: SortOrder
   }
 
   export type SSHConnectionMinOrderByAggregateInput = {
@@ -9379,26 +12338,11 @@ export namespace Prisma {
     updatedAt?: SortOrder
     meta?: SortOrder
     userId?: SortOrder
+    folderId?: SortOrder
   }
 
   export type SSHConnectionSumOrderByAggregateInput = {
     port?: SortOrder
-  }
-
-  export type IntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[]
-    notIn?: number[]
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -9413,6 +12357,49 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type ChatFolderNullableRelationFilter = {
+    is?: ChatFolderWhereInput | null
+    isNot?: ChatFolderWhereInput | null
+  }
+
+  export type ChatFolderCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    order?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    userId?: SortOrder
+    parentId?: SortOrder
+  }
+
+  export type ChatFolderAvgOrderByAggregateInput = {
+    order?: SortOrder
+  }
+
+  export type ChatFolderMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    order?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    userId?: SortOrder
+    parentId?: SortOrder
+  }
+
+  export type ChatFolderMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    order?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    userId?: SortOrder
+    parentId?: SortOrder
+  }
+
+  export type ChatFolderSumOrderByAggregateInput = {
+    order?: SortOrder
   }
 
   export type SSHConnectionNullableRelationFilter = {
@@ -9430,6 +12417,7 @@ export namespace Prisma {
     meta?: SortOrder
     userId?: SortOrder
     sshConnectionId?: SortOrder
+    folderId?: SortOrder
   }
 
   export type ChatSessionMaxOrderByAggregateInput = {
@@ -9442,6 +12430,7 @@ export namespace Prisma {
     meta?: SortOrder
     userId?: SortOrder
     sshConnectionId?: SortOrder
+    folderId?: SortOrder
   }
 
   export type ChatSessionMinOrderByAggregateInput = {
@@ -9454,6 +12443,7 @@ export namespace Prisma {
     meta?: SortOrder
     userId?: SortOrder
     sshConnectionId?: SortOrder
+    folderId?: SortOrder
   }
 
   export type ChatSessionRelationFilter = {
@@ -9591,11 +12581,25 @@ export namespace Prisma {
     _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
+  export type SSHFolderCreateNestedManyWithoutUserInput = {
+    create?: XOR<SSHFolderCreateWithoutUserInput, SSHFolderUncheckedCreateWithoutUserInput> | SSHFolderCreateWithoutUserInput[] | SSHFolderUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SSHFolderCreateOrConnectWithoutUserInput | SSHFolderCreateOrConnectWithoutUserInput[]
+    createMany?: SSHFolderCreateManyUserInputEnvelope
+    connect?: SSHFolderWhereUniqueInput | SSHFolderWhereUniqueInput[]
+  }
+
   export type SSHConnectionCreateNestedManyWithoutUserInput = {
     create?: XOR<SSHConnectionCreateWithoutUserInput, SSHConnectionUncheckedCreateWithoutUserInput> | SSHConnectionCreateWithoutUserInput[] | SSHConnectionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: SSHConnectionCreateOrConnectWithoutUserInput | SSHConnectionCreateOrConnectWithoutUserInput[]
     createMany?: SSHConnectionCreateManyUserInputEnvelope
     connect?: SSHConnectionWhereUniqueInput | SSHConnectionWhereUniqueInput[]
+  }
+
+  export type ChatFolderCreateNestedManyWithoutUserInput = {
+    create?: XOR<ChatFolderCreateWithoutUserInput, ChatFolderUncheckedCreateWithoutUserInput> | ChatFolderCreateWithoutUserInput[] | ChatFolderUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ChatFolderCreateOrConnectWithoutUserInput | ChatFolderCreateOrConnectWithoutUserInput[]
+    createMany?: ChatFolderCreateManyUserInputEnvelope
+    connect?: ChatFolderWhereUniqueInput | ChatFolderWhereUniqueInput[]
   }
 
   export type ChatSessionCreateNestedManyWithoutUserInput = {
@@ -9625,11 +12629,25 @@ export namespace Prisma {
     connect?: UserSettingsWhereUniqueInput
   }
 
+  export type SSHFolderUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<SSHFolderCreateWithoutUserInput, SSHFolderUncheckedCreateWithoutUserInput> | SSHFolderCreateWithoutUserInput[] | SSHFolderUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SSHFolderCreateOrConnectWithoutUserInput | SSHFolderCreateOrConnectWithoutUserInput[]
+    createMany?: SSHFolderCreateManyUserInputEnvelope
+    connect?: SSHFolderWhereUniqueInput | SSHFolderWhereUniqueInput[]
+  }
+
   export type SSHConnectionUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<SSHConnectionCreateWithoutUserInput, SSHConnectionUncheckedCreateWithoutUserInput> | SSHConnectionCreateWithoutUserInput[] | SSHConnectionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: SSHConnectionCreateOrConnectWithoutUserInput | SSHConnectionCreateOrConnectWithoutUserInput[]
     createMany?: SSHConnectionCreateManyUserInputEnvelope
     connect?: SSHConnectionWhereUniqueInput | SSHConnectionWhereUniqueInput[]
+  }
+
+  export type ChatFolderUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<ChatFolderCreateWithoutUserInput, ChatFolderUncheckedCreateWithoutUserInput> | ChatFolderCreateWithoutUserInput[] | ChatFolderUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ChatFolderCreateOrConnectWithoutUserInput | ChatFolderCreateOrConnectWithoutUserInput[]
+    createMany?: ChatFolderCreateManyUserInputEnvelope
+    connect?: ChatFolderWhereUniqueInput | ChatFolderWhereUniqueInput[]
   }
 
   export type ChatSessionUncheckedCreateNestedManyWithoutUserInput = {
@@ -9675,6 +12693,20 @@ export namespace Prisma {
     set?: Date | string
   }
 
+  export type SSHFolderUpdateManyWithoutUserNestedInput = {
+    create?: XOR<SSHFolderCreateWithoutUserInput, SSHFolderUncheckedCreateWithoutUserInput> | SSHFolderCreateWithoutUserInput[] | SSHFolderUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SSHFolderCreateOrConnectWithoutUserInput | SSHFolderCreateOrConnectWithoutUserInput[]
+    upsert?: SSHFolderUpsertWithWhereUniqueWithoutUserInput | SSHFolderUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: SSHFolderCreateManyUserInputEnvelope
+    set?: SSHFolderWhereUniqueInput | SSHFolderWhereUniqueInput[]
+    disconnect?: SSHFolderWhereUniqueInput | SSHFolderWhereUniqueInput[]
+    delete?: SSHFolderWhereUniqueInput | SSHFolderWhereUniqueInput[]
+    connect?: SSHFolderWhereUniqueInput | SSHFolderWhereUniqueInput[]
+    update?: SSHFolderUpdateWithWhereUniqueWithoutUserInput | SSHFolderUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: SSHFolderUpdateManyWithWhereWithoutUserInput | SSHFolderUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: SSHFolderScalarWhereInput | SSHFolderScalarWhereInput[]
+  }
+
   export type SSHConnectionUpdateManyWithoutUserNestedInput = {
     create?: XOR<SSHConnectionCreateWithoutUserInput, SSHConnectionUncheckedCreateWithoutUserInput> | SSHConnectionCreateWithoutUserInput[] | SSHConnectionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: SSHConnectionCreateOrConnectWithoutUserInput | SSHConnectionCreateOrConnectWithoutUserInput[]
@@ -9687,6 +12719,20 @@ export namespace Prisma {
     update?: SSHConnectionUpdateWithWhereUniqueWithoutUserInput | SSHConnectionUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: SSHConnectionUpdateManyWithWhereWithoutUserInput | SSHConnectionUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: SSHConnectionScalarWhereInput | SSHConnectionScalarWhereInput[]
+  }
+
+  export type ChatFolderUpdateManyWithoutUserNestedInput = {
+    create?: XOR<ChatFolderCreateWithoutUserInput, ChatFolderUncheckedCreateWithoutUserInput> | ChatFolderCreateWithoutUserInput[] | ChatFolderUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ChatFolderCreateOrConnectWithoutUserInput | ChatFolderCreateOrConnectWithoutUserInput[]
+    upsert?: ChatFolderUpsertWithWhereUniqueWithoutUserInput | ChatFolderUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: ChatFolderCreateManyUserInputEnvelope
+    set?: ChatFolderWhereUniqueInput | ChatFolderWhereUniqueInput[]
+    disconnect?: ChatFolderWhereUniqueInput | ChatFolderWhereUniqueInput[]
+    delete?: ChatFolderWhereUniqueInput | ChatFolderWhereUniqueInput[]
+    connect?: ChatFolderWhereUniqueInput | ChatFolderWhereUniqueInput[]
+    update?: ChatFolderUpdateWithWhereUniqueWithoutUserInput | ChatFolderUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: ChatFolderUpdateManyWithWhereWithoutUserInput | ChatFolderUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: ChatFolderScalarWhereInput | ChatFolderScalarWhereInput[]
   }
 
   export type ChatSessionUpdateManyWithoutUserNestedInput = {
@@ -9741,6 +12787,20 @@ export namespace Prisma {
     update?: XOR<XOR<UserSettingsUpdateToOneWithWhereWithoutUserInput, UserSettingsUpdateWithoutUserInput>, UserSettingsUncheckedUpdateWithoutUserInput>
   }
 
+  export type SSHFolderUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<SSHFolderCreateWithoutUserInput, SSHFolderUncheckedCreateWithoutUserInput> | SSHFolderCreateWithoutUserInput[] | SSHFolderUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SSHFolderCreateOrConnectWithoutUserInput | SSHFolderCreateOrConnectWithoutUserInput[]
+    upsert?: SSHFolderUpsertWithWhereUniqueWithoutUserInput | SSHFolderUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: SSHFolderCreateManyUserInputEnvelope
+    set?: SSHFolderWhereUniqueInput | SSHFolderWhereUniqueInput[]
+    disconnect?: SSHFolderWhereUniqueInput | SSHFolderWhereUniqueInput[]
+    delete?: SSHFolderWhereUniqueInput | SSHFolderWhereUniqueInput[]
+    connect?: SSHFolderWhereUniqueInput | SSHFolderWhereUniqueInput[]
+    update?: SSHFolderUpdateWithWhereUniqueWithoutUserInput | SSHFolderUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: SSHFolderUpdateManyWithWhereWithoutUserInput | SSHFolderUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: SSHFolderScalarWhereInput | SSHFolderScalarWhereInput[]
+  }
+
   export type SSHConnectionUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<SSHConnectionCreateWithoutUserInput, SSHConnectionUncheckedCreateWithoutUserInput> | SSHConnectionCreateWithoutUserInput[] | SSHConnectionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: SSHConnectionCreateOrConnectWithoutUserInput | SSHConnectionCreateOrConnectWithoutUserInput[]
@@ -9753,6 +12813,20 @@ export namespace Prisma {
     update?: SSHConnectionUpdateWithWhereUniqueWithoutUserInput | SSHConnectionUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: SSHConnectionUpdateManyWithWhereWithoutUserInput | SSHConnectionUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: SSHConnectionScalarWhereInput | SSHConnectionScalarWhereInput[]
+  }
+
+  export type ChatFolderUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<ChatFolderCreateWithoutUserInput, ChatFolderUncheckedCreateWithoutUserInput> | ChatFolderCreateWithoutUserInput[] | ChatFolderUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ChatFolderCreateOrConnectWithoutUserInput | ChatFolderCreateOrConnectWithoutUserInput[]
+    upsert?: ChatFolderUpsertWithWhereUniqueWithoutUserInput | ChatFolderUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: ChatFolderCreateManyUserInputEnvelope
+    set?: ChatFolderWhereUniqueInput | ChatFolderWhereUniqueInput[]
+    disconnect?: ChatFolderWhereUniqueInput | ChatFolderWhereUniqueInput[]
+    delete?: ChatFolderWhereUniqueInput | ChatFolderWhereUniqueInput[]
+    connect?: ChatFolderWhereUniqueInput | ChatFolderWhereUniqueInput[]
+    update?: ChatFolderUpdateWithWhereUniqueWithoutUserInput | ChatFolderUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: ChatFolderUpdateManyWithWhereWithoutUserInput | ChatFolderUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: ChatFolderScalarWhereInput | ChatFolderScalarWhereInput[]
   }
 
   export type ChatSessionUncheckedUpdateManyWithoutUserNestedInput = {
@@ -9821,10 +12895,138 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutUserSettingsInput, UserUpdateWithoutUserSettingsInput>, UserUncheckedUpdateWithoutUserSettingsInput>
   }
 
+  export type UserCreateNestedOneWithoutSshFoldersInput = {
+    create?: XOR<UserCreateWithoutSshFoldersInput, UserUncheckedCreateWithoutSshFoldersInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSshFoldersInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type SSHFolderCreateNestedOneWithoutChildrenInput = {
+    create?: XOR<SSHFolderCreateWithoutChildrenInput, SSHFolderUncheckedCreateWithoutChildrenInput>
+    connectOrCreate?: SSHFolderCreateOrConnectWithoutChildrenInput
+    connect?: SSHFolderWhereUniqueInput
+  }
+
+  export type SSHFolderCreateNestedManyWithoutParentInput = {
+    create?: XOR<SSHFolderCreateWithoutParentInput, SSHFolderUncheckedCreateWithoutParentInput> | SSHFolderCreateWithoutParentInput[] | SSHFolderUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: SSHFolderCreateOrConnectWithoutParentInput | SSHFolderCreateOrConnectWithoutParentInput[]
+    createMany?: SSHFolderCreateManyParentInputEnvelope
+    connect?: SSHFolderWhereUniqueInput | SSHFolderWhereUniqueInput[]
+  }
+
+  export type SSHConnectionCreateNestedManyWithoutFolderInput = {
+    create?: XOR<SSHConnectionCreateWithoutFolderInput, SSHConnectionUncheckedCreateWithoutFolderInput> | SSHConnectionCreateWithoutFolderInput[] | SSHConnectionUncheckedCreateWithoutFolderInput[]
+    connectOrCreate?: SSHConnectionCreateOrConnectWithoutFolderInput | SSHConnectionCreateOrConnectWithoutFolderInput[]
+    createMany?: SSHConnectionCreateManyFolderInputEnvelope
+    connect?: SSHConnectionWhereUniqueInput | SSHConnectionWhereUniqueInput[]
+  }
+
+  export type SSHFolderUncheckedCreateNestedManyWithoutParentInput = {
+    create?: XOR<SSHFolderCreateWithoutParentInput, SSHFolderUncheckedCreateWithoutParentInput> | SSHFolderCreateWithoutParentInput[] | SSHFolderUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: SSHFolderCreateOrConnectWithoutParentInput | SSHFolderCreateOrConnectWithoutParentInput[]
+    createMany?: SSHFolderCreateManyParentInputEnvelope
+    connect?: SSHFolderWhereUniqueInput | SSHFolderWhereUniqueInput[]
+  }
+
+  export type SSHConnectionUncheckedCreateNestedManyWithoutFolderInput = {
+    create?: XOR<SSHConnectionCreateWithoutFolderInput, SSHConnectionUncheckedCreateWithoutFolderInput> | SSHConnectionCreateWithoutFolderInput[] | SSHConnectionUncheckedCreateWithoutFolderInput[]
+    connectOrCreate?: SSHConnectionCreateOrConnectWithoutFolderInput | SSHConnectionCreateOrConnectWithoutFolderInput[]
+    createMany?: SSHConnectionCreateManyFolderInputEnvelope
+    connect?: SSHConnectionWhereUniqueInput | SSHConnectionWhereUniqueInput[]
+  }
+
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type UserUpdateOneRequiredWithoutSshFoldersNestedInput = {
+    create?: XOR<UserCreateWithoutSshFoldersInput, UserUncheckedCreateWithoutSshFoldersInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSshFoldersInput
+    upsert?: UserUpsertWithoutSshFoldersInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSshFoldersInput, UserUpdateWithoutSshFoldersInput>, UserUncheckedUpdateWithoutSshFoldersInput>
+  }
+
+  export type SSHFolderUpdateOneWithoutChildrenNestedInput = {
+    create?: XOR<SSHFolderCreateWithoutChildrenInput, SSHFolderUncheckedCreateWithoutChildrenInput>
+    connectOrCreate?: SSHFolderCreateOrConnectWithoutChildrenInput
+    upsert?: SSHFolderUpsertWithoutChildrenInput
+    disconnect?: SSHFolderWhereInput | boolean
+    delete?: SSHFolderWhereInput | boolean
+    connect?: SSHFolderWhereUniqueInput
+    update?: XOR<XOR<SSHFolderUpdateToOneWithWhereWithoutChildrenInput, SSHFolderUpdateWithoutChildrenInput>, SSHFolderUncheckedUpdateWithoutChildrenInput>
+  }
+
+  export type SSHFolderUpdateManyWithoutParentNestedInput = {
+    create?: XOR<SSHFolderCreateWithoutParentInput, SSHFolderUncheckedCreateWithoutParentInput> | SSHFolderCreateWithoutParentInput[] | SSHFolderUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: SSHFolderCreateOrConnectWithoutParentInput | SSHFolderCreateOrConnectWithoutParentInput[]
+    upsert?: SSHFolderUpsertWithWhereUniqueWithoutParentInput | SSHFolderUpsertWithWhereUniqueWithoutParentInput[]
+    createMany?: SSHFolderCreateManyParentInputEnvelope
+    set?: SSHFolderWhereUniqueInput | SSHFolderWhereUniqueInput[]
+    disconnect?: SSHFolderWhereUniqueInput | SSHFolderWhereUniqueInput[]
+    delete?: SSHFolderWhereUniqueInput | SSHFolderWhereUniqueInput[]
+    connect?: SSHFolderWhereUniqueInput | SSHFolderWhereUniqueInput[]
+    update?: SSHFolderUpdateWithWhereUniqueWithoutParentInput | SSHFolderUpdateWithWhereUniqueWithoutParentInput[]
+    updateMany?: SSHFolderUpdateManyWithWhereWithoutParentInput | SSHFolderUpdateManyWithWhereWithoutParentInput[]
+    deleteMany?: SSHFolderScalarWhereInput | SSHFolderScalarWhereInput[]
+  }
+
+  export type SSHConnectionUpdateManyWithoutFolderNestedInput = {
+    create?: XOR<SSHConnectionCreateWithoutFolderInput, SSHConnectionUncheckedCreateWithoutFolderInput> | SSHConnectionCreateWithoutFolderInput[] | SSHConnectionUncheckedCreateWithoutFolderInput[]
+    connectOrCreate?: SSHConnectionCreateOrConnectWithoutFolderInput | SSHConnectionCreateOrConnectWithoutFolderInput[]
+    upsert?: SSHConnectionUpsertWithWhereUniqueWithoutFolderInput | SSHConnectionUpsertWithWhereUniqueWithoutFolderInput[]
+    createMany?: SSHConnectionCreateManyFolderInputEnvelope
+    set?: SSHConnectionWhereUniqueInput | SSHConnectionWhereUniqueInput[]
+    disconnect?: SSHConnectionWhereUniqueInput | SSHConnectionWhereUniqueInput[]
+    delete?: SSHConnectionWhereUniqueInput | SSHConnectionWhereUniqueInput[]
+    connect?: SSHConnectionWhereUniqueInput | SSHConnectionWhereUniqueInput[]
+    update?: SSHConnectionUpdateWithWhereUniqueWithoutFolderInput | SSHConnectionUpdateWithWhereUniqueWithoutFolderInput[]
+    updateMany?: SSHConnectionUpdateManyWithWhereWithoutFolderInput | SSHConnectionUpdateManyWithWhereWithoutFolderInput[]
+    deleteMany?: SSHConnectionScalarWhereInput | SSHConnectionScalarWhereInput[]
+  }
+
+  export type SSHFolderUncheckedUpdateManyWithoutParentNestedInput = {
+    create?: XOR<SSHFolderCreateWithoutParentInput, SSHFolderUncheckedCreateWithoutParentInput> | SSHFolderCreateWithoutParentInput[] | SSHFolderUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: SSHFolderCreateOrConnectWithoutParentInput | SSHFolderCreateOrConnectWithoutParentInput[]
+    upsert?: SSHFolderUpsertWithWhereUniqueWithoutParentInput | SSHFolderUpsertWithWhereUniqueWithoutParentInput[]
+    createMany?: SSHFolderCreateManyParentInputEnvelope
+    set?: SSHFolderWhereUniqueInput | SSHFolderWhereUniqueInput[]
+    disconnect?: SSHFolderWhereUniqueInput | SSHFolderWhereUniqueInput[]
+    delete?: SSHFolderWhereUniqueInput | SSHFolderWhereUniqueInput[]
+    connect?: SSHFolderWhereUniqueInput | SSHFolderWhereUniqueInput[]
+    update?: SSHFolderUpdateWithWhereUniqueWithoutParentInput | SSHFolderUpdateWithWhereUniqueWithoutParentInput[]
+    updateMany?: SSHFolderUpdateManyWithWhereWithoutParentInput | SSHFolderUpdateManyWithWhereWithoutParentInput[]
+    deleteMany?: SSHFolderScalarWhereInput | SSHFolderScalarWhereInput[]
+  }
+
+  export type SSHConnectionUncheckedUpdateManyWithoutFolderNestedInput = {
+    create?: XOR<SSHConnectionCreateWithoutFolderInput, SSHConnectionUncheckedCreateWithoutFolderInput> | SSHConnectionCreateWithoutFolderInput[] | SSHConnectionUncheckedCreateWithoutFolderInput[]
+    connectOrCreate?: SSHConnectionCreateOrConnectWithoutFolderInput | SSHConnectionCreateOrConnectWithoutFolderInput[]
+    upsert?: SSHConnectionUpsertWithWhereUniqueWithoutFolderInput | SSHConnectionUpsertWithWhereUniqueWithoutFolderInput[]
+    createMany?: SSHConnectionCreateManyFolderInputEnvelope
+    set?: SSHConnectionWhereUniqueInput | SSHConnectionWhereUniqueInput[]
+    disconnect?: SSHConnectionWhereUniqueInput | SSHConnectionWhereUniqueInput[]
+    delete?: SSHConnectionWhereUniqueInput | SSHConnectionWhereUniqueInput[]
+    connect?: SSHConnectionWhereUniqueInput | SSHConnectionWhereUniqueInput[]
+    update?: SSHConnectionUpdateWithWhereUniqueWithoutFolderInput | SSHConnectionUpdateWithWhereUniqueWithoutFolderInput[]
+    updateMany?: SSHConnectionUpdateManyWithWhereWithoutFolderInput | SSHConnectionUpdateManyWithWhereWithoutFolderInput[]
+    deleteMany?: SSHConnectionScalarWhereInput | SSHConnectionScalarWhereInput[]
+  }
+
   export type UserCreateNestedOneWithoutSshConnectionsInput = {
     create?: XOR<UserCreateWithoutSshConnectionsInput, UserUncheckedCreateWithoutSshConnectionsInput>
     connectOrCreate?: UserCreateOrConnectWithoutSshConnectionsInput
     connect?: UserWhereUniqueInput
+  }
+
+  export type SSHFolderCreateNestedOneWithoutConnectionsInput = {
+    create?: XOR<SSHFolderCreateWithoutConnectionsInput, SSHFolderUncheckedCreateWithoutConnectionsInput>
+    connectOrCreate?: SSHFolderCreateOrConnectWithoutConnectionsInput
+    connect?: SSHFolderWhereUniqueInput
   }
 
   export type ChatSessionCreateNestedManyWithoutSshConnectionInput = {
@@ -9855,14 +13057,6 @@ export namespace Prisma {
     connect?: CommandLogWhereUniqueInput | CommandLogWhereUniqueInput[]
   }
 
-  export type IntFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
-  }
-
   export type NullableDateTimeFieldUpdateOperationsInput = {
     set?: Date | string | null
   }
@@ -9873,6 +13067,16 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutSshConnectionsInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSshConnectionsInput, UserUpdateWithoutSshConnectionsInput>, UserUncheckedUpdateWithoutSshConnectionsInput>
+  }
+
+  export type SSHFolderUpdateOneWithoutConnectionsNestedInput = {
+    create?: XOR<SSHFolderCreateWithoutConnectionsInput, SSHFolderUncheckedCreateWithoutConnectionsInput>
+    connectOrCreate?: SSHFolderCreateOrConnectWithoutConnectionsInput
+    upsert?: SSHFolderUpsertWithoutConnectionsInput
+    disconnect?: SSHFolderWhereInput | boolean
+    delete?: SSHFolderWhereInput | boolean
+    connect?: SSHFolderWhereUniqueInput
+    update?: XOR<XOR<SSHFolderUpdateToOneWithWhereWithoutConnectionsInput, SSHFolderUpdateWithoutConnectionsInput>, SSHFolderUncheckedUpdateWithoutConnectionsInput>
   }
 
   export type ChatSessionUpdateManyWithoutSshConnectionNestedInput = {
@@ -9931,6 +13135,120 @@ export namespace Prisma {
     deleteMany?: CommandLogScalarWhereInput | CommandLogScalarWhereInput[]
   }
 
+  export type UserCreateNestedOneWithoutChatFoldersInput = {
+    create?: XOR<UserCreateWithoutChatFoldersInput, UserUncheckedCreateWithoutChatFoldersInput>
+    connectOrCreate?: UserCreateOrConnectWithoutChatFoldersInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type ChatFolderCreateNestedOneWithoutChildrenInput = {
+    create?: XOR<ChatFolderCreateWithoutChildrenInput, ChatFolderUncheckedCreateWithoutChildrenInput>
+    connectOrCreate?: ChatFolderCreateOrConnectWithoutChildrenInput
+    connect?: ChatFolderWhereUniqueInput
+  }
+
+  export type ChatFolderCreateNestedManyWithoutParentInput = {
+    create?: XOR<ChatFolderCreateWithoutParentInput, ChatFolderUncheckedCreateWithoutParentInput> | ChatFolderCreateWithoutParentInput[] | ChatFolderUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: ChatFolderCreateOrConnectWithoutParentInput | ChatFolderCreateOrConnectWithoutParentInput[]
+    createMany?: ChatFolderCreateManyParentInputEnvelope
+    connect?: ChatFolderWhereUniqueInput | ChatFolderWhereUniqueInput[]
+  }
+
+  export type ChatSessionCreateNestedManyWithoutFolderInput = {
+    create?: XOR<ChatSessionCreateWithoutFolderInput, ChatSessionUncheckedCreateWithoutFolderInput> | ChatSessionCreateWithoutFolderInput[] | ChatSessionUncheckedCreateWithoutFolderInput[]
+    connectOrCreate?: ChatSessionCreateOrConnectWithoutFolderInput | ChatSessionCreateOrConnectWithoutFolderInput[]
+    createMany?: ChatSessionCreateManyFolderInputEnvelope
+    connect?: ChatSessionWhereUniqueInput | ChatSessionWhereUniqueInput[]
+  }
+
+  export type ChatFolderUncheckedCreateNestedManyWithoutParentInput = {
+    create?: XOR<ChatFolderCreateWithoutParentInput, ChatFolderUncheckedCreateWithoutParentInput> | ChatFolderCreateWithoutParentInput[] | ChatFolderUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: ChatFolderCreateOrConnectWithoutParentInput | ChatFolderCreateOrConnectWithoutParentInput[]
+    createMany?: ChatFolderCreateManyParentInputEnvelope
+    connect?: ChatFolderWhereUniqueInput | ChatFolderWhereUniqueInput[]
+  }
+
+  export type ChatSessionUncheckedCreateNestedManyWithoutFolderInput = {
+    create?: XOR<ChatSessionCreateWithoutFolderInput, ChatSessionUncheckedCreateWithoutFolderInput> | ChatSessionCreateWithoutFolderInput[] | ChatSessionUncheckedCreateWithoutFolderInput[]
+    connectOrCreate?: ChatSessionCreateOrConnectWithoutFolderInput | ChatSessionCreateOrConnectWithoutFolderInput[]
+    createMany?: ChatSessionCreateManyFolderInputEnvelope
+    connect?: ChatSessionWhereUniqueInput | ChatSessionWhereUniqueInput[]
+  }
+
+  export type UserUpdateOneRequiredWithoutChatFoldersNestedInput = {
+    create?: XOR<UserCreateWithoutChatFoldersInput, UserUncheckedCreateWithoutChatFoldersInput>
+    connectOrCreate?: UserCreateOrConnectWithoutChatFoldersInput
+    upsert?: UserUpsertWithoutChatFoldersInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutChatFoldersInput, UserUpdateWithoutChatFoldersInput>, UserUncheckedUpdateWithoutChatFoldersInput>
+  }
+
+  export type ChatFolderUpdateOneWithoutChildrenNestedInput = {
+    create?: XOR<ChatFolderCreateWithoutChildrenInput, ChatFolderUncheckedCreateWithoutChildrenInput>
+    connectOrCreate?: ChatFolderCreateOrConnectWithoutChildrenInput
+    upsert?: ChatFolderUpsertWithoutChildrenInput
+    disconnect?: ChatFolderWhereInput | boolean
+    delete?: ChatFolderWhereInput | boolean
+    connect?: ChatFolderWhereUniqueInput
+    update?: XOR<XOR<ChatFolderUpdateToOneWithWhereWithoutChildrenInput, ChatFolderUpdateWithoutChildrenInput>, ChatFolderUncheckedUpdateWithoutChildrenInput>
+  }
+
+  export type ChatFolderUpdateManyWithoutParentNestedInput = {
+    create?: XOR<ChatFolderCreateWithoutParentInput, ChatFolderUncheckedCreateWithoutParentInput> | ChatFolderCreateWithoutParentInput[] | ChatFolderUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: ChatFolderCreateOrConnectWithoutParentInput | ChatFolderCreateOrConnectWithoutParentInput[]
+    upsert?: ChatFolderUpsertWithWhereUniqueWithoutParentInput | ChatFolderUpsertWithWhereUniqueWithoutParentInput[]
+    createMany?: ChatFolderCreateManyParentInputEnvelope
+    set?: ChatFolderWhereUniqueInput | ChatFolderWhereUniqueInput[]
+    disconnect?: ChatFolderWhereUniqueInput | ChatFolderWhereUniqueInput[]
+    delete?: ChatFolderWhereUniqueInput | ChatFolderWhereUniqueInput[]
+    connect?: ChatFolderWhereUniqueInput | ChatFolderWhereUniqueInput[]
+    update?: ChatFolderUpdateWithWhereUniqueWithoutParentInput | ChatFolderUpdateWithWhereUniqueWithoutParentInput[]
+    updateMany?: ChatFolderUpdateManyWithWhereWithoutParentInput | ChatFolderUpdateManyWithWhereWithoutParentInput[]
+    deleteMany?: ChatFolderScalarWhereInput | ChatFolderScalarWhereInput[]
+  }
+
+  export type ChatSessionUpdateManyWithoutFolderNestedInput = {
+    create?: XOR<ChatSessionCreateWithoutFolderInput, ChatSessionUncheckedCreateWithoutFolderInput> | ChatSessionCreateWithoutFolderInput[] | ChatSessionUncheckedCreateWithoutFolderInput[]
+    connectOrCreate?: ChatSessionCreateOrConnectWithoutFolderInput | ChatSessionCreateOrConnectWithoutFolderInput[]
+    upsert?: ChatSessionUpsertWithWhereUniqueWithoutFolderInput | ChatSessionUpsertWithWhereUniqueWithoutFolderInput[]
+    createMany?: ChatSessionCreateManyFolderInputEnvelope
+    set?: ChatSessionWhereUniqueInput | ChatSessionWhereUniqueInput[]
+    disconnect?: ChatSessionWhereUniqueInput | ChatSessionWhereUniqueInput[]
+    delete?: ChatSessionWhereUniqueInput | ChatSessionWhereUniqueInput[]
+    connect?: ChatSessionWhereUniqueInput | ChatSessionWhereUniqueInput[]
+    update?: ChatSessionUpdateWithWhereUniqueWithoutFolderInput | ChatSessionUpdateWithWhereUniqueWithoutFolderInput[]
+    updateMany?: ChatSessionUpdateManyWithWhereWithoutFolderInput | ChatSessionUpdateManyWithWhereWithoutFolderInput[]
+    deleteMany?: ChatSessionScalarWhereInput | ChatSessionScalarWhereInput[]
+  }
+
+  export type ChatFolderUncheckedUpdateManyWithoutParentNestedInput = {
+    create?: XOR<ChatFolderCreateWithoutParentInput, ChatFolderUncheckedCreateWithoutParentInput> | ChatFolderCreateWithoutParentInput[] | ChatFolderUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: ChatFolderCreateOrConnectWithoutParentInput | ChatFolderCreateOrConnectWithoutParentInput[]
+    upsert?: ChatFolderUpsertWithWhereUniqueWithoutParentInput | ChatFolderUpsertWithWhereUniqueWithoutParentInput[]
+    createMany?: ChatFolderCreateManyParentInputEnvelope
+    set?: ChatFolderWhereUniqueInput | ChatFolderWhereUniqueInput[]
+    disconnect?: ChatFolderWhereUniqueInput | ChatFolderWhereUniqueInput[]
+    delete?: ChatFolderWhereUniqueInput | ChatFolderWhereUniqueInput[]
+    connect?: ChatFolderWhereUniqueInput | ChatFolderWhereUniqueInput[]
+    update?: ChatFolderUpdateWithWhereUniqueWithoutParentInput | ChatFolderUpdateWithWhereUniqueWithoutParentInput[]
+    updateMany?: ChatFolderUpdateManyWithWhereWithoutParentInput | ChatFolderUpdateManyWithWhereWithoutParentInput[]
+    deleteMany?: ChatFolderScalarWhereInput | ChatFolderScalarWhereInput[]
+  }
+
+  export type ChatSessionUncheckedUpdateManyWithoutFolderNestedInput = {
+    create?: XOR<ChatSessionCreateWithoutFolderInput, ChatSessionUncheckedCreateWithoutFolderInput> | ChatSessionCreateWithoutFolderInput[] | ChatSessionUncheckedCreateWithoutFolderInput[]
+    connectOrCreate?: ChatSessionCreateOrConnectWithoutFolderInput | ChatSessionCreateOrConnectWithoutFolderInput[]
+    upsert?: ChatSessionUpsertWithWhereUniqueWithoutFolderInput | ChatSessionUpsertWithWhereUniqueWithoutFolderInput[]
+    createMany?: ChatSessionCreateManyFolderInputEnvelope
+    set?: ChatSessionWhereUniqueInput | ChatSessionWhereUniqueInput[]
+    disconnect?: ChatSessionWhereUniqueInput | ChatSessionWhereUniqueInput[]
+    delete?: ChatSessionWhereUniqueInput | ChatSessionWhereUniqueInput[]
+    connect?: ChatSessionWhereUniqueInput | ChatSessionWhereUniqueInput[]
+    update?: ChatSessionUpdateWithWhereUniqueWithoutFolderInput | ChatSessionUpdateWithWhereUniqueWithoutFolderInput[]
+    updateMany?: ChatSessionUpdateManyWithWhereWithoutFolderInput | ChatSessionUpdateManyWithWhereWithoutFolderInput[]
+    deleteMany?: ChatSessionScalarWhereInput | ChatSessionScalarWhereInput[]
+  }
+
   export type UserCreateNestedOneWithoutChatSessionsInput = {
     create?: XOR<UserCreateWithoutChatSessionsInput, UserUncheckedCreateWithoutChatSessionsInput>
     connectOrCreate?: UserCreateOrConnectWithoutChatSessionsInput
@@ -9941,6 +13259,12 @@ export namespace Prisma {
     create?: XOR<SSHConnectionCreateWithoutChatSessionsInput, SSHConnectionUncheckedCreateWithoutChatSessionsInput>
     connectOrCreate?: SSHConnectionCreateOrConnectWithoutChatSessionsInput
     connect?: SSHConnectionWhereUniqueInput
+  }
+
+  export type ChatFolderCreateNestedOneWithoutSessionsInput = {
+    create?: XOR<ChatFolderCreateWithoutSessionsInput, ChatFolderUncheckedCreateWithoutSessionsInput>
+    connectOrCreate?: ChatFolderCreateOrConnectWithoutSessionsInput
+    connect?: ChatFolderWhereUniqueInput
   }
 
   export type MessageCreateNestedManyWithoutSessionInput = {
@@ -9973,6 +13297,16 @@ export namespace Prisma {
     delete?: SSHConnectionWhereInput | boolean
     connect?: SSHConnectionWhereUniqueInput
     update?: XOR<XOR<SSHConnectionUpdateToOneWithWhereWithoutChatSessionsInput, SSHConnectionUpdateWithoutChatSessionsInput>, SSHConnectionUncheckedUpdateWithoutChatSessionsInput>
+  }
+
+  export type ChatFolderUpdateOneWithoutSessionsNestedInput = {
+    create?: XOR<ChatFolderCreateWithoutSessionsInput, ChatFolderUncheckedCreateWithoutSessionsInput>
+    connectOrCreate?: ChatFolderCreateOrConnectWithoutSessionsInput
+    upsert?: ChatFolderUpsertWithoutSessionsInput
+    disconnect?: ChatFolderWhereInput | boolean
+    delete?: ChatFolderWhereInput | boolean
+    connect?: ChatFolderWhereUniqueInput
+    update?: XOR<XOR<ChatFolderUpdateToOneWithWhereWithoutSessionsInput, ChatFolderUpdateWithoutSessionsInput>, ChatFolderUncheckedUpdateWithoutSessionsInput>
   }
 
   export type MessageUpdateManyWithoutSessionNestedInput = {
@@ -10191,17 +13525,6 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | null
-    notIn?: Date[] | string[] | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[]
@@ -10227,6 +13550,17 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | null
+    notIn?: Date[] | string[] | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
   export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -10270,6 +13604,37 @@ export namespace Prisma {
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
+  export type SSHFolderCreateWithoutUserInput = {
+    id?: string
+    name: string
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    parent?: SSHFolderCreateNestedOneWithoutChildrenInput
+    children?: SSHFolderCreateNestedManyWithoutParentInput
+    connections?: SSHConnectionCreateNestedManyWithoutFolderInput
+  }
+
+  export type SSHFolderUncheckedCreateWithoutUserInput = {
+    id?: string
+    name: string
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    parentId?: string | null
+    children?: SSHFolderUncheckedCreateNestedManyWithoutParentInput
+    connections?: SSHConnectionUncheckedCreateNestedManyWithoutFolderInput
+  }
+
+  export type SSHFolderCreateOrConnectWithoutUserInput = {
+    where: SSHFolderWhereUniqueInput
+    create: XOR<SSHFolderCreateWithoutUserInput, SSHFolderUncheckedCreateWithoutUserInput>
+  }
+
+  export type SSHFolderCreateManyUserInputEnvelope = {
+    data: SSHFolderCreateManyUserInput | SSHFolderCreateManyUserInput[]
+  }
+
   export type SSHConnectionCreateWithoutUserInput = {
     id?: string
     name: string
@@ -10287,6 +13652,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     meta?: string | null
+    folder?: SSHFolderCreateNestedOneWithoutConnectionsInput
     chatSessions?: ChatSessionCreateNestedManyWithoutSshConnectionInput
     commandLogs?: CommandLogCreateNestedManyWithoutSshConnectionInput
   }
@@ -10308,6 +13674,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     meta?: string | null
+    folderId?: string | null
     chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutSshConnectionInput
     commandLogs?: CommandLogUncheckedCreateNestedManyWithoutSshConnectionInput
   }
@@ -10321,6 +13688,37 @@ export namespace Prisma {
     data: SSHConnectionCreateManyUserInput | SSHConnectionCreateManyUserInput[]
   }
 
+  export type ChatFolderCreateWithoutUserInput = {
+    id?: string
+    name: string
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    parent?: ChatFolderCreateNestedOneWithoutChildrenInput
+    children?: ChatFolderCreateNestedManyWithoutParentInput
+    sessions?: ChatSessionCreateNestedManyWithoutFolderInput
+  }
+
+  export type ChatFolderUncheckedCreateWithoutUserInput = {
+    id?: string
+    name: string
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    parentId?: string | null
+    children?: ChatFolderUncheckedCreateNestedManyWithoutParentInput
+    sessions?: ChatSessionUncheckedCreateNestedManyWithoutFolderInput
+  }
+
+  export type ChatFolderCreateOrConnectWithoutUserInput = {
+    where: ChatFolderWhereUniqueInput
+    create: XOR<ChatFolderCreateWithoutUserInput, ChatFolderUncheckedCreateWithoutUserInput>
+  }
+
+  export type ChatFolderCreateManyUserInputEnvelope = {
+    data: ChatFolderCreateManyUserInput | ChatFolderCreateManyUserInput[]
+  }
+
   export type ChatSessionCreateWithoutUserInput = {
     id?: string
     title: string
@@ -10330,6 +13728,7 @@ export namespace Prisma {
     config?: string | null
     meta?: string | null
     sshConnection?: SSHConnectionCreateNestedOneWithoutChatSessionsInput
+    folder?: ChatFolderCreateNestedOneWithoutSessionsInput
     messages?: MessageCreateNestedManyWithoutSessionInput
   }
 
@@ -10342,6 +13741,7 @@ export namespace Prisma {
     config?: string | null
     meta?: string | null
     sshConnectionId?: string | null
+    folderId?: string | null
     messages?: MessageUncheckedCreateNestedManyWithoutSessionInput
   }
 
@@ -10449,6 +13849,35 @@ export namespace Prisma {
     create: XOR<UserSettingsCreateWithoutUserInput, UserSettingsUncheckedCreateWithoutUserInput>
   }
 
+  export type SSHFolderUpsertWithWhereUniqueWithoutUserInput = {
+    where: SSHFolderWhereUniqueInput
+    update: XOR<SSHFolderUpdateWithoutUserInput, SSHFolderUncheckedUpdateWithoutUserInput>
+    create: XOR<SSHFolderCreateWithoutUserInput, SSHFolderUncheckedCreateWithoutUserInput>
+  }
+
+  export type SSHFolderUpdateWithWhereUniqueWithoutUserInput = {
+    where: SSHFolderWhereUniqueInput
+    data: XOR<SSHFolderUpdateWithoutUserInput, SSHFolderUncheckedUpdateWithoutUserInput>
+  }
+
+  export type SSHFolderUpdateManyWithWhereWithoutUserInput = {
+    where: SSHFolderScalarWhereInput
+    data: XOR<SSHFolderUpdateManyMutationInput, SSHFolderUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type SSHFolderScalarWhereInput = {
+    AND?: SSHFolderScalarWhereInput | SSHFolderScalarWhereInput[]
+    OR?: SSHFolderScalarWhereInput[]
+    NOT?: SSHFolderScalarWhereInput | SSHFolderScalarWhereInput[]
+    id?: StringFilter<"SSHFolder"> | string
+    name?: StringFilter<"SSHFolder"> | string
+    order?: IntFilter<"SSHFolder"> | number
+    createdAt?: DateTimeFilter<"SSHFolder"> | Date | string
+    updatedAt?: DateTimeFilter<"SSHFolder"> | Date | string
+    userId?: StringFilter<"SSHFolder"> | string
+    parentId?: StringNullableFilter<"SSHFolder"> | string | null
+  }
+
   export type SSHConnectionUpsertWithWhereUniqueWithoutUserInput = {
     where: SSHConnectionWhereUniqueInput
     update: XOR<SSHConnectionUpdateWithoutUserInput, SSHConnectionUncheckedUpdateWithoutUserInput>
@@ -10486,6 +13915,36 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"SSHConnection"> | Date | string
     meta?: StringNullableFilter<"SSHConnection"> | string | null
     userId?: StringFilter<"SSHConnection"> | string
+    folderId?: StringNullableFilter<"SSHConnection"> | string | null
+  }
+
+  export type ChatFolderUpsertWithWhereUniqueWithoutUserInput = {
+    where: ChatFolderWhereUniqueInput
+    update: XOR<ChatFolderUpdateWithoutUserInput, ChatFolderUncheckedUpdateWithoutUserInput>
+    create: XOR<ChatFolderCreateWithoutUserInput, ChatFolderUncheckedCreateWithoutUserInput>
+  }
+
+  export type ChatFolderUpdateWithWhereUniqueWithoutUserInput = {
+    where: ChatFolderWhereUniqueInput
+    data: XOR<ChatFolderUpdateWithoutUserInput, ChatFolderUncheckedUpdateWithoutUserInput>
+  }
+
+  export type ChatFolderUpdateManyWithWhereWithoutUserInput = {
+    where: ChatFolderScalarWhereInput
+    data: XOR<ChatFolderUpdateManyMutationInput, ChatFolderUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type ChatFolderScalarWhereInput = {
+    AND?: ChatFolderScalarWhereInput | ChatFolderScalarWhereInput[]
+    OR?: ChatFolderScalarWhereInput[]
+    NOT?: ChatFolderScalarWhereInput | ChatFolderScalarWhereInput[]
+    id?: StringFilter<"ChatFolder"> | string
+    name?: StringFilter<"ChatFolder"> | string
+    order?: IntFilter<"ChatFolder"> | number
+    createdAt?: DateTimeFilter<"ChatFolder"> | Date | string
+    updatedAt?: DateTimeFilter<"ChatFolder"> | Date | string
+    userId?: StringFilter<"ChatFolder"> | string
+    parentId?: StringNullableFilter<"ChatFolder"> | string | null
   }
 
   export type ChatSessionUpsertWithWhereUniqueWithoutUserInput = {
@@ -10517,6 +13976,7 @@ export namespace Prisma {
     meta?: StringNullableFilter<"ChatSession"> | string | null
     userId?: StringFilter<"ChatSession"> | string
     sshConnectionId?: StringNullableFilter<"ChatSession"> | string | null
+    folderId?: StringNullableFilter<"ChatSession"> | string | null
   }
 
   export type MessageUpsertWithWhereUniqueWithoutUserInput = {
@@ -10625,7 +14085,9 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     settings?: string | null
+    sshFolders?: SSHFolderCreateNestedManyWithoutUserInput
     sshConnections?: SSHConnectionCreateNestedManyWithoutUserInput
+    chatFolders?: ChatFolderCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
     messages?: MessageCreateNestedManyWithoutUserInput
     commandLogs?: CommandLogCreateNestedManyWithoutUserInput
@@ -10643,7 +14105,9 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     settings?: string | null
+    sshFolders?: SSHFolderUncheckedCreateNestedManyWithoutUserInput
     sshConnections?: SSHConnectionUncheckedCreateNestedManyWithoutUserInput
+    chatFolders?: ChatFolderUncheckedCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
     messages?: MessageUncheckedCreateNestedManyWithoutUserInput
     commandLogs?: CommandLogUncheckedCreateNestedManyWithoutUserInput
@@ -10677,7 +14141,9 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     settings?: NullableStringFieldUpdateOperationsInput | string | null
+    sshFolders?: SSHFolderUpdateManyWithoutUserNestedInput
     sshConnections?: SSHConnectionUpdateManyWithoutUserNestedInput
+    chatFolders?: ChatFolderUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
     messages?: MessageUpdateManyWithoutUserNestedInput
     commandLogs?: CommandLogUpdateManyWithoutUserNestedInput
@@ -10695,10 +14161,284 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     settings?: NullableStringFieldUpdateOperationsInput | string | null
+    sshFolders?: SSHFolderUncheckedUpdateManyWithoutUserNestedInput
     sshConnections?: SSHConnectionUncheckedUpdateManyWithoutUserNestedInput
+    chatFolders?: ChatFolderUncheckedUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
     messages?: MessageUncheckedUpdateManyWithoutUserNestedInput
     commandLogs?: CommandLogUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserCreateWithoutSshFoldersInput = {
+    id?: string
+    uuid?: string
+    email?: string | null
+    username?: string | null
+    password?: string | null
+    avatar?: string | null
+    role?: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    settings?: string | null
+    sshConnections?: SSHConnectionCreateNestedManyWithoutUserInput
+    chatFolders?: ChatFolderCreateNestedManyWithoutUserInput
+    chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
+    messages?: MessageCreateNestedManyWithoutUserInput
+    commandLogs?: CommandLogCreateNestedManyWithoutUserInput
+    userSettings?: UserSettingsCreateNestedOneWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutSshFoldersInput = {
+    id?: string
+    uuid?: string
+    email?: string | null
+    username?: string | null
+    password?: string | null
+    avatar?: string | null
+    role?: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    settings?: string | null
+    sshConnections?: SSHConnectionUncheckedCreateNestedManyWithoutUserInput
+    chatFolders?: ChatFolderUncheckedCreateNestedManyWithoutUserInput
+    chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
+    messages?: MessageUncheckedCreateNestedManyWithoutUserInput
+    commandLogs?: CommandLogUncheckedCreateNestedManyWithoutUserInput
+    userSettings?: UserSettingsUncheckedCreateNestedOneWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutSshFoldersInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutSshFoldersInput, UserUncheckedCreateWithoutSshFoldersInput>
+  }
+
+  export type SSHFolderCreateWithoutChildrenInput = {
+    id?: string
+    name: string
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutSshFoldersInput
+    parent?: SSHFolderCreateNestedOneWithoutChildrenInput
+    connections?: SSHConnectionCreateNestedManyWithoutFolderInput
+  }
+
+  export type SSHFolderUncheckedCreateWithoutChildrenInput = {
+    id?: string
+    name: string
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    userId: string
+    parentId?: string | null
+    connections?: SSHConnectionUncheckedCreateNestedManyWithoutFolderInput
+  }
+
+  export type SSHFolderCreateOrConnectWithoutChildrenInput = {
+    where: SSHFolderWhereUniqueInput
+    create: XOR<SSHFolderCreateWithoutChildrenInput, SSHFolderUncheckedCreateWithoutChildrenInput>
+  }
+
+  export type SSHFolderCreateWithoutParentInput = {
+    id?: string
+    name: string
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutSshFoldersInput
+    children?: SSHFolderCreateNestedManyWithoutParentInput
+    connections?: SSHConnectionCreateNestedManyWithoutFolderInput
+  }
+
+  export type SSHFolderUncheckedCreateWithoutParentInput = {
+    id?: string
+    name: string
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    userId: string
+    children?: SSHFolderUncheckedCreateNestedManyWithoutParentInput
+    connections?: SSHConnectionUncheckedCreateNestedManyWithoutFolderInput
+  }
+
+  export type SSHFolderCreateOrConnectWithoutParentInput = {
+    where: SSHFolderWhereUniqueInput
+    create: XOR<SSHFolderCreateWithoutParentInput, SSHFolderUncheckedCreateWithoutParentInput>
+  }
+
+  export type SSHFolderCreateManyParentInputEnvelope = {
+    data: SSHFolderCreateManyParentInput | SSHFolderCreateManyParentInput[]
+  }
+
+  export type SSHConnectionCreateWithoutFolderInput = {
+    id?: string
+    name: string
+    host: string
+    port?: number
+    username: string
+    authType: string
+    password?: string | null
+    privateKey?: string | null
+    publicKey?: string | null
+    passphrase?: string | null
+    status?: string
+    lastUsed?: Date | string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    meta?: string | null
+    user: UserCreateNestedOneWithoutSshConnectionsInput
+    chatSessions?: ChatSessionCreateNestedManyWithoutSshConnectionInput
+    commandLogs?: CommandLogCreateNestedManyWithoutSshConnectionInput
+  }
+
+  export type SSHConnectionUncheckedCreateWithoutFolderInput = {
+    id?: string
+    name: string
+    host: string
+    port?: number
+    username: string
+    authType: string
+    password?: string | null
+    privateKey?: string | null
+    publicKey?: string | null
+    passphrase?: string | null
+    status?: string
+    lastUsed?: Date | string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    meta?: string | null
+    userId: string
+    chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutSshConnectionInput
+    commandLogs?: CommandLogUncheckedCreateNestedManyWithoutSshConnectionInput
+  }
+
+  export type SSHConnectionCreateOrConnectWithoutFolderInput = {
+    where: SSHConnectionWhereUniqueInput
+    create: XOR<SSHConnectionCreateWithoutFolderInput, SSHConnectionUncheckedCreateWithoutFolderInput>
+  }
+
+  export type SSHConnectionCreateManyFolderInputEnvelope = {
+    data: SSHConnectionCreateManyFolderInput | SSHConnectionCreateManyFolderInput[]
+  }
+
+  export type UserUpsertWithoutSshFoldersInput = {
+    update: XOR<UserUpdateWithoutSshFoldersInput, UserUncheckedUpdateWithoutSshFoldersInput>
+    create: XOR<UserCreateWithoutSshFoldersInput, UserUncheckedCreateWithoutSshFoldersInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutSshFoldersInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutSshFoldersInput, UserUncheckedUpdateWithoutSshFoldersInput>
+  }
+
+  export type UserUpdateWithoutSshFoldersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    uuid?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    settings?: NullableStringFieldUpdateOperationsInput | string | null
+    sshConnections?: SSHConnectionUpdateManyWithoutUserNestedInput
+    chatFolders?: ChatFolderUpdateManyWithoutUserNestedInput
+    chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
+    messages?: MessageUpdateManyWithoutUserNestedInput
+    commandLogs?: CommandLogUpdateManyWithoutUserNestedInput
+    userSettings?: UserSettingsUpdateOneWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutSshFoldersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    uuid?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    settings?: NullableStringFieldUpdateOperationsInput | string | null
+    sshConnections?: SSHConnectionUncheckedUpdateManyWithoutUserNestedInput
+    chatFolders?: ChatFolderUncheckedUpdateManyWithoutUserNestedInput
+    chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+    messages?: MessageUncheckedUpdateManyWithoutUserNestedInput
+    commandLogs?: CommandLogUncheckedUpdateManyWithoutUserNestedInput
+    userSettings?: UserSettingsUncheckedUpdateOneWithoutUserNestedInput
+  }
+
+  export type SSHFolderUpsertWithoutChildrenInput = {
+    update: XOR<SSHFolderUpdateWithoutChildrenInput, SSHFolderUncheckedUpdateWithoutChildrenInput>
+    create: XOR<SSHFolderCreateWithoutChildrenInput, SSHFolderUncheckedCreateWithoutChildrenInput>
+    where?: SSHFolderWhereInput
+  }
+
+  export type SSHFolderUpdateToOneWithWhereWithoutChildrenInput = {
+    where?: SSHFolderWhereInput
+    data: XOR<SSHFolderUpdateWithoutChildrenInput, SSHFolderUncheckedUpdateWithoutChildrenInput>
+  }
+
+  export type SSHFolderUpdateWithoutChildrenInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutSshFoldersNestedInput
+    parent?: SSHFolderUpdateOneWithoutChildrenNestedInput
+    connections?: SSHConnectionUpdateManyWithoutFolderNestedInput
+  }
+
+  export type SSHFolderUncheckedUpdateWithoutChildrenInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    connections?: SSHConnectionUncheckedUpdateManyWithoutFolderNestedInput
+  }
+
+  export type SSHFolderUpsertWithWhereUniqueWithoutParentInput = {
+    where: SSHFolderWhereUniqueInput
+    update: XOR<SSHFolderUpdateWithoutParentInput, SSHFolderUncheckedUpdateWithoutParentInput>
+    create: XOR<SSHFolderCreateWithoutParentInput, SSHFolderUncheckedCreateWithoutParentInput>
+  }
+
+  export type SSHFolderUpdateWithWhereUniqueWithoutParentInput = {
+    where: SSHFolderWhereUniqueInput
+    data: XOR<SSHFolderUpdateWithoutParentInput, SSHFolderUncheckedUpdateWithoutParentInput>
+  }
+
+  export type SSHFolderUpdateManyWithWhereWithoutParentInput = {
+    where: SSHFolderScalarWhereInput
+    data: XOR<SSHFolderUpdateManyMutationInput, SSHFolderUncheckedUpdateManyWithoutParentInput>
+  }
+
+  export type SSHConnectionUpsertWithWhereUniqueWithoutFolderInput = {
+    where: SSHConnectionWhereUniqueInput
+    update: XOR<SSHConnectionUpdateWithoutFolderInput, SSHConnectionUncheckedUpdateWithoutFolderInput>
+    create: XOR<SSHConnectionCreateWithoutFolderInput, SSHConnectionUncheckedCreateWithoutFolderInput>
+  }
+
+  export type SSHConnectionUpdateWithWhereUniqueWithoutFolderInput = {
+    where: SSHConnectionWhereUniqueInput
+    data: XOR<SSHConnectionUpdateWithoutFolderInput, SSHConnectionUncheckedUpdateWithoutFolderInput>
+  }
+
+  export type SSHConnectionUpdateManyWithWhereWithoutFolderInput = {
+    where: SSHConnectionScalarWhereInput
+    data: XOR<SSHConnectionUpdateManyMutationInput, SSHConnectionUncheckedUpdateManyWithoutFolderInput>
   }
 
   export type UserCreateWithoutSshConnectionsInput = {
@@ -10713,6 +14453,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     settings?: string | null
+    sshFolders?: SSHFolderCreateNestedManyWithoutUserInput
+    chatFolders?: ChatFolderCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
     messages?: MessageCreateNestedManyWithoutUserInput
     commandLogs?: CommandLogCreateNestedManyWithoutUserInput
@@ -10731,6 +14473,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     settings?: string | null
+    sshFolders?: SSHFolderUncheckedCreateNestedManyWithoutUserInput
+    chatFolders?: ChatFolderUncheckedCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
     messages?: MessageUncheckedCreateNestedManyWithoutUserInput
     commandLogs?: CommandLogUncheckedCreateNestedManyWithoutUserInput
@@ -10742,6 +14486,33 @@ export namespace Prisma {
     create: XOR<UserCreateWithoutSshConnectionsInput, UserUncheckedCreateWithoutSshConnectionsInput>
   }
 
+  export type SSHFolderCreateWithoutConnectionsInput = {
+    id?: string
+    name: string
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutSshFoldersInput
+    parent?: SSHFolderCreateNestedOneWithoutChildrenInput
+    children?: SSHFolderCreateNestedManyWithoutParentInput
+  }
+
+  export type SSHFolderUncheckedCreateWithoutConnectionsInput = {
+    id?: string
+    name: string
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    userId: string
+    parentId?: string | null
+    children?: SSHFolderUncheckedCreateNestedManyWithoutParentInput
+  }
+
+  export type SSHFolderCreateOrConnectWithoutConnectionsInput = {
+    where: SSHFolderWhereUniqueInput
+    create: XOR<SSHFolderCreateWithoutConnectionsInput, SSHFolderUncheckedCreateWithoutConnectionsInput>
+  }
+
   export type ChatSessionCreateWithoutSshConnectionInput = {
     id?: string
     title: string
@@ -10751,6 +14522,7 @@ export namespace Prisma {
     config?: string | null
     meta?: string | null
     user: UserCreateNestedOneWithoutChatSessionsInput
+    folder?: ChatFolderCreateNestedOneWithoutSessionsInput
     messages?: MessageCreateNestedManyWithoutSessionInput
   }
 
@@ -10763,6 +14535,7 @@ export namespace Prisma {
     config?: string | null
     meta?: string | null
     userId: string
+    folderId?: string | null
     messages?: MessageUncheckedCreateNestedManyWithoutSessionInput
   }
 
@@ -10831,6 +14604,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     settings?: NullableStringFieldUpdateOperationsInput | string | null
+    sshFolders?: SSHFolderUpdateManyWithoutUserNestedInput
+    chatFolders?: ChatFolderUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
     messages?: MessageUpdateManyWithoutUserNestedInput
     commandLogs?: CommandLogUpdateManyWithoutUserNestedInput
@@ -10849,10 +14624,45 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     settings?: NullableStringFieldUpdateOperationsInput | string | null
+    sshFolders?: SSHFolderUncheckedUpdateManyWithoutUserNestedInput
+    chatFolders?: ChatFolderUncheckedUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
     messages?: MessageUncheckedUpdateManyWithoutUserNestedInput
     commandLogs?: CommandLogUncheckedUpdateManyWithoutUserNestedInput
     userSettings?: UserSettingsUncheckedUpdateOneWithoutUserNestedInput
+  }
+
+  export type SSHFolderUpsertWithoutConnectionsInput = {
+    update: XOR<SSHFolderUpdateWithoutConnectionsInput, SSHFolderUncheckedUpdateWithoutConnectionsInput>
+    create: XOR<SSHFolderCreateWithoutConnectionsInput, SSHFolderUncheckedCreateWithoutConnectionsInput>
+    where?: SSHFolderWhereInput
+  }
+
+  export type SSHFolderUpdateToOneWithWhereWithoutConnectionsInput = {
+    where?: SSHFolderWhereInput
+    data: XOR<SSHFolderUpdateWithoutConnectionsInput, SSHFolderUncheckedUpdateWithoutConnectionsInput>
+  }
+
+  export type SSHFolderUpdateWithoutConnectionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutSshFoldersNestedInput
+    parent?: SSHFolderUpdateOneWithoutChildrenNestedInput
+    children?: SSHFolderUpdateManyWithoutParentNestedInput
+  }
+
+  export type SSHFolderUncheckedUpdateWithoutConnectionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    children?: SSHFolderUncheckedUpdateManyWithoutParentNestedInput
   }
 
   export type ChatSessionUpsertWithWhereUniqueWithoutSshConnectionInput = {
@@ -10887,6 +14697,260 @@ export namespace Prisma {
     data: XOR<CommandLogUpdateManyMutationInput, CommandLogUncheckedUpdateManyWithoutSshConnectionInput>
   }
 
+  export type UserCreateWithoutChatFoldersInput = {
+    id?: string
+    uuid?: string
+    email?: string | null
+    username?: string | null
+    password?: string | null
+    avatar?: string | null
+    role?: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    settings?: string | null
+    sshFolders?: SSHFolderCreateNestedManyWithoutUserInput
+    sshConnections?: SSHConnectionCreateNestedManyWithoutUserInput
+    chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
+    messages?: MessageCreateNestedManyWithoutUserInput
+    commandLogs?: CommandLogCreateNestedManyWithoutUserInput
+    userSettings?: UserSettingsCreateNestedOneWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutChatFoldersInput = {
+    id?: string
+    uuid?: string
+    email?: string | null
+    username?: string | null
+    password?: string | null
+    avatar?: string | null
+    role?: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    settings?: string | null
+    sshFolders?: SSHFolderUncheckedCreateNestedManyWithoutUserInput
+    sshConnections?: SSHConnectionUncheckedCreateNestedManyWithoutUserInput
+    chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
+    messages?: MessageUncheckedCreateNestedManyWithoutUserInput
+    commandLogs?: CommandLogUncheckedCreateNestedManyWithoutUserInput
+    userSettings?: UserSettingsUncheckedCreateNestedOneWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutChatFoldersInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutChatFoldersInput, UserUncheckedCreateWithoutChatFoldersInput>
+  }
+
+  export type ChatFolderCreateWithoutChildrenInput = {
+    id?: string
+    name: string
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutChatFoldersInput
+    parent?: ChatFolderCreateNestedOneWithoutChildrenInput
+    sessions?: ChatSessionCreateNestedManyWithoutFolderInput
+  }
+
+  export type ChatFolderUncheckedCreateWithoutChildrenInput = {
+    id?: string
+    name: string
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    userId: string
+    parentId?: string | null
+    sessions?: ChatSessionUncheckedCreateNestedManyWithoutFolderInput
+  }
+
+  export type ChatFolderCreateOrConnectWithoutChildrenInput = {
+    where: ChatFolderWhereUniqueInput
+    create: XOR<ChatFolderCreateWithoutChildrenInput, ChatFolderUncheckedCreateWithoutChildrenInput>
+  }
+
+  export type ChatFolderCreateWithoutParentInput = {
+    id?: string
+    name: string
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutChatFoldersInput
+    children?: ChatFolderCreateNestedManyWithoutParentInput
+    sessions?: ChatSessionCreateNestedManyWithoutFolderInput
+  }
+
+  export type ChatFolderUncheckedCreateWithoutParentInput = {
+    id?: string
+    name: string
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    userId: string
+    children?: ChatFolderUncheckedCreateNestedManyWithoutParentInput
+    sessions?: ChatSessionUncheckedCreateNestedManyWithoutFolderInput
+  }
+
+  export type ChatFolderCreateOrConnectWithoutParentInput = {
+    where: ChatFolderWhereUniqueInput
+    create: XOR<ChatFolderCreateWithoutParentInput, ChatFolderUncheckedCreateWithoutParentInput>
+  }
+
+  export type ChatFolderCreateManyParentInputEnvelope = {
+    data: ChatFolderCreateManyParentInput | ChatFolderCreateManyParentInput[]
+  }
+
+  export type ChatSessionCreateWithoutFolderInput = {
+    id?: string
+    title: string
+    type?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    config?: string | null
+    meta?: string | null
+    user: UserCreateNestedOneWithoutChatSessionsInput
+    sshConnection?: SSHConnectionCreateNestedOneWithoutChatSessionsInput
+    messages?: MessageCreateNestedManyWithoutSessionInput
+  }
+
+  export type ChatSessionUncheckedCreateWithoutFolderInput = {
+    id?: string
+    title: string
+    type?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    config?: string | null
+    meta?: string | null
+    userId: string
+    sshConnectionId?: string | null
+    messages?: MessageUncheckedCreateNestedManyWithoutSessionInput
+  }
+
+  export type ChatSessionCreateOrConnectWithoutFolderInput = {
+    where: ChatSessionWhereUniqueInput
+    create: XOR<ChatSessionCreateWithoutFolderInput, ChatSessionUncheckedCreateWithoutFolderInput>
+  }
+
+  export type ChatSessionCreateManyFolderInputEnvelope = {
+    data: ChatSessionCreateManyFolderInput | ChatSessionCreateManyFolderInput[]
+  }
+
+  export type UserUpsertWithoutChatFoldersInput = {
+    update: XOR<UserUpdateWithoutChatFoldersInput, UserUncheckedUpdateWithoutChatFoldersInput>
+    create: XOR<UserCreateWithoutChatFoldersInput, UserUncheckedCreateWithoutChatFoldersInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutChatFoldersInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutChatFoldersInput, UserUncheckedUpdateWithoutChatFoldersInput>
+  }
+
+  export type UserUpdateWithoutChatFoldersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    uuid?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    settings?: NullableStringFieldUpdateOperationsInput | string | null
+    sshFolders?: SSHFolderUpdateManyWithoutUserNestedInput
+    sshConnections?: SSHConnectionUpdateManyWithoutUserNestedInput
+    chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
+    messages?: MessageUpdateManyWithoutUserNestedInput
+    commandLogs?: CommandLogUpdateManyWithoutUserNestedInput
+    userSettings?: UserSettingsUpdateOneWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutChatFoldersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    uuid?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    settings?: NullableStringFieldUpdateOperationsInput | string | null
+    sshFolders?: SSHFolderUncheckedUpdateManyWithoutUserNestedInput
+    sshConnections?: SSHConnectionUncheckedUpdateManyWithoutUserNestedInput
+    chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+    messages?: MessageUncheckedUpdateManyWithoutUserNestedInput
+    commandLogs?: CommandLogUncheckedUpdateManyWithoutUserNestedInput
+    userSettings?: UserSettingsUncheckedUpdateOneWithoutUserNestedInput
+  }
+
+  export type ChatFolderUpsertWithoutChildrenInput = {
+    update: XOR<ChatFolderUpdateWithoutChildrenInput, ChatFolderUncheckedUpdateWithoutChildrenInput>
+    create: XOR<ChatFolderCreateWithoutChildrenInput, ChatFolderUncheckedCreateWithoutChildrenInput>
+    where?: ChatFolderWhereInput
+  }
+
+  export type ChatFolderUpdateToOneWithWhereWithoutChildrenInput = {
+    where?: ChatFolderWhereInput
+    data: XOR<ChatFolderUpdateWithoutChildrenInput, ChatFolderUncheckedUpdateWithoutChildrenInput>
+  }
+
+  export type ChatFolderUpdateWithoutChildrenInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutChatFoldersNestedInput
+    parent?: ChatFolderUpdateOneWithoutChildrenNestedInput
+    sessions?: ChatSessionUpdateManyWithoutFolderNestedInput
+  }
+
+  export type ChatFolderUncheckedUpdateWithoutChildrenInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    sessions?: ChatSessionUncheckedUpdateManyWithoutFolderNestedInput
+  }
+
+  export type ChatFolderUpsertWithWhereUniqueWithoutParentInput = {
+    where: ChatFolderWhereUniqueInput
+    update: XOR<ChatFolderUpdateWithoutParentInput, ChatFolderUncheckedUpdateWithoutParentInput>
+    create: XOR<ChatFolderCreateWithoutParentInput, ChatFolderUncheckedCreateWithoutParentInput>
+  }
+
+  export type ChatFolderUpdateWithWhereUniqueWithoutParentInput = {
+    where: ChatFolderWhereUniqueInput
+    data: XOR<ChatFolderUpdateWithoutParentInput, ChatFolderUncheckedUpdateWithoutParentInput>
+  }
+
+  export type ChatFolderUpdateManyWithWhereWithoutParentInput = {
+    where: ChatFolderScalarWhereInput
+    data: XOR<ChatFolderUpdateManyMutationInput, ChatFolderUncheckedUpdateManyWithoutParentInput>
+  }
+
+  export type ChatSessionUpsertWithWhereUniqueWithoutFolderInput = {
+    where: ChatSessionWhereUniqueInput
+    update: XOR<ChatSessionUpdateWithoutFolderInput, ChatSessionUncheckedUpdateWithoutFolderInput>
+    create: XOR<ChatSessionCreateWithoutFolderInput, ChatSessionUncheckedCreateWithoutFolderInput>
+  }
+
+  export type ChatSessionUpdateWithWhereUniqueWithoutFolderInput = {
+    where: ChatSessionWhereUniqueInput
+    data: XOR<ChatSessionUpdateWithoutFolderInput, ChatSessionUncheckedUpdateWithoutFolderInput>
+  }
+
+  export type ChatSessionUpdateManyWithWhereWithoutFolderInput = {
+    where: ChatSessionScalarWhereInput
+    data: XOR<ChatSessionUpdateManyMutationInput, ChatSessionUncheckedUpdateManyWithoutFolderInput>
+  }
+
   export type UserCreateWithoutChatSessionsInput = {
     id?: string
     uuid?: string
@@ -10899,7 +14963,9 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     settings?: string | null
+    sshFolders?: SSHFolderCreateNestedManyWithoutUserInput
     sshConnections?: SSHConnectionCreateNestedManyWithoutUserInput
+    chatFolders?: ChatFolderCreateNestedManyWithoutUserInput
     messages?: MessageCreateNestedManyWithoutUserInput
     commandLogs?: CommandLogCreateNestedManyWithoutUserInput
     userSettings?: UserSettingsCreateNestedOneWithoutUserInput
@@ -10917,7 +14983,9 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     settings?: string | null
+    sshFolders?: SSHFolderUncheckedCreateNestedManyWithoutUserInput
     sshConnections?: SSHConnectionUncheckedCreateNestedManyWithoutUserInput
+    chatFolders?: ChatFolderUncheckedCreateNestedManyWithoutUserInput
     messages?: MessageUncheckedCreateNestedManyWithoutUserInput
     commandLogs?: CommandLogUncheckedCreateNestedManyWithoutUserInput
     userSettings?: UserSettingsUncheckedCreateNestedOneWithoutUserInput
@@ -10946,6 +15014,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     meta?: string | null
     user: UserCreateNestedOneWithoutSshConnectionsInput
+    folder?: SSHFolderCreateNestedOneWithoutConnectionsInput
     commandLogs?: CommandLogCreateNestedManyWithoutSshConnectionInput
   }
 
@@ -10967,12 +15036,40 @@ export namespace Prisma {
     updatedAt?: Date | string
     meta?: string | null
     userId: string
+    folderId?: string | null
     commandLogs?: CommandLogUncheckedCreateNestedManyWithoutSshConnectionInput
   }
 
   export type SSHConnectionCreateOrConnectWithoutChatSessionsInput = {
     where: SSHConnectionWhereUniqueInput
     create: XOR<SSHConnectionCreateWithoutChatSessionsInput, SSHConnectionUncheckedCreateWithoutChatSessionsInput>
+  }
+
+  export type ChatFolderCreateWithoutSessionsInput = {
+    id?: string
+    name: string
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutChatFoldersInput
+    parent?: ChatFolderCreateNestedOneWithoutChildrenInput
+    children?: ChatFolderCreateNestedManyWithoutParentInput
+  }
+
+  export type ChatFolderUncheckedCreateWithoutSessionsInput = {
+    id?: string
+    name: string
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    userId: string
+    parentId?: string | null
+    children?: ChatFolderUncheckedCreateNestedManyWithoutParentInput
+  }
+
+  export type ChatFolderCreateOrConnectWithoutSessionsInput = {
+    where: ChatFolderWhereUniqueInput
+    create: XOR<ChatFolderCreateWithoutSessionsInput, ChatFolderUncheckedCreateWithoutSessionsInput>
   }
 
   export type MessageCreateWithoutSessionInput = {
@@ -11041,7 +15138,9 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     settings?: NullableStringFieldUpdateOperationsInput | string | null
+    sshFolders?: SSHFolderUpdateManyWithoutUserNestedInput
     sshConnections?: SSHConnectionUpdateManyWithoutUserNestedInput
+    chatFolders?: ChatFolderUpdateManyWithoutUserNestedInput
     messages?: MessageUpdateManyWithoutUserNestedInput
     commandLogs?: CommandLogUpdateManyWithoutUserNestedInput
     userSettings?: UserSettingsUpdateOneWithoutUserNestedInput
@@ -11059,7 +15158,9 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     settings?: NullableStringFieldUpdateOperationsInput | string | null
+    sshFolders?: SSHFolderUncheckedUpdateManyWithoutUserNestedInput
     sshConnections?: SSHConnectionUncheckedUpdateManyWithoutUserNestedInput
+    chatFolders?: ChatFolderUncheckedUpdateManyWithoutUserNestedInput
     messages?: MessageUncheckedUpdateManyWithoutUserNestedInput
     commandLogs?: CommandLogUncheckedUpdateManyWithoutUserNestedInput
     userSettings?: UserSettingsUncheckedUpdateOneWithoutUserNestedInput
@@ -11094,6 +15195,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     meta?: NullableStringFieldUpdateOperationsInput | string | null
     user?: UserUpdateOneRequiredWithoutSshConnectionsNestedInput
+    folder?: SSHFolderUpdateOneWithoutConnectionsNestedInput
     commandLogs?: CommandLogUpdateManyWithoutSshConnectionNestedInput
   }
 
@@ -11115,7 +15217,41 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     meta?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
+    folderId?: NullableStringFieldUpdateOperationsInput | string | null
     commandLogs?: CommandLogUncheckedUpdateManyWithoutSshConnectionNestedInput
+  }
+
+  export type ChatFolderUpsertWithoutSessionsInput = {
+    update: XOR<ChatFolderUpdateWithoutSessionsInput, ChatFolderUncheckedUpdateWithoutSessionsInput>
+    create: XOR<ChatFolderCreateWithoutSessionsInput, ChatFolderUncheckedCreateWithoutSessionsInput>
+    where?: ChatFolderWhereInput
+  }
+
+  export type ChatFolderUpdateToOneWithWhereWithoutSessionsInput = {
+    where?: ChatFolderWhereInput
+    data: XOR<ChatFolderUpdateWithoutSessionsInput, ChatFolderUncheckedUpdateWithoutSessionsInput>
+  }
+
+  export type ChatFolderUpdateWithoutSessionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutChatFoldersNestedInput
+    parent?: ChatFolderUpdateOneWithoutChildrenNestedInput
+    children?: ChatFolderUpdateManyWithoutParentNestedInput
+  }
+
+  export type ChatFolderUncheckedUpdateWithoutSessionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    children?: ChatFolderUncheckedUpdateManyWithoutParentNestedInput
   }
 
   export type MessageUpsertWithWhereUniqueWithoutSessionInput = {
@@ -11144,6 +15280,7 @@ export namespace Prisma {
     meta?: string | null
     user: UserCreateNestedOneWithoutChatSessionsInput
     sshConnection?: SSHConnectionCreateNestedOneWithoutChatSessionsInput
+    folder?: ChatFolderCreateNestedOneWithoutSessionsInput
   }
 
   export type ChatSessionUncheckedCreateWithoutMessagesInput = {
@@ -11156,6 +15293,7 @@ export namespace Prisma {
     meta?: string | null
     userId: string
     sshConnectionId?: string | null
+    folderId?: string | null
   }
 
   export type ChatSessionCreateOrConnectWithoutMessagesInput = {
@@ -11175,7 +15313,9 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     settings?: string | null
+    sshFolders?: SSHFolderCreateNestedManyWithoutUserInput
     sshConnections?: SSHConnectionCreateNestedManyWithoutUserInput
+    chatFolders?: ChatFolderCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
     commandLogs?: CommandLogCreateNestedManyWithoutUserInput
     userSettings?: UserSettingsCreateNestedOneWithoutUserInput
@@ -11193,7 +15333,9 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     settings?: string | null
+    sshFolders?: SSHFolderUncheckedCreateNestedManyWithoutUserInput
     sshConnections?: SSHConnectionUncheckedCreateNestedManyWithoutUserInput
+    chatFolders?: ChatFolderUncheckedCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
     commandLogs?: CommandLogUncheckedCreateNestedManyWithoutUserInput
     userSettings?: UserSettingsUncheckedCreateNestedOneWithoutUserInput
@@ -11225,6 +15367,7 @@ export namespace Prisma {
     meta?: NullableStringFieldUpdateOperationsInput | string | null
     user?: UserUpdateOneRequiredWithoutChatSessionsNestedInput
     sshConnection?: SSHConnectionUpdateOneWithoutChatSessionsNestedInput
+    folder?: ChatFolderUpdateOneWithoutSessionsNestedInput
   }
 
   export type ChatSessionUncheckedUpdateWithoutMessagesInput = {
@@ -11237,6 +15380,7 @@ export namespace Prisma {
     meta?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
     sshConnectionId?: NullableStringFieldUpdateOperationsInput | string | null
+    folderId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UserUpsertWithoutMessagesInput = {
@@ -11262,7 +15406,9 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     settings?: NullableStringFieldUpdateOperationsInput | string | null
+    sshFolders?: SSHFolderUpdateManyWithoutUserNestedInput
     sshConnections?: SSHConnectionUpdateManyWithoutUserNestedInput
+    chatFolders?: ChatFolderUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
     commandLogs?: CommandLogUpdateManyWithoutUserNestedInput
     userSettings?: UserSettingsUpdateOneWithoutUserNestedInput
@@ -11280,7 +15426,9 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     settings?: NullableStringFieldUpdateOperationsInput | string | null
+    sshFolders?: SSHFolderUncheckedUpdateManyWithoutUserNestedInput
     sshConnections?: SSHConnectionUncheckedUpdateManyWithoutUserNestedInput
+    chatFolders?: ChatFolderUncheckedUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
     commandLogs?: CommandLogUncheckedUpdateManyWithoutUserNestedInput
     userSettings?: UserSettingsUncheckedUpdateOneWithoutUserNestedInput
@@ -11298,7 +15446,9 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     settings?: string | null
+    sshFolders?: SSHFolderCreateNestedManyWithoutUserInput
     sshConnections?: SSHConnectionCreateNestedManyWithoutUserInput
+    chatFolders?: ChatFolderCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
     messages?: MessageCreateNestedManyWithoutUserInput
     userSettings?: UserSettingsCreateNestedOneWithoutUserInput
@@ -11316,7 +15466,9 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     settings?: string | null
+    sshFolders?: SSHFolderUncheckedCreateNestedManyWithoutUserInput
     sshConnections?: SSHConnectionUncheckedCreateNestedManyWithoutUserInput
+    chatFolders?: ChatFolderUncheckedCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
     messages?: MessageUncheckedCreateNestedManyWithoutUserInput
     userSettings?: UserSettingsUncheckedCreateNestedOneWithoutUserInput
@@ -11345,6 +15497,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     meta?: string | null
     user: UserCreateNestedOneWithoutSshConnectionsInput
+    folder?: SSHFolderCreateNestedOneWithoutConnectionsInput
     chatSessions?: ChatSessionCreateNestedManyWithoutSshConnectionInput
   }
 
@@ -11366,6 +15519,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     meta?: string | null
     userId: string
+    folderId?: string | null
     chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutSshConnectionInput
   }
 
@@ -11397,7 +15551,9 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     settings?: NullableStringFieldUpdateOperationsInput | string | null
+    sshFolders?: SSHFolderUpdateManyWithoutUserNestedInput
     sshConnections?: SSHConnectionUpdateManyWithoutUserNestedInput
+    chatFolders?: ChatFolderUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
     messages?: MessageUpdateManyWithoutUserNestedInput
     userSettings?: UserSettingsUpdateOneWithoutUserNestedInput
@@ -11415,7 +15571,9 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     settings?: NullableStringFieldUpdateOperationsInput | string | null
+    sshFolders?: SSHFolderUncheckedUpdateManyWithoutUserNestedInput
     sshConnections?: SSHConnectionUncheckedUpdateManyWithoutUserNestedInput
+    chatFolders?: ChatFolderUncheckedUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
     messages?: MessageUncheckedUpdateManyWithoutUserNestedInput
     userSettings?: UserSettingsUncheckedUpdateOneWithoutUserNestedInput
@@ -11450,6 +15608,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     meta?: NullableStringFieldUpdateOperationsInput | string | null
     user?: UserUpdateOneRequiredWithoutSshConnectionsNestedInput
+    folder?: SSHFolderUpdateOneWithoutConnectionsNestedInput
     chatSessions?: ChatSessionUpdateManyWithoutSshConnectionNestedInput
   }
 
@@ -11471,7 +15630,17 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     meta?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
+    folderId?: NullableStringFieldUpdateOperationsInput | string | null
     chatSessions?: ChatSessionUncheckedUpdateManyWithoutSshConnectionNestedInput
+  }
+
+  export type SSHFolderCreateManyUserInput = {
+    id?: string
+    name: string
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    parentId?: string | null
   }
 
   export type SSHConnectionCreateManyUserInput = {
@@ -11491,6 +15660,16 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     meta?: string | null
+    folderId?: string | null
+  }
+
+  export type ChatFolderCreateManyUserInput = {
+    id?: string
+    name: string
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    parentId?: string | null
   }
 
   export type ChatSessionCreateManyUserInput = {
@@ -11502,6 +15681,7 @@ export namespace Prisma {
     config?: string | null
     meta?: string | null
     sshConnectionId?: string | null
+    folderId?: string | null
   }
 
   export type MessageCreateManyUserInput = {
@@ -11533,6 +15713,37 @@ export namespace Prisma {
     sshConnectionId?: string | null
   }
 
+  export type SSHFolderUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    parent?: SSHFolderUpdateOneWithoutChildrenNestedInput
+    children?: SSHFolderUpdateManyWithoutParentNestedInput
+    connections?: SSHConnectionUpdateManyWithoutFolderNestedInput
+  }
+
+  export type SSHFolderUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    children?: SSHFolderUncheckedUpdateManyWithoutParentNestedInput
+    connections?: SSHConnectionUncheckedUpdateManyWithoutFolderNestedInput
+  }
+
+  export type SSHFolderUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
   export type SSHConnectionUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
@@ -11550,6 +15761,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     meta?: NullableStringFieldUpdateOperationsInput | string | null
+    folder?: SSHFolderUpdateOneWithoutConnectionsNestedInput
     chatSessions?: ChatSessionUpdateManyWithoutSshConnectionNestedInput
     commandLogs?: CommandLogUpdateManyWithoutSshConnectionNestedInput
   }
@@ -11571,6 +15783,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     meta?: NullableStringFieldUpdateOperationsInput | string | null
+    folderId?: NullableStringFieldUpdateOperationsInput | string | null
     chatSessions?: ChatSessionUncheckedUpdateManyWithoutSshConnectionNestedInput
     commandLogs?: CommandLogUncheckedUpdateManyWithoutSshConnectionNestedInput
   }
@@ -11592,6 +15805,38 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     meta?: NullableStringFieldUpdateOperationsInput | string | null
+    folderId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ChatFolderUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    parent?: ChatFolderUpdateOneWithoutChildrenNestedInput
+    children?: ChatFolderUpdateManyWithoutParentNestedInput
+    sessions?: ChatSessionUpdateManyWithoutFolderNestedInput
+  }
+
+  export type ChatFolderUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    children?: ChatFolderUncheckedUpdateManyWithoutParentNestedInput
+    sessions?: ChatSessionUncheckedUpdateManyWithoutFolderNestedInput
+  }
+
+  export type ChatFolderUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ChatSessionUpdateWithoutUserInput = {
@@ -11603,6 +15848,7 @@ export namespace Prisma {
     config?: NullableStringFieldUpdateOperationsInput | string | null
     meta?: NullableStringFieldUpdateOperationsInput | string | null
     sshConnection?: SSHConnectionUpdateOneWithoutChatSessionsNestedInput
+    folder?: ChatFolderUpdateOneWithoutSessionsNestedInput
     messages?: MessageUpdateManyWithoutSessionNestedInput
   }
 
@@ -11615,6 +15861,7 @@ export namespace Prisma {
     config?: NullableStringFieldUpdateOperationsInput | string | null
     meta?: NullableStringFieldUpdateOperationsInput | string | null
     sshConnectionId?: NullableStringFieldUpdateOperationsInput | string | null
+    folderId?: NullableStringFieldUpdateOperationsInput | string | null
     messages?: MessageUncheckedUpdateManyWithoutSessionNestedInput
   }
 
@@ -11627,6 +15874,7 @@ export namespace Prisma {
     config?: NullableStringFieldUpdateOperationsInput | string | null
     meta?: NullableStringFieldUpdateOperationsInput | string | null
     sshConnectionId?: NullableStringFieldUpdateOperationsInput | string | null
+    folderId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type MessageUpdateWithoutUserInput = {
@@ -11716,6 +15964,130 @@ export namespace Prisma {
     sshConnectionId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
+  export type SSHFolderCreateManyParentInput = {
+    id?: string
+    name: string
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    userId: string
+  }
+
+  export type SSHConnectionCreateManyFolderInput = {
+    id?: string
+    name: string
+    host: string
+    port?: number
+    username: string
+    authType: string
+    password?: string | null
+    privateKey?: string | null
+    publicKey?: string | null
+    passphrase?: string | null
+    status?: string
+    lastUsed?: Date | string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    meta?: string | null
+    userId: string
+  }
+
+  export type SSHFolderUpdateWithoutParentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutSshFoldersNestedInput
+    children?: SSHFolderUpdateManyWithoutParentNestedInput
+    connections?: SSHConnectionUpdateManyWithoutFolderNestedInput
+  }
+
+  export type SSHFolderUncheckedUpdateWithoutParentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
+    children?: SSHFolderUncheckedUpdateManyWithoutParentNestedInput
+    connections?: SSHConnectionUncheckedUpdateManyWithoutFolderNestedInput
+  }
+
+  export type SSHFolderUncheckedUpdateManyWithoutParentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type SSHConnectionUpdateWithoutFolderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    host?: StringFieldUpdateOperationsInput | string
+    port?: IntFieldUpdateOperationsInput | number
+    username?: StringFieldUpdateOperationsInput | string
+    authType?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    privateKey?: NullableStringFieldUpdateOperationsInput | string | null
+    publicKey?: NullableStringFieldUpdateOperationsInput | string | null
+    passphrase?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    lastUsed?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
+    user?: UserUpdateOneRequiredWithoutSshConnectionsNestedInput
+    chatSessions?: ChatSessionUpdateManyWithoutSshConnectionNestedInput
+    commandLogs?: CommandLogUpdateManyWithoutSshConnectionNestedInput
+  }
+
+  export type SSHConnectionUncheckedUpdateWithoutFolderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    host?: StringFieldUpdateOperationsInput | string
+    port?: IntFieldUpdateOperationsInput | number
+    username?: StringFieldUpdateOperationsInput | string
+    authType?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    privateKey?: NullableStringFieldUpdateOperationsInput | string | null
+    publicKey?: NullableStringFieldUpdateOperationsInput | string | null
+    passphrase?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    lastUsed?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
+    userId?: StringFieldUpdateOperationsInput | string
+    chatSessions?: ChatSessionUncheckedUpdateManyWithoutSshConnectionNestedInput
+    commandLogs?: CommandLogUncheckedUpdateManyWithoutSshConnectionNestedInput
+  }
+
+  export type SSHConnectionUncheckedUpdateManyWithoutFolderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    host?: StringFieldUpdateOperationsInput | string
+    port?: IntFieldUpdateOperationsInput | number
+    username?: StringFieldUpdateOperationsInput | string
+    authType?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    privateKey?: NullableStringFieldUpdateOperationsInput | string | null
+    publicKey?: NullableStringFieldUpdateOperationsInput | string | null
+    passphrase?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    lastUsed?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
+    userId?: StringFieldUpdateOperationsInput | string
+  }
+
   export type ChatSessionCreateManySshConnectionInput = {
     id?: string
     title: string
@@ -11725,6 +16097,7 @@ export namespace Prisma {
     config?: string | null
     meta?: string | null
     userId: string
+    folderId?: string | null
   }
 
   export type CommandLogCreateManySshConnectionInput = {
@@ -11748,6 +16121,7 @@ export namespace Prisma {
     config?: NullableStringFieldUpdateOperationsInput | string | null
     meta?: NullableStringFieldUpdateOperationsInput | string | null
     user?: UserUpdateOneRequiredWithoutChatSessionsNestedInput
+    folder?: ChatFolderUpdateOneWithoutSessionsNestedInput
     messages?: MessageUpdateManyWithoutSessionNestedInput
   }
 
@@ -11760,6 +16134,7 @@ export namespace Prisma {
     config?: NullableStringFieldUpdateOperationsInput | string | null
     meta?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
+    folderId?: NullableStringFieldUpdateOperationsInput | string | null
     messages?: MessageUncheckedUpdateManyWithoutSessionNestedInput
   }
 
@@ -11772,6 +16147,7 @@ export namespace Prisma {
     config?: NullableStringFieldUpdateOperationsInput | string | null
     meta?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
+    folderId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CommandLogUpdateWithoutSshConnectionInput = {
@@ -11808,6 +16184,96 @@ export namespace Prisma {
     safetyLevel?: StringFieldUpdateOperationsInput | string
     metadata?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type ChatFolderCreateManyParentInput = {
+    id?: string
+    name: string
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    userId: string
+  }
+
+  export type ChatSessionCreateManyFolderInput = {
+    id?: string
+    title: string
+    type?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    config?: string | null
+    meta?: string | null
+    userId: string
+    sshConnectionId?: string | null
+  }
+
+  export type ChatFolderUpdateWithoutParentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutChatFoldersNestedInput
+    children?: ChatFolderUpdateManyWithoutParentNestedInput
+    sessions?: ChatSessionUpdateManyWithoutFolderNestedInput
+  }
+
+  export type ChatFolderUncheckedUpdateWithoutParentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
+    children?: ChatFolderUncheckedUpdateManyWithoutParentNestedInput
+    sessions?: ChatSessionUncheckedUpdateManyWithoutFolderNestedInput
+  }
+
+  export type ChatFolderUncheckedUpdateManyWithoutParentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type ChatSessionUpdateWithoutFolderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    config?: NullableStringFieldUpdateOperationsInput | string | null
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
+    user?: UserUpdateOneRequiredWithoutChatSessionsNestedInput
+    sshConnection?: SSHConnectionUpdateOneWithoutChatSessionsNestedInput
+    messages?: MessageUpdateManyWithoutSessionNestedInput
+  }
+
+  export type ChatSessionUncheckedUpdateWithoutFolderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    config?: NullableStringFieldUpdateOperationsInput | string | null
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
+    userId?: StringFieldUpdateOperationsInput | string
+    sshConnectionId?: NullableStringFieldUpdateOperationsInput | string | null
+    messages?: MessageUncheckedUpdateManyWithoutSessionNestedInput
+  }
+
+  export type ChatSessionUncheckedUpdateManyWithoutFolderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    config?: NullableStringFieldUpdateOperationsInput | string | null
+    meta?: NullableStringFieldUpdateOperationsInput | string | null
+    userId?: StringFieldUpdateOperationsInput | string
+    sshConnectionId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type MessageCreateManySessionInput = {
@@ -11888,9 +16354,17 @@ export namespace Prisma {
      */
     export type UserCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = UserCountOutputTypeDefaultArgs<ExtArgs>
     /**
+     * @deprecated Use SSHFolderCountOutputTypeDefaultArgs instead
+     */
+    export type SSHFolderCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = SSHFolderCountOutputTypeDefaultArgs<ExtArgs>
+    /**
      * @deprecated Use SSHConnectionCountOutputTypeDefaultArgs instead
      */
     export type SSHConnectionCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = SSHConnectionCountOutputTypeDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use ChatFolderCountOutputTypeDefaultArgs instead
+     */
+    export type ChatFolderCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ChatFolderCountOutputTypeDefaultArgs<ExtArgs>
     /**
      * @deprecated Use ChatSessionCountOutputTypeDefaultArgs instead
      */
@@ -11904,9 +16378,17 @@ export namespace Prisma {
      */
     export type UserSettingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = UserSettingsDefaultArgs<ExtArgs>
     /**
+     * @deprecated Use SSHFolderDefaultArgs instead
+     */
+    export type SSHFolderArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = SSHFolderDefaultArgs<ExtArgs>
+    /**
      * @deprecated Use SSHConnectionDefaultArgs instead
      */
     export type SSHConnectionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = SSHConnectionDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use ChatFolderDefaultArgs instead
+     */
+    export type ChatFolderArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ChatFolderDefaultArgs<ExtArgs>
     /**
      * @deprecated Use ChatSessionDefaultArgs instead
      */

@@ -141,6 +141,16 @@ exports.Prisma.UserSettingsScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.SSHFolderScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  order: 'order',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId',
+  parentId: 'parentId'
+};
+
 exports.Prisma.SSHConnectionScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -158,7 +168,18 @@ exports.Prisma.SSHConnectionScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   meta: 'meta',
-  userId: 'userId'
+  userId: 'userId',
+  folderId: 'folderId'
+};
+
+exports.Prisma.ChatFolderScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  order: 'order',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId',
+  parentId: 'parentId'
 };
 
 exports.Prisma.ChatSessionScalarFieldEnum = {
@@ -170,7 +191,8 @@ exports.Prisma.ChatSessionScalarFieldEnum = {
   config: 'config',
   meta: 'meta',
   userId: 'userId',
-  sshConnectionId: 'sshConnectionId'
+  sshConnectionId: 'sshConnectionId',
+  folderId: 'folderId'
 };
 
 exports.Prisma.MessageScalarFieldEnum = {
@@ -218,7 +240,9 @@ exports.Prisma.NullsOrder = {
 exports.Prisma.ModelName = {
   User: 'User',
   UserSettings: 'UserSettings',
+  SSHFolder: 'SSHFolder',
   SSHConnection: 'SSHConnection',
+  ChatFolder: 'ChatFolder',
   ChatSession: 'ChatSession',
   Message: 'Message',
   CommandLog: 'CommandLog'

@@ -109,7 +109,24 @@ export class LocalStorageAdapter extends BaseStorageAdapter {
         `
         console.log('   ✓ user_settings 表创建成功')
         
-        console.log('3️⃣ 创建 ssh_connections 表...')
+        console.log('3️⃣ 创建 ssh_folders 表...')
+        // 创建 ssh_folders 表
+        await this.prisma.$executeRaw`
+          CREATE TABLE IF NOT EXISTS ssh_folders (
+            id TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            "order" INTEGER DEFAULT 0,
+            createdAt DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            userId TEXT NOT NULL,
+            parentId TEXT,
+            FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE,
+            FOREIGN KEY (parentId) REFERENCES ssh_folders(id) ON DELETE CASCADE
+          )
+        `
+        console.log('   ✓ ssh_folders 表创建成功')
+        
+        console.log('4️⃣ 创建 ssh_connections 表...')
         // 创建 ssh_connections 表
         await this.prisma.$executeRaw`
           CREATE TABLE IF NOT EXISTS ssh_connections (
@@ -130,12 +147,31 @@ export class LocalStorageAdapter extends BaseStorageAdapter {
             updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
             meta TEXT,
             userId TEXT NOT NULL,
-            FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
+            folderId TEXT,
+            FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE,
+            FOREIGN KEY (folderId) REFERENCES ssh_folders(id) ON DELETE SET NULL
           )
         `
         console.log('   ✓ ssh_connections 表创建成功')
         
-        console.log('4️⃣ 创建 chat_sessions 表...')
+        console.log('5️⃣ 创建 chat_folders 表...')
+        // 创建 chat_folders 表
+        await this.prisma.$executeRaw`
+          CREATE TABLE IF NOT EXISTS chat_folders (
+            id TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            "order" INTEGER DEFAULT 0,
+            createdAt DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            userId TEXT NOT NULL,
+            parentId TEXT,
+            FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE,
+            FOREIGN KEY (parentId) REFERENCES chat_folders(id) ON DELETE CASCADE
+          )
+        `
+        console.log('   ✓ chat_folders 表创建成功')
+        
+        console.log('6️⃣ 创建 chat_sessions 表...')
         // 创建 chat_sessions 表
         await this.prisma.$executeRaw`
           CREATE TABLE IF NOT EXISTS chat_sessions (
@@ -148,13 +184,15 @@ export class LocalStorageAdapter extends BaseStorageAdapter {
             meta TEXT,
             userId TEXT NOT NULL,
             sshConnectionId TEXT,
+            folderId TEXT,
             FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE,
-            FOREIGN KEY (sshConnectionId) REFERENCES ssh_connections(id)
+            FOREIGN KEY (sshConnectionId) REFERENCES ssh_connections(id),
+            FOREIGN KEY (folderId) REFERENCES chat_folders(id) ON DELETE SET NULL
           )
         `
         console.log('   ✓ chat_sessions 表创建成功')
         
-        console.log('5️⃣ 创建 messages 表...')
+        console.log('7️⃣ 创建 messages 表...')
         // 创建 messages 表
         await this.prisma.$executeRaw`
           CREATE TABLE IF NOT EXISTS messages (
@@ -179,7 +217,7 @@ export class LocalStorageAdapter extends BaseStorageAdapter {
         `
         console.log('   ✓ messages 表创建成功')
         
-        console.log('6️⃣ 创建 command_logs 表...')
+        console.log('8️⃣ 创建 command_logs 表...')
         // 创建 command_logs 表
         await this.prisma.$executeRaw`
           CREATE TABLE IF NOT EXISTS command_logs (
