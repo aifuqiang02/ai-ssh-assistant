@@ -36,12 +36,148 @@ export class LocalStorageAdapter extends BaseStorageAdapter {
       this.isConnected = true
       console.log('Local database connected')
       
+      // 自动初始化数据库表（如果不存在）
+      await this.initializeDatabase()
+      
       if (this.options.syncEnabled) {
         this.startAutoSync()
       }
     } catch (error) {
       console.error('Failed to connect to local database:', error)
       throw error
+    }
+  }
+
+  /**
+   * 自动初始化数据库表
+   * 检查必需的表是否存在，不存在则创建
+   */
+  private async initializeDatabase(): Promise<void> {
+    try {
+      // 尝试查询 user_settings 表，如果不存在会抛出错误
+      await this.prisma.$queryRaw`SELECT name FROM sqlite_master WHERE type='table' AND name='user_settings'`
+      console.log('✅ Database tables already exist')
+    } catch (error) {
+      console.log('📋 Initializing database tables...')
+      
+      // 创建所有必需的表
+      try {
+        // 创建 users 表
+        await this.prisma.$executeRaw`
+          CREATE TABLE IF NOT EXISTS users (
+            id TEXT PRIMARY KEY,
+            uuid TEXT UNIQUE NOT NULL,
+            email TEXT UNIQUE,
+            username TEXT UNIQUE,
+            password TEXT,
+            avatar TEXT,
+            role TEXT DEFAULT 'USER' NOT NULL,
+            isActive INTEGER DEFAULT 1 NOT NULL,
+            createdAt DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            settings TEXT
+          )
+        `
+        
+        // 创建 user_settings 表
+        await this.prisma.$executeRaw`
+          CREATE TABLE IF NOT EXISTS user_settings (
+            id TEXT PRIMARY KEY,
+            userId TEXT UNIQUE NOT NULL,
+            data TEXT NOT NULL,
+            createdAt DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
+          )
+        `
+        
+        // 创建 ssh_connections 表
+        await this.prisma.$executeRaw`
+          CREATE TABLE IF NOT EXISTS ssh_connections (
+            id TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            host TEXT NOT NULL,
+            port INTEGER DEFAULT 22 NOT NULL,
+            username TEXT NOT NULL,
+            authType TEXT NOT NULL,
+            password TEXT,
+            privateKey TEXT,
+            publicKey TEXT,
+            passphrase TEXT,
+            status TEXT DEFAULT 'DISCONNECTED' NOT NULL,
+            lastUsed DATETIME,
+            isActive INTEGER DEFAULT 1 NOT NULL,
+            createdAt DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            meta TEXT,
+            userId TEXT NOT NULL,
+            FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
+          )
+        `
+        
+        // 创建 chat_sessions 表
+        await this.prisma.$executeRaw`
+          CREATE TABLE IF NOT EXISTS chat_sessions (
+            id TEXT PRIMARY KEY,
+            title TEXT NOT NULL,
+            type TEXT DEFAULT 'CHAT' NOT NULL,
+            createdAt DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            config TEXT,
+            meta TEXT,
+            userId TEXT NOT NULL,
+            sshConnectionId TEXT,
+            FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE,
+            FOREIGN KEY (sshConnectionId) REFERENCES ssh_connections(id)
+          )
+        `
+        
+        // 创建 messages 表
+        await this.prisma.$executeRaw`
+          CREATE TABLE IF NOT EXISTS messages (
+            id TEXT PRIMARY KEY,
+            content TEXT NOT NULL,
+            role TEXT NOT NULL,
+            createdAt DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            meta TEXT,
+            extra TEXT,
+            isDeleted INTEGER DEFAULT 0 NOT NULL,
+            isEdited INTEGER DEFAULT 0 NOT NULL,
+            plugin TEXT,
+            pluginState TEXT,
+            translate TEXT,
+            tts TEXT,
+            sessionId TEXT NOT NULL,
+            userId TEXT NOT NULL,
+            FOREIGN KEY (sessionId) REFERENCES chat_sessions(id) ON DELETE CASCADE,
+            FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
+          )
+        `
+        
+        // 创建 command_logs 表
+        await this.prisma.$executeRaw`
+          CREATE TABLE IF NOT EXISTS command_logs (
+            id TEXT PRIMARY KEY,
+            command TEXT NOT NULL,
+            output TEXT,
+            exitCode INTEGER,
+            duration INTEGER,
+            createdAt DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+            safetyLevel TEXT DEFAULT 'SAFE' NOT NULL,
+            metadata TEXT,
+            userId TEXT NOT NULL,
+            sshConnectionId TEXT,
+            FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE,
+            FOREIGN KEY (sshConnectionId) REFERENCES ssh_connections(id)
+          )
+        `
+        
+        console.log('✅ Database tables initialized successfully')
+      } catch (initError) {
+        console.error('Failed to initialize database tables:', initError)
+        // 不抛出错误，允许应用继续运行
+      }
     }
   }
 
