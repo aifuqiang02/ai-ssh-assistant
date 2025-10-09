@@ -30,23 +30,22 @@
           <p class="section-description">告诉 AI 您希望助手完成什么任务，我们将为您生成基础提示词</p>
         
           <div class="setting-row">
-            <textarea
-              v-model="taskDescription"
-              placeholder="例如：我需要一个专业的 Python 编程助手，能够帮我解答代码问题，提供最佳实践建议..."
-              class="form-textarea"
-              rows="6"
-            ></textarea>
-          </div>
-
-          <div class="setting-row">
-            <button
-              @click="generatePrompt"
-              :disabled="!taskDescription.trim() || isGenerating"
-              class="btn-primary"
-            >
-              <i :class="['bi', isGenerating ? 'bi-hourglass-split' : 'bi-magic']"></i>
-              {{ isGenerating ? '生成中...' : '生成基础提示词' }}
-            </button>
+            <div class="task-input-container">
+              <textarea
+                v-model="taskDescription"
+                placeholder="例如：我需要一个专业的 Python 编程助手，能够帮我解答代码问题，提供最佳实践建议..."
+                class="form-textarea"
+                rows="6"
+              ></textarea>
+              <button
+                @click="generatePrompt"
+                :disabled="!taskDescription.trim() || isGenerating"
+                class="btn-primary generate-btn"
+              >
+                <i :class="['bi', isGenerating ? 'bi-hourglass-split' : 'bi-magic']"></i>
+                {{ isGenerating ? '生成中...' : '生成基础提示词' }}
+              </button>
+            </div>
           </div>
         </section>
 
@@ -59,17 +58,12 @@
           <p class="section-description">这是根据您的任务描述生成的系统提示词，您可以进行测试</p>
         
           <div class="setting-row">
-            <div class="setting-left">
-              <label class="setting-label">当前提示词</label>
-              <p class="setting-hint">您可以手动编辑提示词后再测试</p>
-            </div>
-            <div class="setting-right">
-              <textarea
-                v-model="generatedPrompt"
-                class="form-textarea prompt-display"
-                rows="10"
-              ></textarea>
-            </div>
+            <textarea
+              v-model="generatedPrompt"
+              placeholder="您可以手动编辑提示词后再测试..."
+              class="form-textarea prompt-display"
+              rows="10"
+            ></textarea>
           </div>
 
           <div class="setting-row">
