@@ -37,13 +37,10 @@
         <span v-else class="tree-node-spacer"></span>
       </div>
 
-      <!-- 节点图标 -->
+      <!-- 节点图标（仅显示会话图标） -->
       <i 
-        :class="[
-          node.type === 'folder' ? 'bi bi-folder' : 'bi bi-chat-dots',
-          'tree-node-icon',
-          node.type === 'folder' ? 'text-vscode-warning' : 'text-vscode-accent'
-        ]"
+        v-if="node.type === 'session'"
+        class="bi bi-chat-dots tree-node-icon text-vscode-accent"
       ></i>
 
       <!-- 节点名称 -->
@@ -383,20 +380,20 @@ const toggleActionMenu = () => {
 .tree-node-content {
   display: flex;
   align-items: center;
-  padding: 4px 8px;
+  padding: 4px 8px 4px 0;
+  font-size: 13px;
   cursor: pointer;
-  transition: background-color 0.15s ease;
+  border-radius: 4px;
+  transition: background-color 0.1s ease;
   position: relative;
-  min-height: 28px;
 }
 
 .tree-node-content:hover {
-  background-color: var(--vscode-list-hoverBackground);
+  background: var(--vscode-bg-lighter);
 }
 
 .tree-node-content.is-selected {
-  background-color: var(--vscode-list-activeSelectionBackground);
-  color: var(--vscode-list-activeSelectionForeground);
+  background: var(--vscode-bg-lighter);
 }
 
 .tree-node-content.is-dragging {
@@ -404,7 +401,8 @@ const toggleActionMenu = () => {
 }
 
 .tree-node-content.is-drag-over {
-  background-color: var(--vscode-list-dropBackground);
+  background: var(--vscode-accent);
+  opacity: 0.3;
 }
 
 .tree-node-arrow {
@@ -413,14 +411,15 @@ const toggleActionMenu = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
   margin-right: 4px;
+  color: var(--vscode-fg-muted);
+  flex-shrink: 0;
 }
 
 .chevron-icon {
-  transition: transform 0.2s ease;
-  color: var(--vscode-fg);
-  cursor: pointer;
+  transform: rotate(0deg);
+  transition: transform 0.15s ease;
+  color: var(--vscode-fg-muted);
 }
 
 .chevron-icon.expanded {
@@ -428,14 +427,13 @@ const toggleActionMenu = () => {
 }
 
 .tree-node-spacer {
-  display: inline-block;
   width: 16px;
+  height: 16px;
 }
 
 .tree-node-icon {
-  font-size: 16px;
   margin-right: 6px;
-  flex-shrink: 0;
+  font-size: 14px;
 }
 
 .tree-node-label {
@@ -443,22 +441,17 @@ const toggleActionMenu = () => {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 13px;
+  color: var(--vscode-fg);
 }
 
 .tree-node-input {
   flex: 1;
-  background: var(--vscode-input-background);
-  color: var(--vscode-input-foreground);
-  border: 1px solid var(--vscode-input-border);
-  border-radius: 2px;
-  padding: 2px 6px;
+  background: var(--vscode-bg-input);
+  border: 1px solid var(--vscode-accent);
+  color: var(--vscode-fg);
   font-size: 13px;
+  padding: 2px 6px;
   outline: none;
-}
-
-.tree-node-input:focus {
-  border-color: var(--vscode-focusBorder);
 }
 
 .message-badge {
@@ -478,13 +471,19 @@ const toggleActionMenu = () => {
 }
 
 .tree-node-actions {
-  display: none;
   margin-left: auto;
-  padding-left: 8px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  display: flex;
+  gap: 4px;
 }
 
 .tree-node-content:hover .tree-node-actions {
-  display: block;
+  opacity: 1;
+}
+
+.tree-node-children {
+  margin-left: 0;
 }
 
 .action-menu-wrapper {
@@ -492,52 +491,82 @@ const toggleActionMenu = () => {
 }
 
 .more-button {
-  padding: 2px 6px;
-  font-size: 14px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.tree-node-content:hover .more-button {
+  opacity: 1;
 }
 
 .action-dropdown {
   position: absolute;
-  right: 0;
   top: 100%;
-  margin-top: 4px;
-  background: var(--vscode-menu-background, var(--vscode-sideBar-background, #252526));
-  border: 1px solid var(--vscode-menu-border, var(--vscode-panel-border, #454545));
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  min-width: 140px;
-  padding: 4px 0;
+  right: 0;
   z-index: 1000;
+  background: var(--vscode-bg-lighter);
+  border: 1px solid var(--vscode-border);
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  min-width: 120px;
+  padding: 4px 0;
+  margin-top: 2px;
 }
 
 .action-item {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
+  gap: 6px;
+  padding: 4px 8px;
   cursor: pointer;
-  font-size: 13px;
-  color: var(--vscode-menu-foreground, var(--vscode-foreground, #cccccc));
-  transition: background-color 0.15s ease;
+  font-size: 12px;
+  color: var(--vscode-fg);
+  transition: background 0.15s ease;
 }
 
 .action-item:hover {
-  background-color: var(--vscode-menu-selectionBackground, var(--vscode-list-hoverBackground, rgba(90, 93, 94, 0.31)));
-  color: var(--vscode-menu-selectionForeground, var(--vscode-foreground, #ffffff));
+  background: var(--vscode-bg-lighter);
 }
 
 .action-item.danger {
-  color: var(--vscode-errorForeground);
+  color: var(--vscode-error);
 }
 
 .action-item i {
-  font-size: 14px;
+  font-size: 12px;
+  width: 14px;
+  text-align: center;
 }
 
 .action-divider {
   height: 1px;
-  background: var(--vscode-menu-separatorBackground);
-  margin: 4px 0;
+  background: var(--vscode-border);
+  margin: 2px 0;
+}
+
+/* vscode 按钮样式 */
+.vscode-icon-button {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: color 0.15s ease;
+  color: var(--vscode-fg-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.vscode-icon-button:hover {
+  color: var(--vscode-fg);
+  background: var(--vscode-bg-lighter);
+}
+
+.vscode-icon-button i {
+  font-size: 11px;
 }
 </style>
 

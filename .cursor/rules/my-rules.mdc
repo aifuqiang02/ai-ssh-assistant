@@ -203,24 +203,124 @@ console.log('✅ 修改完成！请手动执行 `pnpm dev` 重启应用。')
 await runCommand('pnpm dev')
 ```
 
-### 1. 添加新功能模块
+### 1. 双存储实现规范
+
+**核心原则**：实现任何后端功能时，**必须**同时提供本地存储和远程存储两种实现方式。
+
+#### 为什么需要双存储？
+- 本地模式（Local）：使用 SQLite + IPC，无需服务器，适合单机使用
+- 云端模式（Remote）：使用 PostgreSQL + HTTP API，支持多设备同步
+
+#### 完整实现清单
+
+**本地存储实现（Local）**：
+1. ✅ 定义 SQLite 表结构（`apps/desktop/electron/services/your.service.ts`）
+2. ✅ 实现本地服务逻辑（使用 better-sqlite3）
+3. ✅ 注册 IPC 处理器（`apps/desktop/electron/ipc/your-handlers.ts`）
+4. ✅ 更新 Preload API（`apps/desktop/electron/preload/index.ts`）
+5. ✅ 更新 TypeScript 类型（`apps/desktop/src/types/electron.d.ts`）
+6. ✅ 实现 LocalImpl 服务（`apps/desktop/src/services/your.service.ts`）
+
+**远程存储实现（Remote）**：
+1. ✅ 定义 Prisma Schema（`packages/database/prisma/schema.prisma`）
+2. ✅ 运行数据库迁移（`pnpm prisma migrate dev`）
+3. ✅ 实现后端服务（`packages/server/src/services/your.service.ts`）
+4. ✅ 创建 API 路由（`packages/server/src/routes/your.routes.ts`）
+5. ✅ 实现 ApiImpl 服务（`apps/desktop/src/services/your.service.ts`）
+
+**服务整合**：
+```typescript
+// apps/desktop/src/services/your.service.ts
+export interface IYourService {
+  getData(): Promise<Data[]>
+  createData(data: CreateDto): Promise<Data>
+  // ... 其他方法
+}
+
+// 本地实现 - 使用 IPC + SQLite
+class YourLocalImpl extends BaseLocalImpl implements IYourService {
+  async getData(): Promise<Data[]> {
+    const userId = this.getUserId() // 自动获取 'local-user'
+    return this.electronAPI.your.getData(userId)
+  }
+}
+
+// 云端实现 - 使用 HTTP API + PostgreSQL
+class YourApiImpl extends BaseApiImpl implements IYourService {
+  async getData(): Promise<Data[]> {
+    const response = await this.apiService.get('/your/data')
+    return response.data
+  }
+}
+
+// 自动切换
+export const yourService = createService<IYourService>(
+  'YourService',
+  YourLocalImpl,
+  YourApiImpl
+)
+```
+
+#### 实现顺序建议
+
+1. **先实现本地存储**（快速验证功能）
+   - 创建 SQLite 表
+   - 实现本地服务和 IPC
+   - 测试基本功能
+
+2. **后实现远程存储**（支持云端同步）
+   - 定义 Prisma Schema
+   - 实现 API 和后端服务
+   - 测试云端功能
+
+3. **验证双模式切换**
+   - 测试本地模式运行正常
+   - 测试云端模式运行正常
+   - 测试模式切换无缝
+
+#### 常见错误
+
+❌ **只实现本地或只实现云端**
+```typescript
+// 错误：只有本地实现
+class YourLocalImpl implements IYourService { ... }
+export const yourService = new YourLocalImpl()
+```
+
+✅ **同时提供两种实现**
+```typescript
+// 正确：提供双实现
+export const yourService = createService<IYourService>(
+  'YourService',
+  YourLocalImpl,
+  YourApiImpl
+)
+```
+
+### 2. 添加新功能模块（详细步骤）
+**本地存储部分**：
 1. 定义服务接口 (`apps/desktop/src/services/your.service.ts`)
 2. 实现本地服务 (`apps/desktop/electron/services/your.service.ts`)
 3. 注册 IPC 处理器 (`apps/desktop/electron/ipc/your-handlers.ts`)
 4. 更新 Preload 脚本 (`apps/desktop/electron/preload/index.ts`)
 5. 更新类型定义 (`apps/desktop/src/types/electron.d.ts`)
-6. 实现云端服务 (`packages/server/src/services/your.service.ts`)
-7. 创建 API 路由 (`packages/server/src/routes/your.routes.ts`)
-8. 实现双模式服务（LocalImpl + ApiImpl）
-9. 创建 UI 组件
 
-### 2. Git 提交规范
+**远程存储部分**：
+6. 定义 Prisma Schema (`packages/database/prisma/schema.prisma`)
+7. 实现云端服务 (`packages/server/src/services/your.service.ts`)
+8. 创建 API 路由 (`packages/server/src/routes/your.routes.ts`)
+
+**服务整合**：
+9. 实现双模式服务（LocalImpl + ApiImpl）
+10. 创建 UI 组件
+
+### 3. Git 提交规范
 - **完成任务后必须提交**: `git add . && git commit -m "简短说明" && git push`
 - **commit 信息要简短明确**，说明做了什么
 - **不要**跳过 hooks（除非明确需要）
 - **不要** force push 到 main/master
 
-### 3. 调试技巧
+### 4. 调试技巧
 - **不要怀疑**代码未生效是因为没有编译或重启
 - **使用**详细日志记录关键节点
 - **验证数据流**:

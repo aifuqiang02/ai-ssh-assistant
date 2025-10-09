@@ -32,6 +32,17 @@ export interface ElectronAPI {
   
   // SSH 相关
   ssh: {
+    // 树形结构管理
+    getTree: (userId: string) => Promise<any[]>
+    createFolder: (userId: string, data: any) => Promise<any>
+    updateFolder: (userId: string, folderId: string, data: any) => Promise<any>
+    deleteFolder: (userId: string, folderId: string) => Promise<void>
+    createConnection: (userId: string, data: any) => Promise<any>
+    updateConnection: (userId: string, id: string, data: any) => Promise<any>
+    deleteConnection: (userId: string, id: string) => Promise<void>
+    moveNode: (userId: string, data: any) => Promise<void>
+    
+    // 运行时连接管理
     connect: (config: any) => Promise<any>
     disconnect: (id: string) => Promise<any>
     execute: (id: string, command: string) => Promise<any>
@@ -39,7 +50,6 @@ export interface ElectronAPI {
     getInitialOutput: (id: string) => Promise<string>
     getConnections: () => Promise<any>
     saveConnection: (config: any) => Promise<any>
-    deleteConnection: (id: string) => Promise<any>
     testConnection: (config: any) => Promise<any>
     
     // SFTP 相关

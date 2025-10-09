@@ -3,6 +3,7 @@ import { join } from 'path'
 import { windowEvents } from '../shared/events'
 import { StorageManager } from '@ai-ssh/database'
 import { registerSettingsHandlers } from '../ipc/settings-handlers'
+import { initializeStorageManager } from './storage'
 
 // 静态导入所有 IPC 处理器（避免 Electron ESM 问题）
 import '../ipc/api-handlers'
@@ -91,6 +92,10 @@ class Application {
         const storageManager = new StorageManager(storageConfig)
         await storageManager.connect()
         console.log('[Main] ✅ StorageManager initialized in local mode')
+        
+        // 初始化共享的 StorageManager 实例
+        initializeStorageManager(storageManager)
+        console.log('[Main] ✅ Shared StorageManager initialized')
         
         // 注册 Settings IPC 处理器
         registerSettingsHandlers(storageManager)

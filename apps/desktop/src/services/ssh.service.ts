@@ -174,35 +174,35 @@ class SSHApiImpl extends BaseApiImpl implements ISSHService {
 class SSHLocalImpl extends BaseLocalImpl implements ISSHService {
   // ======== 树形结构管理 ========
   async getSSHTree(): Promise<any[]> {
-    return this.electronAPI.ssh.getTree?.() || []
+    return this.electronAPI.ssh.getTree(this.getUserId())
   }
   
   async createFolder(data: any): Promise<any> {
-    return this.electronAPI.ssh.createFolder?.(data)
+    return this.electronAPI.ssh.createFolder(this.getUserId(), data)
   }
   
   async updateFolder(id: string, data: any): Promise<any> {
-    return this.electronAPI.ssh.updateFolder?.(id, data)
+    return this.electronAPI.ssh.updateFolder(this.getUserId(), id, data)
   }
   
   async deleteFolder(id: string): Promise<void> {
-    await this.electronAPI.ssh.deleteFolder?.(id)
+    await this.electronAPI.ssh.deleteFolder(this.getUserId(), id)
   }
   
   async createConnection(data: any): Promise<any> {
-    return this.electronAPI.ssh.createConnection?.(data)
+    return this.electronAPI.ssh.createConnection(this.getUserId(), data)
   }
   
   async updateConnection(id: string, data: any): Promise<any> {
-    return this.electronAPI.ssh.updateConnection?.(id, data)
+    return this.electronAPI.ssh.updateConnection(this.getUserId(), id, data)
   }
   
   async deleteConnection(id: string): Promise<void> {
-    await this.electronAPI.ssh.deleteConnection?.(id)
+    await this.electronAPI.ssh.deleteConnection(this.getUserId(), id)
   }
   
   async moveNode(data: any): Promise<void> {
-    await this.electronAPI.ssh.moveNode?.(data)
+    await this.electronAPI.ssh.moveNode(this.getUserId(), data)
   }
   
   // ======== 运行时连接管理 ========

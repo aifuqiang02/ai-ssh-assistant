@@ -9,6 +9,19 @@ import { BaseStorageAdapter, StorageOptions, SyncResult } from './base.adapter'
 export class LocalStorageAdapter extends BaseStorageAdapter {
   private prisma: any
 
+  /**
+   * 将传入的模型名映射为 Prisma Client 的委托名称
+   * 例如：User -> user, ChatSession -> chatSession, SSHFolder -> sSHFolder
+   */
+  private getModelDelegate(model: string): any {
+    const delegateName = model.charAt(0).toLowerCase() + model.slice(1)
+    const delegate = (this.prisma as any)[delegateName]
+    if (!delegate) {
+      throw new Error(`Model ${model} not found`)
+    }
+    return delegate
+  }
+
   constructor(options: StorageOptions = {}) {
     super(options)
     
@@ -58,20 +71,7 @@ export class LocalStorageAdapter extends BaseStorageAdapter {
    */
   private async initializeDatabase(): Promise<void> {
     try {
-      console.log('🔎 检查 user_settings 表是否存在...')
-      // 检查 user_settings 表是否存在
-      const result = await this.prisma.$queryRaw<Array<{ name: string }>>`
-        SELECT name FROM sqlite_master WHERE type='table' AND name='user_settings'
-      `
-      
-      console.log('📊 查询结果:', result)
-      
-      if (result && result.length > 0) {
-        console.log('✅ Database tables already exist')
-        return
-      }
-      
-      console.log('📋 表不存在，开始初始化数据库表...')
+      console.log('🔎 检查并确保所有必需的表存在（幂等创建）...')
       console.log('⏳ 这可能需要几秒钟...')
       
       // 创建所有必需的表
@@ -282,10 +282,7 @@ export class LocalStorageAdapter extends BaseStorageAdapter {
 
   // CRUD 操作实现
   async create(model: string, data: any): Promise<any> {
-    const modelDelegate = (this.prisma as any)[model]
-    if (!modelDelegate) {
-      throw new Error(`Model ${model} not found`)
-    }
+    const modelDelegate = this.getModelDelegate(model)
     
     // 添加本地时间戳
     let enrichedData = {
@@ -311,19 +308,13 @@ export class LocalStorageAdapter extends BaseStorageAdapter {
   }
 
   async findMany(model: string, options: any = {}): Promise<any[]> {
-    const modelDelegate = (this.prisma as any)[model]
-    if (!modelDelegate) {
-      throw new Error(`Model ${model} not found`)
-    }
+    const modelDelegate = this.getModelDelegate(model)
     
     return await modelDelegate.findMany(options)
   }
 
   async findUnique(model: string, options: any): Promise<any> {
-    const modelDelegate = (this.prisma as any)[model]
-    if (!modelDelegate) {
-      throw new Error(`Model ${model} not found`)
-    }
+    const modelDelegate = this.getModelDelegate(model)
     
     const result = await modelDelegate.findUnique(options)
     
@@ -332,10 +323,7 @@ export class LocalStorageAdapter extends BaseStorageAdapter {
   }
 
   async update(model: string, options: any): Promise<any> {
-    const modelDelegate = (this.prisma as any)[model]
-    if (!modelDelegate) {
-      throw new Error(`Model ${model} not found`)
-    }
+    const modelDelegate = this.getModelDelegate(model)
     
     // 更新时间戳
     let updateData = {
@@ -362,20 +350,14 @@ export class LocalStorageAdapter extends BaseStorageAdapter {
   }
 
   async delete(model: string, options: any): Promise<any> {
-    const modelDelegate = (this.prisma as any)[model]
-    if (!modelDelegate) {
-      throw new Error(`Model ${model} not found`)
-    }
+    const modelDelegate = this.getModelDelegate(model)
     
     return await modelDelegate.delete(options)
   }
 
   // 批量操作
   async createMany(model: string, data: any[]): Promise<any> {
-    const modelDelegate = (this.prisma as any)[model]
-    if (!modelDelegate) {
-      throw new Error(`Model ${model} not found`)
-    }
+    const modelDelegate = this.getModelDelegate(model)
     
     const enrichedData = data.map(item => ({
       ...item,
@@ -388,10 +370,7 @@ export class LocalStorageAdapter extends BaseStorageAdapter {
   }
 
   async updateMany(model: string, options: any): Promise<any> {
-    const modelDelegate = (this.prisma as any)[model]
-    if (!modelDelegate) {
-      throw new Error(`Model ${model} not found`)
-    }
+    const modelDelegate = this.getModelDelegate(model)
     
     const updateData = {
       ...options.data,
@@ -406,10 +385,7 @@ export class LocalStorageAdapter extends BaseStorageAdapter {
   }
 
   async deleteMany(model: string, options: any): Promise<any> {
-    const modelDelegate = (this.prisma as any)[model]
-    if (!modelDelegate) {
-      throw new Error(`Model ${model} not found`)
-    }
+    const modelDelegate = this.getModelDelegate(model)
     
     return await modelDelegate.deleteMany(options)
   }
@@ -478,10 +454,7 @@ export class LocalStorageAdapter extends BaseStorageAdapter {
 
   // 获取待同步的数据
   async getPendingSyncData(model: string): Promise<any[]> {
-    const modelDelegate = (this.prisma as any)[model]
-    if (!modelDelegate) {
-      return []
-    }
+    const modelDelegate = this.getModelDelegate(model)
 
     try {
       return await modelDelegate.findMany({
@@ -496,10 +469,7 @@ export class LocalStorageAdapter extends BaseStorageAdapter {
 
   // 标记数据为已同步
   async markAsSynced(model: string, ids: string[]): Promise<void> {
-    const modelDelegate = (this.prisma as any)[model]
-    if (!modelDelegate) {
-      return
-    }
+    const modelDelegate = this.getModelDelegate(model)
 
     try {
       await modelDelegate.updateMany({

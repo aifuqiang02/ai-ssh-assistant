@@ -40,6 +40,17 @@ const api = {
 
   // SSH 相关
   ssh: {
+    // 树形结构管理
+    getTree: (userId: string) => ipcRenderer.invoke('ssh:get-tree', userId),
+    createFolder: (userId: string, data: any) => ipcRenderer.invoke('ssh:create-folder', userId, data),
+    updateFolder: (userId: string, folderId: string, data: any) => ipcRenderer.invoke('ssh:update-folder', userId, folderId, data),
+    deleteFolder: (userId: string, folderId: string) => ipcRenderer.invoke('ssh:delete-folder', userId, folderId),
+    createConnection: (userId: string, data: any) => ipcRenderer.invoke('ssh:create-connection-config', userId, data),
+    updateConnection: (userId: string, id: string, data: any) => ipcRenderer.invoke('ssh:update-connection-config', userId, id, data),
+    deleteConnection: (userId: string, id: string) => ipcRenderer.invoke('ssh:delete-connection-config', userId, id),
+    moveNode: (userId: string, data: any) => ipcRenderer.invoke('ssh:move-node', userId, data),
+    
+    // 运行时连接管理
     connect: (config: any) => ipcRenderer.invoke('ssh:connect', config),
     disconnect: (id: string) => ipcRenderer.invoke('ssh:disconnect', id),
     execute: (id: string, command: string) => ipcRenderer.invoke('ssh:execute', id, command),
@@ -47,7 +58,6 @@ const api = {
     getInitialOutput: (id: string) => ipcRenderer.invoke('ssh:get-initial-output', id),
     getConnections: () => ipcRenderer.invoke('ssh:get-connections'),
     saveConnection: (config: any) => ipcRenderer.invoke('ssh:save-connection', config),
-    deleteConnection: (id: string) => ipcRenderer.invoke('ssh:delete-connection', id),
     testConnection: (config: any) => ipcRenderer.invoke('ssh:test-connection', config),
     
     // SFTP 相关

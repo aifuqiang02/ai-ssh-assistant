@@ -3,6 +3,7 @@ import { Client, SFTPWrapper } from 'ssh2'
 import fs from 'fs/promises'
 import path from 'path'
 import { windowEvents } from '../shared/events'
+import { getSSHTreeService } from '../services/ssh-tree.service'
 
 interface SSHConnection {
   id: string
@@ -748,5 +749,98 @@ ipcMain.handle('ssh:create-directory', async (_, id: string, remotePath: string)
     return { success: false, error: error.message }
   }
 })
+
+// ============= SSH 树形结构管理 =============
+const sshTreeService = getSSHTreeService()
+
+// 获取 SSH 树
+ipcMain.handle('ssh:get-tree', async (_, userId: string) => {
+  try {
+    console.log('[IPC] ssh:get-tree', { userId })
+    return sshTreeService.getSSHTree(userId)
+  } catch (error) {
+    console.error('[IPC] ssh:get-tree error:', error)
+    throw error
+  }
+})
+
+// 创建文件夹
+ipcMain.handle('ssh:create-folder', async (_, userId: string, data: any) => {
+  try {
+    console.log('[IPC] ssh:create-folder', { userId, data })
+    return sshTreeService.createFolder(userId, data)
+  } catch (error) {
+    console.error('[IPC] ssh:create-folder error:', error)
+    throw error
+  }
+})
+
+// 更新文件夹
+ipcMain.handle('ssh:update-folder', async (_, userId: string, folderId: string, data: any) => {
+  try {
+    console.log('[IPC] ssh:update-folder', { userId, folderId, data })
+    return sshTreeService.updateFolder(userId, folderId, data)
+  } catch (error) {
+    console.error('[IPC] ssh:update-folder error:', error)
+    throw error
+  }
+})
+
+// 删除文件夹
+ipcMain.handle('ssh:delete-folder', async (_, userId: string, folderId: string) => {
+  try {
+    console.log('[IPC] ssh:delete-folder', { userId, folderId })
+    return sshTreeService.deleteFolder(userId, folderId)
+  } catch (error) {
+    console.error('[IPC] ssh:delete-folder error:', error)
+    throw error
+  }
+})
+
+// 创建连接配置
+ipcMain.handle('ssh:create-connection-config', async (_, userId: string, data: any) => {
+  try {
+    console.log('[IPC] ssh:create-connection-config', { userId, data })
+    return sshTreeService.createConnection(userId, data)
+  } catch (error) {
+    console.error('[IPC] ssh:create-connection-config error:', error)
+    throw error
+  }
+})
+
+// 更新连接配置
+ipcMain.handle('ssh:update-connection-config', async (_, userId: string, connectionId: string, data: any) => {
+  try {
+    console.log('[IPC] ssh:update-connection-config', { userId, connectionId, data })
+    return sshTreeService.updateConnection(userId, connectionId, data)
+  } catch (error) {
+    console.error('[IPC] ssh:update-connection-config error:', error)
+    throw error
+  }
+})
+
+// 删除连接配置
+ipcMain.handle('ssh:delete-connection-config', async (_, userId: string, connectionId: string) => {
+  try {
+    console.log('[IPC] ssh:delete-connection-config', { userId, connectionId })
+    return sshTreeService.deleteConnection(userId, connectionId)
+  } catch (error) {
+    console.error('[IPC] ssh:delete-connection-config error:', error)
+    throw error
+  }
+})
+
+// 移动节点
+ipcMain.handle('ssh:move-node', async (_, userId: string, data: any) => {
+  try {
+    console.log('[IPC] ssh:move-node', { userId, data })
+    return sshTreeService.moveNode(userId, data.nodeId, data.nodeType, data.targetFolderId, data.order || 0)
+  } catch (error) {
+    console.error('[IPC] ssh:move-node error:', error)
+    throw error
+  }
+})
+
+console.log('[IPC] SSH tree handlers registered')
 
 export { sshManager }
