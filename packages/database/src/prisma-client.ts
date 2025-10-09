@@ -1,21 +1,13 @@
 /**
  * Prisma Client 适配器
- * 处理 CommonJS 和 ESM 模块之间的兼容性
+ * 处理 Prisma Client 路径解析
  */
 
-import { createRequire } from 'module'
-import { fileURLToPath } from 'url'
-import { dirname, join } from 'path'
+import { join } from 'path'
 import { existsSync } from 'fs'
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
 
 // 调试信息
 console.log('🔍 Prisma Client Adapter - Current directory:', __dirname)
-
-// 创建 require 函数以导入 CommonJS 模块
-const require = createRequire(import.meta.url)
 
 // 尝试多个可能的路径
 const possiblePaths = [
@@ -50,12 +42,10 @@ if (!prismaClientPath) {
   throw new Error('Prisma Client not found')
 }
 
-// 导入生成的 Prisma Client（CommonJS 格式）
-const { PrismaClient: PrismaClientImpl, Prisma } = require(prismaClientPath)
+// 动态加载 Prisma Client
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const prismaModule = require(prismaClientPath)
 
-// 重新导出
-export { PrismaClientImpl as PrismaClient, Prisma }
-
-// 默认导出
-export default PrismaClientImpl
-
+// 导出（CommonJS 方式）
+export const { PrismaClient, Prisma } = prismaModule
+export default prismaModule.PrismaClient

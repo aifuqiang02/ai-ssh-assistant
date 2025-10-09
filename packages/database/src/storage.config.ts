@@ -16,15 +16,6 @@ function getEnv(key: string, defaultValue?: string): string | undefined {
     return (window as any).ENV[key] || defaultValue
   }
   
-  // 如果在Vite环境中，尝试使用import.meta.env
-  try {
-    if (typeof import.meta !== 'undefined' && (import.meta as any).env) {
-      return ((import.meta as any).env as any)[key] || defaultValue
-    }
-  } catch (e) {
-    // ignore
-  }
-  
   return defaultValue
 }
 

@@ -1,9 +1,11 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "lib": ["ES2022"],
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "lib": [
+      "ES2022"
+    ],
+    "module": "CommonJS",
+    "moduleResolution": "Node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "composite": true,
@@ -13,21 +15,19 @@
     "noEmit": false,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    
     "paths": {
-      "@ai-ssh/shared/*": ["../../packages/shared/src/*"]
+      "@ai-ssh/shared/*": [
+        "../../packages/shared/src/*"
+      ]
     }
   },
   "include": [

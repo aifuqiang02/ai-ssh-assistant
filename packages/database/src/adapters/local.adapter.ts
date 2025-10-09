@@ -3,8 +3,8 @@
  * 基于 SQLite 或 PostgreSQL 的本地数据库实现
  */
 
-import { PrismaClient } from '../prisma-client.js'  // ✅ 使用 Prisma Client 适配器
-import { BaseStorageAdapter, StorageOptions, SyncResult } from './base.adapter.js'
+import { PrismaClient } from '../prisma-client'  // ✅ 使用 Prisma Client 适配器
+import { BaseStorageAdapter, StorageOptions, SyncResult } from './base.adapter'
 
 export class LocalStorageAdapter extends BaseStorageAdapter {
   private prisma: any
