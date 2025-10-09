@@ -239,7 +239,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, computed, onMounted, watch, inject } from 'vue'
+import { ref, nextTick, computed, onMounted, onBeforeUnmount, watch, inject } from 'vue'
 import { useRouter } from 'vue-router'
 import { chatCompletion, type ChatMessage as APIChatMessage } from '../../services/ai-api.service'
 import type { AIProvider, AIModel } from '../../types/ai-providers'
@@ -557,14 +557,70 @@ const openPromptOptimizer = () => {
   }
 }
 
+// 加载系统提示词
+const loadSystemPrompt = () => {
+  if (props.sessionId) {
+    // 先尝试加载会话特定的提示词
+    const sessionConfigKey = `chat-session-config-${props.sessionId}`
+    const sessionConfig = localStorage.getItem(sessionConfigKey)
+    if (sessionConfig) {
+      const config = JSON.parse(sessionConfig)
+      if (config.systemPrompt) {
+        systemRole.value = config.systemPrompt
+        console.log('[AIChatSession] 已加载会话提示词')
+        return
+      }
+    }
+  }
+  
+  // 如果没有会话特定提示词，加载默认提示词
+  const defaultPrompt = localStorage.getItem('default-system-prompt')
+  if (defaultPrompt) {
+    systemRole.value = defaultPrompt
+    console.log('[AIChatSession] 已加载默认提示词')
+  }
+}
+
+// 监听提示词更新事件
+const handlePromptUpdate = (event: CustomEvent) => {
+  const { sessionId, systemPrompt } = event.detail
+  if (sessionId === props.sessionId) {
+    systemRole.value = systemPrompt
+    console.log('[AIChatSession] 提示词已更新')
+  }
+}
+
+// 保存当前会话 ID 到 localStorage（用于提示词优化助手）
+const saveCurrentSessionId = () => {
+  if (props.sessionId) {
+    localStorage.setItem('current-session-id', props.sessionId)
+  }
+}
+
 // 生命周期
 onMounted(() => {
   scrollToBottom()
+  loadSystemPrompt()
+  saveCurrentSessionId()
+  
+  // 监听提示词更新事件
+  window.addEventListener('session-prompt-updated', handlePromptUpdate as EventListener)
+})
+
+// 清理事件监听器
+onBeforeUnmount(() => {
+  window.removeEventListener('session-prompt-updated', handlePromptUpdate as EventListener)
 })
 
 watch(messages, () => {
   scrollToBottom()
 }, { deep: true })
+
+// 监听 sessionId 变化
+watch(() => props.sessionId, () => {
+  loadSystemPrompt()
+  saveCurrentSessionId()
+})
 </script>
 
 <style scoped>

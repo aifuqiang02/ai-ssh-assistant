@@ -398,13 +398,40 @@ ${userFeedback.value}
 
 // 方法：保存提示词
 const savePrompt = () => {
-  // TODO: 保存提示词到会话设置
-  // 可以通过路由传递或使用 localStorage
-  console.log('保存提示词:', generatedPrompt.value)
+  if (!generatedPrompt.value.trim()) {
+    alert('提示词不能为空！')
+    return
+  }
   
-  // 临时存储到 localStorage
-  localStorage.setItem('optimizedPrompt', generatedPrompt.value)
-  alert('提示词已保存到临时存储！\n\n提示：您可以在会话设置中使用这个提示词。')
+  try {
+    // 保存到全局默认系统提示词（用于新会话）
+    localStorage.setItem('default-system-prompt', generatedPrompt.value)
+    
+    // 如果有当前会话ID，也保存到该会话
+    const currentSessionId = localStorage.getItem('current-session-id')
+    if (currentSessionId) {
+      const sessionConfigKey = `chat-session-config-${currentSessionId}`
+      const existingConfig = localStorage.getItem(sessionConfigKey)
+      const config = existingConfig ? JSON.parse(existingConfig) : {}
+      
+      config.systemPrompt = generatedPrompt.value
+      config.updatedAt = new Date().toISOString()
+      
+      localStorage.setItem(sessionConfigKey, JSON.stringify(config))
+      
+      // 触发事件通知会话更新
+      window.dispatchEvent(new CustomEvent('session-prompt-updated', {
+        detail: { sessionId: currentSessionId, systemPrompt: generatedPrompt.value }
+      }))
+    }
+    
+    alert('✅ 提示词已保存成功！\n\n' + 
+          (currentSessionId ? '已应用到当前会话和默认配置。' : '已保存为默认提示词，将应用到新会话。'))
+    
+  } catch (error: any) {
+    console.error('保存提示词失败:', error)
+    alert('❌ 保存失败：' + error.message)
+  }
 }
 
 // 方法：重置所有内容
