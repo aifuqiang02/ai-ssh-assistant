@@ -4,6 +4,11 @@
     <div class="settings-sidebar">
       <div class="sidebar-header">
         <h3 class="sidebar-title">会话设置</h3>
+        <!-- 保存状态指示器 -->
+        <div class="save-status" v-if="saveStatus">
+          <i :class="['bi', saveStatus === 'saving' ? 'bi-hourglass-split' : saveStatus === 'saved' ? 'bi-check-circle' : 'bi-exclamation-triangle']"></i>
+          <span>{{ saveStatusText }}</span>
+        </div>
       </div>
       <nav class="settings-nav">
         <div 
@@ -91,8 +96,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { chatService } from '../services/chat.service'
+import type { ChatSession } from '@ai-ssh/shared'
 
 const router = useRouter()
 
@@ -106,12 +113,31 @@ const activeSection = ref('basic')
 const contentContainer = ref<HTMLElement | null>(null)
 const isScrolling = ref(false)
 
+// 会话管理
+const currentSessionId = ref<string>('')
+const isLoading = ref(true)
+
+// 保存状态
+type SaveStatus = 'saving' | 'saved' | 'error' | null
+const saveStatus = ref<SaveStatus>(null)
+const saveStatusText = computed(() => {
+  switch (saveStatus.value) {
+    case 'saving': return '保存中...'
+    case 'saved': return '已保存'
+    case 'error': return '保存失败'
+    default: return ''
+  }
+})
+
 // 基本信息
 const sessionName = ref('')
 
 // 高级设置
 const contextWindow = ref(10)
 const enableStreaming = ref(true)
+
+// 防抖定时器
+let saveTimer: ReturnType<typeof setTimeout> | null = null
 
 // 方法
 const scrollToSection = (sectionId: string) => {
@@ -158,10 +184,109 @@ const onScroll = () => {
   }
 }
 
+// 加载会话配置
+const loadSessionConfig = async () => {
+  try {
+    // 从 localStorage 获取当前会话 ID
+    const sessionId = localStorage.getItem('current-session-id')
+    if (!sessionId) {
+      console.warn('[SessionSettings] ⚠️ 未找到当前会话 ID')
+      isLoading.value = false
+      return
+    }
+    
+    currentSessionId.value = sessionId
+    console.log('[SessionSettings] 📥 加载会话配置:', sessionId)
+    
+    // 从数据库加载会话信息
+    const session = await chatService.getSession(sessionId)
+    if (!session) {
+      console.error('[SessionSettings] ❌ 会话不存在:', sessionId)
+      isLoading.value = false
+      return
+    }
+    
+    // 填充表单
+    sessionName.value = session.title || ''
+    
+    // 从 config 中加载高级设置
+    if (session.config) {
+      contextWindow.value = (session.config as any).contextWindow || 10
+      enableStreaming.value = (session.config as any).enableStreaming !== false
+    }
+    
+    console.log('[SessionSettings] ✅ 会话配置加载成功')
+    isLoading.value = false
+    
+  } catch (error: any) {
+    console.error('[SessionSettings] ❌ 加载会话配置失败:', error)
+    isLoading.value = false
+  }
+}
+
+// 保存会话配置（带防抖）
+const saveSessionConfig = () => {
+  if (!currentSessionId.value) {
+    console.warn('[SessionSettings] ⚠️ 无法保存：未找到会话 ID')
+    return
+  }
+  
+  // 清除之前的定时器
+  if (saveTimer) {
+    clearTimeout(saveTimer)
+  }
+  
+  // 设置新的定时器（800ms 防抖）
+  saveTimer = setTimeout(async () => {
+    try {
+      saveStatus.value = 'saving'
+      
+      // 构建更新数据
+      const updateData = {
+        title: sessionName.value,
+        config: {
+          contextWindow: contextWindow.value,
+          enableStreaming: enableStreaming.value
+        }
+      }
+      
+      // 保存到数据库
+      await chatService.updateSession(currentSessionId.value, updateData)
+      
+      console.log('[SessionSettings] ✅ 会话配置已保存', updateData)
+      saveStatus.value = 'saved'
+      
+      // 2秒后隐藏"已保存"提示
+      setTimeout(() => {
+        if (saveStatus.value === 'saved') {
+          saveStatus.value = null
+        }
+      }, 2000)
+      
+    } catch (error: any) {
+      console.error('[SessionSettings] ❌ 保存会话配置失败:', error)
+      saveStatus.value = 'error'
+      
+      // 3秒后隐藏错误提示
+      setTimeout(() => {
+        if (saveStatus.value === 'error') {
+          saveStatus.value = null
+        }
+      }, 3000)
+    }
+  }, 800)
+}
+
+// 监听字段变化，自动保存
+watch([sessionName, contextWindow, enableStreaming], () => {
+  if (!isLoading.value && currentSessionId.value) {
+    saveSessionConfig()
+  }
+}, { deep: true })
+
 // 生命周期
-onMounted(() => {
-  // 加载会话设置
-  console.log('加载会话设置')
+onMounted(async () => {
+  await loadSessionConfig()
 })
 </script>
 
@@ -194,6 +319,53 @@ onMounted(() => {
   font-size: 20px;
   font-weight: 600;
   color: var(--vscode-fg);
+}
+
+.save-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--vscode-fg-muted);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.save-status i {
+  font-size: 14px;
+}
+
+.save-status i.bi-hourglass-split {
+  color: var(--vscode-accent);
+  animation: spin 1s linear infinite;
+}
+
+.save-status i.bi-check-circle {
+  color: #27ae60;
+}
+
+.save-status i.bi-exclamation-triangle {
+  color: #e74c3c;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .settings-nav {
