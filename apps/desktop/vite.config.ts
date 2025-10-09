@@ -20,7 +20,15 @@ export default defineConfig({
             minify: process.env.NODE_ENV === 'production',
             outDir: 'dist-electron/main',
             rollupOptions: {
-              external: ['electron', 'sqlite3', 'better-sqlite3', 'ssh2']
+              external: [
+                'electron', 
+                'sqlite3', 
+                'better-sqlite3', 
+                'ssh2',
+                '@ai-ssh/database',  // 不打包 database 包
+                '@prisma/client',    // 不打包 Prisma Client
+                '.prisma/client'     // 不打包生成的客户端
+              ]
             }
           }
         }
