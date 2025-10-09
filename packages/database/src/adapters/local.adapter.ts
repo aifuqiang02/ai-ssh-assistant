@@ -3,7 +3,7 @@
  * 基于 SQLite 或 PostgreSQL 的本地数据库实现
  */
 
-import { PrismaClient } from '@prisma/client'  // ✅ 使用 @prisma/client 包
+import { PrismaClient } from '../generated/client/index.js'  // ✅ 使用生成的 SQLite 客户端
 import { BaseStorageAdapter, StorageOptions, SyncResult } from './base.adapter.js'
 
 export class LocalStorageAdapter extends BaseStorageAdapter {
@@ -65,14 +65,20 @@ export class LocalStorageAdapter extends BaseStorageAdapter {
     }
     
     // 添加本地时间戳
-    const enrichedData = {
+    let enrichedData = {
       ...data,
       createdAt: new Date(),
       updatedAt: new Date(),
       syncStatus: 'pending' // 标记为待同步
     }
     
-    return await modelDelegate.create({ data: enrichedData })
+    // 处理 SQLite 的 JSON 字段序列化
+    enrichedData = this.serializeJsonFields(model, enrichedData)
+    
+    const result = await modelDelegate.create({ data: enrichedData })
+    
+    // 反序列化返回结果
+    return this.deserializeJsonFields(model, result)
   }
 
   async findMany(model: string, options: any = {}): Promise<any[]> {
@@ -90,7 +96,10 @@ export class LocalStorageAdapter extends BaseStorageAdapter {
       throw new Error(`Model ${model} not found`)
     }
     
-    return await modelDelegate.findUnique(options)
+    const result = await modelDelegate.findUnique(options)
+    
+    // 反序列化 JSON 字段
+    return result ? this.deserializeJsonFields(model, result) : result
   }
 
   async update(model: string, options: any): Promise<any> {
@@ -100,16 +109,22 @@ export class LocalStorageAdapter extends BaseStorageAdapter {
     }
     
     // 更新时间戳和同步状态
-    const updateData = {
+    let updateData = {
       ...options.data,
       updatedAt: new Date(),
       syncStatus: 'pending'
     }
     
-    return await modelDelegate.update({
+    // 处理 SQLite 的 JSON 字段序列化
+    updateData = this.serializeJsonFields(model, updateData)
+    
+    const result = await modelDelegate.update({
       ...options,
       data: updateData
     })
+    
+    // 反序列化返回结果
+    return this.deserializeJsonFields(model, result)
   }
 
   async delete(model: string, options: any): Promise<any> {
@@ -267,5 +282,71 @@ export class LocalStorageAdapter extends BaseStorageAdapter {
     } catch (error) {
       console.warn(`Failed to mark ${model} records as synced:`, error)
     }
+  }
+
+  /**
+   * 序列化 JSON 字段（SQLite 需要将对象转为字符串）
+   */
+  private serializeJsonFields(model: string, data: any): any {
+    if (model === 'UserSettings' && data.data && typeof data.data === 'object') {
+      return {
+        ...data,
+        data: JSON.stringify(data.data)
+      }
+    }
+    
+    // 其他模型可能也有 JSON 字段，按需添加
+    if (model === 'ChatSession') {
+      const serialized = { ...data }
+      if (serialized.config && typeof serialized.config === 'object') {
+        serialized.config = JSON.stringify(serialized.config)
+      }
+      if (serialized.meta && typeof serialized.meta === 'object') {
+        serialized.meta = JSON.stringify(serialized.meta)
+      }
+      return serialized
+    }
+    
+    return data
+  }
+
+  /**
+   * 反序列化 JSON 字段（SQLite 需要将字符串转回对象）
+   */
+  private deserializeJsonFields(model: string, data: any): any {
+    if (!data) return data
+
+    if (model === 'UserSettings' && data.data && typeof data.data === 'string') {
+      try {
+        return {
+          ...data,
+          data: JSON.parse(data.data)
+        }
+      } catch {
+        return data
+      }
+    }
+    
+    // 其他模型可能也有 JSON 字段，按需添加
+    if (model === 'ChatSession') {
+      const deserialized = { ...data }
+      if (deserialized.config && typeof deserialized.config === 'string') {
+        try {
+          deserialized.config = JSON.parse(deserialized.config)
+        } catch {
+          // 保持原样
+        }
+      }
+      if (deserialized.meta && typeof deserialized.meta === 'string') {
+        try {
+          deserialized.meta = JSON.parse(deserialized.meta)
+        } catch {
+          // 保持原样
+        }
+      }
+      return deserialized
+    }
+    
+    return data
   }
 }

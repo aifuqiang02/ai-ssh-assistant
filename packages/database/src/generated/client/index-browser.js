@@ -133,6 +133,14 @@ exports.Prisma.UserScalarFieldEnum = {
   settings: 'settings'
 };
 
+exports.Prisma.UserSettingsScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  data: 'data',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SSHConnectionScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -209,6 +217,7 @@ exports.Prisma.NullsOrder = {
 
 exports.Prisma.ModelName = {
   User: 'User',
+  UserSettings: 'UserSettings',
   SSHConnection: 'SSHConnection',
   ChatSession: 'ChatSession',
   Message: 'Message',
