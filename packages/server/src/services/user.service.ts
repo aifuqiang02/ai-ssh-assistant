@@ -89,7 +89,7 @@ export class UserService {
         }
       })
 
-(`New user created: ${username} (${email})`)
+      logger.info(`New user created: ${username} (${email})`)
 
       // 返回用户信息（不包含密码）
       return {
