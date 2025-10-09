@@ -83,6 +83,13 @@
       "dist",
       "dist-electron"
     ],
+    "asarUnpack": [
+      "node_modules/ssh2/**/*",
+      "node_modules/ssh2-streams/**/*",
+      "node_modules/asn1/**/*",
+      "node_modules/bcrypt-pbkdf/**/*",
+      "node_modules/cpu-features/**/*"
+    ],
     "mac": {
       "target": [
         {
