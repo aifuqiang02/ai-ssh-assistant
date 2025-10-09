@@ -133,7 +133,7 @@ const saveStatusText = computed(() => {
 const sessionName = ref('')
 
 // 高级设置
-const contextWindow = ref(10)
+const contextWindow = ref(50)
 const enableStreaming = ref(true)
 
 // 防抖定时器
@@ -211,7 +211,7 @@ const loadSessionConfig = async () => {
     
     // 从 config 中加载高级设置
     if (session.config) {
-      contextWindow.value = (session.config as any).contextWindow || 10
+      contextWindow.value = (session.config as any).contextWindow || 50
       enableStreaming.value = (session.config as any).enableStreaming !== false
     }
     
