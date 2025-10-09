@@ -637,7 +637,7 @@ onUnmounted(() => {
 
 .content-inner {
   max-width: 900px;
-  padding: 32px 48px;
+  padding: 32px 48px 80px 48px;
 }
 
 /* ========== Section 样式 ========== */
