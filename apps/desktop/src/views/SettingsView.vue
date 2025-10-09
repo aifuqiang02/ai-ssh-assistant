@@ -1349,6 +1349,8 @@ const showNotification = (message: string, type: 'success' | 'error' = 'success'
 
 // 保存设置
 const saveSettings = async () => {
+  console.log('[SettingsView] 🚀 开始保存设置...')
+  
   // 将响应式对象转换为纯 JSON 对象（避免 IPC 序列化错误）
   const settings = {
     appearance: {
@@ -1388,12 +1390,19 @@ const saveSettings = async () => {
     lastUpdated: new Date().toISOString()
   }
   
+  console.log('[SettingsView] 📦 设置内容:', JSON.stringify(settings, null, 2))
+  
   try {
+    console.log('[SettingsView] 📡 调用 settingsService.saveSettings...')
+    
     // ✅ 使用 settingsService，自动处理 userId
-    await settingsService.saveSettings(settings)
-    console.log('[Settings] Settings saved successfully')
+    const result = await settingsService.saveSettings(settings)
+    
+    console.log('[SettingsView] ✅ 保存结果:', result)
+    console.log('[SettingsView] ✅ 设置保存成功')
     
     // ✅ 保存元配置到 localStorage
+    console.log('[SettingsView] 💾 保存 storageMode 到 localStorage:', storageMode.value)
     localStorage.setItem('storageMode', storageMode.value)
     
     // 更新主题 Composable
@@ -1403,8 +1412,11 @@ const saveSettings = async () => {
   
     // 触发设置更新事件
     window.dispatchEvent(new CustomEvent('settings-updated'))
+    
+    console.log('[SettingsView] 🎉 所有保存操作完成')
   } catch (error) {
-    console.error('[Settings] Failed to save settings:', error)
+    console.error('[SettingsView] ❌ 保存设置失败:', error)
+    console.error('[SettingsView] 错误详情:', error instanceof Error ? error.stack : error)
     showNotification('保存设置失败', 'error')
   }
 }

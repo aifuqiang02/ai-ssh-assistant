@@ -85,11 +85,20 @@ class SettingsApiImpl extends BaseApiImpl implements ISettingsService {
 class SettingsLocalImpl extends BaseLocalImpl implements ISettingsService {
   async getSettings(): Promise<AppSettings> {
     // ✅ 使用 this.getUserId()，本地模式自动使用 'local-user'
-    return this.electronAPI.settings.get(this.getUserId())
+    const userId = this.getUserId()
+    console.log('[SettingsService Local] 📖 获取设置, userId:', userId)
+    const result = await this.electronAPI.settings.get(userId)
+    console.log('[SettingsService Local] 获取结果:', result)
+    return result
   }
   
   async saveSettings(settings: AppSettings): Promise<{ success: boolean }> {
-    return this.electronAPI.settings.save(this.getUserId(), settings)
+    const userId = this.getUserId()
+    console.log('[SettingsService Local] 💾 保存设置, userId:', userId)
+    console.log('[SettingsService Local] 设置内容:', JSON.stringify(settings, null, 2))
+    const result = await this.electronAPI.settings.save(userId, settings)
+    console.log('[SettingsService Local] 保存结果:', result)
+    return result
   }
   
   async resetSettings(): Promise<{ success: boolean }> {

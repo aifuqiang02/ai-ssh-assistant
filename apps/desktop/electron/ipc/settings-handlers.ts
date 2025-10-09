@@ -63,45 +63,57 @@ export function registerSettingsHandlers(storage: StorageManager) {
   // ✅ 保存设置 - StorageManager 自动同步
   ipcMain.handle('settings:save', async (_, userId: string, settings: any) => {
     try {
-      console.log('[Settings IPC] Save settings for user:', userId)
+      console.log('[Settings IPC] 📝 开始保存设置')
+      console.log('[Settings IPC] userId:', userId)
+      console.log('[Settings IPC] settings:', JSON.stringify(settings, null, 2))
       
       if (!userId) {
+        console.error('[Settings IPC] ❌ userId 为空')
         throw new Error('User ID is required')
       }
 
       // 检查是否存在
+      console.log('[Settings IPC] 🔍 检查现有设置...')
       const existing = await storage.findUnique('UserSettings', {
         where: { userId }
       })
+      console.log('[Settings IPC] 现有设置:', existing ? '已存在' : '不存在')
 
       if (existing) {
-        await storage.update('UserSettings', {
+        console.log('[Settings IPC] 📝 更新现有设置...')
+        const result = await storage.update('UserSettings', {
           where: { userId },
           data: { 
             data: settings,
             updatedAt: new Date()
           }
         })
+        console.log('[Settings IPC] 更新结果:', result)
       } else {
-        await storage.create('UserSettings', {
+        console.log('[Settings IPC] 📝 创建新设置...')
+        const result = await storage.create('UserSettings', {
           userId,
           data: settings
         })
+        console.log('[Settings IPC] 创建结果:', result)
       }
 
-      console.log('[Settings IPC] Settings saved successfully')
+      console.log('[Settings IPC] ✅ 设置保存成功')
       
       // ✅ 如果是 hybrid 模式，自动触发同步
       const status = await storage.getStatus()
+      console.log('[Settings IPC] 存储模式:', status.mode)
       if (status.mode === 'hybrid' && !status.sync.inProgress) {
+        console.log('[Settings IPC] 🔄 触发后台同步...')
         storage.sync().catch(err => {
-          console.warn('[Settings IPC] Background sync failed:', err)
+          console.warn('[Settings IPC] ⚠️ 后台同步失败:', err)
         })
       }
       
       return { success: true }
     } catch (error) {
-      console.error('[Settings IPC] Save error:', error)
+      console.error('[Settings IPC] ❌ 保存设置失败:', error)
+      console.error('[Settings IPC] 错误堆栈:', error instanceof Error ? error.stack : error)
       throw error
     }
   })
