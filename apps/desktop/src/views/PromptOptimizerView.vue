@@ -39,20 +39,14 @@
           </div>
 
           <div class="setting-row">
-            <div class="setting-left">
-              <label class="setting-label">生成提示词</label>
-              <p class="setting-hint">基于您的任务描述，AI 将生成一个优化的系统提示词</p>
-            </div>
-            <div class="setting-right">
-              <button
-                @click="generatePrompt"
-                :disabled="!taskDescription.trim() || isGenerating"
-                class="btn-primary"
-              >
-                <i :class="['bi', isGenerating ? 'bi-hourglass-split' : 'bi-magic']"></i>
-                {{ isGenerating ? '生成中...' : '生成基础提示词' }}
-              </button>
-            </div>
+            <button
+              @click="generatePrompt"
+              :disabled="!taskDescription.trim() || isGenerating"
+              class="btn-primary"
+            >
+              <i :class="['bi', isGenerating ? 'bi-hourglass-split' : 'bi-magic']"></i>
+              {{ isGenerating ? '生成中...' : '生成基础提示词' }}
+            </button>
           </div>
         </section>
 
