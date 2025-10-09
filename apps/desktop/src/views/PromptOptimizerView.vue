@@ -701,6 +701,22 @@ onUnmounted(() => {
   font-size: 13px;
 }
 
+/* ========== 任务输入容器 ========== */
+.task-input-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.task-input-container .form-textarea {
+  width: 100%;
+}
+
+.task-input-container .generate-btn {
+  align-self: flex-end;
+}
+
 /* ========== 按钮样式 ========== */
 .btn-primary,
 .btn-success,
