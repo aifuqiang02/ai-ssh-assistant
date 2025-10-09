@@ -30,18 +30,12 @@
           <p class="section-description">告诉 AI 您希望助手完成什么任务，我们将为您生成基础提示词</p>
         
           <div class="setting-row">
-            <div class="setting-left">
-              <label class="setting-label">任务描述</label>
-              <p class="setting-hint">详细描述您希望 AI 助手的角色和任务</p>
-            </div>
-            <div class="setting-right">
-              <textarea
-                v-model="taskDescription"
-                placeholder="例如：我需要一个专业的 Python 编程助手，能够帮我解答代码问题，提供最佳实践建议..."
-                class="form-textarea"
-                rows="6"
-              ></textarea>
-            </div>
+            <textarea
+              v-model="taskDescription"
+              placeholder="例如：我需要一个专业的 Python 编程助手，能够帮我解答代码问题，提供最佳实践建议..."
+              class="form-textarea"
+              rows="6"
+            ></textarea>
           </div>
 
           <div class="setting-row">
