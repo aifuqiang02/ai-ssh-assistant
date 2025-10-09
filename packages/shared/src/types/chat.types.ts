@@ -14,6 +14,15 @@ export interface ChatMessage {
   model?: string
 }
 
+// 聊天会话配置
+export interface ChatSessionConfig {
+  systemPrompt?: string  // 系统提示词
+  model?: string         // AI 模型
+  temperature?: number   // 温度参数
+  maxTokens?: number     // 最大 Token 数
+  [key: string]: any     // 其他配置
+}
+
 // 聊天会话
 export interface ChatSession {
   id: string
@@ -25,6 +34,7 @@ export interface ChatSession {
   lastMessageAt?: Date
   messageCount?: number
   model?: string
+  config?: ChatSessionConfig  // 会话配置
 }
 
 // 聊天文件夹
@@ -72,6 +82,7 @@ export interface CreateChatSessionDto {
   folderId?: string | null
   order?: number
   model?: string
+  config?: ChatSessionConfig
 }
 
 // 更新会话 DTO
@@ -80,6 +91,7 @@ export interface UpdateChatSessionDto {
   folderId?: string | null
   order?: number
   model?: string
+  config?: ChatSessionConfig
 }
 
 // 移动节点 DTO

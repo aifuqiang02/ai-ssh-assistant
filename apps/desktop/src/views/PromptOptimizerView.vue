@@ -173,6 +173,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { chatCompletion } from '../services/ai-api.service'
 import { settingsService } from '../services/settings.service'
+import { chatService } from '../services/chat.service'
 import { DEFAULT_PROVIDERS, type AIProvider, type AIModel } from '../types/ai-providers'
 
 // 左侧菜单配置
@@ -397,39 +398,64 @@ ${userFeedback.value}
 }
 
 // 方法：保存提示词
-const savePrompt = () => {
+const savePrompt = async () => {
   if (!generatedPrompt.value.trim()) {
     alert('提示词不能为空！')
     return
   }
   
   try {
-    // 保存到全局默认系统提示词（用于新会话）
+    // 1. 保存到 localStorage（作为本地缓存）
     localStorage.setItem('default-system-prompt', generatedPrompt.value)
     
-    // 如果有当前会话ID，也保存到该会话
     const currentSessionId = localStorage.getItem('current-session-id')
+    let savedToDatabase = false
+    
+    // 2. 如果有当前会话ID，保存到数据库
     if (currentSessionId) {
-      const sessionConfigKey = `chat-session-config-${currentSessionId}`
-      const existingConfig = localStorage.getItem(sessionConfigKey)
-      const config = existingConfig ? JSON.parse(existingConfig) : {}
-      
-      config.systemPrompt = generatedPrompt.value
-      config.updatedAt = new Date().toISOString()
-      
-      localStorage.setItem(sessionConfigKey, JSON.stringify(config))
-      
-      // 触发事件通知会话更新
-      window.dispatchEvent(new CustomEvent('session-prompt-updated', {
-        detail: { sessionId: currentSessionId, systemPrompt: generatedPrompt.value }
-      }))
+      try {
+        // 保存到 localStorage（本地缓存）
+        const sessionConfigKey = `chat-session-config-${currentSessionId}`
+        const existingConfig = localStorage.getItem(sessionConfigKey)
+        const config = existingConfig ? JSON.parse(existingConfig) : {}
+        
+        config.systemPrompt = generatedPrompt.value
+        config.updatedAt = new Date().toISOString()
+        
+        localStorage.setItem(sessionConfigKey, JSON.stringify(config))
+        
+        // 保存到数据库
+        await chatService.updateSession(currentSessionId, {
+          config: {
+            systemPrompt: generatedPrompt.value
+          }
+        })
+        
+        savedToDatabase = true
+        console.log('[PromptOptimizer] ✅ 提示词已保存到数据库')
+        
+        // 触发事件通知会话更新
+        window.dispatchEvent(new CustomEvent('session-prompt-updated', {
+          detail: { sessionId: currentSessionId, systemPrompt: generatedPrompt.value }
+        }))
+      } catch (dbError: any) {
+        console.error('[PromptOptimizer] ⚠️ 数据库保存失败，仅保存到本地:', dbError)
+        // 数据库保存失败，但 localStorage 已保存，继续执行
+      }
     }
     
-    alert('✅ 提示词已保存成功！\n\n' + 
-          (currentSessionId ? '已应用到当前会话和默认配置。' : '已保存为默认提示词，将应用到新会话。'))
+    // 3. 显示保存结果
+    const message = currentSessionId 
+      ? `✅ 提示词已保存成功！\n\n` +
+        `• 已应用到当前会话\n` +
+        `• 已保存到${savedToDatabase ? '数据库和' : ''}本地配置\n` +
+        `• 已设置为默认提示词`
+      : `✅ 提示词已保存为默认配置！\n\n将应用到新创建的会话。`
+    
+    alert(message)
     
   } catch (error: any) {
-    console.error('保存提示词失败:', error)
+    console.error('[PromptOptimizer] ❌ 保存提示词失败:', error)
     alert('❌ 保存失败：' + error.message)
   }
 }

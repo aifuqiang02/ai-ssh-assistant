@@ -244,6 +244,7 @@ import { useRouter } from 'vue-router'
 import { chatCompletion, type ChatMessage as APIChatMessage } from '../../services/ai-api.service'
 import type { AIProvider, AIModel } from '../../types/ai-providers'
 import { settingsService } from '../../services/settings.service'
+import { chatService } from '../../services/chat.service'
 import { marked } from 'marked'
 import hljs from 'highlight.js'
 
@@ -558,26 +559,48 @@ const openPromptOptimizer = () => {
 }
 
 // 加载系统提示词
-const loadSystemPrompt = () => {
+const loadSystemPrompt = async () => {
   if (props.sessionId) {
-    // 先尝试加载会话特定的提示词
+    try {
+      // 1. 优先从数据库加载会话配置
+      const session = await chatService.getSession(props.sessionId)
+      if (session?.config?.systemPrompt) {
+        systemRole.value = session.config.systemPrompt
+        console.log('[AIChatSession] ✅ 已从数据库加载会话提示词')
+        
+        // 同步到 localStorage 作为缓存
+        const sessionConfigKey = `chat-session-config-${props.sessionId}`
+        localStorage.setItem(sessionConfigKey, JSON.stringify(session.config))
+        return
+      }
+    } catch (error) {
+      console.warn('[AIChatSession] ⚠️ 从数据库加载失败，尝试本地缓存:', error)
+    }
+    
+    // 2. 如果数据库加载失败，尝试从 localStorage 加载
     const sessionConfigKey = `chat-session-config-${props.sessionId}`
     const sessionConfig = localStorage.getItem(sessionConfigKey)
     if (sessionConfig) {
-      const config = JSON.parse(sessionConfig)
-      if (config.systemPrompt) {
-        systemRole.value = config.systemPrompt
-        console.log('[AIChatSession] 已加载会话提示词')
-        return
+      try {
+        const config = JSON.parse(sessionConfig)
+        if (config.systemPrompt) {
+          systemRole.value = config.systemPrompt
+          console.log('[AIChatSession] 📦 已从本地缓存加载会话提示词')
+          return
+        }
+      } catch (error) {
+        console.error('[AIChatSession] ❌ 解析本地配置失败:', error)
       }
     }
   }
   
-  // 如果没有会话特定提示词，加载默认提示词
+  // 3. 如果都没有，加载默认提示词
   const defaultPrompt = localStorage.getItem('default-system-prompt')
   if (defaultPrompt) {
     systemRole.value = defaultPrompt
-    console.log('[AIChatSession] 已加载默认提示词')
+    console.log('[AIChatSession] 📝 已加载默认提示词')
+  } else {
+    console.log('[AIChatSession] ℹ️ 未设置系统提示词')
   }
 }
 
@@ -598,9 +621,9 @@ const saveCurrentSessionId = () => {
 }
 
 // 生命周期
-onMounted(() => {
+onMounted(async () => {
   scrollToBottom()
-  loadSystemPrompt()
+  await loadSystemPrompt()
   saveCurrentSessionId()
   
   // 监听提示词更新事件
@@ -617,8 +640,8 @@ watch(messages, () => {
 }, { deep: true })
 
 // 监听 sessionId 变化
-watch(() => props.sessionId, () => {
-  loadSystemPrompt()
+watch(() => props.sessionId, async () => {
+  await loadSystemPrompt()
   saveCurrentSessionId()
 })
 </script>
