@@ -203,6 +203,24 @@ console.log('✅ 修改完成！请手动执行 `pnpm dev` 重启应用。')
 await runCommand('pnpm dev')
 ```
 
+### 0.1. 文件管理规范
+- **禁止删除参考项目**: `Chaterm-main/` 目录是重要的参考项目，**绝对不能**删除或移动
+- **参考项目用途**: 
+  - 作为 Electron + Vue3 架构的参考实现
+  - 提供打包配置的参考
+  - 帮助解决技术难题时的对照代码
+- **位置**: 项目根目录下的 `Chaterm-main/` 或 `d:\git-projects\ai-ssh-assistant\Chaterm-main\`
+
+```bash
+# ❌ 禁止操作
+rm -rf Chaterm-main/
+git rm -rf Chaterm-main/
+
+# ✅ 正确 - 保留参考项目
+# 需要时可以查看参考项目的实现
+cat Chaterm-main/package.json
+```
+
 ### 1. 双存储实现规范
 
 **核心原则**：实现任何后端功能时，**必须**同时提供本地存储和远程存储两种实现方式。
@@ -315,10 +333,20 @@ export const yourService = createService<IYourService>(
 10. 创建 UI 组件
 
 ### 3. Git 提交规范
-- **完成任务后必须提交**: `git add . && git commit -m "简短说明" && git push`
+- **禁止自动提交和推送**: 除非用户明确要求，否则不要执行 `git add`、`git commit` 或 `git push`
+- **任务完成后**: 告知用户"✅ 任务完成！如需提交代码，请手动执行 git 操作。"
 - **commit 信息要简短明确**，说明做了什么
 - **不要**跳过 hooks（除非明确需要）
-- **不要** force push 到 main/master
+- **不要** force push 到 main/master（除非用户明确要求）
+
+```bash
+# ✅ 正确 - 仅在用户明确要求时执行
+# 用户: "提交代码并推送"
+git add . && git commit -m "简短说明" && git push
+
+# ❌ 错误 - 任务完成后自动提交
+# 完成功能实现后自动执行 git commit
+```
 
 ### 4. 调试技巧
 - **不要怀疑**代码未生效是因为没有编译或重启
