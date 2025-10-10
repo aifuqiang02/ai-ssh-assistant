@@ -1,0 +1,82 @@
+appId: com.ai-ssh-assistant.desktop
+productName: AI SSH Assistant
+compression: maximum
+directories:
+  output: release/${version}
+  buildResources: build
+files:
+  - dist/**/*
+  - dist-electron/**/*
+  - node_modules/**/*
+  - package.json
+  - '!**/.vscode/*'
+  - '!src/*'
+  - '!electron.vite.config.{js,ts,mjs,cjs}'
+  - '!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
+  - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
+  - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
+  - '!node_modules/**/*.ts'
+  - '!node_modules/**/*.map'
+  - '!node_modules/**/test/**'
+  - '!node_modules/**/tests/**'
+  - '!node_modules/**/docs/**'
+  - '!node_modules/**/documentation/**'
+  - '!node_modules/**/examples/**'
+  - '!node_modules/**/.github/**'
+  - '!node_modules/**/README.md'
+  - '!node_modules/**/readme.md'
+  - '!node_modules/**/CHANGELOG.md'
+  - '!node_modules/**/changelog.md'
+  - '!node_modules/**/LICENSE*'
+  - '!node_modules/**/license*'
+  - '!node_modules/**/*.d.ts'
+  - '!node_modules/**/.flow'
+  - '!node_modules/**/.DS_Store'
+  - '!node_modules/**/Thumbs.db'
+  - '!node_modules/**/webpack/**'
+  - '!node_modules/**/rollup/**'
+  - '!node_modules/**/vite/**'
+  - '!node_modules/**/@types/**'
+asar: false
+asarUnpack:
+  - node_modules/better-sqlite3/**/*
+  - node_modules/.pnpm/better-sqlite3*/**/*
+npmRebuild: false
+icon: build/icon.ico
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  executableName: AI SSH Assistant
+  artifactName: AI-SSH-Assistant-${version}-setup-${arch}.${ext}
+nsis:
+  artifactName: AI-SSH-Assistant-${version}-setup-${arch}.${ext}
+  shortcutName: ${productName}
+  uninstallDisplayName: ${productName}
+  createDesktopShortcut: always
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+mac:
+  icon: build/icon.icns
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+    - target: zip
+      arch:
+        - x64
+        - arm64
+  category: public.app-category.developer-tools
+dmg:
+  artifactName: ${name}-${version}-macos-${arch}.${ext}
+linux:
+  target:
+    - AppImage
+    - deb
+  category: Development
+  artifactName: ${name}-${version}-linux-${arch}.${ext}
+electronDownload:
+  mirror: https://npmmirror.com/mirrors/electron/
+

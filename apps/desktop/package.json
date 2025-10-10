@@ -1,6 +1,6 @@
 {
   "name": "@ai-ssh/desktop",
-  "version": "1.0.8",
+  "version": "1.1.0",
   "description": "AI SSH Assistant Desktop Application",
   "main": "dist-electron/main/index.js",
   "private": true,
@@ -8,7 +8,7 @@
     "name": "AI SSH Assistant Team",
     "email": "team@ai-ssh-assistant.com"
   },
-  "scripts": { 
+  "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build && electron-builder",
     "build:skip-check": "vite build && electron-builder",
@@ -21,7 +21,7 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "clean": "rimraf dist dist-electron node_modules/.vite",
     "rebuild": "electron-rebuild -f -w better-sqlite3",
-    "postinstall": "electron-rebuild -f -w better-sqlite3"
+    "postinstall": "electron-builder install-app-deps"
   },
   "dependencies": {
     "@ai-ssh/database": "workspace:*",
@@ -34,11 +34,14 @@
     "@xterm/addon-fit": "^0.9.0",
     "@xterm/addon-web-links": "^0.11.0",
     "@xterm/xterm": "^5.5.0",
+    "asn1": "^0.2.6",
     "axios": "^1.6.2",
+    "bcrypt-pbkdf": "^1.0.2",
     "better-sqlite3": "^12.4.1",
     "bootstrap": "^5.3.2",
     "bootstrap-icons": "^1.11.2",
     "bootstrap-vue-next": "^0.15.0",
+    "cpu-features": "^0.0.10",
     "dayjs": "^1.11.10",
     "highlight.js": "^11.11.1",
     "lodash-es": "^4.17.21",
@@ -47,7 +50,9 @@
     "node-fetch": "^3.3.2",
     "pinia": "^2.1.7",
     "pinia-plugin-persistedstate": "^3.2.0",
-    "ssh2": "^1.15.0",
+    "safer-buffer": "^2.1.2",
+    "ssh2": "^1.17.0",
+    "tweetnacl": "^1.0.3",
     "vue": "^3.3.8",
     "vue-router": "^4.2.5"
   },
@@ -71,73 +76,5 @@
     "vite-plugin-electron": "^0.15.5",
     "vite-plugin-electron-renderer": "^0.14.5",
     "vue-tsc": "^1.8.25"
-  },
-  "build": {
-    "appId": "com.ai-ssh-assistant.desktop",
-    "productName": "AI SSH Assistant",
-    "npmRebuild": false,
-    "asar": true,
-    "directories": {
-      "output": "release/${version}"
-    },
-    "files": [
-      "dist",
-      "dist-electron",
-      {
-        "from": "../../node_modules/.pnpm/ssh2@1.17.0/node_modules",
-        "to": "node_modules"
-      },
-      {
-        "from": "../../node_modules/.pnpm/safer-buffer@2.1.2/node_modules/safer-buffer",
-        "to": "node_modules/safer-buffer"
-      },
-      {
-        "from": "../../node_modules/.pnpm/tweetnacl@0.14.5/node_modules/tweetnacl",
-        "to": "node_modules/tweetnacl"
-      }
-    ],
-    "asarUnpack": [
-      "**/node_modules/**/*"
-    ],
-    "mac": {
-      "target": [
-        {
-          "target": "default",
-          "arch": [
-            "arm64",
-            "x64"
-          ]
-        }
-      ],
-      "artifactName": "${productName}-Mac-${version}-Installer.${ext}"
-    },
-    "win": {
-      "target": [
-        {
-          "target": "nsis",
-          "arch": [
-            "x64"
-          ]
-        }
-      ],
-      "artifactName": "${productName}-Windows-${version}-Setup.${ext}"
-    },
-    "linux": {
-      "target": [
-        {
-          "target": "AppImage",
-          "arch": [
-            "x64"
-          ]
-        }
-      ],
-      "artifactName": "${productName}-Linux-${version}.${ext}"
-    },
-    "nsis": {
-      "oneClick": false,
-      "perMachine": false,
-      "allowToChangeInstallationDirectory": true,
-      "deleteAppDataOnUninstall": false
-    }
   }
 }

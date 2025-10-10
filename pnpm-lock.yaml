@@ -71,9 +71,15 @@ importers:
       '@xterm/xterm':
         specifier: ^5.5.0
         version: 5.5.0
+      asn1:
+        specifier: ^0.2.6
+        version: 0.2.6
       axios:
         specifier: ^1.6.2
         version: 1.12.2
+      bcrypt-pbkdf:
+        specifier: ^1.0.2
+        version: 1.0.2
       better-sqlite3:
         specifier: ^12.4.1
         version: 12.4.1
@@ -86,6 +92,9 @@ importers:
       bootstrap-vue-next:
         specifier: ^0.15.0
         version: 0.15.5(vue@3.5.22)
+      cpu-features:
+        specifier: ^0.0.10
+        version: 0.0.10
       dayjs:
         specifier: ^1.11.10
         version: 1.11.18
@@ -110,9 +119,15 @@ importers:
       pinia-plugin-persistedstate:
         specifier: ^3.2.0
         version: 3.2.3(pinia@2.3.1)
+      safer-buffer:
+        specifier: ^2.1.2
+        version: 2.1.2
       ssh2:
-        specifier: ^1.15.0
+        specifier: ^1.17.0
         version: 1.17.0
+      tweetnacl:
+        specifier: ^1.0.3
+        version: 1.0.3
       vue:
         specifier: ^3.3.8
         version: 3.5.22(typescript@5.3.3)
@@ -2828,7 +2843,6 @@ packages:
     engines: {node: '>=10.0.0'}
     requiresBuild: true
     dev: false
-    optional: true
 
   /builder-util-runtime@9.2.4:
     resolution: {integrity: sha512-upp+biKpN/XZMLim7aguUyW8s0FUpDvOtK6sbanMFDAMBzpHDqdhgVYm6zc9HJ6nWo7u2Lxk60i2M6Jd3aiNrA==}
@@ -3207,7 +3221,6 @@ packages:
       buildcheck: 0.0.6
       nan: 2.23.0
     dev: false
-    optional: true
 
   /crc-32@1.2.2:
     resolution: {integrity: sha512-ROmzCKrTnOwybPcJApAA6WBWij23HVfGVNKqqrZpuyZOHqK2CwHSvpGuyt/UNNvaIjEd8X5IFGp4Mh+Ie1IHJQ==}
@@ -5278,7 +5291,6 @@ packages:
     resolution: {integrity: sha512-1UxuyYGdoQHcGg87Lkqm3FzefucTa0NAiOcuRsDmysep3c1LVCRK2krrUDafMWtjSG04htvAmvg96+SDknOmgQ==}
     requiresBuild: true
     dev: false
-    optional: true
 
   /nanoid@3.3.11:
     resolution: {integrity: sha512-N8SpfPUnUp1bK+PMYW8qSWdl9U+wwNWI4QKxOYDy9JAro3WMX7p2OeVRF9v+347pnakNevPmiHhNmZ2HbFA76w==}
@@ -6861,6 +6873,10 @@ packages:
 
   /tweetnacl@0.14.5:
     resolution: {integrity: sha512-KXXFFdAbFXY4geFIwoyNK+f5Z1b7swfXABfL7HXCmoIWMKU3dmS26672A4EeQtDzLKy7SXmfBu51JolvEKwtGA==}
+    dev: false
+
+  /tweetnacl@1.0.3:
+    resolution: {integrity: sha512-6rt+RN7aOi1nGMyC4Xa5DdYiukl2UWCbcJft7YhxReBGQD7OAM8Pbxw6YMo4r2diNEA8FEmu32YOn9rhaiE5yw==}
     dev: false
 
   /type-check@0.4.0:
