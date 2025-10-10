@@ -2,16 +2,16 @@ import { app, BrowserWindow, shell, ipcMain, dialog, globalShortcut, session } f
 import { join } from 'path'
 import { windowEvents } from '../shared/events'
 import { StorageManager } from '@ai-ssh/database'
-import { registerSettingsHandlers } from '../ipc/settings-handlers'
 import { initializeStorageManager } from './storage'
 
-// 静态导入所有 IPC 处理器（避免 Electron ESM 问题）
+// ✅ 静态导入所有 IPC 处理器（Electron 打包兼容）
 import '../ipc/api-handlers'
 import '../ipc/ssh-handlers'
 import '../ipc/ai-handlers'
 import '../ipc/file-handlers'
 import '../ipc/system-handlers'
-import { registerChatHandlers } from '../ipc/chat-handlers'
+import '../ipc/settings-handlers'
+import '../ipc/chat-handlers'
 
 class Application {
   private mainWindow: BrowserWindow | null = null
@@ -94,16 +94,10 @@ class Application {
         console.log('[Main] ✅ StorageManager initialized in local mode')
         
         // 初始化共享的 StorageManager 实例
+        // ✅ IPC handlers 会通过 getStorageManager() 自动获取
         initializeStorageManager(storageManager)
         console.log('[Main] ✅ Shared StorageManager initialized')
-        
-        // 注册 Settings IPC 处理器
-        registerSettingsHandlers(storageManager)
-        console.log('[Main] ✅ Settings handlers registered')
-        
-        // 注册 Chat IPC 处理器
-        registerChatHandlers()
-        console.log('[Main] ✅ Chat handlers registered')
+        console.log('[Main] ✅ All IPC handlers registered (static)')
         
         // ✅ 注册存储模式切换处理器
         
