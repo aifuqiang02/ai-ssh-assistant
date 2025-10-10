@@ -426,16 +426,17 @@ const handleSendMessage = async () => {
   inputMessage.value = ''
   inputHeight.value = 54
   
-  emit('send-message', content)
-  
-  // 如果没有外部处理，则内部处理
-  if (props.messages.length === 0) {
-    await sendMessageInternal(content)
-  }
+  // 总是内部处理（因为现在 ChatView 不再拦截）
+  await sendMessageInternal(content)
 }
 
 const sendMessageInternal = async (content: string) => {
+  console.log('[AIChatSession] 发送消息:', content)
+  console.log('[AIChatSession] currentProvider:', props.currentProvider)
+  console.log('[AIChatSession] currentModel:', props.currentModel)
+  
   if (!props.currentProvider || !props.currentModel) {
+    console.warn('[AIChatSession] ⚠️ 缺少模型配置，显示提示')
     const tipMessage: Message = {
       id: Date.now(),
       role: 'assistant',
@@ -482,6 +483,12 @@ const sendMessageInternal = async (content: string) => {
       }))
     
     // 添加系统角色（如果有）
+    if (systemRole.value) {
+      console.log('[AIChatSession] ✅ 使用 systemPrompt:', systemRole.value.substring(0, 100) + '...')
+    } else {
+      console.log('[AIChatSession] ℹ️ 没有 systemPrompt')
+    }
+    
     const messages: APIChatMessage[] = systemRole.value 
       ? [{ role: 'system', content: systemRole.value }, ...apiMessages, { role: 'user', content }]
       : [...apiMessages, { role: 'user', content }]

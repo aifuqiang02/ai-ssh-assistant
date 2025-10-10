@@ -3,7 +3,6 @@
     <!-- AI 会话组件 -->
     <div class="flex-1 overflow-hidden">
       <AIChatSession
-        :messages="messages"
         :current-provider="currentProvider"
         :current-model="currentModel"
         :session-name="currentSessionName"
@@ -15,10 +14,6 @@
         :empty-state-subtext="currentSessionId ? '这是一个新的对话会话，开始与 AI 助手对话吧！' : '提示：您可以在左侧创建会话来保存对话历史'"
         :show-attach-button="true"
         :show-status-info="false"
-        @send-message="handleSendMessage"
-        @clear-messages="handleClearMessages"
-        @attach-file="handleAttachFile"
-        @update:messages="handleUpdateMessages"
       />
     </div>
   </div>
@@ -27,26 +22,14 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import AIChatSession, { type Message } from '../components/chat/AIChatSession.vue'
+import AIChatSession from '../components/chat/AIChatSession.vue'
 import type { AIProvider, AIModel } from '../types/ai-providers'
-import { chatCompletion, type ChatMessage as APIChatMessage } from '../services/ai-api.service'
 import { chatService } from '../services/chat.service'
-import { settingsService } from '../services/settings.service'
-
-interface SelectedModel {
-  providerId: string
-  modelId: string
-}
 
 // 路由和会话管理
 const route = useRoute()
 
-// Chat 树数据
-const chatTree = ref<any[]>([])
-
 // 响应式数据
-const messages = ref<Message[]>([])
-const selectedModel = ref<SelectedModel | undefined>()
 const currentProvider = ref<AIProvider | null>(null)
 const currentModel = ref<AIModel | null>(null)
 
@@ -54,297 +37,98 @@ const currentModel = ref<AIModel | null>(null)
 const currentSessionId = computed(() => route.query.sessionId as string || null)
 const currentSessionName = ref('AI 对话')
 
-
-// 消息发送处理
-const handleSendMessage = async (content: string) => {
-  // 检查是否选择了模型
-  if (!selectedModel.value || !currentProvider.value || !currentModel.value) {
-    const tipMessage: Message = {
-      id: Date.now(),
-      role: 'assistant',
-      content: '请先在右上角选择一个 AI 模型，然后再开始对话。',
-      timestamp: new Date()
-    }
-    messages.value.push(tipMessage)
-    return
-  }
-  
-  // 添加用户消息
-  const userMessage: Message = {
-    id: Date.now(),
-    role: 'user',
-    content,
-    timestamp: new Date()
-  }
-  messages.value.push(userMessage)
-  
-  // 准备 AI 响应消息
-  const assistantMessage: Message = {
-    id: Date.now() + 1,
-    role: 'assistant',
-    content: '',
-    timestamp: new Date(),
-    streaming: true
-  }
-  messages.value.push(assistantMessage)
-  
-  try {
-    // 准备 API 消息格式
-    const apiMessages: APIChatMessage[] = messages.value
-      .filter(msg => !msg.streaming)
-      .map(msg => ({
-        role: msg.role,
-        content: msg.content
-      }))
-    
-    // 添加当前用户消息
-    apiMessages.push({
-      role: 'user',
-      content
-    })
-    
-    // ✅ 使用 settingsService 获取 API 密钥（自动处理 userId）
-    const settings = await settingsService.getSettings()
-    const configs = settings?.aiProviders || []
-    const providerConfig = configs.find((p: any) => p.id === currentProvider.value?.id)
-    
-    if (!providerConfig?.apiKey) {
-      throw new Error('未找到 API 密钥配置')
-    }
-    
-    // 创建包含 API Key 的 provider 对象
-    const providerWithApiKey = {
-      ...currentProvider.value,
-      apiKey: providerConfig.apiKey
-    }
-    
-    // 调用 AI API
-    const response = await chatCompletion(
-      providerWithApiKey,
-      currentModel.value,
-      {
-        messages: apiMessages,
-        stream: true
-      },
-      (chunk) => {
-        assistantMessage.content += chunk.content || ''
-        // 强制触发响应式更新
-        messages.value = [...messages.value]
-      }
-    )
-    
-    // 完成流式输出
-    assistantMessage.streaming = false
-    assistantMessage.content = response.content
-    
-    // 如果有会话ID，保存消息
-    if (currentSessionId.value) {
-      await saveSessionMessages(currentSessionId.value)
-    }
-    
-  } catch (error: any) {
-    console.error('AI 响应错误:', error)
-    assistantMessage.streaming = false
-    assistantMessage.content = `抱歉，发生了错误：${error.message}`
-  }
-}
-
-// 清空消息处理
-const handleClearMessages = () => {
-  messages.value = []
-  if (currentSessionId.value) {
-    saveSessionMessages(currentSessionId.value)
-  }
-}
-
-// 消息更新处理
-const handleUpdateMessages = (newMessages: Message[]) => {
-  messages.value = newMessages
-}
-
-// 附加文件处理
-const handleAttachFile = () => {
-  // 待实现
-}
-
-// 加载会话消息
-const loadSessionMessages = async (sessionId: string) => {
-  try {
-    const savedMessages = localStorage.getItem(`chat-session-${sessionId}`)
-    if (savedMessages) {
-      const parsedMessages = JSON.parse(savedMessages)
-      messages.value = parsedMessages.map((msg: any) => ({
-        ...msg,
-        timestamp: new Date(msg.timestamp)
-      }))
-    } else {
-      messages.value = []
-    }
-
-    const savedSessionName = localStorage.getItem(`chat-session-name-${sessionId}`)
-    if (savedSessionName) {
-      currentSessionName.value = savedSessionName
-    }
-  } catch (error) {
-    console.error('加载会话消息失败:', error)
-    messages.value = []
-  }
-}
-
-// 保存会话消息
-const saveSessionMessages = async (sessionId: string) => {
-  try {
-    localStorage.setItem(`chat-session-${sessionId}`, JSON.stringify(messages.value))
-    localStorage.setItem(`chat-session-name-${sessionId}`, currentSessionName.value)
-  } catch (error) {
-    console.error('保存会话消息失败:', error)
-  }
-}
-
 // 保存选中的模型
 const saveSelectedModel = () => {
-  if (selectedModel.value) {
-    localStorage.setItem('selectedAIModel', JSON.stringify(selectedModel.value))
+  if (currentProvider.value && currentModel.value) {
+    localStorage.setItem('selectedAIModel', JSON.stringify({
+      provider: currentProvider.value,
+      model: currentModel.value
+    }))
   }
 }
 
-// Token 估算
-const estimateTokens = (text: string): number => {
-  return Math.ceil(text.length / 4)
+// 加载会话名称
+const loadSessionName = async (sessionId: string) => {
+  try {
+    const session = await chatService.getSession(sessionId)
+    if (session) {
+      currentSessionName.value = session.title || 'AI 对话'
+    }
+  } catch (error) {
+    console.error('加载会话名称失败:', error)
+  }
+}
+
+// 监听 AI 模型选择事件（从 AppTitleBar 触发）
+const handleModelSelected = (event: CustomEvent) => {
+  const detail = event.detail
+  console.log('[ChatView] 接收到模型切换事件:', detail)
+  
+  // 新格式：包含完整的 provider 和 model 对象
+  if (detail.provider && detail.model) {
+    currentProvider.value = detail.provider
+    currentModel.value = detail.model
+    console.log('[ChatView] ✅ 模型已选择:', detail.provider.name, detail.model.name)
+  }
+  // 旧格式兼容：只有 providerId 和 modelId（不应该再出现）
+  else if (detail.providerId && detail.modelId) {
+    console.warn('[ChatView] ⚠️ 收到旧格式事件，忽略')
+  }
+}
+
+// 恢复上次选择的模型
+const loadSavedModel = () => {
+  const savedModel = localStorage.getItem('selectedAIModel')
+  if (savedModel) {
+    try {
+      const parsed = JSON.parse(savedModel)
+      
+      // 检查是否是新格式（完整对象）
+      if (parsed.provider && parsed.model) {
+        currentProvider.value = parsed.provider
+        currentModel.value = parsed.model
+        console.log('[ChatView] ✅ 已恢复模型:', parsed.provider.name, parsed.model.name)
+      } else if (parsed.providerId && parsed.modelId) {
+        // 旧格式，清理并提示用户重新选择
+        console.warn('[ChatView] ⚠️ 检测到旧格式模型配置，已清理，请重新选择')
+        localStorage.removeItem('selectedAIModel')
+      }
+    } catch (error) {
+      console.error('[ChatView] ❌ 解析保存的模型失败:', error)
+      // 清理损坏的数据
+      localStorage.removeItem('selectedAIModel')
+    }
+  }
 }
 
 // 监听会话ID变化
 watch(currentSessionId, async (newSessionId, oldSessionId) => {
-  if (oldSessionId) {
-    await saveSessionMessages(oldSessionId)
-  }
-  if (newSessionId) {
-    await loadSessionMessages(newSessionId)
-    const findSessionInTree = (nodes: any[], sessionId: string): any => {
-      for (const node of nodes) {
-        if (node.id === sessionId && node.type === 'session') {
-          return node
-        }
-        if (node.children) {
-          const found = findSessionInTree(node.children, sessionId)
-          if (found) return found
-        }
-      }
-      return null
-    }
-    const session = findSessionInTree(chatTree.value, newSessionId)
-    if (session) {
-      currentSessionName.value = session.name || session.title || 'AI 对话'
-    }
-  } else {
-    messages.value = []
-    currentSessionName.value = 'AI 对话'
+  if (newSessionId && newSessionId !== oldSessionId) {
+    await loadSessionName(newSessionId)
   }
 }, { immediate: true })
 
-// 监听模型变化
-watch(selectedModel, () => {
-  saveSelectedModel()
-}, { deep: true })
-
-// 加载模型配置
-const loadModelConfiguration = async () => {
-  try {
-    const saved = localStorage.getItem('selectedAIModel')
-    if (!saved) {
-      return
-    }
-    
-    const savedModel = JSON.parse(saved)
-    
-    // 使用 settingsService 获取配置（自动处理 userId）
-    const settings = await settingsService.getSettings()
-    const configs = settings?.aiProviders || []
-    
-    if (configs.length > 0 && savedModel) {
-      const provider = configs.find((p: AIProvider) => p.id === savedModel.providerId)
-      
-      if (provider) {
-        const model = provider.models?.find((m: AIModel) => m.id === savedModel.modelId)
-        if (model) {
-          selectedModel.value = savedModel
-          currentProvider.value = provider
-          currentModel.value = model
-        } else {
-          console.warn('[ChatView] ⚠️ 未找到模型:', savedModel.modelId)
-        }
-      } else {
-        console.warn('[ChatView] ⚠️ 未找到服务商:', savedModel.providerId)
-      }
-    }
-  } catch (error) {
-    console.error('[ChatView] ❌ 模型配置加载失败:', error)
-  }
-}
-
-// 监听模型切换事件
-const handleModelChanged = () => {
-  loadModelConfiguration()
-}
-
-const handleSettingsUpdated = () => {
-  loadModelConfiguration()
-}
-
-// 加载 Chat 树
-const loadChatTree = async () => {
-  try {
-    chatTree.value = await chatService.getChatTree()
-  } catch (err) {
-    console.error('加载 Chat 树失败:', err)
-  }
-}
-
 // 生命周期
 onMounted(async () => {
-  loadModelConfiguration()
-  // ✅ 直接使用 chatService
-  await loadChatTree()
+  // 恢复上次选择的模型
+  loadSavedModel()
+
+  // 监听模型选择事件（事件名称与 AppTitleBar 一致）
+  window.addEventListener('ai-model-changed', handleModelSelected as EventListener)
   
-  // 监听模型切换和设置更新事件
-  window.addEventListener('ai-model-changed', handleModelChanged)
-  window.addEventListener('settings-updated', handleSettingsUpdated)
-  window.addEventListener('ai-provider-configs-updated', handleSettingsUpdated)
+  // 如果有会话ID，加载会话名称
+  if (currentSessionId.value) {
+    await loadSessionName(currentSessionId.value)
+  }
 })
 
 onBeforeUnmount(() => {
-  window.removeEventListener('ai-model-changed', handleModelChanged)
-  window.removeEventListener('settings-updated', handleSettingsUpdated)
-  window.removeEventListener('ai-provider-configs-updated', handleSettingsUpdated)
+  window.removeEventListener('ai-model-changed', handleModelSelected as EventListener)
 })
 </script>
 
 <style scoped>
 .chat-view {
-  background: var(--vscode-editor-background);
-}
-
-.chat-header {
-  background: var(--vscode-editor-background);
-  border-bottom: 1px solid var(--vscode-panel-border);
-}
-
-.header-content {
-  display: flex;
-  justify-content: flex-start;
-  align-items: flex-start;
-}
-
-.header-text h2 {
-  color: var(--vscode-editor-foreground);
-  margin: 0;
-  font-size: 1.25rem;
-  font-weight: 600;
-}
-
-.header-text p {
-  color: var(--vscode-descriptionForeground);
-  margin: 0.25rem 0 0 0;
-  font-size: 0.875rem;
+  background: var(--vscode-bg-light);
 }
 </style>

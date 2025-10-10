@@ -500,27 +500,43 @@ const loadAIModelConfiguration = async () => {
       return
     }
     
-    const savedModel = JSON.parse(saved)
-    console.log('[TerminalView] 尝试加载模型:', savedModel)
+    const parsed = JSON.parse(saved)
+    console.log('[TerminalView] 尝试加载模型:', parsed)
     
-    // ✅ 使用 settingsService 获取配置（自动处理 userId）
-    const settings = await settingsService.getSettings()
-    const configs = settings?.aiProviders || []
+    // 新格式：完整的 provider 和 model 对象
+    if (parsed.provider && parsed.model) {
+      currentProvider.value = parsed.provider
+      currentModel.value = parsed.model
+      console.log('[TerminalView] ✅ 已加载模型 (新格式):', parsed.provider.name, '-', parsed.model.name)
+      return
+    }
     
-    if (configs.length > 0 && savedModel) {
-      const provider = configs.find((p: AIProvider) => p.id === savedModel.providerId)
+    // 旧格式兼容：只有 providerId 和 modelId
+    if (parsed.providerId && parsed.modelId) {
+      console.log('[TerminalView] 检测到旧格式，从 settings 加载完整对象')
       
+      const settings = await settingsService.getSettings()
+      const configs = settings?.aiProviders || []
+      
+      const provider = configs.find((p: AIProvider) => p.id === parsed.providerId)
       if (provider) {
-        const model = provider.models?.find((m: AIModel) => m.id === savedModel.modelId)
+        const model = provider.models?.find((m: AIModel) => m.id === parsed.modelId)
         if (model) {
           currentProvider.value = provider
           currentModel.value = model
-          console.log('[TerminalView] ✅ 已加载模型:', provider.name, '-', model.name)
+          console.log('[TerminalView] ✅ 已加载模型 (旧格式):', provider.name, '-', model.name)
+          
+          // 升级到新格式
+          localStorage.setItem('selectedAIModel', JSON.stringify({
+            provider: provider,
+            model: model
+          }))
+          console.log('[TerminalView] 📝 已升级为新格式')
         } else {
-          console.warn('[TerminalView] ⚠️ 未找到模型:', savedModel.modelId)
+          console.warn('[TerminalView] ⚠️ 未找到模型:', parsed.modelId)
         }
       } else {
-        console.warn('[TerminalView] ⚠️ 未找到服务商:', savedModel.providerId)
+        console.warn('[TerminalView] ⚠️ 未找到服务商:', parsed.providerId)
       }
     }
   } catch (error) {

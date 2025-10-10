@@ -474,23 +474,46 @@ const toggleModelDropdown = () => {
   }
 }
 
-const selectModel = (model: TitleBarModel) => {
+const selectModel = async (model: TitleBarModel) => {
   // 更新当前显示的模型
   currentModel.value = model
   showModelDropdown.value = false
   
-  // 保存选择到 localStorage
-  const selection = {
-    providerId: model.providerId,
-    modelId: model.id
+  try {
+    // 获取完整的 provider 和 model 对象用于保存
+    const settings = await settingsService.getSettings()
+    const provider = settings?.aiProviders?.find((p: AIProvider) => p.id === model.providerId)
+    const fullModel = provider?.models?.find((m: AIModel) => m.id === model.id)
+    
+    if (provider && fullModel) {
+      // 保存完整对象到 localStorage
+      const selection = {
+        provider: provider,
+        model: fullModel
+      }
+      
+      localStorage.setItem('selectedAIModel', JSON.stringify(selection))
+      console.log('[AppTitleBar] ✅ 已保存完整模型对象')
+      
+      // 触发自定义事件通知其他组件（传递完整对象）
+      window.dispatchEvent(new CustomEvent('ai-model-changed', {
+        detail: selection
+      }))
+    } else {
+      console.warn('[AppTitleBar] ⚠️ 未找到完整的 provider/model 对象')
+      // 降级：保存 ID
+      const selection = {
+        providerId: model.providerId,
+        modelId: model.id
+      }
+      localStorage.setItem('selectedAIModel', JSON.stringify(selection))
+      window.dispatchEvent(new CustomEvent('ai-model-changed', {
+        detail: selection
+      }))
+    }
+  } catch (error) {
+    console.error('[AppTitleBar] ❌ 保存模型失败:', error)
   }
-  
-  localStorage.setItem('selectedAIModel', JSON.stringify(selection))
-  
-  // 触发自定义事件通知其他组件
-  window.dispatchEvent(new CustomEvent('ai-model-changed', {
-    detail: selection
-  }))
 }
 
 const openModelSettings = () => {

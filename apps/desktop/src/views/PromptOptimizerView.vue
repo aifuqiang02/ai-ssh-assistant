@@ -217,14 +217,26 @@ const loadAIModelConfiguration = async () => {
       return false
     }
     
-    const savedModel = JSON.parse(saved)
-    const settings = await settingsService.getSettings()
-    const configs = settings?.aiProviders || []
+    const parsed = JSON.parse(saved)
     
-    if (configs.length > 0 && savedModel) {
+    // 新格式：完整的 provider 和 model 对象
+    if (parsed.provider && parsed.model) {
+      currentProvider.value = parsed.provider
+      currentModel.value = parsed.model
+      console.log('[PromptOptimizer] ✅ 已加载模型 (新格式):', parsed.provider.name, '-', parsed.model.name)
+      return true
+    }
+    
+    // 旧格式兼容：只有 providerId 和 modelId
+    if (parsed.providerId && parsed.modelId) {
+      console.log('[PromptOptimizer] 检测到旧格式，从 settings 加载完整对象')
+      
+      const settings = await settingsService.getSettings()
+      const configs = settings?.aiProviders || []
+      
       // 合并配置与默认 provider
-      const savedConfig = configs.find((p: any) => p.id === savedModel.providerId)
-      const defaultProvider = DEFAULT_PROVIDERS.find(p => p.id === savedModel.providerId)
+      const savedConfig = configs.find((p: any) => p.id === parsed.providerId)
+      const defaultProvider = DEFAULT_PROVIDERS.find(p => p.id === parsed.providerId)
       
       if (savedConfig && defaultProvider) {
         // 合并 provider 数据
@@ -244,11 +256,11 @@ const loadAIModelConfiguration = async () => {
             : defaultProvider.models
         }
         
-        const model = provider.models?.find(m => m.id === savedModel.modelId)
+        const model = provider.models?.find(m => m.id === parsed.modelId)
         if (model) {
           currentProvider.value = provider
           currentModel.value = model
-          console.log('[PromptOptimizer] ✅ 已加载模型:', provider.name, '-', model.name)
+          console.log('[PromptOptimizer] ✅ 已加载模型 (旧格式):', provider.name, '-', model.name)
           return true
         }
       }
