@@ -408,6 +408,234 @@ git add . && git commit -m "简短说明" && git push
 - [ ] 是否正确清理副作用（onBeforeUnmount）？
 - [ ] 是否有完整的错误处理？
 
+## 🎨 主题色应用规范
+
+### 1. 主题系统架构
+
+**主题文件位置**：
+- `apps/desktop/src/assets/styles/themes/dark-modern.css` - 深色主题
+- `apps/desktop/src/assets/styles/themes/light-modern.css` - 浅色主题
+- `apps/desktop/src/services/theme.service.ts` - 主题服务
+
+**主题管理**：
+```typescript
+import { themeService } from '@/services/theme.service'
+
+// 获取当前主题
+const currentTheme = themeService.getCurrentTheme()
+
+// 切换主题
+themeService.toggleTheme()
+
+// 应用指定主题
+themeService.applyTheme('dark-modern')
+```
+
+### 2. CSS 变量使用规范
+
+#### 核心原则
+- **禁止**使用硬编码颜色（如 `#007ACC`, `rgb(0, 122, 204)`, `white`, `black`）
+- **必须**使用主题 CSS 变量
+- **例外**：半透明遮罩层（如 `rgba(0, 0, 0, 0.5)`）可以保留
+
+#### 主要颜色变量
+
+**主题强调色（Accent）**：
+```css
+/* ✅ 正确 - 主按钮、激活状态、悬停效果 */
+.primary-button {
+  background: var(--vscode-accent);
+  color: var(--vscode-button-foreground);
+}
+
+.primary-button:hover {
+  background: var(--vscode-accent-hover);
+}
+
+/* ❌ 错误 - 硬编码颜色 */
+.primary-button {
+  background: #007ACC;
+  color: white;
+}
+```
+
+**背景和文字颜色**：
+```css
+/* 背景色 */
+--vscode-bg                    /* 主背景 */
+--vscode-bg-light              /* 浅背景 */
+--vscode-bg-lighter            /* 更浅背景 */
+
+/* 文字颜色 */
+--vscode-fg                    /* 主文字 */
+--vscode-fg-muted              /* 次要文字 */
+--vscode-button-foreground     /* 按钮文字（通常是白色）*/
+
+/* 边框 */
+--vscode-border                /* 主边框 */
+```
+
+**状态颜色**：
+```css
+/* 成功 */
+--vscode-editorGutter-addedBackground      /* 绿色 */
+
+/* 警告 */
+--vscode-editorGutter-modifiedBackground   /* 黄色 */
+
+/* 错误 */
+--vscode-error                              /* 红色 */
+--vscode-editorGutter-deletedBackground    /* 红色背景 */
+```
+
+**交互颜色**：
+```css
+/* 列表悬停 */
+--vscode-list-hoverBackground
+--vscode-list-hoverForeground
+
+/* 列表选中 */
+--vscode-list-activeSelectionBackground
+--vscode-list-activeSelectionForeground
+```
+
+### 3. 按钮颜色规范
+
+#### 主按钮（Primary Button）
+```css
+/* ✅ 统一使用主题强调色 */
+.vscode-button.primary,
+.btn-primary,
+.toolbar-btn.primary {
+  background: var(--vscode-accent);
+  color: var(--vscode-button-foreground);
+  border-color: var(--vscode-accent);
+}
+
+.vscode-button.primary:hover {
+  background: var(--vscode-accent-hover);
+  border-color: var(--vscode-accent-hover);
+}
+```
+
+#### 激活按钮（Active Button）
+```css
+/* ✅ 使用主题强调色 + 阴影 */
+.btn-icon.active,
+.send-button.has-content {
+  background: var(--vscode-accent);
+  color: var(--vscode-button-foreground);
+  box-shadow: 0 2px 8px rgba(var(--vscode-accent-rgb, 0, 122, 204), 0.3);
+}
+
+.btn-icon.active:hover {
+  background: var(--vscode-accent-hover);
+  box-shadow: 0 4px 12px rgba(var(--vscode-accent-rgb, 0, 122, 204), 0.4);
+}
+```
+
+#### 危险按钮（Danger Button）
+```css
+/* ✅ 使用错误色 */
+.btn-danger:hover {
+  background: var(--vscode-inputValidation-errorBackground);
+  border-color: var(--vscode-inputValidation-errorBorder);
+  color: var(--vscode-button-foreground);
+}
+```
+
+### 4. 下拉菜单颜色规范
+
+```css
+/* ✅ 菜单项悬停 - 使用主题强调色 */
+.action-item:hover,
+.menu-item:hover {
+  background: var(--vscode-accent);
+  color: var(--vscode-button-foreground);
+}
+
+/* ✅ 危险操作项 */
+.action-item.danger {
+  color: var(--vscode-error);  /* 默认红色警示 */
+}
+
+.action-item.danger:hover {
+  background: var(--vscode-accent);  /* 悬停时使用主题色 */
+  color: var(--vscode-button-foreground);  /* 白色文字确保可读 */
+}
+```
+
+### 5. 常见错误和修复
+
+#### 错误示例 ❌
+```css
+/* 硬编码颜色 */
+.button {
+  background: #007ACC;
+  color: white;
+}
+
+.menu-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.status-success {
+  color: #27ae60;
+}
+```
+
+#### 正确示例 ✅
+```css
+/* 使用主题变量 */
+.button {
+  background: var(--vscode-accent);
+  color: var(--vscode-button-foreground);
+}
+
+.menu-item:hover {
+  background: var(--vscode-list-hoverBackground);
+}
+
+.status-success {
+  color: var(--vscode-editorGutter-addedBackground);
+}
+```
+
+### 6. 主题变量完整列表
+
+参考文件：
+- `apps/desktop/src/assets/styles/themes/QUICK-REFERENCE.md` - 快速参考
+- `apps/desktop/src/assets/styles/themes/README.md` - 详细文档
+- `apps/desktop/src/assets/styles/themes/dark-modern.css` - 深色主题定义
+- `apps/desktop/src/assets/styles/themes/light-modern.css` - 浅色主题定义
+
+### 7. 检查清单
+
+在提交代码前，检查：
+- [ ] 是否有硬编码的颜色值？
+- [ ] 所有按钮是否使用 `--vscode-accent`？
+- [ ] 悬停效果是否使用主题变量？
+- [ ] 状态颜色是否使用对应的主题变量？
+- [ ] 深色/浅色模式是否都测试过？
+- [ ] 文字在各种背景上是否清晰可读？
+
+### 8. 主题切换测试
+
+```typescript
+// 测试主题切换
+import { themeService } from '@/services/theme.service'
+
+// 切换到深色主题
+themeService.applyTheme('dark-modern')
+
+// 切换到浅色主题
+themeService.applyTheme('light-modern')
+
+// 检查所有按钮、菜单、状态显示是否正常
+```
+
+---
+
 ## 📄 文档规范
 
 ### 禁止创建总结文档
@@ -448,3 +676,4 @@ git commit -m "fix: SSH 重连后 AI 助手连接 ID 不更新
 
 **最后更新**: 2025-10-11
 **项目架构版本**: v2.0 (双模式服务架构)
+**主题系统版本**: v1.0 (VSCode 主题系统)
