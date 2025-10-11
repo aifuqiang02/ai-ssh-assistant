@@ -45,6 +45,16 @@
 
             <!-- 消息内容 -->
             <div class="message-body">
+              <!-- 加载指示器（AI 正在思考，还没返回内容） -->
+              <div v-if="message.role === 'assistant' && message.streaming && !message.content && !message.toolUse" class="message-thinking">
+                <div class="thinking-indicator">
+                  <div class="thinking-dots">
+                    <span></span><span></span><span></span>
+                  </div>
+                  <span class="thinking-text">AI 正在思考...</span>
+                </div>
+              </div>
+
               <!-- 普通文本消息 -->
               <div 
                 v-if="!message.toolUse && message.content" 
@@ -1528,6 +1538,56 @@ onBeforeUnmount(() => {
 }
 
 /* 加载指示器 */
+/* AI 思考中指示器（请求中，还没返回内容） */
+.message-thinking {
+  padding: 16px 0;
+}
+
+.thinking-indicator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.thinking-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.thinking-dots span {
+  width: 10px;
+  height: 10px;
+  background: var(--vscode-accent);
+  border-radius: 50%;
+  animation: thinking-bounce 1.4s infinite ease-in-out both;
+}
+
+.thinking-dots span:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.thinking-dots span:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+.thinking-text {
+  font-size: 14px;
+  color: var(--vscode-fg-muted);
+  font-style: italic;
+}
+
+@keyframes thinking-bounce {
+  0%, 80%, 100% {
+    transform: scale(0.6);
+    opacity: 0.3;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* 流式输出中的加载指示器 */
 .message-loading {
   display: flex;
   align-items: center;
