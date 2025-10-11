@@ -785,13 +785,13 @@ onBeforeUnmount(() => {
 }
 
 .btn-icon.active {
-  background-color: var(--vscode-button-background);
+    background-color: var(--vscode-accent);
   color: var(--vscode-button-foreground);
-。  box-shadow: 0 2px 8px rgba(var(--vscode-accent-rgb, 0, 122, 204), 0.3);
+  box-shadow: 0 2px 8px rgba(var(--vscode-accent-rgb, 0, 122, 204), 0.3);
 }
 
 .btn-icon.active:hover {
-  background-color: var(--vscode-button-hoverBackground);
+  background-color: var(--vscode-accent-hover);
   box-shadow: 0 4px 12px rgba(var(--vscode-accent-rgb, 0, 122, 204), 0.4);
   transform: translateY(-1px);
 }

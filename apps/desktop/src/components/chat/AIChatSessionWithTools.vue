@@ -1846,12 +1846,12 @@ onBeforeUnmount(() => {
 
 /* 发送按钮 - 有内容时高亮显示 */
 .control-button.send-button.has-content:not(:disabled) {
-  background: var(--vscode-button-background);
+  background: var(--vscode-accent);
   box-shadow: 0 2px 8px rgba(var(--vscode-accent-rgb, 0, 122, 204), 0.3);
 }
 
 .control-button.send-button.has-content:hover:not(:disabled) {
-  background: var(--vscode-button-hoverBackground);
+  background: var(--vscode-accent-hover);
   box-shadow: 0 4px 12px rgba(var(--vscode-accent-rgb, 0, 122, 204), 0.4);
   transform: translateY(-2px);
 }
