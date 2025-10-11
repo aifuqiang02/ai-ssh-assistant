@@ -196,13 +196,13 @@
 
           <!-- 右侧按钮组 -->
           <div class="action-buttons">
-            <!-- 发送/停止按钮 - 暂时禁用发送功能，保留停止功能 -->
+            <!-- 发送/停止按钮 -->
             <button
               class="control-button send-button"
               :class="{ 'is-generating': isGenerating, 'has-content': inputMessage.trim() }"
-              :disabled="true"
-              :title="isGenerating ? '停止生成 (Ctrl+C)' : '使用 Ctrl+Enter 发送消息'"
-              @click="isGenerating ? handleStopGeneration() : null"
+              :disabled="!inputMessage.trim() && !isGenerating"
+              :title="isGenerating ? '停止生成 (Ctrl+C)' : '发送消息 (Ctrl+Enter)'"
+              @click="isGenerating ? handleStopGeneration() : handleSendMessage()"
             >
               <i v-if="!isGenerating" class="bi bi-send-fill"></i>
               <i v-else class="bi bi-stop-circle-fill"></i>
