@@ -40,10 +40,17 @@
               <span class="header-title">Todo List</span>
               <span class="header-count">{{ completedCount }}/{{ totalCount }}</span>
             </div>
-            <i 
-              class="bi bi-chevron-up collapse-icon"
-              @click.stop="toggleCollapse"
-            ></i>
+            <div class="header-actions">
+              <i 
+                class="bi bi-trash action-icon"
+                title="清除任务列表"
+                @click.stop="handleClear"
+              ></i>
+              <i 
+                class="bi bi-chevron-up collapse-icon"
+                @click.stop="toggleCollapse"
+              ></i>
+            </div>
           </div>
 
           <!-- Todo Items -->
@@ -79,6 +86,11 @@ interface Todo {
 // Props
 const props = defineProps<{
   todos: Todo[]
+}>()
+
+// Emits
+const emit = defineEmits<{
+  'clear': []
 }>()
 
 // 响应式状态
@@ -142,6 +154,11 @@ const setItemRef = (el: any, index: number) => {
 
 const getStatusClass = (status: string): string => {
   return status
+}
+
+const handleClear = () => {
+  emit('clear')
+  isCollapsed.value = true
 }
 
 // 监听 todos 变化，自动滚动到当前任务
@@ -327,6 +344,28 @@ onBeforeUnmount(() => {
   color: var(--vscode-descriptionForeground);
   font-size: 13px;
   font-weight: 500;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.action-icon {
+  font-size: 13px;
+  opacity: 0.6;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 2px;
+  transition: all 0.2s;
+  color: var(--vscode-foreground);
+}
+
+.action-icon:hover {
+  opacity: 1;
+  background: var(--vscode-toolbar-hoverBackground);
+  color: var(--vscode-errorForeground);
 }
 
 .collapse-icon {

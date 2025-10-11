@@ -141,7 +141,11 @@
     </div>
 
     <!-- Todo List 显示 -->
-    <TodoListDisplay v-if="todoList.length > 0" :todos="todoList" />
+    <TodoListDisplay 
+      v-if="todoList.length > 0" 
+      :todos="todoList"
+      @clear="handleClearTodoList"
+    />
 
     <!-- 输入区域 -->
     <div class="input-area">
@@ -904,11 +908,22 @@ const sendMessageInternal = async (content: string, hideUserMessage = false) => 
     assistantMessage.content = response.content
 
     // 检测并更新 Todo List
+    // 策略：只在检测到新的或更完整的 todo list 时才更新
     const extractedTodos = extractTodoListFromMessage(response.content)
     if (extractedTodos && extractedTodos.length > 0) {
-      console.log('[Chat] 🔄 检测到 Todo List，共', extractedTodos.length, '个任务')
-      todoList.value = extractedTodos
+      // 如果当前没有 todo list，或者新的 todo list 任务数量不同，则更新
+      // 这样可以保留已有的 todo list，避免被后续无 todo 的响应清空
+      if (todoList.value.length === 0 || extractedTodos.length !== todoList.value.length) {
+        console.log('[Chat] 🔄 检测到 Todo List，共', extractedTodos.length, '个任务')
+        console.log('[Chat] 📋 任务列表:', extractedTodos.map(t => `${t.status}: ${t.content}`).join(', '))
+        todoList.value = extractedTodos
+      } else {
+        // 任务数量相同，更新状态（支持任务状态更新）
+        console.log('[Chat] 🔄 更新 Todo List 状态')
+        todoList.value = extractedTodos
+      }
     }
+    // 注意：如果没有检测到 todo list，不清空现有的列表
 
     // 检查是否包含工具调用
     if (props.enableTools) {
@@ -1016,6 +1031,12 @@ const handleStorageChange = () => {
 
 const handleSettingsUpdate = () => {
   loadAISettings()
+}
+
+// 清除 Todo List
+const handleClearTodoList = () => {
+  console.log('[Chat] 🗑️ 用户清除 Todo List')
+  todoList.value = []
 }
 
 // 监听 props 变化
