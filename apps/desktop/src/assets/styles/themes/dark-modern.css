@@ -146,6 +146,14 @@
     --vscode-badge-background: #616161;
     --vscode-badge-foreground: #F8F8F8;
 
+    /* ========== 列表 ========== */
+    --vscode-list-hoverBackground: #2A2D2E;
+    --vscode-list-hoverForeground: #CCCCCC;
+    --vscode-list-activeSelectionBackground: #094771;
+    --vscode-list-activeSelectionForeground: #FFFFFF;
+    --vscode-list-inactiveSelectionBackground: #37373D;
+    --vscode-list-inactiveSelectionForeground: #CCCCCC;
+
     /* ========== 进度条 ========== */
     --vscode-progressBar-background: #0078D4;
 
