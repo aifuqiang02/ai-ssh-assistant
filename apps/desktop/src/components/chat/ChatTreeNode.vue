@@ -525,7 +525,8 @@ const toggleActionMenu = () => {
 }
 
 .action-item:hover {
-  background: var(--vscode-bg-lighter);
+  background: var(--vscode-list-hoverBackground);
+  color: var(--vscode-list-hoverForeground);
 }
 
 .action-item.danger {
