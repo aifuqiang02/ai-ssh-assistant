@@ -161,6 +161,54 @@ Usage:
 <question>What port would you like the web server to run on?</question>
 </ask_followup_question>`)
 
+  // Todo List 工具（可选，通过 Markdown checklist 格式）
+  tools.push(`
+## Todo List Support
+
+You can create and update todo lists to track complex multi-step tasks. Use Markdown checklist format to present tasks:
+
+**Format:**
+- [ ] Task description (pending - not started)
+- [-] Task description (in_progress - currently working on)
+- [x] Task description (completed - fully finished)
+
+**When to Use:**
+- Complex tasks with multiple steps
+- Tasks that require step-by-step tracking
+- When the user provides multiple tasks or requests a plan
+- Long-running tasks that benefit from progress tracking
+
+**When NOT to Use:**
+- Simple, single-step tasks
+- Purely conversational or informational requests
+- Tasks completable in 1-2 steps
+
+**Best Practices:**
+- List todos in execution order
+- Mark tasks as in_progress when starting work
+- Mark as completed immediately after finishing
+- Add new todos as they are discovered
+- Keep task descriptions clear and specific
+
+**Example:**
+When starting a complex deployment task:
+
+Todo:
+- [x] Check server requirements
+- [-] Install dependencies
+- [ ] Configure application
+- [ ] Run tests
+- [ ] Deploy to production
+
+After completing the installation:
+
+Todo:
+- [x] Check server requirements
+- [x] Install dependencies
+- [-] Configure application
+- [ ] Run tests
+- [ ] Deploy to production`)
+
   // 完成工具
   tools.push(`
 ## attempt_completion

@@ -140,6 +140,9 @@
       </div>
     </div>
 
+    <!-- Todo List 显示 -->
+    <TodoListDisplay v-if="todoList.length > 0" :todos="todoList" />
+
     <!-- 输入区域 -->
     <div class="input-area">
       <div class="input-container">
@@ -211,6 +214,7 @@ import { generateSystemPrompt } from '@/services/tools/system-prompt'
 import { parseToolUse, executeTool } from '@/services/tools/tool-executor'
 import type { ToolResult } from '@/types/tools'
 import { settingsService } from '@/services/settings.service'
+import TodoListDisplay from './TodoListDisplay.vue'
 
 // Props
 interface Props {
@@ -247,6 +251,13 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
   'tool-executed': [toolName: string, result: ToolResult]
 }>()
+
+// Todo 类型定义
+interface TodoItem {
+  id: string
+  content: string
+  status: 'pending' | 'in_progress' | 'completed'
+}
 
 // 消息类型定义
 interface Message {
@@ -285,6 +296,71 @@ const internalMessages = ref<Message[]>([])
 
 // 聊天模式：agent (可执行工具) 或 ask (只回答问题)
 const chatMode = ref<'agent' | 'ask'>('agent')
+
+// Todo List 状态
+// 自动从 AI 响应中提取 Markdown checklist 格式的任务列表
+// 支持格式: [ ] pending, [-] in_progress, [x] completed
+const todoList = ref<TodoItem[]>([])
+
+// Markdown Checklist 解析函数
+const parseMarkdownChecklist = (markdown: string): TodoItem[] => {
+  if (typeof markdown !== 'string') return []
+  
+  const lines = markdown
+    .split(/\r?\n/)
+    .map(l => l.trim())
+    .filter(Boolean)
+  
+  const todos: TodoItem[] = []
+  
+  for (const line of lines) {
+    // 支持两种格式: "[ ] Task" 和 "- [ ] Task"
+    const match = line.match(/^(?:-\s*)?\[\s*([ xX\-~])\s*\]\s+(.+)$/)
+    if (!match) continue
+    
+    let status: 'pending' | 'in_progress' | 'completed' = 'pending'
+    if (match[1] === 'x' || match[1] === 'X') {
+      status = 'completed'
+    } else if (match[1] === '-' || match[1] === '~') {
+      status = 'in_progress'
+    }
+    
+    // 使用内容 + 状态生成简单的 ID
+    const id = `todo-${todos.length}-${Date.now()}`
+    
+    todos.push({
+      id,
+      content: match[2],
+      status
+    })
+  }
+  
+  return todos
+}
+
+// 从 AI 响应中提取 Todo List
+const extractTodoListFromMessage = (content: string): TodoItem[] | null => {
+  // 检测常见的 todo list 模式
+  const patterns = [
+    // 匹配类似 "Todo:" 或 "TODO:" 或 "任务列表:" 后面的清单
+    /(?:todo|TODO|Todo|任务列表|Task List)[:\s]*\n((?:(?:-\s*)?\[[\sxX\-~]\].+\n?)+)/i,
+    // 匹配独立的清单块（连续的 checkbox）
+    /((?:^|\n)(?:-\s*)?\[[\sxX\-~]\].+(?:\n(?:-\s*)?\[[\sxX\-~]\].+)*)/m
+  ]
+  
+  for (const pattern of patterns) {
+    const match = content.match(pattern)
+    if (match) {
+      const checklistText = match[1] || match[0]
+      const todos = parseMarkdownChecklist(checklistText)
+      if (todos.length > 0) {
+        return todos
+      }
+    }
+  }
+  
+  return null
+}
 
 // 工具相关状态
 const pendingToolResolve = ref<((response: ToolApprovalResponse) => void) | null>(null)
@@ -693,7 +769,7 @@ const handleSendMessage = async () => {
   await sendMessageInternal(content)
 }
 
-const sendMessageInternal = async (content: string) => {
+const sendMessageInternal = async (content: string, hideUserMessage = false) => {
   if (!props.currentProvider || !props.currentModel) {
     const tipMessage: Message = {
       id: Date.now(),
@@ -706,15 +782,17 @@ const sendMessageInternal = async (content: string) => {
     return
   }
   
-  // 添加用户消息
-  const userMessage: Message = {
-    id: Date.now(),
-    role: 'user',
-    content,
-    timestamp: new Date()
+  // 添加用户消息（除非是隐藏的系统消息）
+  if (!hideUserMessage) {
+    const userMessage: Message = {
+      id: Date.now(),
+      role: 'user',
+      content,
+      timestamp: new Date()
+    }
+    internalMessages.value.push(userMessage)
+    scrollToBottom()
   }
-  internalMessages.value.push(userMessage)
-  scrollToBottom()
   
   // 准备 AI 响应消息
   const assistantMessage: Message = {
@@ -825,6 +903,13 @@ const sendMessageInternal = async (content: string) => {
     assistantMessage.streaming = false
     assistantMessage.content = response.content
 
+    // 检测并更新 Todo List
+    const extractedTodos = extractTodoListFromMessage(response.content)
+    if (extractedTodos && extractedTodos.length > 0) {
+      console.log('[Chat] 🔄 检测到 Todo List，共', extractedTodos.length, '个任务')
+      todoList.value = extractedTodos
+    }
+
     // 检查是否包含工具调用
     if (props.enableTools) {
       const toolUse = parseToolUse(assistantMessage.content)
@@ -845,8 +930,8 @@ const sendMessageInternal = async (content: string) => {
           if (toolResult.success && toolUse.toolName !== 'attempt_completion') {
             scrollToBottom()
 
-            // 递归调用以处理工具结果
-            await sendMessageInternal('Please analyze the tool execution result and continue.')
+            // 递归调用以处理工具结果（隐藏系统消息）
+            await sendMessageInternal('Please analyze the tool execution result and continue.', true)
             return
           }
         } catch (error: any) {

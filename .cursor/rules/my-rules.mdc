@@ -204,7 +204,7 @@ await runCommand('pnpm dev')
 ```
 
 ### 0.1. 文件管理规范
-- **禁止删除参考项目**: `Chaterm-main/`、`electron-egg-master` 目录是重要的参考项目，**绝对不能**删除或移动
+- **禁止删除参考项目**: `Chaterm-main`、`electron-egg-master`、`Roo-Code-main`、`lobe-chat-main` 目录是重要的参考项目，**绝对不能**删除或移动
 - **参考项目用途**: 
   - 作为 Electron + Vue3 架构的参考实现
   - 提供打包配置的参考
@@ -408,7 +408,43 @@ git add . && git commit -m "简短说明" && git push
 - [ ] 是否正确清理副作用（onBeforeUnmount）？
 - [ ] 是否有完整的错误处理？
 
+## 📄 文档规范
+
+### 禁止创建总结文档
+- **禁止**在任务完成后创建总结文档（如 `*_FIX.md`、`*_COMPLETE.md`、`*_SUMMARY.md` 等）
+- **原因**: 
+  - 文档容易过时且难以维护
+  - Git 提交历史已经记录了所有修改
+  - 重要的架构说明应该写在代码注释中
+  - 项目规范统一记录在 `.cursor/rules/my-rules.mdc`
+
+```bash
+# ❌ 禁止创建
+apps/desktop/SSH_RECONNECT_FIX.md
+apps/desktop/THEME_OPTIMIZATION.md
+apps/desktop/SYSTEM_MESSAGE_HIDE_FIX.md
+
+# ✅ 正确做法
+# 1. 在代码中添加关键注释
+// 修复 SSH 重连后连接 ID 不更新的问题
+// 使用 currentConnectionId 而不是 actualConnectionId
+:connection-id="currentConnectionId"
+
+# 2. 提交时写清晰的 commit message
+git commit -m "fix: SSH 重连后 AI 助手连接 ID 不更新
+
+- 修改 TerminalView 传递给 AI 助手的连接 ID
+- 从固定的 actualConnectionId 改为动态的 currentConnectionId
+- 添加 watch 监听连接 ID 变化"
+```
+
+### 何时创建文档
+**仅在以下情况**下创建文档：
+- 重大架构变更（应更新 `README.md` 或 `.cursor/rules/my-rules.mdc`）
+- API 文档（使用 OpenAPI/Swagger 自动生成）
+- 用户使用指南（`docs/` 目录）
+
 ---
 
-**最后更新**: 2025-10-08
+**最后更新**: 2025-10-11
 **项目架构版本**: v2.0 (双模式服务架构)
