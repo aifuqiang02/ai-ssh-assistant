@@ -24,10 +24,7 @@
 
     <!-- Expanded Todo List (Floating Panel) -->
     <Teleport to="body">
-      <div v-if="!isCollapsed" class="todo-overlay-container">
-        <!-- Backdrop -->
-        <div class="todo-backdrop" @click="toggleCollapse"></div>
-        
+      <div v-if="!isCollapsed">
         <!-- Floating Panel -->
         <div
           class="todo-floating-panel"
@@ -187,6 +184,20 @@ watch(() => [props.todos, isCollapsed.value], () => {
   })
 }, { deep: true })
 
+// 点击面板外部关闭
+const handleClickOutside = (event: MouseEvent) => {
+  if (!isCollapsed.value) {
+    const panel = document.querySelector('.todo-floating-panel')
+    const header = document.querySelector('.todo-header')
+    
+    // 如果点击的不是面板和标题栏，则关闭
+    if (panel && !panel.contains(event.target as Node) && 
+        header && !header.contains(event.target as Node)) {
+      isCollapsed.value = true
+    }
+  }
+}
+
 // 生命周期
 onMounted(() => {
   // 监听窗口大小变化，关闭面板
@@ -195,10 +206,14 @@ onMounted(() => {
       isCollapsed.value = true
     }
   })
+  
+  // 监听点击事件，点击外部关闭面板
+  document.addEventListener('click', handleClickOutside)
 })
 
 onBeforeUnmount(() => {
-  // 清理事件监听器已经由 window.removeEventListener 自动处理
+  // 清理事件监听器
+  document.removeEventListener('click', handleClickOutside)
 })
 </script>
 
@@ -283,27 +298,6 @@ onBeforeUnmount(() => {
 
 .progress-counter i {
   font-size: 12px;
-}
-
-/* Overlay Container (Teleport to body) */
-.todo-overlay-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1000;
-  pointer-events: none;
-}
-
-.todo-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.3);
-  pointer-events: all;
 }
 
 /* Floating Panel */
