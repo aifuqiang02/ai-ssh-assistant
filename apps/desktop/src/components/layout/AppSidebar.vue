@@ -966,9 +966,9 @@ const handleRequestInput = (data: { type: string; title: string; placeholder: st
 
 /* 主要按钮样式 */
 .vscode-button.primary {
-  background: var(--vscode-accent);
-  color: #ffffff;
-  border-color: var(--vscode-accent);
+  background: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+  border-color: var(--vscode-button-background);
 }
 
 .vscode-button.primary:hover {
@@ -1079,7 +1079,7 @@ const handleRequestInput = (data: { type: string; title: string; placeholder: st
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.5); /* 半透明遮罩，保持黑色 */
   display: flex;
   align-items: center;
   justify-content: center;

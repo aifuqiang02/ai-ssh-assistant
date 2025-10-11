@@ -2483,13 +2483,13 @@ onMounted(async () => {
 }
 
 .notification-success {
-  background: #27ae60;
-  color: white;
+  background: var(--vscode-editorGutter-addedBackground);
+  color: var(--vscode-button-foreground);
 }
 
 .notification-error {
-  background: #e74c3c;
-  color: white;
+  background: var(--vscode-editorGutter-deletedBackground);
+  color: var(--vscode-button-foreground);
 }
 
 /* ========== AI 服务商 ========== */
@@ -2616,14 +2616,15 @@ onMounted(async () => {
 .chip-count {
   display: inline-block;
   padding: 2px 6px;
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--vscode-badge-background);
   border-radius: 10px;
   font-size: 11px;
   font-weight: 600;
+  color: var(--vscode-badge-foreground);
 }
 
 .filter-chip.active .chip-count {
-  background: rgba(255, 255, 255, 0.3);
+  opacity: 0.9;
 }
 
 /* 高级过滤 */
@@ -2803,7 +2804,7 @@ onMounted(async () => {
 }
 
 .provider-header:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--vscode-list-hoverBackground);
 }
 
 .provider-info {
@@ -2864,18 +2865,21 @@ onMounted(async () => {
 }
 
 .status-badge.configured {
-  background: rgba(52, 152, 219, 0.2);
-  color: #3498db;
+  background: var(--vscode-editorGutter-modifiedBackground);
+  opacity: 0.2;
+  color: var(--vscode-editorGutter-modifiedBackground);
 }
 
 .status-badge.success {
-  background: rgba(39, 174, 96, 0.2);
-  color: #27ae60;
+  background: var(--vscode-editorGutter-addedBackground);
+  opacity: 0.2;
+  color: var(--vscode-editorGutter-addedBackground);
 }
 
 .status-badge.error {
-  background: rgba(231, 76, 60, 0.2);
-  color: #e74c3c;
+  background: var(--vscode-editorGutter-deletedBackground);
+  opacity: 0.2;
+  color: var(--vscode-editorGutter-deletedBackground);
 }
 
 .expand-icon {

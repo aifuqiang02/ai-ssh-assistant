@@ -618,8 +618,8 @@ document.addEventListener('click', handleClickOutside)
 }
 
 .vscode-window-control-close:hover {
-  background-color: #e81123 !important;
-  color: white;
+  background-color: var(--vscode-error) !important;
+  color: var(--vscode-button-foreground);
 }
 
 .vscode-window-control svg {
@@ -667,7 +667,7 @@ document.addEventListener('click', handleClickOutside)
 
 .model-dropdown-item:hover {
   background: var(--vscode-accent);
-  color: #ffffff;
+  color: var(--vscode-button-foreground);
 }
 
 .model-settings-btn {

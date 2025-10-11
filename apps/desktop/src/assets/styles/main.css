@@ -10,7 +10,7 @@
 :root {
   /* 使用 Dark Modern 作为默认主题 */
   /* 所有变量已在 dark-modern.css 中定义 */
-  
+
   /* Bootstrap 变量覆盖 */
   --bs-primary: #0078D4;
   --bs-secondary: #6c757d;
