@@ -221,6 +221,7 @@ import { parseToolUse, executeTool } from '@/services/tools/tool-executor'
 import type { ToolResult } from '@/types/tools'
 import { settingsService } from '@/services/settings.service'
 import TodoListDisplay from './TodoListDisplay.vue'
+import { $confirm } from '@/composables/useDialog'
 
 // Props
 interface Props {
@@ -1097,10 +1098,17 @@ const handleClearTodoList = () => {
 /**
  * 清空会话
  */
-const handleClearSession = () => {
+const handleClearSession = async () => {
   // 确认对话框
   if (internalMessages.value.length > 0) {
-    const confirmed = confirm('确定要清空当前会话吗？此操作不可恢复。')
+    const confirmed = await $confirm({
+      title: '清空会话',
+      message: '确定要清空当前会话吗？\n\n此操作将删除所有消息记录和任务列表，且不可恢复。',
+      type: 'danger',
+      confirmText: '清空',
+      cancelText: '取消'
+    })
+    
     if (!confirmed) {
       return
     }

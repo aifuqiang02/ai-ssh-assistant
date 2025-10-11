@@ -14,6 +14,9 @@ import './assets/styles/main.css'
 import App from './App.vue'
 import routes from './router'
 
+// 自定义插件
+import DialogPlugin from './plugins/dialog'
+
 // 创建应用实例
 const app = createApp(App)
 
@@ -38,6 +41,7 @@ const router = createRouter({
 app.use(pinia)
 app.use(router)
 app.use(BootstrapVueNext)
+app.use(DialogPlugin)
 
 // 挂载应用
 app.mount('#app')
