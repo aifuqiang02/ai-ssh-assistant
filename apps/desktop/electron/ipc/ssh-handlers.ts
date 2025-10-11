@@ -227,39 +227,52 @@ class SSHManager {
       let output = ''
       let errorOutput = ''
       let commandSent = false
-      const timeout = 30000 // 30 秒超时
+      let lastOutputTime = Date.now()
+      let completionCheckTimer: NodeJS.Timeout | null = null
+      const timeout = 120000 // 增加到 120 秒超时，以支持长时间运行的命令（如下载）
+      const silenceThreshold = 1000 // 1秒内没有新输出则认为命令可能完成
 
       // 超时处理
       const timeoutId = setTimeout(() => {
         console.log('[SSHManager] ⏱️ 命令执行超时')
-        shell.removeAllListeners('data')
-        shell.stderr.removeAllListeners('data')
+        cleanup()
         resolve({
           success: false,
-          error: '命令执行超时'
+          error: '命令执行超时（120秒）'
         })
       }, timeout)
 
-      // 监听标准输出
-      const onData = (data: Buffer) => {
-        const chunk = data.toString()
-        output += chunk
-        console.log('[SSHManager] 收到输出片段:', chunk.substring(0, 100))
+      // 清理监听器
+      const cleanup = () => {
+        clearTimeout(timeoutId)
+        if (completionCheckTimer) {
+          clearTimeout(completionCheckTimer)
+          completionCheckTimer = null
+        }
+        shell.removeListener('data', onData)
+        shell.stderr.removeListener('data', onStderr)
+      }
+
+      // 检查命令是否真正完成
+      const checkCompletion = () => {
+        const timeSinceLastOutput = Date.now() - lastOutputTime
         
-        // 检测命令提示符（简单的启发式方法）
-        // 通常 shell 提示符以 $ 或 # 结尾
-        if (commandSent && (chunk.includes('$') || chunk.includes('#') || chunk.includes('> '))) {
-          console.log('[SSHManager] ✅ 检测到命令执行完成（提示符出现）')
-          clearTimeout(timeoutId)
-          shell.removeListener('data', onData)
-          shell.stderr.removeListener('data', onStderr)
+        // 如果距离上次输出已超过阈值，且输出中包含可能的提示符
+        if (timeSinceLastOutput >= silenceThreshold) {
+          console.log('[SSHManager] ✅ 命令执行完成（检测到静默期和提示符）')
+          cleanup()
           
           // 清理输出（移除命令本身和提示符）
           const lines = output.split('\n')
           let cleanedOutput = lines
-            .slice(1, -1) // 移除第一行（命令）和最后一行（提示符）
+            .slice(1, -1) // 移除第一行（命令回显）和最后一行（提示符）
             .join('\n')
             .trim()
+          
+          // 如果清理后的输出为空，尝试更保守的清理策略
+          if (!cleanedOutput && lines.length > 2) {
+            cleanedOutput = lines.slice(1).join('\n').trim()
+          }
           
           console.log('[SSHManager] 清理后的输出长度:', cleanedOutput.length)
           console.log('[SSHManager] 清理后的输出预览:', cleanedOutput.substring(0, 200))
@@ -272,11 +285,41 @@ class SSHManager {
         }
       }
 
+      // 监听标准输出
+      const onData = (data: Buffer) => {
+        const chunk = data.toString()
+        output += chunk
+        lastOutputTime = Date.now()
+        
+        // 显示输出片段（限制长度以避免日志过长）
+        const preview = chunk.length > 100 ? chunk.substring(0, 100) + '...' : chunk
+        console.log('[SSHManager] 收到输出片段:', preview.replace(/\n/g, '\\n'))
+        
+        // 检测可能的命令提示符
+        // 改进的检测逻辑：检查行尾是否包含提示符模式
+        const lines = chunk.split('\n')
+        const lastLine = lines[lines.length - 1]
+        const hasPromptPattern = /[$#>]\s*$/.test(lastLine) || /\w+@\w+.*[$#>]\s*$/.test(lastLine)
+        
+        if (commandSent && hasPromptPattern) {
+          console.log('[SSHManager] 🔍 检测到可能的提示符，等待确认...')
+          
+          // 清除之前的检查定时器
+          if (completionCheckTimer) {
+            clearTimeout(completionCheckTimer)
+          }
+          
+          // 设置延迟检查，确保命令真正完成
+          completionCheckTimer = setTimeout(checkCompletion, silenceThreshold)
+        }
+      }
+
       // 监听错误输出
       const onStderr = (data: Buffer) => {
         const chunk = data.toString()
         errorOutput += chunk
-        console.log('[SSHManager] 收到错误输出:', chunk)
+        lastOutputTime = Date.now()
+        console.log('[SSHManager] 收到错误输出:', chunk.substring(0, 200))
       }
 
       shell.on('data', onData)
@@ -288,9 +331,7 @@ class SSHManager {
       shell.write(commandWithNewline, (err: any) => {
         if (err) {
           console.error('[SSHManager] ❌ 写入命令失败:', err)
-          clearTimeout(timeoutId)
-          shell.removeListener('data', onData)
-          shell.stderr.removeListener('data', onStderr)
+          cleanup()
           reject(err)
         } else {
           console.log('[SSHManager] ✅ 命令已发送')
