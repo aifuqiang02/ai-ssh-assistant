@@ -6,17 +6,6 @@
       class="messages-area"
       :style="{ maxHeight: maxHeight || 'calc(100vh - 200px)' }"
     >
-      <!-- 清空会话按钮（浮动在右上角） -->
-      <button
-        v-if="messages.length > 0"
-        class="clear-session-button"
-        title="清空会话"
-        @click="handleClearSession"
-      >
-        <i class="bi bi-trash"></i>
-        <span>清空会话</span>
-      </button>
-
       <!-- 空状态 -->
       <div v-if="messages.length === 0" class="empty-state">
         <div class="empty-icon">
@@ -174,13 +163,26 @@
 
         <!-- 底部控制栏：模式选择 + 按钮组 -->
         <div class="input-controls">
-          <!-- 模式选择下拉框 -->
-          <div class="select-wrapper">
-            <select v-model="chatMode" class="mode-select">
-              <option value="agent">🤖 Agent</option>
-              <option value="ask">💬 Ask</option>
-            </select>
-            <i class="bi bi-chevron-down select-icon"></i>
+          <!-- 左侧控制组 -->
+          <div class="left-controls">
+            <!-- 模式选择下拉框 -->
+            <div class="select-wrapper">
+              <select v-model="chatMode" class="mode-select">
+                <option value="agent">🤖 Agent</option>
+                <option value="ask">💬 Ask</option>
+              </select>
+              <i class="bi bi-chevron-down select-icon"></i>
+            </div>
+
+            <!-- 清空会话按钮 -->
+            <button
+              v-if="messages.length > 0"
+              class="icon-button clear-session-icon"
+              title="清空会话"
+              @click="handleClearSession"
+            >
+              <i class="bi bi-trash"></i>
+            </button>
           </div>
 
           <!-- 右侧按钮组 -->
@@ -1220,45 +1222,11 @@ onBeforeUnmount(() => {
   color: var(--vscode-descriptionForeground);
 }
 
-/* 清空会话按钮 */
-.clear-session-button {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  background: var(--vscode-bg-lighter);
-  border: 1px solid var(--vscode-border);
-  border-radius: 4px;
-  color: var(--vscode-fg);
-  font-size: 13px;
-  cursor: pointer;
-  transition: all 0.2s;
-  z-index: 10;
-}
-
-.clear-session-button:hover {
-  background: var(--vscode-error);
-  border-color: var(--vscode-error);
-  color: #ffffff;
-}
-
-.clear-session-button i {
-  font-size: 14px;
-}
-
-.clear-session-button span {
-  font-weight: 500;
-}
-
 /* 消息列表 */
 .messages-list {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding-top: 40px; /* 为清空按钮留出空间 */
 }
 
 .message-row {
@@ -1721,6 +1689,40 @@ onBeforeUnmount(() => {
   justify-content: space-between;
   margin-top: 8px;
   gap: 12px;
+}
+
+/* 左侧控制组 */
+.left-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 清空会话图标按钮 */
+.icon-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: var(--vscode-bg-lighter);
+  border: 1px solid var(--vscode-border);
+  border-radius: 4px;
+  color: var(--vscode-fg);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 16px;
+}
+
+.icon-button:hover {
+  background: var(--vscode-error);
+  border-color: var(--vscode-error);
+  color: #ffffff;
+}
+
+.icon-button:active {
+  transform: scale(0.95);
 }
 
 /* 右侧按钮组 */
