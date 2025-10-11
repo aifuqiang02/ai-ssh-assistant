@@ -220,10 +220,10 @@ onBeforeUnmount(() => {
 <style scoped>
 .todo-list-container {
   margin: 0;
-  border: 1px solid var(--vscode-panel-border);
+  border: 1px solid var(--vscode-border);
   border-top: 0;
   border-radius: 0 0 6px 6px;
-  background: var(--vscode-editor-background);
+  background: var(--vscode-bg);
   position: relative;
 }
 
@@ -252,26 +252,26 @@ onBeforeUnmount(() => {
 }
 
 .status-icon.completed {
-  background: var(--vscode-charts-green, #4caf50);
+  background: var(--vscode-success, #4caf50);
 }
 
 .status-icon.in_progress {
-  background: var(--vscode-charts-yellow, #ffc107);
+  background: var(--vscode-warning, #ffc107);
 }
 
 .status-icon.pending {
-  border: 2px solid var(--vscode-descriptionForeground);
-  background: var(--vscode-editor-background);
+  border: 2px solid var(--vscode-fg-muted);
+  background: var(--vscode-bg);
 }
 
 .status-icon.default {
-  background: var(--vscode-descriptionForeground);
+  background: var(--vscode-fg-muted);
 }
 
 .todo-text {
   flex: 1;
   font-weight: 500;
-  color: var(--vscode-foreground);
+  color: var(--vscode-fg);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -279,11 +279,11 @@ onBeforeUnmount(() => {
 }
 
 .todo-header:has(.status-icon.completed) .todo-text {
-  color: var(--vscode-charts-green, #4caf50);
+  color: var(--vscode-success, #4caf50);
 }
 
 .todo-header:has(.status-icon.in_progress) .todo-text {
-  color: var(--vscode-charts-yellow, #ffc107);
+  color: var(--vscode-warning, #ffc107);
 }
 
 .progress-counter {
@@ -291,7 +291,7 @@ onBeforeUnmount(() => {
   align-items: center;
   gap: 4px;
   flex-shrink: 0;
-  color: var(--vscode-descriptionForeground);
+  color: var(--vscode-fg-muted);
   font-size: 12px;
   font-weight: 500;
 }
@@ -305,8 +305,8 @@ onBeforeUnmount(() => {
   position: fixed;
   width: 400px;
   max-width: calc(100vw - 40px);
-  background: var(--vscode-editor-background);
-  border: 1px solid var(--vscode-panel-border);
+  background: var(--vscode-bg);
+  border: 1px solid var(--vscode-border);
   border-radius: 6px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
   max-height: 400px;
@@ -321,8 +321,8 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: space-between;
   padding: 12px 16px;
-  border-bottom: 1px solid var(--vscode-panel-border);
-  background: var(--vscode-editor-background);
+  border-bottom: 1px solid var(--vscode-border);
+  background: var(--vscode-bg);
 }
 
 .header-left {
@@ -332,18 +332,18 @@ onBeforeUnmount(() => {
 }
 
 .header-left i {
-  color: var(--vscode-foreground);
+  color: var(--vscode-fg);
   font-size: 14px;
 }
 
 .header-title {
   font-weight: 600;
   font-size: 14px;
-  color: var(--vscode-foreground);
+  color: var(--vscode-fg);
 }
 
 .header-count {
-  color: var(--vscode-descriptionForeground);
+  color: var(--vscode-fg-muted);
   font-size: 13px;
   font-weight: 500;
 }
@@ -360,12 +360,12 @@ onBeforeUnmount(() => {
   padding: 4px;
   border-radius: 2px;
   transition: all 0.2s;
-  color: var(--vscode-descriptionForeground);
+  color: var(--vscode-fg-muted);
 }
 
 .action-icon:hover {
-  background: var(--vscode-toolbar-hoverBackground);
-  color: var(--vscode-errorForeground);
+  background: var(--vscode-bg-lighter);
+  color: var(--vscode-error);
 }
 
 .collapse-icon {
@@ -374,12 +374,12 @@ onBeforeUnmount(() => {
   padding: 4px;
   border-radius: 2px;
   transition: all 0.2s;
-  color: var(--vscode-descriptionForeground);
+  color: var(--vscode-fg-muted);
 }
 
 .collapse-icon:hover {
-  background: var(--vscode-toolbar-hoverBackground);
-  color: var(--vscode-foreground);
+  background: var(--vscode-bg-lighter);
+  color: var(--vscode-fg);
 }
 
 /* Todo Items List */
@@ -389,7 +389,7 @@ onBeforeUnmount(() => {
   list-style: none;
   max-height: 340px;
   overflow-y: auto;
-  background: var(--vscode-editor-background);
+  background: var(--vscode-bg);
 }
 
 .todo-item {
@@ -399,7 +399,7 @@ onBeforeUnmount(() => {
   margin-bottom: 8px;
   min-height: 20px;
   line-height: 1.4;
-  background: var(--vscode-editor-background);
+  background: var(--vscode-bg);
   padding: 2px 0;
 }
 
@@ -413,16 +413,16 @@ onBeforeUnmount(() => {
 }
 
 .item-status-icon.completed {
-  background: var(--vscode-charts-green, #4caf50);
+  background: var(--vscode-success, #4caf50);
 }
 
 .item-status-icon.in_progress {
-  background: var(--vscode-charts-yellow, #ffc107);
+  background: var(--vscode-warning, #ffc107);
 }
 
 .item-status-icon.pending {
-  border: 2px solid var(--vscode-descriptionForeground);
-  background: var(--vscode-editor-background);
+  border: 2px solid var(--vscode-fg-muted);
+  background: var(--vscode-bg);
 }
 
 .item-text {
@@ -432,15 +432,15 @@ onBeforeUnmount(() => {
 }
 
 .item-text.completed {
-  color: var(--vscode-charts-green, #4caf50);
+  color: var(--vscode-success, #4caf50);
 }
 
 .item-text.in_progress {
-  color: var(--vscode-charts-yellow, #ffc107);
+  color: var(--vscode-warning, #ffc107);
 }
 
 .item-text.pending {
-  color: var(--vscode-foreground);
+  color: var(--vscode-fg);
 }
 </style>
 
