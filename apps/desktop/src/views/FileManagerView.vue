@@ -1367,8 +1367,8 @@ onBeforeUnmount(() => {
 }
 
 .toolbar-btn.primary {
-  background: var(--vscode-button-background);
-  border-color: var(--vscode-button-background);
+  background: var(--vscode-accent);
+  border-color: var(--vscode-accent);
   color: var(--vscode-button-foreground);
 }
 

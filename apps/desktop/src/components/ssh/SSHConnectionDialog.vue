@@ -462,9 +462,9 @@ const handleTest = async () => {
 }
 
 .btn-primary {
-  background: var(--vscode-button-background);
+  background: var(--vscode-accent);
   color: var(--vscode-button-foreground);
-  border-color: var(--vscode-button-background);
+  border-color: var(--vscode-accent);
 }
 
 .btn-primary:hover:not(:disabled) {
