@@ -167,7 +167,6 @@
           class="message-input"
           :placeholder="currentPlaceholder"
           :rows="inputRows"
-          :disabled="isGenerating"
           @keydown="handleKeyDown"
         ></textarea>
 
