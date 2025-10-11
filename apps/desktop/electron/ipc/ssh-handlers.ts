@@ -229,8 +229,8 @@ class SSHManager {
       let commandSent = false
       let lastOutputTime = Date.now()
       let completionCheckTimer: NodeJS.Timeout | null = null
-      const timeout = 120000 // 增加到 120 秒超时，以支持长时间运行的命令（如下载）
-      const silenceThreshold = 1000 // 1秒内没有新输出则认为命令可能完成
+      const timeout = 12000000 // 增加到 120 秒超时，以支持长时间运行的命令（如下载）
+      const silenceThreshold = 5000 // 1秒内没有新输出则认为命令可能完成
 
       // 超时处理
       const timeoutId = setTimeout(() => {
@@ -238,7 +238,7 @@ class SSHManager {
         cleanup()
         resolve({
           success: false,
-          error: '命令执行超时（120秒）'
+          error: '命令执行超时（12000秒）'
         })
       }, timeout)
 

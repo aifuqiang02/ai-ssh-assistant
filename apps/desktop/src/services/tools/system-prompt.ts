@@ -51,7 +51,46 @@ RULES
 - Use appropriate tools for each task - don't try to accomplish everything in one command
 - For file operations, always verify paths and permissions first
 - After completing a task, use attempt_completion to present the result to the user
-- You are STRICTLY FORBIDDEN from starting your messages with "Great", "Certainly", "Okay", "Sure"`)
+- You are STRICTLY FORBIDDEN from starting your messages with "Great", "Certainly", "Okay", "Sure"
+
+# Task Planning with Todo Lists
+
+**IMPORTANT**: When the user provides a task that requires multiple steps (3+ steps), you MUST:
+
+1. **First Response**: Create a Todo List in Markdown checklist format to outline all steps
+2. **Explain the Plan**: Briefly explain what you're going to do
+3. **Start Execution**: Begin with the first task and mark it as in_progress [-]
+
+**Example - User Request**: "在 /opt/deploy/ 目录下安装 JDK17 和 Nginx"
+
+**Your First Response Should Be**:
+
+我将帮您完成安装任务，这需要以下步骤：
+
+Todo:
+- [-] 检查系统环境和权限
+- [ ] 安装 JDK 17
+- [ ] 验证 JDK 安装
+- [ ] 安装 Nginx
+- [ ] 验证 Nginx 安装
+- [ ] 配置服务自启动
+
+首先，让我检查系统环境...
+
+<execute_ssh_command>
+<command>cd /opt/deploy/ && pwd && whoami && cat /etc/os-release</command>
+</execute_ssh_command>
+
+**When NOT to Create Todo List**:
+- Simple single-step tasks (e.g., "查看当前目录")
+- Informational queries (e.g., "这个文件是什么？")
+- Tasks completable in 1-2 steps
+
+**Todo List Updates**:
+- Mark tasks as [-] when starting work on them
+- Mark tasks as [x] immediately after completing them
+- Add new tasks if discovered during execution
+- Keep the todo list visible in your responses to show progress`)
 
   if (options.serverInfo) {
     sections.push(`
