@@ -6,6 +6,17 @@
       class="messages-area"
       :style="{ maxHeight: maxHeight || 'calc(100vh - 200px)' }"
     >
+      <!-- 清空会话按钮（浮动在右上角） -->
+      <button
+        v-if="messages.length > 0"
+        class="clear-session-button"
+        title="清空会话"
+        @click="handleClearSession"
+      >
+        <i class="bi bi-trash"></i>
+        <span>清空会话</span>
+      </button>
+
       <!-- 空状态 -->
       <div v-if="messages.length === 0" class="empty-state">
         <div class="empty-icon">
@@ -254,6 +265,7 @@ const props = withDefaults(defineProps<Props>(), {
 // Emits
 const emit = defineEmits<{
   'tool-executed': [toolName: string, result: ToolResult]
+  'session-cleared': []
 }>()
 
 // Todo 类型定义
@@ -1091,6 +1103,38 @@ const handleClearTodoList = () => {
   todoList.value = []
 }
 
+/**
+ * 清空会话
+ */
+const handleClearSession = () => {
+  // 确认对话框
+  if (internalMessages.value.length > 0) {
+    const confirmed = confirm('确定要清空当前会话吗？此操作不可恢复。')
+    if (!confirmed) {
+      return
+    }
+  }
+  
+  console.log('[Chat] 🗑️ 清空会话')
+  
+  // 清空消息列表
+  internalMessages.value = []
+  
+  // 清空 Todo List
+  todoList.value = []
+  
+  // 清空输入框
+  inputMessage.value = ''
+  
+  // 如果正在生成，停止生成
+  if (isGenerating.value) {
+    handleStopGeneration()
+  }
+  
+  // 发出清空事件（如果父组件需要知道）
+  emit('session-cleared')
+}
+
 // 监听 props 变化
 watch(() => [props.currentProvider, props.currentModel], ([newProvider, newModel]) => {
   // 模型变化时可以在这里处理
@@ -1176,11 +1220,45 @@ onBeforeUnmount(() => {
   color: var(--vscode-descriptionForeground);
 }
 
+/* 清空会话按钮 */
+.clear-session-button {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--vscode-bg-lighter);
+  border: 1px solid var(--vscode-border);
+  border-radius: 4px;
+  color: var(--vscode-fg);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  z-index: 10;
+}
+
+.clear-session-button:hover {
+  background: var(--vscode-error);
+  border-color: var(--vscode-error);
+  color: #ffffff;
+}
+
+.clear-session-button i {
+  font-size: 14px;
+}
+
+.clear-session-button span {
+  font-weight: 500;
+}
+
 /* 消息列表 */
 .messages-list {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  padding-top: 40px; /* 为清空按钮留出空间 */
 }
 
 .message-row {
