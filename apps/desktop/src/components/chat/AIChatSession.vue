@@ -81,8 +81,9 @@
                     <div 
                       v-else
                       class="message-text markdown-content text-sm leading-relaxed"
-                      v-html="renderMarkdown(message.content)"
-                    ></div>
+                    >
+                      <MarkdownRenderer :content="message.content" />
+                    </div>
                   </div>
 
                   <!-- 消息操作栏 - 仅对 AI 消息显示 -->
@@ -201,16 +202,16 @@
 
     <!-- 右侧面板：角色设定 -->
     <div 
-      class="role-settings-panel flex-shrink-0 border-l border-vscode-border bg-vscode-sideBar-background overflow-y-auto"
+      class="role-settings-panel flex-shrink-0 flex flex-col border-l border-vscode-border bg-vscode-sideBar-background"
       style="width: 400px;"
     >
-      <div class="panel-header px-6 py-4 border-b border-vscode-border sticky top-0 bg-vscode-sideBar-background z-10">
+      <div class="panel-header px-6 py-4 border-b border-vscode-border bg-vscode-sideBar-background">
         <div class="flex items-center justify-between">
           <h3 class="text-base font-semibold text-vscode-sideBarTitle-foreground flex items-center gap-2">
             <i class="bi bi-chat-square-text"></i>
             <span>角色设定</span>
           </h3>
-          <button
+          <button 
             @click="openPromptOptimizer"
             class="edit-button p-2 rounded-md hover:bg-vscode-list-hoverBackground transition-colors"
             title="编辑提示词"
@@ -220,16 +221,11 @@
         </div>
       </div>
 
-      <div class="panel-content px-6 py-6">
+      <div class="panel-content flex-1 overflow-y-auto">
         <!-- 系统角色显示区 -->
-        <div class="setting-section mb-6">
-          <label class="setting-label text-sm font-medium text-vscode-foreground mb-2 block">
-            系统提示词
-          </label>
-          <div
-            class="prompt-display w-full text-vscode-input-foreground text-sm min-h-[200px] whitespace-pre-wrap leading-relaxed"
-          >
-            <span v-if="systemRole">{{ systemRole }}</span>
+        <div class="setting-section">
+          <div class="prompt-display w-full text-vscode-input-foreground text-sm leading-relaxed">
+            <MarkdownRenderer v-if="systemRole" :content="systemRole" />
             <span v-else class="text-vscode-descriptionForeground opacity-50">暂无系统提示词，点击右上角编辑图标进入提示词优化助手...</span>
           </div>
         </div>
@@ -247,6 +243,7 @@ import { settingsService } from '../../services/settings.service'
 import { chatService } from '../../services/chat.service'
 import { marked } from 'marked'
 import hljs from 'highlight.js'
+import MarkdownRenderer from './MarkdownRenderer.vue'
 
 const router = useRouter()
 
@@ -352,18 +349,6 @@ marked.use({
 })
 
 // 方法
-const renderMarkdown = (content: string): string => {
-  try {
-    const contentStr = String(content || '')
-    if (!contentStr.trim()) return contentStr
-    const result = marked(contentStr)
-    return typeof result === 'string' ? result : contentStr
-  } catch (error) {
-    console.error('Markdown rendering error:', error)
-    return String(content || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-  }
-}
-
 const formatTime = (date: Date): string => {
   const now = new Date()
   const diff = now.getTime() - date.getTime()
@@ -662,6 +647,11 @@ watch(() => props.sessionId, async () => {
 /* 消息区域 */
 .messages-area {
   background: var(--vscode-editor-background);
+  /* 确保消息区域支持文本选择 */
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
 }
 
 .message-item {
@@ -693,6 +683,19 @@ watch(() => props.sessionId, async () => {
   word-wrap: break-word;
   word-break: break-word;
   transition: box-shadow 0.2s;
+  /* 允许文本选择 */
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  cursor: text;
+}
+
+.message-bubble * {
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
 }
 
 .user-bubble {
@@ -702,12 +705,107 @@ watch(() => props.sessionId, async () => {
 
 .user-bubble * {
   color: #ffffff !important;
+  /* 确保用户消息也能选择 */
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
 }
 
 .assistant-bubble {
-  background: var(--vscode-input-background, #3c3c3c);
-  border: 1px solid var(--vscode-input-border, #6b6b6b);
-  color: var(--vscode-foreground, #cccccc);
+  background: var(--vscode-bg-lighter);
+  border: 1px solid var(--vscode-border);
+  color: var(--vscode-fg);
+}
+
+/* 消息内容可选择 */
+.message-text {
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+  cursor: text !important;
+}
+
+/* 用户消息选择高亮 */
+.user-bubble .message-text::selection {
+  background: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}
+
+.user-bubble .message-text::-moz-selection {
+  background: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}
+
+/* Markdown 内容样式 */
+.markdown-content {
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+}
+
+.markdown-content ::selection {
+  background: rgba(100, 150, 255, 0.3);
+}
+
+.markdown-content ::-moz-selection {
+  background: rgba(100, 150, 255, 0.3);
+}
+
+.markdown-content pre,
+.markdown-content code {
+  user-select: text;
+  cursor: text;
+}
+
+.markdown-content p {
+  margin: 0.5em 0;
+}
+
+.markdown-content ul,
+.markdown-content ol {
+  padding-left: 1.5em;
+  margin: 0.5em 0;
+}
+
+.markdown-content li {
+  margin: 0.25em 0;
+}
+
+.markdown-content blockquote {
+  border-left: 3px solid var(--vscode-textBlockQuote-border, #007acc);
+  padding-left: 1em;
+  margin: 0.5em 0;
+  color: var(--vscode-textBlockQuote-foreground);
+}
+
+.markdown-content a {
+  color: var(--vscode-textLink-foreground, #3794ff);
+  text-decoration: none;
+}
+
+.markdown-content a:hover {
+  text-decoration: underline;
+}
+
+.markdown-content table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0.5em 0;
+}
+
+.markdown-content th,
+.markdown-content td {
+  border: 1px solid var(--vscode-panel-border);
+  padding: 0.5em;
+  text-align: left;
+}
+
+.markdown-content th {
+  background: var(--vscode-editorWidget-background);
+  font-weight: 600;
 }
 
 /* 流式输出光标 */
@@ -792,12 +890,31 @@ watch(() => props.sessionId, async () => {
   box-shadow: -2px 0 8px rgba(0, 0, 0, 0.05);
 }
 
+
+
+.role-settings-panel .panel-header {
+  background: var(--vscode-bg-lighter) !important;
+}
+
 .role-settings-panel .panel-header h3 {
   font-weight: 600;
 }
 
 .role-settings-panel .setting-section {
   margin-bottom: 1.5rem;
+}
+
+/* 提示词显示区域 */
+.prompt-display {
+  padding: 12px;
+}
+
+.prompt-display :deep(.markdown-renderer) {
+  font-size: 0.875rem;
+}
+
+.prompt-display :deep(.code-block-container) {
+  margin: 8px 0;
 }
 
 .role-settings-panel .setting-label {

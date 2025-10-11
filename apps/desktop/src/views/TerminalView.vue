@@ -85,7 +85,7 @@
         <AIChatSessionWithTools
           :current-provider="currentProvider"
           :current-model="currentModel"
-          :connection-id="actualConnectionId"
+          :connection-id="currentConnectionId"
           :enable-tools="true"
           :server-info="serverInfo"
           :multiline="true"
@@ -412,6 +412,7 @@ const handleReconnect = async () => {
       
       if (result && result.status === 'connected') {
         // 更新当前连接ID
+        console.log('[TerminalView] 🔄 重连成功，更新连接ID:', result.id)
         currentConnectionId.value = result.id
         connectToSSH()
       } else {

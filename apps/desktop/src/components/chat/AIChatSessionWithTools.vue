@@ -938,6 +938,13 @@ watch(() => [props.currentProvider, props.currentModel], ([newProvider, newModel
   // 模型变化时可以在这里处理
 }, { deep: true })
 
+// 监听 connectionId 变化
+watch(() => props.connectionId, (newId, oldId) => {
+  if (newId !== oldId) {
+    console.log('[AIChatSessionWithTools] 🔄 连接ID已更新:', { oldId, newId })
+  }
+})
+
 onMounted(() => {
   
   loadAISettings()
