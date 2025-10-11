@@ -699,12 +699,12 @@ watch(() => props.sessionId, async () => {
 }
 
 .user-bubble {
-  background: var(--vscode-accent, #007acc);
-  color: #ffffff;
+  background: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
 }
 
 .user-bubble * {
-  color: #ffffff !important;
+  color: var(--vscode-button-foreground) !important;
   /* 确保用户消息也能选择 */
   user-select: text !important;
   -webkit-user-select: text !important;
@@ -729,13 +729,13 @@ watch(() => props.sessionId, async () => {
 
 /* 用户消息选择高亮 */
 .user-bubble .message-text::selection {
-  background: rgba(255, 255, 255, 0.3);
-  color: #ffffff;
+  background: var(--vscode-editor-selectionBackground);
+  color: var(--vscode-editor-selectionForeground);
 }
 
 .user-bubble .message-text::-moz-selection {
-  background: rgba(255, 255, 255, 0.3);
-  color: #ffffff;
+  background: var(--vscode-editor-selectionBackground);
+  color: var(--vscode-editor-selectionForeground);
 }
 
 /* Markdown 内容样式 */
@@ -747,11 +747,11 @@ watch(() => props.sessionId, async () => {
 }
 
 .markdown-content ::selection {
-  background: rgba(100, 150, 255, 0.3);
+  background: var(--vscode-editor-selectionBackground);
 }
 
 .markdown-content ::-moz-selection {
-  background: rgba(100, 150, 255, 0.3);
+  background: var(--vscode-editor-selectionBackground);
 }
 
 .markdown-content pre,

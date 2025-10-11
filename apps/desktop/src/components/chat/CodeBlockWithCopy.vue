@@ -163,11 +163,11 @@ const copyCode = async () => {
 
 .copy-button:hover {
   opacity: 1;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--vscode-toolbar-hoverBackground);
 }
 
 .copy-button.copied {
-  color: #4caf50;
+  color: var(--vscode-editorGutter-addedBackground);
   opacity: 1;
 }
 
@@ -209,11 +209,11 @@ const copyCode = async () => {
 }
 
 .code-content ::selection {
-  background: rgba(100, 150, 255, 0.3);
+  background: var(--vscode-editor-selectionBackground);
 }
 
 .code-content ::-moz-selection {
-  background: rgba(100, 150, 255, 0.3);
+  background: var(--vscode-editor-selectionBackground);
 }
 
 /* 滚动条样式 */
@@ -222,16 +222,16 @@ const copyCode = async () => {
 }
 
 .code-content::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--vscode-scrollbarSlider-background);
 }
 
 .code-content::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--vscode-scrollbarSlider-hoverBackground);
   border-radius: 4px;
 }
 
 .code-content::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: var(--vscode-scrollbarSlider-activeBackground);
 }
 </style>
 

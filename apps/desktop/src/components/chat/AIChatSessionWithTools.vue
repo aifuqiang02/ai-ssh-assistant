@@ -1276,7 +1276,7 @@ onBeforeUnmount(() => {
 
 /* 用户消息背景（使用主题色） */
 .message-user .message-container {
-  background: rgba(var(--vscode-accent-rgb, 0, 122, 204), 0.08);
+  background: var(--vscode-list-inactiveSelectionBackground);
   border-left: 3px solid var(--vscode-accent);
   border-radius: 6px;
   padding: 8px 10px;
@@ -1423,7 +1423,7 @@ onBeforeUnmount(() => {
 .tool-approval {
   border-top: 1px solid var(--vscode-editorGroup-border);
   padding: 10px;
-  background: rgba(var(--vscode-accent-rgb, 0, 122, 204), 0.05);
+  background: var(--vscode-editorWidget-background);
 }
 
 .approval-message {
@@ -1498,13 +1498,15 @@ onBeforeUnmount(() => {
 }
 
 .tool-result-status.success {
-  color: var(--vscode-charts-green);
-  background: rgba(0, 255, 0, 0.05);
+  color: var(--vscode-editorGutter-addedBackground);
+  background: var(--vscode-editorGutter-addedBackground);
+  opacity: 0.05;
 }
 
 .tool-result-status.error {
-  color: var(--vscode-errorForeground);
-  background: rgba(255, 0, 0, 0.05);
+  color: var(--vscode-editorGutter-deletedBackground);
+  background: var(--vscode-editorGutter-deletedBackground);
+  opacity: 0.05;
 }
 
 .tool-output {
@@ -1787,9 +1789,9 @@ onBeforeUnmount(() => {
 }
 
 .icon-button:hover {
-  background: var(--vscode-error);
-  border-color: var(--vscode-error);
-  color: #ffffff;
+  background: var(--vscode-inputValidation-errorBackground);
+  border-color: var(--vscode-inputValidation-errorBorder);
+  color: var(--vscode-button-foreground);
 }
 
 .icon-button:active {

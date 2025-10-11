@@ -743,18 +743,21 @@ onBeforeUnmount(() => {
 }
 
 .status-badge.connected {
-  color: #0dbc79;
-  background-color: rgba(13, 188, 121, 0.1);
+  color: var(--vscode-editorGutter-addedBackground);
+  background-color: var(--vscode-editorGutter-addedBackground);
+  opacity: 0.1;
 }
 
 .status-badge.connecting {
-  color: #e5e510;
-  background-color: rgba(229, 229, 16, 0.1);
+  color: var(--vscode-editorGutter-modifiedBackground);
+  background-color: var(--vscode-editorGutter-modifiedBackground);
+  opacity: 0.1;
 }
 
 .status-badge.disconnected {
-  color: #cd3131;
-  background-color: rgba(205, 49, 49, 0.1);
+  color: var(--vscode-editorGutter-deletedBackground);
+  background-color: var(--vscode-editorGutter-deletedBackground);
+  opacity: 0.1;
 }
 
 .terminal-actions {
@@ -782,8 +785,8 @@ onBeforeUnmount(() => {
 }
 
 .btn-icon.active {
-  background-color: var(--vscode-accent);
-  color: #ffffff;
+  background-color: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
 }
 
 .btn-icon.btn-disabled {
@@ -811,7 +814,7 @@ onBeforeUnmount(() => {
   flex: 1;
   padding: 8px;
   overflow: hidden;
-  background-color: #1e1e1e;
+  background-color: var(--vscode-terminal-background);
   transition: flex 0.3s ease;
 }
 
@@ -869,12 +872,12 @@ onBeforeUnmount(() => {
 }
 
 .context-menu-item:hover {
-  background: var(--vscode-accent);
-  color: #ffffff;
+  background: var(--vscode-list-hoverBackground);
+  color: var(--vscode-list-hoverForeground);
 }
 
 .context-menu-item:hover i {
-  color: #ffffff;
+  color: var(--vscode-list-hoverForeground);
 }
 
 .context-menu-item i {

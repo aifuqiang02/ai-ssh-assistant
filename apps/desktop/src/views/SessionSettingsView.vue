@@ -341,11 +341,11 @@ onMounted(async () => {
 }
 
 .save-status i.bi-check-circle {
-  color: #27ae60;
+  color: var(--vscode-editorGutter-addedBackground);
 }
 
 .save-status i.bi-exclamation-triangle {
-  color: #e74c3c;
+  color: var(--vscode-editorGutter-deletedBackground);
 }
 
 @keyframes fadeIn {

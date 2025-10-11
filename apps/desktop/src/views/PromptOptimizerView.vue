@@ -814,12 +814,12 @@ onUnmounted(() => {
 }
 
 .btn-success {
-  background: #27ae60;
-  color: white;
+  background: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
 }
 
 .btn-success:hover:not(:disabled) {
-  background: #229954;
+  background: var(--vscode-button-hoverBackground);
   transform: translateY(-1px);
 }
 
@@ -882,9 +882,9 @@ onUnmounted(() => {
 }
 
 .btn-copy.copied {
-  background: var(--vscode-accent);
-  color: #ffffff;
-  border-color: var(--vscode-accent);
+  background: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+  border-color: var(--vscode-button-background);
 }
 
 .btn-copy i {

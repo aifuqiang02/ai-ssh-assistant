@@ -1316,13 +1316,15 @@ onBeforeUnmount(() => {
 }
 
 .status-badge.connected {
-  color: #0dbc79;
-  background-color: rgba(13, 188, 121, 0.1);
+  color: var(--vscode-editorGutter-addedBackground);
+  background-color: var(--vscode-editorGutter-addedBackground);
+  opacity: 0.1;
 }
 
 .status-badge.disconnected {
-  color: #cd3131;
-  background-color: rgba(205, 49, 49, 0.1);
+  color: var(--vscode-editorGutter-deletedBackground);
+  background-color: var(--vscode-editorGutter-deletedBackground);
+  opacity: 0.1;
 }
 
 .toolbar {
@@ -1365,9 +1367,9 @@ onBeforeUnmount(() => {
 }
 
 .toolbar-btn.primary {
-  background: var(--vscode-accent);
-  border-color: var(--vscode-accent);
-  color: #ffffff;
+  background: var(--vscode-button-background);
+  border-color: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
 }
 
 .toolbar-btn.primary:hover:not(:disabled) {
@@ -1380,9 +1382,9 @@ onBeforeUnmount(() => {
 }
 
 .toolbar-btn.danger:hover:not(:disabled) {
-  background: var(--vscode-error);
-  border-color: var(--vscode-error);
-  color: #ffffff;
+  background: var(--vscode-inputValidation-errorBackground);
+  border-color: var(--vscode-inputValidation-errorBorder);
+  color: var(--vscode-button-foreground);
 }
 
 .path-bar {
@@ -1421,10 +1423,10 @@ onBeforeUnmount(() => {
   display: inline-flex;
   align-items: center;
   padding: 6px 12px;
-  background: rgba(var(--vscode-accent-rgb, 0, 122, 204), 0.1);
+  background: var(--vscode-badge-background);
   border: 1px solid var(--vscode-accent);
   border-radius: 4px;
-  color: var(--vscode-accent);
+  color: var(--vscode-badge-foreground);
   font-size: 13px;
   font-weight: 500;
   margin-right: 8px;
@@ -1507,7 +1509,7 @@ onBeforeUnmount(() => {
 }
 
 .file-item.selected {
-  background: rgba(var(--vscode-accent-rgb, 0, 122, 204), 0.15);
+  background: var(--vscode-list-activeSelectionBackground);
 }
 
 /* 分隔线样式 - 使用更细的线条 */
@@ -1517,12 +1519,12 @@ onBeforeUnmount(() => {
 
 /* 返回上级目录样式 */
 .file-item.parent-dir {
-  background: rgba(var(--vscode-accent-rgb, 0, 122, 204), 0.05);
+  background: var(--vscode-list-inactiveSelectionBackground);
   font-weight: 500;
 }
 
 .file-item.parent-dir:hover {
-  background: rgba(var(--vscode-accent-rgb, 0, 122, 204), 0.1);
+  background: var(--vscode-list-hoverBackground);
 }
 
 .file-item.parent-dir .file-icon {
@@ -1607,9 +1609,9 @@ onBeforeUnmount(() => {
 }
 
 .action-btn.danger:hover {
-  background: var(--vscode-error);
-  border-color: var(--vscode-error);
-  color: #ffffff;
+  background: var(--vscode-inputValidation-errorBackground);
+  border-color: var(--vscode-inputValidation-errorBorder);
+  color: var(--vscode-button-foreground);
 }
 
 .status-bar {
