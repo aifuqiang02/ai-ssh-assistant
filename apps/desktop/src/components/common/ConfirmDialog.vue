@@ -192,22 +192,26 @@ if (typeof window !== 'undefined') {
 }
 
 .dialog-icon-warning {
-  background: rgba(255, 204, 2, 0.15);
+  background: var(--vscode-editorGutter-modifiedBackground);
+  opacity: 0.15;
   color: var(--vscode-warning);
 }
 
 .dialog-icon-danger {
-  background: rgba(244, 71, 71, 0.15);
+  background: var(--vscode-editorGutter-deletedBackground);
+  opacity: 0.15;
   color: var(--vscode-error);
 }
 
 .dialog-icon-info {
-  background: rgba(0, 122, 204, 0.15);
+  background: var(--vscode-button-background);
+  opacity: 0.15;
   color: var(--vscode-accent);
 }
 
 .dialog-icon-success {
-  background: rgba(78, 201, 176, 0.15);
+  background: var(--vscode-editorGutter-addedBackground);
+  opacity: 0.15;
   color: var(--vscode-success);
 }
 
@@ -269,7 +273,7 @@ if (typeof window !== 'undefined') {
 }
 
 .dialog-button-confirm {
-  color: #ffffff;
+  color: var(--vscode-button-foreground);
 }
 
 .dialog-button-warning {

@@ -381,9 +381,9 @@ const handleRegister = async () => {
 }
 
 .vscode-button.primary {
-  background: var(--vscode-accent);
-  color: #ffffff;
-  border-color: var(--vscode-accent);
+  background: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+  border-color: var(--vscode-button-background);
 }
 
 .vscode-button.primary:hover:not(:disabled) {
@@ -393,8 +393,8 @@ const handleRegister = async () => {
 
 .error-message {
   padding: 8px 12px;
-  background: rgba(244, 67, 54, 0.1);
-  border: 1px solid rgba(244, 67, 54, 0.3);
+  background: var(--vscode-inputValidation-errorBackground);
+  border: 1px solid var(--vscode-inputValidation-errorBorder);
   border-radius: 4px;
   font-size: 13px;
 }

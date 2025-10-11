@@ -504,7 +504,7 @@ watch(isOpen, (newVal) => {
 }
 
 .model-item.selected {
-  background: rgba(var(--vscode-accent-rgb), 0.15);
+  background: var(--vscode-list-activeSelectionBackground);
   border: 1px solid var(--vscode-accent);
 }
 

@@ -748,9 +748,9 @@ const handleClose = () => {
 }
 
 .toolbar-btn.primary {
-  background: var(--vscode-accent);
-  border-color: var(--vscode-accent);
-  color: #ffffff;
+  background: var(--vscode-button-background);
+  border-color: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
 }
 
 .toolbar-btn.primary:hover:not(:disabled) {
@@ -805,8 +805,8 @@ const handleClose = () => {
   align-items: center;
   justify-content: space-between;
   padding: 10px 20px;
-  background: var(--vscode-accent);
-  color: #ffffff;
+  background: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
 }
 
 .selected-info {
@@ -897,8 +897,8 @@ const handleClose = () => {
 }
 
 .file-item.selected {
-  background: var(--vscode-accent);
-  color: #ffffff;
+  background: var(--vscode-list-activeSelectionBackground);
+  color: var(--vscode-list-activeSelectionForeground);
 }
 
 .file-col-checkbox {
@@ -965,9 +965,9 @@ const handleClose = () => {
 }
 
 .action-btn.danger:hover {
-  background: var(--vscode-error);
-  border-color: var(--vscode-error);
-  color: #ffffff;
+  background: var(--vscode-inputValidation-errorBackground);
+  border-color: var(--vscode-inputValidation-errorBorder);
+  color: var(--vscode-button-foreground);
 }
 
 .status-bar {
@@ -1097,9 +1097,9 @@ const handleClose = () => {
 }
 
 .vscode-button.primary {
-  background: var(--vscode-accent);
-  color: #ffffff;
-  border-color: var(--vscode-accent);
+  background: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+  border-color: var(--vscode-button-background);
 }
 
 .vscode-button.primary:hover {

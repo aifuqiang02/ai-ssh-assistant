@@ -432,10 +432,11 @@ const handleTest = async () => {
   align-items: center;
   gap: 8px;
   padding: 10px 12px;
-  background: rgba(76, 175, 80, 0.1);
-  border: 1px solid #4caf50;
+  background: var(--vscode-editorGutter-addedBackground);
+  opacity: 0.1;
+  border: 1px solid var(--vscode-editorGutter-addedBackground);
   border-radius: 4px;
-  color: #4caf50;
+  color: var(--vscode-editorGutter-addedBackground);
   font-size: 13px;
   margin-bottom: 16px;
 }
@@ -461,9 +462,9 @@ const handleTest = async () => {
 }
 
 .btn-primary {
-  background: var(--vscode-accent);
-  color: #ffffff;
-  border-color: var(--vscode-accent);
+  background: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+  border-color: var(--vscode-button-background);
 }
 
 .btn-primary:hover:not(:disabled) {
@@ -487,9 +488,9 @@ const handleTest = async () => {
 }
 
 .btn-test {
-  background: var(--vscode-success);
-  color: #ffffff;
-  border-color: var(--vscode-success);
+  background: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+  border-color: var(--vscode-button-background);
 }
 
 .btn-test:hover:not(:disabled) {

@@ -570,8 +570,8 @@ const handleDrop = (event: DragEvent) => {
 }
 
 .action-item:hover {
-  background: var(--vscode-accent);
-  color: #ffffff;
+  background: var(--vscode-list-hoverBackground);
+  color: var(--vscode-list-hoverForeground);
 }
 
 .action-item.danger {
@@ -579,8 +579,8 @@ const handleDrop = (event: DragEvent) => {
 }
 
 .action-item.danger:hover {
-  background: var(--vscode-error);
-  color: #ffffff;
+  background: var(--vscode-inputValidation-errorBackground);
+  color: var(--vscode-button-foreground);
 }
 
 .action-divider {
