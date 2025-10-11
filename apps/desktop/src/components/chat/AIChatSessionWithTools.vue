@@ -197,13 +197,13 @@
 
           <!-- 右侧按钮组 -->
           <div class="action-buttons">
-            <!-- 发送/停止按钮 -->
+            <!-- 发送/停止按钮 - 暂时禁用发送功能，保留停止功能 -->
             <button
               class="control-button send-button"
               :class="{ 'is-generating': isGenerating, 'has-content': inputMessage.trim() }"
-              :disabled="!inputMessage.trim() && !isGenerating"
-              :title="isGenerating ? '停止生成 (Ctrl+C)' : '发送消息 (Ctrl+Enter)'"
-              @click="isGenerating ? handleStopGeneration() : handleSendMessage()"
+              :disabled="true"
+              :title="isGenerating ? '停止生成 (Ctrl+C)' : '使用 Ctrl+Enter 发送消息'"
+              @click="isGenerating ? handleStopGeneration() : null"
             >
               <i v-if="!isGenerating" class="bi bi-send-fill"></i>
               <i v-else class="bi bi-stop-circle-fill"></i>
@@ -824,6 +824,11 @@ const handleSendMessage = async () => {
   
   // 直接调用 sendMessageInternal 处理消息
   await sendMessageInternal(content)
+  
+  // 发送完成后恢复输入框焦点
+  nextTick(() => {
+    textareaRef.value?.focus()
+  })
 }
 
 const sendMessageInternal = async (content: string, hideUserMessage = false) => {
@@ -1042,6 +1047,11 @@ const sendMessageInternal = async (content: string, hideUserMessage = false) => 
   } finally {
     isGenerating.value = false
     abortController.value = null
+    
+    // 响应完成后恢复输入框焦点
+    nextTick(() => {
+      textareaRef.value?.focus()
+    })
   }
 }
 
