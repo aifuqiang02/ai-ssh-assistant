@@ -33,13 +33,17 @@
           <div class="setting-row">
             <div class="setting-left">
               <label class="setting-label">主题模式</label>
-              <p class="setting-hint">选择应用的外观主题</p>
+              <p class="setting-hint">选择应用的外观主题（基于 VSCode 官方主题）</p>
           </div>
             <div class="setting-right">
-              <select v-model="theme" @change="onThemeChange" class="form-select">
-            <option value="light">☀️ 浅色</option>
-            <option value="dark">🌙 深色</option>
-            <option value="auto">🔄 跟随系统</option>
+              <select v-model="selectedThemeMode" @change="onThemeModeChange" class="form-select">
+                <option 
+                  v-for="themeOption in availableThemes" 
+                  :key="themeOption.value"
+                  :value="themeOption.value"
+                >
+                  {{ themeOption.label }}
+                </option>
           </select>
             </div>
         </div>
@@ -916,6 +920,7 @@ import { storeToRefs } from 'pinia'
 import LoginModal from '../components/auth/LoginModal.vue'
 import ProviderIcon from '../components/common/ProviderIcon.vue'
 import { useTheme } from '../composables/useTheme'
+import { themeService, type ThemeMode } from '../services/theme.service'
 import { settingsService } from '../services/settings.service'
 import { 
   DEFAULT_PROVIDERS, 
@@ -960,6 +965,10 @@ const isScrolling = ref(false)
 // mode, colorScheme, themeFontSize 已经在上面解构
 const fontSize = ref<'small' | 'medium' | 'large'>('medium')
 const selectedColorScheme = ref<'blue' | 'green' | 'purple' | 'orange' | 'red'>('blue')
+
+// 新主题系统
+const selectedThemeMode = ref<ThemeMode>(themeService.getCurrentTheme())
+const availableThemes = computed(() => themeService.getAvailableThemes())
 
 // SSH 设置
 const sshTimeout = ref(30)
@@ -1307,6 +1316,13 @@ const manualSync = async () => {
 const onThemeChange = () => {
   theme.setMode(mode.value)
   showSuccessNotification('主题模式已更新')
+}
+
+// 新主题系统的切换处理
+const onThemeModeChange = () => {
+  console.log('[Settings] 🎨 切换主题:', selectedThemeMode.value)
+  themeService.applyTheme(selectedThemeMode.value)
+  showSuccessNotification(`主题已切换为: ${availableThemes.value.find(t => t.value === selectedThemeMode.value)?.label}`)
 }
 
 const onColorSchemeChange = (scheme: 'blue' | 'green' | 'purple' | 'orange' | 'red') => {
@@ -1873,6 +1889,13 @@ onMounted(async () => {
   storageMode.value = savedMode || 'local'
   
   console.log('[Settings] 当前存储模式:', storageMode.value)
+  
+  // 监听主题变化
+  const handleThemeChange = (event: Event) => {
+    const customEvent = event as CustomEvent
+    selectedThemeMode.value = customEvent.detail.theme
+  }
+  window.addEventListener('theme-changed', handleThemeChange)
   
   // 加载完整设置
   await loadSettings()

@@ -116,15 +116,15 @@
       
       <!-- 快捷主题切换按钮 -->
       <button 
-        @click="toggleTheme"
+        @click="handleQuickThemeToggle"
         class="vscode-window-control"
-        :title="`当前主题: ${currentThemeLabel}`"
+        :title="`当前主题: ${currentNewThemeLabel}`"
       >
-        <svg v-if="mode === 'light'" width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+        <svg v-if="currentNewTheme.includes('light')" width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
           <!-- 太阳图标 -->
           <path d="M8 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"/>
         </svg>
-        <svg v-else-if="mode === 'dark'" width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+        <svg v-else-if="currentNewTheme.includes('dark')" width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
           <!-- 月亮图标 -->
           <path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"/>
         </svg>
@@ -185,6 +185,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useTheme } from '../../composables/useTheme'
+import { themeService } from '../../services/theme.service'
 import { settingsService } from '../../services/settings.service'
 import type { AIProvider, AIModel as AIProviderModel } from '../../types/ai-providers'
 
@@ -322,12 +323,20 @@ const handleSettingsUpdated = () => {
   loadAvailableModels()
 }
 
+// 监听主题变化
+const handleThemeChange = (event: Event) => {
+  const customEvent = event as CustomEvent
+  currentNewTheme.value = customEvent.detail.theme
+  console.log('[AppTitleBar] 🎨 主题已变化:', currentNewTheme.value)
+}
+
 onMounted(() => {
   loadAvailableModels()
   window.addEventListener('storage', handleStorageChange)
   window.addEventListener('ai-model-changed', handleModelChange)
   window.addEventListener('ai-provider-configs-updated', handleProviderConfigsUpdated)
   window.addEventListener('settings-updated', handleSettingsUpdated)
+  window.addEventListener('theme-changed', handleThemeChange)
 })
 
 onBeforeUnmount(() => {
@@ -335,9 +344,10 @@ onBeforeUnmount(() => {
   window.removeEventListener('ai-model-changed', handleModelChange)
   window.removeEventListener('ai-provider-configs-updated', handleProviderConfigsUpdated)
   window.removeEventListener('settings-updated', handleSettingsUpdated)
+  window.removeEventListener('theme-changed', handleThemeChange)
 })
 
-// 当前主题标签
+// 当前主题标签（旧系统）
 const currentThemeLabel = computed(() => {
   switch (mode.value) {
     case 'light':
@@ -350,6 +360,21 @@ const currentThemeLabel = computed(() => {
       return mode.value
   }
 })
+
+// 新主题系统
+const currentNewTheme = ref(themeService.getCurrentTheme())
+const currentNewThemeLabel = computed(() => {
+  const themes = themeService.getAvailableThemes()
+  const theme = themes.find(t => t.value === currentNewTheme.value)
+  return theme?.label || currentNewTheme.value
+})
+
+// 快捷主题切换
+const handleQuickThemeToggle = () => {
+  console.log('[AppTitleBar] 🎨 快捷切换主题')
+  themeService.toggleTheme()
+  currentNewTheme.value = themeService.getCurrentTheme()
+}
 
 // 菜单配置
 const menus = ref([
@@ -391,6 +416,9 @@ const menuItems: MenuItems = {
   view: [
     { id: 'sidebar', label: '切换侧边栏', action: 'toggle-sidebar', shortcut: 'Ctrl+B' },
     { id: 'fullscreen', label: '全屏', action: 'toggle-fullscreen', shortcut: 'F11' },
+    { id: 'separator1', label: '', action: '', type: 'separator' },
+    { id: 'theme-toggle', label: '切换主题', action: 'toggle-theme', shortcut: 'Ctrl+K Ctrl+T' },
+    { id: 'separator2', label: '', action: '', type: 'separator' },
     { id: 'zoom-in', label: '放大', action: 'zoom-in', shortcut: 'Ctrl+=' },
     { id: 'zoom-out', label: '缩小', action: 'zoom-out', shortcut: 'Ctrl+-' }
   ],
@@ -436,6 +464,11 @@ const executeMenuAction = (action: string) => {
       if (window.electronAPI?.toggleFullscreen) {
         window.electronAPI.toggleFullscreen()
       }
+      break
+    case 'toggle-theme':
+      // 切换主题
+      console.log('[AppTitleBar] 🎨 切换主题')
+      themeService.toggleTheme()
       break
     // ... 其他菜单操作
   }
