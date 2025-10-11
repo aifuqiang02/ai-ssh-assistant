@@ -187,17 +187,6 @@
 
           <!-- 右侧按钮组 -->
           <div class="action-buttons">
-            <!-- 清空按钮 -->
-            <button
-              v-if="inputMessage.trim() && !isGenerating"
-              class="control-button"
-              title="清空输入"
-              @click="handleClearInput"
-            >
-              <i class="bi bi-x-lg"></i>
-              <span>清空</span>
-            </button>
-
             <!-- 发送/停止按钮 -->
             <button
               class="control-button send-button"
