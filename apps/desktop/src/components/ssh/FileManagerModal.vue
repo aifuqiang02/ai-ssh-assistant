@@ -1097,9 +1097,9 @@ const handleClose = () => {
 }
 
 .vscode-button.primary {
-  background: var(--vscode-button-background);
+bei'jse  background: var(--vscode-accent);
   color: var(--vscode-button-foreground);
-  border-color: var(--vscode-button-background);
+  border-color: var(--vscode-accent);
 }
 
 .vscode-button.primary:hover {

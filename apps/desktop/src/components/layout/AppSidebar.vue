@@ -966,9 +966,9 @@ const handleRequestInput = (data: { type: string; title: string; placeholder: st
 
 /* 主要按钮样式 */
 .vscode-button.primary {
-  background: var(--vscode-button-background);
+  background: var(--vscode-accent);
   color: var(--vscode-button-foreground);
-  border-color: var(--vscode-button-background);
+  border-color: var(--vscode-accent);
 }
 
 .vscode-button.primary:hover {
