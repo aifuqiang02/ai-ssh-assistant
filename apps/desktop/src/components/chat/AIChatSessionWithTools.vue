@@ -49,7 +49,7 @@
               <div 
                 v-if="!message.toolUse && message.content" 
                 class="message-content"
-                v-html="renderMarkdown(message.content)"
+                v-html="renderMarkdown(getMessageContentWithoutTodo(message))"
               ></div>
 
               <!-- 工具调用 -->
@@ -364,6 +364,45 @@ const extractTodoListFromMessage = (content: string): TodoItem[] | null => {
   }
   
   return null
+}
+
+/**
+ * 从消息内容中移除 Todo List 部分
+ * 这样可以避免 Todo List 在消息和独立面板中重复显示
+ */
+const removeTodoListFromMessage = (content: string): string => {
+  // 移除 "Todo:" 或 "TODO:" 等标题及其后面的清单
+  const pattern1 = /(?:todo|TODO|Todo|任务列表|Task List)[:\s]*\n(?:(?:-\s*)?\[[\sxX\-~]\].+\n?)+/gi
+  let result = content.replace(pattern1, '')
+  
+  // 移除独立的清单块（连续的 checkbox 行）
+  const pattern2 = /(?:^|\n)(?:-\s*)?\[[\sxX\-~]\].+(?:\n(?:-\s*)?\[[\sxX\-~]\].+)*/gm
+  result = result.replace(pattern2, '')
+  
+  // 清理多余的空行（超过2个连续换行）
+  result = result.replace(/\n{3,}/g, '\n\n')
+  
+  return result.trim()
+}
+
+/**
+ * 获取消息内容（如果有 Todo List 且已提取，则移除 Todo List 部分）
+ */
+const getMessageContentWithoutTodo = (message: Message): string => {
+  // 只对 assistant 的消息处理
+  if (message.role !== 'assistant') {
+    return message.content
+  }
+  
+  // 如果当前有活跃的 todoList，并且消息中包含 Todo List，则移除它
+  if (todoList.value.length > 0) {
+    const hasTodoList = extractTodoListFromMessage(message.content)
+    if (hasTodoList && hasTodoList.length > 0) {
+      return removeTodoListFromMessage(message.content)
+    }
+  }
+  
+  return message.content
 }
 
 // 工具相关状态
@@ -898,6 +937,20 @@ const sendMessageInternal = async (content: string, hideUserMessage = false) => 
       },
       (chunk) => {
         assistantMessage.content += chunk.content || ''
+        
+        // 在流式输出过程中实时检测并提取 Todo List
+        // 这样可以避免 Todo 内容在 Markdown 渲染中"一闪而过"
+        const extractedTodos = extractTodoListFromMessage(assistantMessage.content)
+        if (extractedTodos && extractedTodos.length > 0) {
+          // 实时更新 todoList，让 Todo 内容从消息中分离出来
+          if (todoList.value.length === 0 || extractedTodos.length !== todoList.value.length) {
+            todoList.value = extractedTodos
+          } else {
+            // 任务数量相同，更新状态
+            todoList.value = extractedTodos
+          }
+        }
+        
         internalMessages.value = [...internalMessages.value]
         scrollToBottom()
       }
@@ -907,8 +960,7 @@ const sendMessageInternal = async (content: string, hideUserMessage = false) => 
     assistantMessage.streaming = false
     assistantMessage.content = response.content
 
-    // 检测并更新 Todo List
-    // 策略：只在检测到新的或更完整的 todo list 时才更新
+    // 最终再次检测并更新 Todo List（确保完整性）
     const extractedTodos = extractTodoListFromMessage(response.content)
     if (extractedTodos && extractedTodos.length > 0) {
       // 如果当前没有 todo list，或者新的 todo list 任务数量不同，则更新
