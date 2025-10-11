@@ -1844,12 +1844,26 @@ onBeforeUnmount(() => {
   cursor: not-allowed;
 }
 
+/* 发送按钮 - 有内容时高亮显示 */
+.control-button.send-button.has-content:not(:disabled) {
+  background: var(--vscode-button-background);
+  box-shadow: 0 2px 8px rgba(var(--vscode-accent-rgb, 0, 122, 204), 0.3);
+}
+
+.control-button.send-button.has-content:hover:not(:disabled) {
+  background: var(--vscode-button-hoverBackground);
+  box-shadow: 0 4px 12px rgba(var(--vscode-accent-rgb, 0, 122, 204), 0.4);
+  transform: translateY(-2px);
+}
+
+/* 生成中 - 停止按钮（红色） */
 .control-button.send-button.is-generating {
-  background: var(--vscode-errorForeground);
+  background: var(--vscode-inputValidation-errorBackground);
+  color: var(--vscode-button-foreground);
 }
 
 .control-button.send-button.is-generating:hover:not(:disabled) {
-  background: var(--vscode-errorForeground);
+  background: var(--vscode-error);
   opacity: 0.9;
 }
 </style>
