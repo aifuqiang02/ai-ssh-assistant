@@ -1,0 +1,208 @@
+/**
+ * VSCode Dark Modern Theme
+ * 基于 VSCode 官方 Dark Modern 主题
+ * 文件路径: vscode-main/extensions/theme-defaults/themes/dark_modern.json
+ */
+
+:root.dark,
+:root.dark-modern {
+  /* ========== 基础颜色 ========== */
+  --vscode-foreground: #CCCCCC;
+  --vscode-errorForeground: #F85149;
+  --vscode-descriptionForeground: #9D9D9D;
+  --vscode-icon-foreground: #CCCCCC;
+
+  /* ========== 焦点边框 ========== */
+  --vscode-focusBorder: #0078D4;
+
+  /* ========== 文本颜色 ========== */
+  --vscode-textLink-foreground: #4daafc;
+  --vscode-textLink-activeForeground: #4daafc;
+  --vscode-textPreformat-foreground: #D0D0D0;
+  --vscode-textPreformat-background: #3C3C3C;
+  --vscode-textBlockQuote-background: #2B2B2B;
+  --vscode-textBlockQuote-border: #616161;
+  --vscode-textCodeBlock-background: #2B2B2B;
+  --vscode-textSeparator-foreground: #21262D;
+
+  /* ========== 按钮 ========== */
+  --vscode-button-background: #0078D4;
+  --vscode-button-foreground: #FFFFFF;
+  --vscode-button-border: #FFFFFF12;
+  --vscode-button-hoverBackground: #026EC1;
+  --vscode-button-secondaryBackground: #313131;
+  --vscode-button-secondaryForeground: #CCCCCC;
+  --vscode-button-secondaryHoverBackground: #3C3C3C;
+
+  /* ========== 下拉菜单 ========== */
+  --vscode-dropdown-background: #313131;
+  --vscode-dropdown-foreground: #CCCCCC;
+  --vscode-dropdown-border: #3C3C3C;
+  --vscode-dropdown-listBackground: #1F1F1F;
+
+  /* ========== 输入框 ========== */
+  --vscode-input-background: #313131;
+  --vscode-input-foreground: #CCCCCC;
+  --vscode-input-border: #3C3C3C;
+  --vscode-input-placeholderForeground: #989898;
+  --vscode-inputOption-activeBackground: #2489DB82;
+  --vscode-inputOption-activeBorder: #2488DB;
+
+  /* ========== 复选框 ========== */
+  --vscode-checkbox-background: #313131;
+  --vscode-checkbox-border: #3C3C3C;
+
+  /* ========== 编辑器 ========== */
+  --vscode-editor-background: #1F1F1F;
+  --vscode-editor-foreground: #CCCCCC;
+  --vscode-editor-findMatchBackground: #9E6A03;
+  --vscode-editorWidget-background: #202020;
+  --vscode-editorLineNumber-foreground: #6E7681;
+  --vscode-editorLineNumber-activeForeground: #CCCCCC;
+  --vscode-editorGutter-addedBackground: #2EA043;
+  --vscode-editorGutter-modifiedBackground: #0078D4;
+  --vscode-editorGutter-deletedBackground: #F85149;
+  --vscode-editorOverviewRuler-border: #010409;
+
+  /* ========== 编辑器组 ========== */
+  --vscode-editorGroup-border: #FFFFFF17;
+  --vscode-editorGroupHeader-tabsBackground: #181818;
+  --vscode-editorGroupHeader-tabsBorder: #2B2B2B;
+
+  /* ========== 标签页 ========== */
+  --vscode-tab-activeBackground: #1F1F1F;
+  --vscode-tab-activeForeground: #FFFFFF;
+  --vscode-tab-activeBorder: #1F1F1F;
+  --vscode-tab-activeBorderTop: #0078D4;
+  --vscode-tab-selectedBorderTop: #6caddf;
+  --vscode-tab-inactiveBackground: #181818;
+  --vscode-tab-inactiveForeground: #9D9D9D;
+  --vscode-tab-border: #2B2B2B;
+  --vscode-tab-hoverBackground: #1F1F1F;
+  --vscode-tab-unfocusedActiveBorder: #1F1F1F;
+  --vscode-tab-unfocusedActiveBorderTop: #2B2B2B;
+  --vscode-tab-unfocusedHoverBackground: #1F1F1F;
+
+  /* ========== 侧边栏 ========== */
+  --vscode-sideBar-background: #181818;
+  --vscode-sideBar-foreground: #CCCCCC;
+  --vscode-sideBar-border: #2B2B2B;
+  --vscode-sideBarTitle-foreground: #CCCCCC;
+  --vscode-sideBarSectionHeader-background: #181818;
+  --vscode-sideBarSectionHeader-foreground: #CCCCCC;
+  --vscode-sideBarSectionHeader-border: #2B2B2B;
+
+  /* ========== 活动栏 ========== */
+  --vscode-activityBar-background: #181818;
+  --vscode-activityBar-foreground: #D7D7D7;
+  --vscode-activityBar-inactiveForeground: #868686;
+  --vscode-activityBar-border: #2B2B2B;
+  --vscode-activityBar-activeBorder: #0078D4;
+  --vscode-activityBarBadge-background: #0078D4;
+  --vscode-activityBarBadge-foreground: #FFFFFF;
+
+  /* ========== 面板 ========== */
+  --vscode-panel-background: #181818;
+  --vscode-panel-border: #2B2B2B;
+  --vscode-panelInput-border: #2B2B2B;
+  --vscode-panelTitle-activeBorder: #0078D4;
+  --vscode-panelTitle-activeForeground: #CCCCCC;
+  --vscode-panelTitle-inactiveForeground: #9D9D9D;
+
+  /* ========== 标题栏 ========== */
+  --vscode-titleBar-activeBackground: #181818;
+  --vscode-titleBar-activeForeground: #CCCCCC;
+  --vscode-titleBar-inactiveBackground: #1F1F1F;
+  --vscode-titleBar-inactiveForeground: #9D9D9D;
+  --vscode-titleBar-border: #2B2B2B;
+
+  /* ========== 状态栏 ========== */
+  --vscode-statusBar-background: #181818;
+  --vscode-statusBar-foreground: #CCCCCC;
+  --vscode-statusBar-border: #2B2B2B;
+  --vscode-statusBar-debuggingBackground: #0078D4;
+  --vscode-statusBar-debuggingForeground: #FFFFFF;
+  --vscode-statusBar-noFolderBackground: #1F1F1F;
+  --vscode-statusBar-focusBorder: #0078D4;
+  --vscode-statusBarItem-hoverBackground: #F1F1F133;
+  --vscode-statusBarItem-hoverForeground: #FFFFFF;
+  --vscode-statusBarItem-prominentBackground: #6E768166;
+  --vscode-statusBarItem-focusBorder: #0078D4;
+  --vscode-statusBarItem-remoteBackground: #0078D4;
+  --vscode-statusBarItem-remoteForeground: #FFFFFF;
+
+  /* ========== 菜单 ========== */
+  --vscode-menu-background: #1F1F1F;
+  --vscode-menu-selectionBackground: #0078d4;
+
+  /* ========== 通知 ========== */
+  --vscode-notifications-background: #1F1F1F;
+  --vscode-notifications-foreground: #CCCCCC;
+  --vscode-notifications-border: #2B2B2B;
+  --vscode-notificationCenterHeader-background: #1F1F1F;
+  --vscode-notificationCenterHeader-foreground: #CCCCCC;
+
+  /* ========== 徽章 ========== */
+  --vscode-badge-background: #616161;
+  --vscode-badge-foreground: #F8F8F8;
+
+  /* ========== 进度条 ========== */
+  --vscode-progressBar-background: #0078D4;
+
+  /* ========== 快速输入 ========== */
+  --vscode-quickInput-background: #222222;
+  --vscode-quickInput-foreground: #CCCCCC;
+
+  /* ========== Peek View ========== */
+  --vscode-peekViewEditor-background: #1F1F1F;
+  --vscode-peekViewEditor-matchHighlightBackground: #BB800966;
+  --vscode-peekViewResult-background: #1F1F1F;
+  --vscode-peekViewResult-matchHighlightBackground: #BB800966;
+
+  /* ========== Picker ========== */
+  --vscode-pickerGroup-border: #3C3C3C;
+
+  /* ========== 设置 ========== */
+  --vscode-settings-headerForeground: #FFFFFF;
+  --vscode-settings-modifiedItemIndicator: #BB800966;
+  --vscode-settings-dropdownBackground: #313131;
+  --vscode-settings-dropdownBorder: #3C3C3C;
+
+  /* ========== 终端 ========== */
+  --vscode-terminal-foreground: #CCCCCC;
+  --vscode-terminal-tab-activeBorder: #0078D4;
+
+  /* ========== 调试工具栏 ========== */
+  --vscode-debugToolBar-background: #181818;
+
+  /* ========== 欢迎页 ========== */
+  --vscode-welcomePage-tileBackground: #2B2B2B;
+  --vscode-welcomePage-progress-foreground: #0078D4;
+
+  /* ========== Widget ========== */
+  --vscode-widget-border: #313131;
+
+  /* ========== 键绑定标签 ========== */
+  --vscode-keybindingLabel-foreground: #CCCCCC;
+
+  /* ========== Chat（AI 助手专用）========== */
+  --vscode-chat-slashCommandBackground: #26477866;
+  --vscode-chat-slashCommandForeground: #85B6FF;
+  --vscode-chat-editedFileForeground: #E2C08D;
+
+  /* ========== 自定义简化变量（向后兼容）========== */
+  --vscode-bg: #1F1F1F;
+  --vscode-bg-light: #181818;
+  --vscode-bg-lighter: #2d2d30;
+  --vscode-bg-input: #313131;
+  --vscode-fg: #CCCCCC;
+  --vscode-fg-muted: #9D9D9D;
+  --vscode-accent: #0078D4;
+  --vscode-accent-hover: #026EC1;
+  --vscode-border: #2B2B2B;
+  --vscode-border-subtle: #3C3C3C;
+  --vscode-success: #4ec9b0;
+  --vscode-warning: #ffcc02;
+  --vscode-error: #F85149;
+}
+

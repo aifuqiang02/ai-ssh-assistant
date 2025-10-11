@@ -204,7 +204,7 @@ await runCommand('pnpm dev')
 ```
 
 ### 0.1. 文件管理规范
-- **禁止删除参考项目**: `Chaterm-main`、`electron-egg-master`、`Roo-Code-main`、`lobe-chat-main` 目录是重要的参考项目，**绝对不能**删除或移动
+- **禁止删除参考项目**: `Chaterm-main`、`electron-egg-master`、`Roo-Code-main`、`lobe-chat-main`、`vscode-main` 目录是重要的参考项目，**绝对不能**删除或移动
 - **参考项目用途**: 
   - 作为 Electron + Vue3 架构的参考实现
   - 提供打包配置的参考

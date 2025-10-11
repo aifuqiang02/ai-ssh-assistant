@@ -2,80 +2,17 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-/* CSS 变量定义 */
+/* 导入 VSCode 官方主题 */
+@import './themes/dark-modern.css';
+@import './themes/light-modern.css';
+
+/* 默认主题（深色） */
 :root {
-  /* 默认深色主题 - 精确匹配 VSCode */
-  --vscode-bg: #252526;
-  /* VSCode 主背景色 */
-  --vscode-bg-light: #252526;
-  /* 与主背景一致 */
-  --vscode-bg-lighter: #2d2d30;
-  /* 稍浅的背景 */
-  --vscode-bg-input: #3c3c3c;
-  /* 输入框背景 - VSCode 标准 */
-  --vscode-fg: #e0e0e0;
-  /* 主文字颜色 - 更亮 */
-  --vscode-fg-muted: #9d9d9d;
-  /* 次要文字 */
-  --vscode-accent: #007acc;
-  --vscode-accent-hover: #005a9e;
-  --vscode-border: #3c3c3c;
-  --vscode-border-subtle: #2b2b2b;
-  --vscode-success: #4ec9b0;
-  --vscode-warning: #ffcc02;
-  --vscode-error: #f44747;
-}
-
-/* 浅色主题 */
-:root.light {
-  --vscode-bg: #ffffff;
-  --vscode-bg-light: #ffffff;
-  /* 与主背景一致 */
-  --vscode-bg-lighter: #f3f3f3;
-  /* 用于输入框等表单控件 */
-  --vscode-bg-input: #f3f3f3;
-  /* 输入框专用背景 */
-  --vscode-fg: #3c3c3c;
-  --vscode-fg-muted: #6c6c6c;
-  --vscode-accent: #007acc;
-  --vscode-accent-hover: #005a9e;
-  --vscode-border: #d4d4d4;
-  --vscode-border-subtle: #e5e5e5;
-  /* 更微妙的边框色 */
-  --vscode-success: #107c10;
-  --vscode-warning: #c19c00;
-  --vscode-error: #e51400;
-}
-
-/* 浅色主题 Select - 移除背景箭头 */
-:root.light select {
-  background-image: none;
-}
-
-/* 深色主题（显式定义）- 精确匹配 VSCode */
-:root.dark {
-  --vscode-bg: #252526;
-  /* VSCode 主背景色 */
-  --vscode-bg-light: #252526;
-  /* 与主背景一致 */
-  --vscode-bg-lighter: #2d2d30;
-  /* 稍浅的背景 */
-  --vscode-bg-input: #3c3c3c;
-  /* 输入框背景 - VSCode 标准 */
-  --vscode-fg: #e0e0e0;
-  /* 主文字颜色 - 更亮 */
-  --vscode-fg-muted: #9d9d9d;
-  /* 次要文字 */
-  --vscode-accent: #007acc;
-  --vscode-accent-hover: #005a9e;
-  --vscode-border: #3c3c3c;
-  --vscode-border-subtle: #2b2b2b;
-  --vscode-success: #4ec9b0;
-  --vscode-warning: #ffcc02;
-  --vscode-error: #f44747;
-
+  /* 使用 Dark Modern 作为默认主题 */
+  /* 所有变量已在 dark-modern.css 中定义 */
+  
   /* Bootstrap 变量覆盖 */
-  --bs-primary: #007acc;
+  --bs-primary: #0078D4;
   --bs-secondary: #6c757d;
   --bs-success: #28a745;
   --bs-danger: #dc3545;
