@@ -533,6 +533,10 @@ const toggleActionMenu = () => {
   color: var(--vscode-error);
 }
 
+.action-item.danger:hover {
+  color: var(--vscode-button-foreground);
+}
+
 .action-item i {
   font-size: 12px;
   width: 14px;

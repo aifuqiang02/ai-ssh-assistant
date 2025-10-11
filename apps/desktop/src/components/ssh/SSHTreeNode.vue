@@ -579,7 +579,7 @@ const handleDrop = (event: DragEvent) => {
 }
 
 .action-item.danger:hover {
-  background: var(--vscode-inputValidation-errorBackground);
+  background: var(--vscode-accent);
   color: var(--vscode-button-foreground);
 }
 
