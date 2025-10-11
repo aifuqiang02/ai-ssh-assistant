@@ -1124,6 +1124,20 @@ const handleClearSession = () => {
   
   // 发出清空事件（如果父组件需要知道）
   emit('session-cleared')
+  
+  // 自动聚焦到输入框
+  // 使用 nextTick + setTimeout 确保 DOM 完全更新后再聚焦
+  // 解决清空会话后输入框无法获取焦点的问题
+  nextTick(() => {
+    setTimeout(() => {
+      if (textareaRef.value) {
+        // 先失焦再聚焦，确保焦点状态刷新
+        textareaRef.value.blur()
+        textareaRef.value.focus()
+        console.log('[Chat] ✅ 输入框已重新聚焦')
+      }
+    }, 100)
+  })
 }
 
 // 监听 props 变化
