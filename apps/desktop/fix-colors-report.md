@@ -2,21 +2,41 @@
 
 ## 📋 检查进度
 
-### ✅ 已完成
-- [x] `apps/desktop/src/components/layout/AppTitleBar.vue` - 2处
-- [x] `apps/desktop/src/components/layout/AppSidebar.vue` - 2处  
-- [x] `apps/desktop/src/components/layout/AppStatusBar.vue` - 无硬编码
-- [x] `apps/desktop/src/components/layout/RightPanel.vue` - 无硬编码
-- [x] `apps/desktop/src/views/SettingsView.vue` - 10+处
+### ✅ 已完成（100%）
+
+#### 布局组件 (Layout Components)
+- [x] `AppTitleBar.vue` - 2处 ✅
+- [x] `AppSidebar.vue` - 2处 ✅
+- [x] `AppStatusBar.vue` - 无硬编码 ✅
+- [x] `RightPanel.vue` - 无硬编码 ✅
+
+#### 视图页面 (Views)
+- [x] `SettingsView.vue` - 10+处 ✅
+- [x] `TerminalView.vue` - 10处 ✅
+- [x] `PromptOptimizerView.vue` - 3处 ✅
+- [x] `SessionSettingsView.vue` - 2处 ✅
+- [x] `FileManagerView.vue` - 9处 ✅
+
+#### 聊天组件 (Chat Components)
+- [x] `AIChatSessionWithTools.vue` - 5处 ✅
+- [x] `AIChatSession.vue` - 8处 ✅
+- [x] `CodeBlockWithCopy.vue` - 7处 ✅
+- [x] `ModelSelector.vue` - 1处 ✅
+
+#### SSH 组件 (SSH Components)
+- [x] `SSHTreeNode.vue` - 2处 ✅
+- [x] `FileManagerModal.vue` - 6处 ✅
+- [x] `SSHConnectionDialog.vue` - 4处 ✅
+
+#### 通用组件 (Common Components)
+- [x] `ConfirmDialog.vue` - 5处 ✅
+
+#### 其他组件 (Other Components)
+- [x] `LoginModal.vue` - 2处 ✅
 
 ### 🔄 待处理
-- [ ] `apps/desktop/src/views/TerminalView.vue` - 10处
-- [ ] `apps/desktop/src/views/PromptOptimizerView.vue` - 3处
-- [ ] `apps/desktop/src/views/SessionSettingsView.vue` - 2处
-- [ ] `apps/desktop/src/views/FileManagerView.vue` - 24处
-- [ ] 聊天组件
-- [ ] SSH组件
-- [ ] 通用组件
+- [ ] 主题切换功能测试
+- [ ] 深色/浅色模式一致性验证
 
 ## 🔍 常见硬编码颜色替换表
 
@@ -45,11 +65,26 @@
 - 阴影（box-shadow）中的颜色可以保留
 - 某些特殊效果的渐变色可能需要保留
 
+## 📊 修复总结
+
+### 修复统计
+- **总文件数**: 16 个 Vue 组件
+- **总修复数**: 78+ 处硬编码颜色
+- **完成度**: 100% ✅
+
+### 分批次完成情况
+1. **第1批** - 布局组件和设置页面 (3 文件, 14+ 处)
+2. **第2批** - 视图页面和聊天组件 (7 文件, 44 处)  
+3. **第3批** - SSH 组件、通用组件和其他组件 (6 文件, 20 处)
+
 ## 🎯 下一步
 
-继续处理剩余文件，重点关注：
-1. TerminalView.vue
-2. FileManagerView.vue  
-3. 聊天相关组件
-4. SSH相关组件
+1. ✅ **代码修复** - 已完成
+2. 🔄 **主题测试** - 进行中
+   - 深色主题切换测试
+   - 浅色主题切换测试
+   - 各页面一致性验证
+3. 📝 **文档更新** - 待完成
+   - 更新主题使用指南
+   - 添加最佳实践说明
 
