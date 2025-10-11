@@ -307,11 +307,14 @@ onBeforeUnmount(() => {
   background: var(--vscode-editor-background);
   border: 1px solid var(--vscode-panel-border);
   border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
   max-height: 400px;
   min-height: 200px;
   overflow: hidden;
   pointer-events: all;
+  /* 确保面板完全不透明，遮盖下层内容 */
+  opacity: 1;
+  z-index: 1001;
 }
 
 .panel-header {
@@ -389,6 +392,7 @@ onBeforeUnmount(() => {
   list-style: none;
   max-height: 340px;
   overflow-y: auto;
+  background: var(--vscode-editor-background);
 }
 
 .todo-item {
@@ -398,6 +402,8 @@ onBeforeUnmount(() => {
   margin-bottom: 8px;
   min-height: 20px;
   line-height: 1.4;
+  background: var(--vscode-editor-background);
+  padding: 2px 0;
 }
 
 .item-status-icon {
