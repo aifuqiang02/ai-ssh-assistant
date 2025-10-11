@@ -245,8 +245,8 @@ onBeforeUnmount(() => {
 }
 
 .status-icon.pending {
-  border: 1px solid var(--vscode-descriptionForeground);
-  background: transparent;
+  border: 2px solid var(--vscode-descriptionForeground);
+  background: var(--vscode-editor-background);
 }
 
 .status-icon.default {
@@ -302,7 +302,7 @@ onBeforeUnmount(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(0, 0, 0, 0.3);
   pointer-events: all;
 }
 
@@ -314,13 +314,11 @@ onBeforeUnmount(() => {
   background: var(--vscode-editor-background);
   border: 1px solid var(--vscode-panel-border);
   border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
   max-height: 400px;
   min-height: 200px;
   overflow: hidden;
   pointer-events: all;
-  /* 确保面板完全不透明，遮盖下层内容 */
-  opacity: 1;
   z-index: 1001;
 }
 
@@ -364,32 +362,30 @@ onBeforeUnmount(() => {
 
 .action-icon {
   font-size: 13px;
-  opacity: 0.6;
   cursor: pointer;
   padding: 4px;
   border-radius: 2px;
   transition: all 0.2s;
-  color: var(--vscode-foreground);
+  color: var(--vscode-descriptionForeground);
 }
 
 .action-icon:hover {
-  opacity: 1;
   background: var(--vscode-toolbar-hoverBackground);
   color: var(--vscode-errorForeground);
 }
 
 .collapse-icon {
   font-size: 14px;
-  opacity: 0.7;
   cursor: pointer;
   padding: 4px;
   border-radius: 2px;
   transition: all 0.2s;
+  color: var(--vscode-descriptionForeground);
 }
 
 .collapse-icon:hover {
-  opacity: 1;
   background: var(--vscode-toolbar-hoverBackground);
+  color: var(--vscode-foreground);
 }
 
 /* Todo Items List */
@@ -431,8 +427,8 @@ onBeforeUnmount(() => {
 }
 
 .item-status-icon.pending {
-  border: 1px solid var(--vscode-descriptionForeground);
-  background: transparent;
+  border: 2px solid var(--vscode-descriptionForeground);
+  background: var(--vscode-editor-background);
 }
 
 .item-text {
