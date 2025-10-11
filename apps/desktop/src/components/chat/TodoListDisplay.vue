@@ -31,7 +31,7 @@
         <!-- Floating Panel -->
         <div
           class="todo-floating-panel"
-          :style="{ top: panelPosition.top, left: panelPosition.left }"
+          :style="{ top: panelPosition.top, left: panelPosition.left, width: panelPosition.width }"
         >
           <!-- Panel Header -->
           <div class="panel-header">
@@ -47,7 +47,7 @@
                 @click.stop="handleClear"
               ></i>
               <i 
-                class="bi bi-chevron-up collapse-icon"
+                class="bi bi-chevron-down collapse-icon"
                 @click.stop="toggleCollapse"
               ></i>
             </div>
@@ -98,7 +98,7 @@ const isCollapsed = ref(true)
 const todoListRef = ref<HTMLUListElement | null>(null)
 const itemRefs = ref<(HTMLLIElement | null)[]>([])
 const headerElement = ref<HTMLElement | null>(null)
-const panelPosition = ref({ top: '0px', left: '0px' })
+const panelPosition = ref({ top: '0px', left: '0px', width: 'auto' })
 
 // 计算属性
 const totalCount = computed(() => props.todos.length)
@@ -136,10 +136,17 @@ const toggleCollapse = (event?: MouseEvent) => {
   if (event && event.target instanceof HTMLElement) {
     const rect = event.target.closest('.todo-header')?.getBoundingClientRect()
     if (rect) {
-      // 计算浮动面板的位置（在标题下方）
+      // 计算浮动面板的位置（在标题上方）
+      // 估算面板高度：header(49px) + items(~30px per item) + padding
+      const itemHeight = 30
+      const headerHeight = 49
+      const padding = 24
+      const estimatedHeight = Math.min(400, headerHeight + (props.todos.length * itemHeight) + padding)
+      
       panelPosition.value = {
-        top: `${rect.bottom + 4}px`,
-        left: `${rect.left}px`
+        top: `${Math.max(10, rect.top - estimatedHeight - 4)}px`, // 确保不超出屏幕顶部
+        left: `${rect.left}px`,
+        width: `${rect.width}px` // 与标题栏宽度一致
       }
     }
   }
