@@ -1,0 +1,262 @@
+name: 🚀 Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., v1.0.4)'
+        required: true
+        type: string
+
+# 关键：添加权限配置
+permissions:
+  contents: write # 允许创建 Release 和上传资源
+  packages: write # 允许上传包
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  create-release:
+    name: 📝 Create Release
+    runs-on: ubuntu-latest
+    outputs:
+      release_id: ${{ steps.create_release.outputs.id }}
+      release_upload_url: ${{ steps.create_release.outputs.upload_url }}
+      version: ${{ steps.get_version.outputs.version }}
+    steps:
+      - name: ⬇️ Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🏷️ Get version
+        id: get_version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            VERSION=${GITHUB_REF#refs/tags/}
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
+
+      - name: 📋 Extract changelog
+        id: changelog
+        run: |
+          VERSION="${{ steps.get_version.outputs.version }}"
+          # 移除版本号前的 'v' 前缀
+          VERSION_NUMBER="${VERSION#v}"
+
+          # 从 CHANGELOG.md 提取当前版本的更新内容
+          echo "CHANGELOG<<EOF" >> $GITHUB_OUTPUT
+
+          # 提取版本内容（从 ## [x.x.x] 到下一个 ---）
+          awk "/## \[${VERSION_NUMBER}\]/,/^---$/" CHANGELOG.md | sed '1d;$d' >> $GITHUB_OUTPUT
+
+          # 添加下载说明
+          echo "" >> $GITHUB_OUTPUT
+          echo "---" >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+          echo "## 📦 下载说明" >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+          echo "### Windows" >> $GITHUB_OUTPUT
+          echo "- 下载 \`AI-SSH-Assistant-${VERSION_NUMBER}-setup-x64.exe\`" >> $GITHUB_OUTPUT
+          echo "- 双击运行安装程序" >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+          echo "### macOS" >> $GITHUB_OUTPUT
+          echo "- **Intel 芯片**: 下载 \`ai-ssh-assistant-${VERSION_NUMBER}-macos-x64.dmg\`" >> $GITHUB_OUTPUT
+          echo "- **Apple Silicon**: 下载 \`ai-ssh-assistant-${VERSION_NUMBER}-macos-arm64.dmg\`" >> $GITHUB_OUTPUT
+          echo "- 首次运行需在\"系统偏好设置 → 安全性与隐私\"中允许" >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+          echo "### Linux" >> $GITHUB_OUTPUT
+          echo "- **AppImage**: \`chmod +x ai-ssh-assistant-${VERSION_NUMBER}-linux-x64.AppImage && ./ai-ssh-assistant-${VERSION_NUMBER}-linux-x64.AppImage\`" >> $GITHUB_OUTPUT
+          echo "- **Debian/Ubuntu**: \`sudo dpkg -i ai-ssh-assistant-${VERSION_NUMBER}-linux-x64.deb\`" >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+          echo "## 🔧 系统要求" >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+          echo "- Windows 10/11 (64-bit)" >> $GITHUB_OUTPUT
+          echo "- macOS 10.15 或更高版本" >> $GITHUB_OUTPUT
+          echo "- Ubuntu 20.04 或其他主流 Linux 发行版" >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+          echo "## 📞 加入社区" >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+          echo "QQ 交流群：**307460844**" >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: 🎯 Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.get_version.outputs.version }}
+          name: AI SSH Assistant ${{ steps.get_version.outputs.version }}
+          body: ${{ steps.changelog.outputs.CHANGELOG }}
+          draft: true
+          prerelease: ${{ contains(steps.get_version.outputs.version, 'beta') || contains(steps.get_version.outputs.version, 'alpha') }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-and-upload:
+    name: 🏗️ Build & Upload ${{ matrix.platform }}
+    needs: create-release
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: 'Windows'
+            os: windows-latest
+            build_script: 'build:win'
+          - platform: 'macOS'
+            os: macos-latest
+            build_script: 'build:mac'
+          - platform: 'Linux'
+            os: ubuntu-latest
+            build_script: 'build:linux'
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: ⬇️ Checkout
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.12.0
+
+      - name: ⚡ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      # Linux specific dependencies
+      - name: 🐧 Install Linux dependencies
+        if: matrix.platform == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libnss3-dev libatk-bridge2.0-dev libdrm-dev libxcomposite-dev libxdamage-dev libxrandr-dev libgbm-dev libxss1 libasound2-dev
+
+      # macOS specific setup
+      - name: 🍎 Setup macOS Python for node-gyp
+        if: matrix.platform == 'macOS'
+        run: |
+          pip3 install --break-system-packages setuptools
+          xcode-select --print-path || sudo xcode-select --install
+
+      # Windows specific setup - install setuptools for node-gyp
+      - name: 🪟 Setup Windows Python for node-gyp
+        if: matrix.platform == 'Windows'
+        run: |
+          pip3 install setuptools
+
+      - name: 📥 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🔗 Link workspace dependencies
+        run: pnpm install
+
+      - name: 🏗️ Generate Prisma Client
+        run: pnpm db:generate
+
+      - name: 🏗️ Build shared packages
+        run: pnpm build:shared
+
+      - name: 🏗️ Build database
+        run: pnpm build:database
+
+      - name: 🏗️ Build server
+        run: pnpm build:server
+
+      # Clean release directory to avoid conflicts
+      - name: 🧹 Clean release directory
+        shell: bash
+        run: |
+          rm -rf apps/desktop/release
+          echo "✅ Cleaned release directory"
+
+      # 在 Windows 上让 electron-builder 自动处理原生模块重建
+      # 不设置跳过环境变量，确保 better-sqlite3 正确编译
+
+      - name: 🚀 Build desktop app
+        run: pnpm --filter @ai-ssh/desktop ${{ matrix.build_script }}
+        env:
+          ELECTRON_CACHE: ${{ github.workspace }}/.cache/electron
+          ELECTRON_BUILDER_CACHE: ${{ github.workspace }}/.cache/electron-builder
+          VITE_APP_VERSION: ${{ needs.create-release.outputs.version }}
+          DEBUG: electron-builder # 启用详细日志
+
+      - name: 🧾 Generate update manifests
+        run: node apps/desktop/scripts/generate-update-manifest.mjs
+        env:
+          RELEASE_DIR: apps/desktop/release
+          RELEASE_VERSION: ${{ needs.create-release.outputs.version }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+
+      - name: 📋 List generated files
+        shell: bash
+        run: |
+          echo "Listing release directory:"
+          ls -la apps/desktop/release/ || true
+          echo ""
+          echo "Finding all artifacts:"
+          find apps/desktop/release -type f \( -name "*.AppImage" -o -name "*.deb" -o -name "*.dmg" -o -name "*.zip" -o -name "*.exe" \) || true
+
+      - name: 📤 Upload Release Assets
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ needs.create-release.outputs.version }}
+          files: |
+            apps/desktop/release/**/ai-ssh-assistant-*-linux-*.AppImage
+            apps/desktop/release/**/*.blockmap
+            apps/desktop/release/**/ai-ssh-assistant-*-linux-*.deb
+            apps/desktop/release/**/ai-ssh-assistant-*-macos-*.dmg
+            apps/desktop/release/**/ai-ssh-assistant-*-macos-*.zip
+            apps/desktop/release/**/AI-SSH-Assistant-*-setup-*.exe
+            apps/desktop/release/**/latest*.yml
+            apps/desktop/release/update-manifest-*.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 📊 Build Summary
+        shell: bash
+        run: |
+          echo "### 🏗️ Build completed for ${{ matrix.platform }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Version:** ${{ needs.create-release.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Platform:** ${{ matrix.platform }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Files:**" >> $GITHUB_STEP_SUMMARY
+          ls -la apps/desktop/release/*/ >> $GITHUB_STEP_SUMMARY 2>/dev/null || echo "No release files found" >> $GITHUB_STEP_SUMMARY
+
+  post-release:
+    name: 📢 Post Release Tasks
+    needs: [create-release, build-and-upload]
+    runs-on: ubuntu-latest
+    if: ${{ needs.build-and-upload.result == 'success' }}
+    steps:
+      - name: ✅ Publish Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ needs.create-release.outputs.version }}
+          draft: false
+          prerelease: ${{ contains(needs.create-release.outputs.version, 'beta') || contains(needs.create-release.outputs.version, 'alpha') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🎉 Release Summary
+        run: |
+          echo "### 🚀 Release ${{ needs.create-release.outputs.version }} completed!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Release URL:** https://github.com/${{ github.repository }}/releases/tag/${{ needs.create-release.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📦 Available Downloads:" >> $GITHUB_STEP_SUMMARY
+          echo "- Windows (x64)" >> $GITHUB_STEP_SUMMARY
+          echo "- macOS (Intel & Apple Silicon)" >> $GITHUB_STEP_SUMMARY
+          echo "- Linux (AppImage & DEB)" >> $GITHUB_STEP_SUMMARY
+
+      # 可以在这里添加其他后处理任务
+      # 比如：通知 Discord/Slack、更新文档、发送邮件等

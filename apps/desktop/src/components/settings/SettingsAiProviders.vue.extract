@@ -1,0 +1,892 @@
+        <!-- AI 服务商设置 -->
+        <section :id="'section-ai-providers'" class="setting-section">
+          <h2 class="section-title">
+            <i class="bi bi-robot"></i>
+            {{ $t('settings.aiProvidersTitle') }}
+            <span class="provider-count-badge">{{ PROVIDER_STATS.total }} 个服务商</span>
+          </h2>
+          <p class="section-description">{{ $t('settings.aiProvidersDesc') }}</p>
+
+          <!-- 过滤和搜索工具栏 -->
+          <div class="providers-toolbar">
+            <!-- 搜索框 -->
+            <div class="search-box">
+              <i class="bi bi-search search-icon"></i>
+              <input 
+                v-model="providerSearchQuery"
+                type="text"
+                placeholder="搜索服务商名称、描述或模型..."
+                class="search-input"
+              />
+              <button 
+                v-if="providerSearchQuery" 
+                @click="providerSearchQuery = ''"
+                class="clear-search-btn"
+                title="清除搜索"
+              >
+                <i class="bi bi-x-lg"></i>
+              </button>
+            </div>
+
+            <!-- 快捷分类筛选 -->
+            <div class="filter-chips">
+              <button 
+                v-for="category in providerCategories" 
+                :key="category.id"
+                @click="selectedCategory = category.id"
+                :class="['filter-chip', { active: selectedCategory === category.id }]"
+                :title="category.description"
+              >
+                <i :class="category.icon"></i>
+                {{ category.label }}
+                <span class="chip-count">{{ category.count }}</span>
+              </button>
+            </div>
+
+            <!-- 高级过滤 -->
+            <div class="advanced-filters">
+              <!-- 能力筛选 -->
+              <div class="filter-group">
+                <label class="filter-label">
+                  <i class="bi bi-stars"></i>
+                  能力
+                </label>
+                <select v-model="capabilityFilter" class="filter-select">
+                  <option value="all">全部</option>
+                  <option value="vision">视觉理解</option>
+                  <option value="image">图像生成</option>
+                  <option value="functionCall">函数调用</option>
+                </select>
+              </div>
+
+              <!-- 重置按钮 -->
+              <button 
+                @click="resetFilters"
+                class="reset-filters-btn"
+                title="重置所有筛选"
+                :disabled="isFiltersDefault"
+              >
+                <i class="bi bi-arrow-counterclockwise"></i>
+                重置
+              </button>
+            </div>
+          </div>
+
+          <!-- 过滤结果统计 -->
+          <div v-if="!isFiltersDefault" class="filter-result-info">
+            <i class="bi bi-info-circle"></i>
+            找到 <strong>{{ filteredProviders.length }}</strong> 个服务商
+            <span v-if="providerSearchQuery">（搜索: "{{ providerSearchQuery }}"）</span>
+          </div>
+
+          <!-- 服务商列表 -->
+          <div class="providers-container">
+            <div 
+              v-if="filteredProviders.length === 0"
+              class="no-results"
+            >
+              <i class="bi bi-inbox"></i>
+              <p>未找到匹配的服务商</p>
+              <button @click="resetFilters" class="btn-reset">
+                <i class="bi bi-arrow-counterclockwise"></i>
+                重置筛选条件
+              </button>
+            </div>
+
+            <!-- 已配置的服务商 -->
+            <div v-if="configuredProviders.length > 0" class="provider-section">
+              <div class="provider-section-header">
+                <i class="bi bi-check-circle-fill"></i>
+                <span>已配置 ({{ configuredProviders.length }})</span>
+              </div>
+              <div 
+                v-for="provider in configuredProviders" 
+                :key="provider.id"
+                class="provider-card"
+              >
+              <!-- 服务商头部 -->
+              <div class="provider-header" @click="toggleProvider(provider.id)">
+                <div class="provider-info">
+                  <div class="provider-icon-wrapper">
+                    <i :class="provider.icon"></i>
+                  </div>
+                  <div class="provider-details">
+                    <h4 class="provider-name">{{ provider.name }}</h4>
+                    <p class="provider-description">{{ provider.description }}</p>
+                  </div>
+                </div>
+                <div class="provider-actions">
+                  <!-- 测试状态指示器 -->
+                  <span 
+                    v-if="testResults[provider.id]?.success" 
+                    class="status-badge success"
+                    :title="`测试成功: ${testResults[provider.id]?.message}`"
+                  >
+                    <i class="bi bi-check-circle-fill"></i>
+                    已验证
+                  </span>
+                  <span 
+                    v-else-if="testResults[provider.id] && !testResults[provider.id].success" 
+                    class="status-badge error"
+                    :title="`测试失败: ${testResults[provider.id]?.error}`"
+                  >
+                    <i class="bi bi-x-circle-fill"></i>
+                    验证失败
+                  </span>
+                  <span 
+                    v-else-if="provider.apiKey" 
+                    class="status-badge configured"
+                    title="已配置但未测试"
+                  >
+                    <i class="bi bi-check-circle-fill"></i>
+                    已配置
+                  </span>
+                  <label class="toggle-switch" @click.stop>
+                    <input v-model="provider.enabled" type="checkbox" />
+                    <span class="toggle-slider"></span>
+                  </label>
+                  <i :class="['bi', expandedProviders.includes(provider.id) ? 'bi-chevron-up' : 'bi-chevron-down', 'expand-icon']"></i>
+                </div>
+              </div>
+
+              <!-- 服务商配置区域（展开时显示） -->
+              <div v-if="expandedProviders.includes(provider.id)" class="provider-config">
+                <!-- API Key 输入 -->
+                <div class="config-row">
+                  <label class="config-label">
+                    <i class="bi bi-key"></i>
+                    API Key
+                  </label>
+                  <div class="input-with-action">
+                    <input 
+                      v-model="provider.apiKey"
+                      :type="showApiKey[provider.id] ? 'text' : 'password'"
+                      class="config-input"
+                      :placeholder="`输入 ${provider.name} 的 API Key`"
+                    />
+                    <button 
+                      class="input-action-btn"
+                      @click="toggleApiKeyVisibility(provider.id)"
+                      :title="showApiKey[provider.id] ? '隐藏' : '显示'"
+                    >
+                      <i :class="['bi', showApiKey[provider.id] ? 'bi-eye-slash' : 'bi-eye']"></i>
+                    </button>
+                  </div>
+                  <a :href="provider.website" target="_blank" class="config-hint">
+                    <i class="bi bi-box-arrow-up-right"></i>
+                    获取 API Key
+                  </a>
+                </div>
+
+                <!-- 端点 URL（可选） -->
+                <div class="config-row">
+                  <label class="config-label">
+                    <i class="bi bi-link-45deg"></i>
+                    端点 URL（可选）
+                  </label>
+                  <input 
+                    v-model="provider.endpoint"
+                    type="url"
+                    class="config-input"
+                    :placeholder="provider.endpoint"
+                  />
+                  <p class="config-hint">
+                    <i class="bi bi-info-circle"></i>
+                    使用自定义端点或代理地址，留空使用默认值
+                  </p>
+                </div>
+
+                <!-- 支持的模型 -->
+                <div class="config-row">
+                  <div class="config-label-with-action">
+                    <label class="config-label">
+                      <i class="bi bi-cpu"></i>
+                      支持的模型（{{ provider.models.length }}）
+                    </label>
+                    <button 
+                      class="btn-link"
+                      @click="toggleModelDetails(provider.id)"
+                    >
+                      <i :class="['bi', expandedModels[provider.id] ? 'bi-chevron-up' : 'bi-chevron-down']"></i>
+                      {{ expandedModels[provider.id] ? '收起' : '展开' }}详情
+                    </button>
+                  </div>
+                  
+                  <!-- 简要模型列表 -->
+                  <div v-if="!expandedModels[provider.id]" class="models-list">
+                    <span 
+                      v-for="model in provider.models.slice(0, 3)" 
+                      :key="model.id"
+                      class="model-badge"
+                      :class="{ recommended: model.recommended }"
+                    >
+                      {{ model.name }}
+                      <i v-if="model.recommended" class="bi bi-star-fill"></i>
+                    </span>
+                    <span v-if="provider.models.length > 3" class="model-badge more">
+                      +{{ provider.models.length - 3 }} 更多
+                    </span>
+                  </div>
+
+                  <!-- 详细模型列表 -->
+                  <div v-else class="models-detail-list">
+                    <!-- 模型搜索和筛选工具栏 -->
+                    <div class="model-filter-toolbar">
+                      <!-- 搜索框 -->
+                      <div class="model-search-input">
+                        <i class="bi bi-search"></i>
+                        <input
+                          v-model="modelSearchQuery[provider.id]"
+                          type="text"
+                          placeholder="搜索模型名称、ID..."
+                          class="search-input"
+                        />
+                        <button
+                          v-if="modelSearchQuery[provider.id]"
+                          @click="modelSearchQuery[provider.id] = ''"
+                          class="clear-search-btn"
+                          title="清除搜索"
+                        >
+                          <i class="bi bi-x-circle-fill"></i>
+                        </button>
+                      </div>
+                      
+                      <!-- 价格筛选 -->
+                      <div class="model-price-filter">
+                        <i class="bi bi-currency-dollar"></i>
+                        <select
+                          v-model="modelPriceFilter[provider.id]"
+                          class="price-filter-select"
+                        >
+                          <option value="all">全部价格</option>
+                          <option value="free">免费</option>
+                          <option value="low">低价 (≤$1)</option>
+                          <option value="medium">中价 ($1-$10)</option>
+                          <option value="high">高价 (>$10)</option>
+                        </select>
+                      </div>
+                    </div>
+                    
+                    <!-- 已启用的模型 -->
+                    <div v-if="getEnabledModels(provider.models, provider.id).length > 0" class="model-section">
+                      <div class="model-section-header">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <span>已启用 ({{ getEnabledModels(provider.models, provider.id).length }})</span>
+                      </div>
+                      <div 
+                        v-for="model in getEnabledModels(provider.models, provider.id)" 
+                        :key="model.id"
+                        class="model-row"
+                      >
+                        <!-- 模型名称 -->
+                        <div class="model-name-col" :title="model.description || model.name">
+                          <ProviderIcon 
+                            :provider-id="getProviderIdFromModel(model, provider)" 
+                            :size="16" 
+                            :title="getModelProviderIcon(model, provider).name"
+                          />
+                          <span class="model-name-text">{{ model.name }}</span>
+                          <i v-if="model.recommended" class="bi bi-star-fill model-star" title="推荐"></i>
+                        </div>
+                        
+                        <!-- 上下文窗口 -->
+                        <div class="model-info-col">
+                          <i 
+                            class="bi bi-window-stack model-icon" 
+                            :title="`上下文窗口: ${formatContextWindow(model.contextWindow)}`"
+                          ></i>
+                          <span class="model-info-text">{{ formatContextWindow(model.contextWindow) }}</span>
+                        </div>
+                        
+                        <!-- 能力图标 -->
+                        <div class="model-capabilities-col">
+                          <i 
+                            v-if="model.capabilities.text" 
+                            class="bi bi-chat-text model-capability-icon" 
+                            title="支持文本对话"
+                          ></i>
+                          <i 
+                            v-if="model.capabilities.image" 
+                            class="bi bi-image model-capability-icon" 
+                            title="支持图片生成"
+                          ></i>
+                          <i 
+                            v-if="model.capabilities.vision" 
+                            class="bi bi-eye model-capability-icon" 
+                            title="支持视觉理解"
+                          ></i>
+                          <i 
+                            v-if="model.capabilities.functionCall" 
+                            class="bi bi-code-square model-capability-icon" 
+                            title="支持函数调用"
+                          ></i>
+                        </div>
+                        
+                        <!-- 价格 -->
+                        <div v-if="model.price" class="model-price-col">
+                          <i 
+                            class="bi bi-currency-dollar model-icon" 
+                            :title="`价格: 输入 $${model.price.input.toFixed(2)}/1M · 输出 $${model.price.output.toFixed(2)}/1M`"
+                          ></i>
+                          <span class="model-info-text">${{ model.price.input.toFixed(2) }}/${{ model.price.output.toFixed(2) }}</span>
+                        </div>
+                        <div v-else class="model-price-col">
+                          <span class="model-info-text">-</span>
+                        </div>
+                        
+                        <!-- 开关 -->
+                        <div class="model-toggle-col">
+                          <label class="toggle-switch model-toggle" @click.stop>
+                            <input 
+                              v-model="model.enabled" 
+                              type="checkbox"
+                              @change="onModelToggle(provider.id, model.id)"
+                            />
+                            <span class="toggle-slider"></span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 已禁用的模型 -->
+                    <div v-if="getDisabledModels(provider.models, provider.id).length > 0" class="model-section">
+                      <div class="model-section-header disabled">
+                        <i class="bi bi-dash-circle"></i>
+                        <span>已禁用 ({{ getDisabledModels(provider.models, provider.id).length }})</span>
+                      </div>
+                      <div 
+                        v-for="model in getDisabledModels(provider.models, provider.id)" 
+                        :key="model.id"
+                        class="model-row disabled"
+                      >
+                        <!-- 模型名称 -->
+                        <div class="model-name-col" :title="model.description || model.name">
+                          <ProviderIcon 
+                            :provider-id="getProviderIdFromModel(model, provider)" 
+                            :size="16" 
+                            :title="getModelProviderIcon(model, provider).name"
+                          />
+                          <span class="model-name-text">{{ model.name }}</span>
+                          <i v-if="model.recommended" class="bi bi-star-fill model-star" title="推荐"></i>
+                        </div>
+                        
+                        <!-- 上下文窗口 -->
+                        <div class="model-info-col">
+                          <i 
+                            class="bi bi-window-stack model-icon" 
+                            :title="`上下文窗口: ${formatContextWindow(model.contextWindow)}`"
+                          ></i>
+                          <span class="model-info-text">{{ formatContextWindow(model.contextWindow) }}</span>
+                        </div>
+                        
+                        <!-- 能力图标 -->
+                        <div class="model-capabilities-col">
+                          <i 
+                            v-if="model.capabilities.text" 
+                            class="bi bi-chat-text model-capability-icon" 
+                            title="支持文本对话"
+                          ></i>
+                          <i 
+                            v-if="model.capabilities.image" 
+                            class="bi bi-image model-capability-icon" 
+                            title="支持图片生成"
+                          ></i>
+                          <i 
+                            v-if="model.capabilities.vision" 
+                            class="bi bi-eye model-capability-icon" 
+                            title="支持视觉理解"
+                          ></i>
+                          <i 
+                            v-if="model.capabilities.functionCall" 
+                            class="bi bi-code-square model-capability-icon" 
+                            title="支持函数调用"
+                          ></i>
+                        </div>
+                        
+                        <!-- 价格 -->
+                        <div v-if="model.price" class="model-price-col">
+                          <i 
+                            class="bi bi-currency-dollar model-icon" 
+                            :title="`价格: 输入 $${model.price.input.toFixed(2)}/1M · 输出 $${model.price.output.toFixed(2)}/1M`"
+                          ></i>
+                          <span class="model-info-text">${{ model.price.input.toFixed(2) }}/${{ model.price.output.toFixed(2) }}</span>
+                        </div>
+                        <div v-else class="model-price-col">
+                          <span class="model-info-text">-</span>
+                        </div>
+                        
+                        <!-- 开关 -->
+                        <div class="model-toggle-col">
+                          <label class="toggle-switch model-toggle" @click.stop>
+                            <input 
+                              v-model="model.enabled" 
+                              type="checkbox"
+                              @change="onModelToggle(provider.id, model.id)"
+                            />
+                            <span class="toggle-slider"></span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 测试结果显示 -->
+                <div 
+                  v-if="testResults[provider.id]" 
+                  class="test-result"
+                  :class="{ success: testResults[provider.id].success, error: !testResults[provider.id].success }"
+                >
+                  <i :class="['bi', testResults[provider.id].success ? 'bi-check-circle-fill' : 'bi-x-circle-fill']"></i>
+                  <div class="test-result-content">
+                    <p class="test-message">{{ testResults[provider.id].message }}</p>
+                    <p v-if="testResults[provider.id].error" class="test-error">{{ testResults[provider.id].error }}</p>
+                  </div>
+                </div>
+
+                <!-- 操作按钮 -->
+                <div class="config-actions">
+                  <button 
+                    class="btn-test"
+                    :disabled="(!provider.apiKey && provider.id !== 'ollama') || testingProviders[provider.id]"
+                    @click="testProviderConnection(provider)"
+                  >
+                    <i :class="['bi', testingProviders[provider.id] ? 'bi-hourglass-split spin' : 'bi-lightning']"></i>
+                    {{ testingProviders[provider.id] ? '测试中...' : '测试连接' }}
+                  </button>
+                  <!-- 自定义服务商显示"添加模型"按钮 -->
+                  <button 
+                    v-if="provider.id === 'custom-openai'"
+                    class="btn-refresh"
+                    @click="openAddModelDialog(provider)"
+                    title="手动添加模型"
+                  >
+                    <i class="bi bi-plus-circle"></i>
+                    添加模型
+                  </button>
+                  <!-- 其他服务商显示"刷新模型"按钮 -->
+                  <button 
+                    v-else
+                    class="btn-refresh"
+                    :disabled="!provider.apiKey || fetchingModels[provider.id]"
+                    @click="refreshModelList(provider)"
+                    :title="provider.apiKey ? '从 API 刷新最新模型列表' : '请先配置 API Key'"
+                  >
+                    <i :class="['bi', fetchingModels[provider.id] ? 'bi-arrow-repeat spin' : 'bi-arrow-repeat']"></i>
+                    {{ fetchingModels[provider.id] ? '刷新中...' : '刷新模型' }}
+                  </button>
+                  <button 
+                    class="btn-clear"
+                    @click="clearProviderConfig(provider.id)"
+                  >
+                    <i class="bi bi-trash"></i>
+                    清除配置
+                  </button>
+                </div>
+              </div>
+              </div>
+            </div>
+
+            <!-- 未配置的服务商 -->
+            <div v-if="unconfiguredProviders.length > 0" class="provider-section">
+              <div class="provider-section-header unconfigured">
+                <i class="bi bi-dash-circle"></i>
+                <span>未配置 ({{ unconfiguredProviders.length }})</span>
+              </div>
+              <div 
+                v-for="provider in unconfiguredProviders" 
+                :key="provider.id"
+                class="provider-card"
+              >
+              <!-- 服务商头部 -->
+              <div class="provider-header" @click="toggleProvider(provider.id)">
+                <div class="provider-info">
+                  <div class="provider-icon-wrapper">
+                    <i :class="provider.icon"></i>
+                  </div>
+                  <div class="provider-details">
+                    <h4 class="provider-name">{{ provider.name }}</h4>
+                    <p class="provider-description">{{ provider.description }}</p>
+                  </div>
+                </div>
+                <div class="provider-actions">
+                  <!-- 测试状态指示器 -->
+                  <span 
+                    v-if="testResults[provider.id]?.success" 
+                    class="status-badge success"
+                    :title="`测试成功: ${testResults[provider.id]?.message}`"
+                  >
+                    <i class="bi bi-check-circle-fill"></i>
+                    已验证
+                  </span>
+                  <span 
+                    v-else-if="testResults[provider.id] && !testResults[provider.id].success" 
+                    class="status-badge error"
+                    :title="`测试失败: ${testResults[provider.id]?.error}`"
+                  >
+                    <i class="bi bi-x-circle-fill"></i>
+                    验证失败
+                  </span>
+                  <span 
+                    v-else-if="provider.apiKey" 
+                    class="status-badge configured"
+                    title="已配置但未测试"
+                  >
+                    <i class="bi bi-check-circle-fill"></i>
+                    已配置
+                  </span>
+                  <label class="toggle-switch" @click.stop>
+                    <input v-model="provider.enabled" type="checkbox" />
+                    <span class="toggle-slider"></span>
+                  </label>
+                  <i :class="['bi', expandedProviders.includes(provider.id) ? 'bi-chevron-up' : 'bi-chevron-down', 'expand-icon']"></i>
+                </div>
+              </div>
+
+              <!-- 服务商配置区域（展开时显示） -->
+              <div v-if="expandedProviders.includes(provider.id)" class="provider-config">
+                <!-- API Key 输入 -->
+                <div class="config-row">
+                  <label class="config-label">
+                    <i class="bi bi-key"></i>
+                    API Key
+                  </label>
+                  <div class="input-with-action">
+                    <input 
+                      v-model="provider.apiKey"
+                      :type="showApiKey[provider.id] ? 'text' : 'password'"
+                      class="config-input"
+                      :placeholder="`输入 ${provider.name} 的 API Key`"
+                    />
+                    <button 
+                      class="input-action-btn"
+                      @click="toggleApiKeyVisibility(provider.id)"
+                      :title="showApiKey[provider.id] ? '隐藏' : '显示'"
+                    >
+                      <i :class="['bi', showApiKey[provider.id] ? 'bi-eye-slash' : 'bi-eye']"></i>
+                    </button>
+                  </div>
+                  <a :href="provider.website" target="_blank" class="config-hint">
+                    <i class="bi bi-box-arrow-up-right"></i>
+                    获取 API Key
+                  </a>
+                </div>
+
+                <!-- 端点 URL（可选） -->
+                <div class="config-row">
+                  <label class="config-label">
+                    <i class="bi bi-link-45deg"></i>
+                    端点 URL（可选）
+                  </label>
+                  <input 
+                    v-model="provider.endpoint"
+                    type="url"
+                    class="config-input"
+                    :placeholder="provider.endpoint"
+                  />
+                  <p class="config-hint">
+                    <i class="bi bi-info-circle"></i>
+                    使用自定义端点或代理地址，留空使用默认值
+                  </p>
+                </div>
+
+                <!-- 支持的模型 -->
+                <div class="config-row">
+                  <div class="config-label-with-action">
+                    <label class="config-label">
+                      <i class="bi bi-cpu"></i>
+                      支持的模型（{{ provider.models.length }}）
+                    </label>
+                    <button 
+                      class="btn-link"
+                      @click="toggleModelDetails(provider.id)"
+                    >
+                      <i :class="['bi', expandedModels[provider.id] ? 'bi-chevron-up' : 'bi-chevron-down']"></i>
+                      {{ expandedModels[provider.id] ? '收起' : '展开' }}详情
+                    </button>
+                  </div>
+                  
+                  <!-- 简要模型列表 -->
+                  <div v-if="!expandedModels[provider.id]" class="models-list">
+                    <span 
+                      v-for="model in provider.models.slice(0, 3)" 
+                      :key="model.id"
+                      class="model-badge"
+                      :class="{ recommended: model.recommended }"
+                    >
+                      {{ model.name }}
+                      <i v-if="model.recommended" class="bi bi-star-fill"></i>
+                    </span>
+                    <span v-if="provider.models.length > 3" class="model-badge more">
+                      +{{ provider.models.length - 3 }} 更多
+                    </span>
+                  </div>
+
+                  <!-- 详细模型列表 -->
+                  <div v-else class="models-detail-list">
+                    <!-- 模型搜索和筛选工具栏 -->
+                    <div class="model-filter-toolbar">
+                      <!-- 搜索框 -->
+                      <div class="model-search-input">
+                        <i class="bi bi-search"></i>
+                        <input
+                          v-model="modelSearchQuery[provider.id]"
+                          type="text"
+                          placeholder="搜索模型名称、ID..."
+                          class="search-input"
+                        />
+                        <button
+                          v-if="modelSearchQuery[provider.id]"
+                          @click="modelSearchQuery[provider.id] = ''"
+                          class="clear-search-btn"
+                          title="清除搜索"
+                        >
+                          <i class="bi bi-x-circle-fill"></i>
+                        </button>
+                      </div>
+                      
+                      <!-- 价格筛选 -->
+                      <div class="model-price-filter">
+                        <i class="bi bi-currency-dollar"></i>
+                        <select
+                          v-model="modelPriceFilter[provider.id]"
+                          class="price-filter-select"
+                        >
+                          <option value="all">全部价格</option>
+                          <option value="free">免费</option>
+                          <option value="low">低价 (≤$1)</option>
+                          <option value="medium">中价 ($1-$10)</option>
+                          <option value="high">高价 (>$10)</option>
+                        </select>
+                      </div>
+                    </div>
+                    
+                    <!-- 已启用的模型 -->
+                    <div v-if="getEnabledModels(provider.models, provider.id).length > 0" class="model-section">
+                      <div class="model-section-header">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <span>已启用 ({{ getEnabledModels(provider.models, provider.id).length }})</span>
+                      </div>
+                      <div 
+                        v-for="model in getEnabledModels(provider.models, provider.id)" 
+                        :key="model.id"
+                        class="model-row"
+                      >
+                        <!-- 模型名称 -->
+                        <div class="model-name-col" :title="model.description || model.name">
+                          <ProviderIcon 
+                            :provider-id="getProviderIdFromModel(model, provider)" 
+                            :size="16" 
+                            :title="getModelProviderIcon(model, provider).name"
+                          />
+                          <span class="model-name-text">{{ model.name }}</span>
+                          <i v-if="model.recommended" class="bi bi-star-fill model-star" title="推荐"></i>
+                        </div>
+                        
+                        <!-- 上下文窗口 -->
+                        <div class="model-info-col">
+                          <i 
+                            class="bi bi-window-stack model-icon" 
+                            :title="`上下文窗口: ${formatContextWindow(model.contextWindow)}`"
+                          ></i>
+                          <span class="model-info-text">{{ formatContextWindow(model.contextWindow) }}</span>
+                        </div>
+                        
+                        <!-- 能力图标 -->
+                        <div class="model-capabilities-col">
+                          <i 
+                            v-if="model.capabilities.text" 
+                            class="bi bi-chat-text model-capability-icon" 
+                            title="支持文本对话"
+                          ></i>
+                          <i 
+                            v-if="model.capabilities.image" 
+                            class="bi bi-image model-capability-icon" 
+                            title="支持图片生成"
+                          ></i>
+                          <i 
+                            v-if="model.capabilities.vision" 
+                            class="bi bi-eye model-capability-icon" 
+                            title="支持视觉理解"
+                          ></i>
+                          <i 
+                            v-if="model.capabilities.functionCall" 
+                            class="bi bi-code-square model-capability-icon" 
+                            title="支持函数调用"
+                          ></i>
+                        </div>
+                        
+                        <!-- 价格 -->
+                        <div v-if="model.price" class="model-price-col">
+                          <i 
+                            class="bi bi-currency-dollar model-icon" 
+                            :title="`价格: 输入 $${model.price.input.toFixed(2)}/1M · 输出 $${model.price.output.toFixed(2)}/1M`"
+                          ></i>
+                          <span class="model-info-text">${{ model.price.input.toFixed(2) }}/${{ model.price.output.toFixed(2) }}</span>
+                        </div>
+                        <div v-else class="model-price-col">
+                          <span class="model-info-text">-</span>
+                        </div>
+                        
+                        <!-- 开关 -->
+                        <div class="model-toggle-col">
+                          <label class="toggle-switch model-toggle" @click.stop>
+                            <input 
+                              v-model="model.enabled" 
+                              type="checkbox"
+                              @change="onModelToggle(provider.id, model.id)"
+                            />
+                            <span class="toggle-slider"></span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 已禁用的模型 -->
+                    <div v-if="getDisabledModels(provider.models, provider.id).length > 0" class="model-section">
+                      <div class="model-section-header disabled">
+                        <i class="bi bi-dash-circle"></i>
+                        <span>已禁用 ({{ getDisabledModels(provider.models, provider.id).length }})</span>
+                      </div>
+                      <div 
+                        v-for="model in getDisabledModels(provider.models, provider.id)" 
+                        :key="model.id"
+                        class="model-row disabled"
+                      >
+                        <!-- 模型名称 -->
+                        <div class="model-name-col" :title="model.description || model.name">
+                          <ProviderIcon 
+                            :provider-id="getProviderIdFromModel(model, provider)" 
+                            :size="16" 
+                            :title="getModelProviderIcon(model, provider).name"
+                          />
+                          <span class="model-name-text">{{ model.name }}</span>
+                          <i v-if="model.recommended" class="bi bi-star-fill model-star" title="推荐"></i>
+                        </div>
+                        
+                        <!-- 上下文窗口 -->
+                        <div class="model-info-col">
+                          <i 
+                            class="bi bi-window-stack model-icon" 
+                            :title="`上下文窗口: ${formatContextWindow(model.contextWindow)}`"
+                          ></i>
+                          <span class="model-info-text">{{ formatContextWindow(model.contextWindow) }}</span>
+                        </div>
+                        
+                        <!-- 能力图标 -->
+                        <div class="model-capabilities-col">
+                          <i 
+                            v-if="model.capabilities.text" 
+                            class="bi bi-chat-text model-capability-icon" 
+                            title="支持文本对话"
+                          ></i>
+                          <i 
+                            v-if="model.capabilities.image" 
+                            class="bi bi-image model-capability-icon" 
+                            title="支持图片生成"
+                          ></i>
+                          <i 
+                            v-if="model.capabilities.vision" 
+                            class="bi bi-eye model-capability-icon" 
+                            title="支持视觉理解"
+                          ></i>
+                          <i 
+                            v-if="model.capabilities.functionCall" 
+                            class="bi bi-code-square model-capability-icon" 
+                            title="支持函数调用"
+                          ></i>
+                        </div>
+                        
+                        <!-- 价格 -->
+                        <div v-if="model.price" class="model-price-col">
+                          <i 
+                            class="bi bi-currency-dollar model-icon" 
+                            :title="`价格: 输入 $${model.price.input.toFixed(2)}/1M · 输出 $${model.price.output.toFixed(2)}/1M`"
+                          ></i>
+                          <span class="model-info-text">${{ model.price.input.toFixed(2) }}/${{ model.price.output.toFixed(2) }}</span>
+                        </div>
+                        <div v-else class="model-price-col">
+                          <span class="model-info-text">-</span>
+                        </div>
+                        
+                        <!-- 开关 -->
+                        <div class="model-toggle-col">
+                          <label class="toggle-switch model-toggle" @click.stop>
+                            <input 
+                              v-model="model.enabled" 
+                              type="checkbox"
+                              @change="onModelToggle(provider.id, model.id)"
+                            />
+                            <span class="toggle-slider"></span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 测试结果显示 -->
+                <div 
+                  v-if="testResults[provider.id]" 
+                  class="test-result"
+                  :class="{ success: testResults[provider.id].success, error: !testResults[provider.id].success }"
+                >
+                  <i :class="['bi', testResults[provider.id].success ? 'bi-check-circle-fill' : 'bi-x-circle-fill']"></i>
+                  <div class="test-result-content">
+                    <p class="test-message">{{ testResults[provider.id].message }}</p>
+                    <p v-if="testResults[provider.id].error" class="test-error">{{ testResults[provider.id].error }}</p>
+                  </div>
+                </div>
+
+                <!-- 操作按钮 -->
+                <div class="config-actions">
+                  <button 
+                    class="btn-test"
+                    :disabled="(!provider.apiKey && provider.id !== 'ollama') || testingProviders[provider.id]"
+                    @click="testProviderConnection(provider)"
+                  >
+                    <i :class="['bi', testingProviders[provider.id] ? 'bi-hourglass-split spin' : 'bi-lightning']"></i>
+                    {{ testingProviders[provider.id] ? '测试中...' : '测试连接' }}
+                  </button>
+                  <!-- 自定义服务商显示"添加模型"按钮 -->
+                  <button 
+                    v-if="provider.id === 'custom-openai'"
+                    class="btn-refresh"
+                    @click="openAddModelDialog(provider)"
+                    title="手动添加模型"
+                  >
+                    <i class="bi bi-plus-circle"></i>
+                    添加模型
+                  </button>
+                  <!-- 其他服务商显示"刷新模型"按钮 -->
+                  <button 
+                    v-else
+                    class="btn-refresh"
+                    :disabled="!provider.apiKey || fetchingModels[provider.id]"
+                    @click="refreshModelList(provider)"
+                    :title="provider.apiKey ? '从 API 刷新最新模型列表' : '请先配置 API Key'"
+                  >
+                    <i :class="['bi', fetchingModels[provider.id] ? 'bi-arrow-repeat spin' : 'bi-arrow-repeat']"></i>
+                    {{ fetchingModels[provider.id] ? '刷新中...' : '刷新模型' }}
+                  </button>
+                  <button 
+                    class="btn-clear"
+                    @click="clearProviderConfig(provider.id)"
+                  >
+                    <i class="bi bi-trash"></i>
+                    清除配置
+                  </button>
+                </div>
+              </div>
+              </div>
+            </div>
+
+            <!-- 空状态提示 -->
+            <div v-if="aiProviders.length === 0" class="empty-state">
+              <i class="bi bi-inbox"></i>
+              <p>暂无可用的 AI 服务商</p>
+            </div>
+          </div>
+        </section>
+      
+        <!-- AI 助手设置 -->

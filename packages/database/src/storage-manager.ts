@@ -1,0 +1,619 @@
+/**
+ * 存储管理器
+ * 统一管理本地和云存储适配器，提供数据同步和冲突解决功能
+ */
+
+import { BaseStorageAdapter, SyncResult } from './adapters/base.adapter.js'
+import { LocalStorageAdapter } from './adapters/local.adapter.js'
+import { CloudStorageAdapter, CloudStorageOptions } from './adapters/cloud.adapter.js'
+
+export interface StorageManagerOptions {
+  // 存储模式
+  mode: 'local' | 'cloud' | 'hybrid' | 'auto'
+  
+  // 本地存储配置
+  localOptions?: {
+    connectionString?: string
+    enabled?: boolean
+  }
+  
+  // 云存储配置
+  cloudOptions?: CloudStorageOptions & {
+    enabled?: boolean
+  }
+  
+  // 混合模式配置
+  hybridOptions?: {
+    primaryStorage: 'local' | 'cloud' // 主要存储
+    fallbackEnabled?: boolean // 是否启用降级
+    syncStrategy?: 'realtime' | 'periodic' | 'manual' // 同步策略
+    syncInterval?: number // 同步间隔（毫秒）
+    conflictResolution?: 'local' | 'cloud' | 'merge' | 'manual' // 冲突解决
+    offlineMode?: boolean // 离线模式支持
+  }
+
+  // 自动模式配置
+  autoOptions?: {
+    // 根据用户登录状态自动切换存储
+    useCloudWhenAuthenticated?: boolean // 登录时使用云存储
+    useLocalWhenOffline?: boolean // 离线时使用本地存储
+    autoSync?: boolean // 登录时自动同步本地数据到云端
+    migrationStrategy?: 'merge' | 'replace' | 'manual' // 数据迁移策略
+  }
+}
+
+export interface StorageStatus {
+  mode: string
+  local: {
+    connected: boolean
+    lastSync?: Date
+    pendingRecords?: number
+  }
+  cloud: {
+    connected: boolean
+    lastSync?: Date
+    health?: boolean
+  }
+  sync: {
+    enabled: boolean
+    lastResult?: SyncResult
+    inProgress: boolean
+  }
+}
+
+export class StorageManager {
+  private localAdapter?: LocalStorageAdapter
+  private cloudAdapter?: CloudStorageAdapter
+  private options: StorageManagerOptions
+  private syncInProgress = false
+  private syncTimer?: NodeJS.Timeout
+  private isAuthenticated = false
+  private currentUser?: { id: string; email?: string; username?: string }
+
+  constructor(options: StorageManagerOptions) {
+    const defaultOptions = {
+      mode: 'local' as const,
+      hybridOptions: {
+        primaryStorage: 'local' as const,
+        fallbackEnabled: true,
+        syncStrategy: 'periodic' as const,
+        syncInterval: 5 * 60 * 1000, // 5分钟
+        conflictResolution: 'merge' as const,
+        offlineMode: true
+      }
+    }
+    
+    this.options = {
+      ...defaultOptions,
+      ...options
+    }
+
+    this.initializeAdapters()
+  }
+
+  private initializeAdapters(): void {
+    // 初始化本地适配器
+    if (this.options.mode === 'local' || this.options.mode === 'hybrid') {
+      if (this.options.localOptions?.enabled !== false) {
+        this.localAdapter = new LocalStorageAdapter({
+          connectionString: this.options.localOptions?.connectionString,
+          syncEnabled: this.options.mode === 'hybrid'
+        })
+      }
+    }
+
+    // 初始化云适配器
+    if (this.options.mode === 'cloud' || this.options.mode === 'hybrid') {
+      if (this.options.cloudOptions?.enabled !== false) {
+        this.cloudAdapter = new CloudStorageAdapter({
+          ...this.options.cloudOptions,
+          syncEnabled: this.options.mode === 'hybrid'
+        })
+      }
+    }
+  }
+
+  async connect(): Promise<void> {
+    const connectPromises: Promise<void>[] = []
+
+    // 连接本地适配器
+    if (this.localAdapter) {
+      connectPromises.push(
+        this.localAdapter.connect().catch(error => {
+          console.error('Failed to connect local adapter:', error)
+          if (this.options.mode === 'local') {
+            throw error
+          }
+        })
+      )
+    }
+
+    // 连接云适配器
+    if (this.cloudAdapter) {
+      connectPromises.push(
+        this.cloudAdapter.connect().catch(error => {
+          console.error('Failed to connect cloud adapter:', error)
+          if (this.options.mode === 'cloud') {
+            throw error
+          }
+          // 混合模式下云连接失败不抛出错误，启用降级模式
+        })
+      )
+    }
+
+    await Promise.all(connectPromises)
+
+    // 启动自动同步（仅混合模式）
+    if (this.options.mode === 'hybrid' && this.options.hybridOptions?.syncStrategy === 'periodic') {
+      this.startAutoSync()
+    }
+
+    console.log(`Storage manager connected in ${this.options.mode} mode`)
+  }
+
+  async disconnect(): Promise<void> {
+    this.stopAutoSync()
+
+    const disconnectPromises: Promise<void>[] = []
+
+    if (this.localAdapter) {
+      disconnectPromises.push(this.localAdapter.disconnect())
+    }
+
+    if (this.cloudAdapter) {
+      disconnectPromises.push(this.cloudAdapter.disconnect())
+    }
+
+    await Promise.all(disconnectPromises)
+    console.log('Storage manager disconnected')
+  }
+
+  // 获取主要存储适配器
+  private getPrimaryAdapter(): BaseStorageAdapter {
+    if (this.options.mode === 'local') {
+      if (!this.localAdapter) {
+        throw new Error('Local adapter not available')
+      }
+      return this.localAdapter
+    }
+
+    if (this.options.mode === 'cloud') {
+      if (!this.cloudAdapter) {
+        throw new Error('Cloud adapter not available')
+      }
+      return this.cloudAdapter
+    }
+
+    // 混合模式
+    const primary = this.options.hybridOptions?.primaryStorage || 'local'
+    const primaryAdapter = primary === 'local' ? this.localAdapter : this.cloudAdapter
+    
+    if (!primaryAdapter || !primaryAdapter.getConnectionStatus()) {
+      // 主要存储不可用，尝试降级
+      const fallbackAdapter = primary === 'local' ? this.cloudAdapter : this.localAdapter
+      if (fallbackAdapter && fallbackAdapter.getConnectionStatus()) {
+        console.warn(`Primary storage (${primary}) unavailable, using fallback`)
+        return fallbackAdapter
+      }
+      throw new Error('No storage adapter available')
+    }
+
+    return primaryAdapter
+  }
+
+  // CRUD 操作代理
+  async create(model: string, data: any): Promise<any> {
+    const adapter = this.getPrimaryAdapter()
+    const result = await adapter.create(model, data)
+
+    // 混合模式下，如果使用本地存储，标记需要同步
+    if (this.options.mode === 'hybrid' && adapter.type === 'local') {
+      this.scheduleSync()
+    }
+
+    return result
+  }
+
+  async findMany(model: string, options?: any): Promise<any[]> {
+    const adapter = this.getPrimaryAdapter()
+    return await adapter.findMany(model, options)
+  }
+
+  async findUnique(model: string, options: any): Promise<any> {
+    const adapter = this.getPrimaryAdapter()
+    return await adapter.findUnique(model, options)
+  }
+
+  async update(model: string, options: any): Promise<any> {
+    const adapter = this.getPrimaryAdapter()
+    const result = await adapter.update(model, options)
+
+    // 混合模式下，如果使用本地存储，标记需要同步
+    if (this.options.mode === 'hybrid' && adapter.type === 'local') {
+      this.scheduleSync()
+    }
+
+    return result
+  }
+
+  async delete(model: string, options: any): Promise<any> {
+    const adapter = this.getPrimaryAdapter()
+    const result = await adapter.delete(model, options)
+
+    // 混合模式下，如果使用本地存储，标记需要同步
+    if (this.options.mode === 'hybrid' && adapter.type === 'local') {
+      this.scheduleSync()
+    }
+
+    return result
+  }
+
+  // 批量操作
+  async createMany(model: string, data: any[]): Promise<any> {
+    const adapter = this.getPrimaryAdapter()
+    const result = await adapter.createMany(model, data)
+
+    if (this.options.mode === 'hybrid' && adapter.type === 'local') {
+      this.scheduleSync()
+    }
+
+    return result
+  }
+
+  async updateMany(model: string, options: any): Promise<any> {
+    const adapter = this.getPrimaryAdapter()
+    const result = await adapter.updateMany(model, options)
+
+    if (this.options.mode === 'hybrid' && adapter.type === 'local') {
+      this.scheduleSync()
+    }
+
+    return result
+  }
+
+  async deleteMany(model: string, options: any): Promise<any> {
+    const adapter = this.getPrimaryAdapter()
+    const result = await adapter.deleteMany(model, options)
+
+    if (this.options.mode === 'hybrid' && adapter.type === 'local') {
+      this.scheduleSync()
+    }
+
+    return result
+  }
+
+  // 事务支持
+  async transaction<T>(fn: (manager: StorageManager) => Promise<T>): Promise<T> {
+    const adapter = this.getPrimaryAdapter()
+    
+    return await adapter.transaction(async (tx) => {
+      // 创建一个临时的存储管理器实例用于事务
+      const txManager = Object.create(this)
+      txManager.getPrimaryAdapter = () => ({ ...adapter, ...tx })
+      
+      return await fn(txManager)
+    })
+  }
+
+  // 同步功能
+  async sync(): Promise<SyncResult> {
+    if (this.options.mode !== 'hybrid') {
+      throw new Error('Sync is only available in hybrid mode')
+    }
+
+    if (this.syncInProgress) {
+      throw new Error('Sync already in progress')
+    }
+
+    if (!this.localAdapter || !this.cloudAdapter) {
+      throw new Error('Both local and cloud adapters are required for sync')
+    }
+
+    this.syncInProgress = true
+
+    try {
+      console.log('Starting data synchronization...')
+      
+      const result: SyncResult = {
+        success: true,
+        conflictsResolved: 0,
+        recordsSynced: 0,
+        lastSyncTime: new Date(),
+        errors: []
+      }
+
+      // 双向同步逻辑
+      try {
+        // 1. 本地 -> 云端
+        if (this.localAdapter.sync) {
+          const localSyncResult = await this.localAdapter.sync()
+          result.recordsSynced += localSyncResult.recordsSynced
+          result.conflictsResolved += localSyncResult.conflictsResolved
+          if (localSyncResult.errors) {
+            result.errors?.push(...localSyncResult.errors)
+          }
+        }
+
+        // 2. 云端 -> 本地
+        if (this.cloudAdapter.sync) {
+          const cloudSyncResult = await this.cloudAdapter.sync()
+          result.recordsSynced += cloudSyncResult.recordsSynced
+          result.conflictsResolved += cloudSyncResult.conflictsResolved
+          if (cloudSyncResult.errors) {
+            result.errors?.push(...cloudSyncResult.errors)
+          }
+        }
+
+      } catch (error) {
+        result.success = false
+        result.errors?.push(error instanceof Error ? error.message : String(error))
+      }
+
+      console.log('Data synchronization completed:', result)
+      return result
+
+    } finally {
+      this.syncInProgress = false
+    }
+  }
+
+  // 调度同步（防抖）
+  private scheduleSync(): void {
+    if (this.options.hybridOptions?.syncStrategy !== 'realtime') {
+      return
+    }
+
+    // 清除之前的调度
+    if (this.syncTimer) {
+      clearTimeout(this.syncTimer)
+    }
+
+    // 延迟执行同步（防抖）
+    this.syncTimer = setTimeout(() => {
+      this.sync().catch(error => {
+        console.error('Scheduled sync failed:', error)
+      })
+    }, 1000) // 1秒延迟
+  }
+
+  // 启动自动同步
+  private startAutoSync(): void {
+    if (this.syncTimer) {
+      clearInterval(this.syncTimer)
+    }
+
+    const interval = this.options.hybridOptions?.syncInterval || 5 * 60 * 1000
+    this.syncTimer = setInterval(() => {
+      this.sync().catch(error => {
+        console.error('Auto sync failed:', error)
+      })
+    }, interval)
+
+    console.log(`Auto sync started with ${interval}ms interval`)
+  }
+
+  // 停止自动同步
+  private stopAutoSync(): void {
+    if (this.syncTimer) {
+      clearInterval(this.syncTimer)
+      this.syncTimer = undefined
+    }
+  }
+
+  // 获取存储状态
+  async getStatus(): Promise<StorageStatus> {
+    const status: StorageStatus = {
+      mode: this.options.mode,
+      local: {
+        connected: this.localAdapter?.getConnectionStatus() || false
+      },
+      cloud: {
+        connected: this.cloudAdapter?.getConnectionStatus() || false
+      },
+      sync: {
+        enabled: this.options.mode === 'hybrid',
+        inProgress: this.syncInProgress
+      }
+    }
+
+    // 获取最后同步时间
+    try {
+      if (this.localAdapter?.getLastSyncTime) {
+        status.local.lastSync = await this.localAdapter.getLastSyncTime() || undefined
+      }
+      if (this.cloudAdapter?.getLastSyncTime) {
+        status.cloud.lastSync = await this.cloudAdapter.getLastSyncTime() || undefined
+      }
+    } catch (error) {
+      console.warn('Failed to get sync times:', error)
+    }
+
+    // 云端健康检查
+    if (this.cloudAdapter && 'healthCheck' in this.cloudAdapter) {
+      try {
+        status.cloud.health = await (this.cloudAdapter as any).healthCheck()
+      } catch {
+        status.cloud.health = false
+      }
+    }
+
+    return status
+  }
+
+  // 切换存储模式（运行时）
+  async switchMode(newMode: 'local' | 'cloud' | 'hybrid'): Promise<void> {
+    if (newMode === this.options.mode) {
+      return
+    }
+
+    console.log(`Switching storage mode from ${this.options.mode} to ${newMode}`)
+    
+    // 停止当前模式
+    this.stopAutoSync()
+    
+    // 更新配置
+    this.options.mode = newMode
+    
+    // 重新初始化适配器（如果需要）
+    this.initializeAdapters()
+    
+    // 重新连接
+    await this.connect()
+    
+    console.log(`Storage mode switched to ${newMode}`)
+  }
+
+  // 强制同步（忽略进行中状态）
+  async forceSync(): Promise<SyncResult> {
+    this.syncInProgress = false
+    return await this.sync()
+  }
+
+  // 清理资源
+  async cleanup(): Promise<void> {
+    await this.disconnect()
+    
+    if (this.localAdapter) {
+      await this.localAdapter.cleanup()
+    }
+    
+    if (this.cloudAdapter) {
+      await this.cloudAdapter.cleanup()
+    }
+  }
+
+  // ==================== 用户认证状态管理 ====================
+
+  /**
+   * 设置用户登录状态
+   */
+  async setUserAuthenticated(user: { id: string; email?: string; username?: string }): Promise<void> {
+    const wasAuthenticated = this.isAuthenticated
+    this.isAuthenticated = true
+    this.currentUser = user
+
+    console.log(`User authenticated: ${user.username || user.email}`)
+
+    // 如果是 auto 模式，自动切换到云存储
+    if (this.options.mode === 'auto' && this.options.autoOptions?.useCloudWhenAuthenticated) {
+      if (!wasAuthenticated) {
+        console.log('Switching to cloud storage for authenticated user')
+        await this.switchToCloudStorage()
+      }
+    }
+  }
+
+  /**
+   * 设置用户登出状态
+   */
+  async setUserUnauthenticated(): Promise<void> {
+    const wasAuthenticated = this.isAuthenticated
+    this.isAuthenticated = false
+    this.currentUser = undefined
+
+    console.log('User unauthenticated')
+
+    // 如果是 auto 模式，自动切换到本地存储
+    if (this.options.mode === 'auto' && this.options.autoOptions?.useLocalWhenOffline) {
+      if (wasAuthenticated) {
+        console.log('Switching to local storage for unauthenticated user')
+        await this.switchToLocalStorage()
+      }
+    }
+  }
+
+  /**
+   * 获取当前用户信息
+   */
+  getCurrentUser(): { id: string; email?: string; username?: string } | undefined {
+    return this.currentUser
+  }
+
+  /**
+   * 检查用户是否已认证
+   */
+  isUserAuthenticated(): boolean {
+    return this.isAuthenticated
+  }
+
+  /**
+   * 切换到云存储
+   */
+  private async switchToCloudStorage(): Promise<void> {
+    if (!this.cloudAdapter) {
+      console.warn('Cloud adapter not available')
+      return
+    }
+
+    // 如果启用了自动同步，先同步本地数据到云端
+  if (this.options.autoOptions?.autoSync && this.localAdapter) {
+      try {
+        console.log('Syncing local data to cloud before switching...')
+      await this.syncLocalToCloud()
+    } catch (error) {
+      console.error('Failed to sync local data to cloud:', error)
+    }
+  }
+
+  console.log('Switched to cloud storage')
+}
+
+  /**
+   * 切换到本地存储
+   */
+  private async switchToLocalStorage(): Promise<void> {
+    if (!this.localAdapter) {
+      console.warn('Local adapter not available')
+      return
+    }
+
+    console.log('Switched to local storage')
+  }
+
+  /**
+   * 同步本地数据到云端
+   */
+  private async syncLocalToCloud(): Promise<void> {
+    if (!this.localAdapter || !this.cloudAdapter) {
+      throw new Error('Both local and cloud adapters are required for sync')
+    }
+
+    // 这里可以实现具体的数据同步逻辑
+    // 例如：获取本地数据，上传到云端
+    console.log('Syncing local data to cloud...')
+    
+    // 实现数据迁移逻辑
+    // const localData = await this.localAdapter.getAllData()
+    // await this.cloudAdapter.migrateData(localData)
+  }
+
+  /**
+   * 获取当前活动的适配器
+   * 根据存储模式返回相应的适配器
+   */
+  get adapter(): LocalStorageAdapter | CloudStorageAdapter | undefined {
+    if (this.options.mode === 'local') {
+      return this.localAdapter
+    } else if (this.options.mode === 'cloud') {
+      return this.cloudAdapter
+    } else if (this.options.mode === 'hybrid') {
+      // 混合模式优先返回主存储适配器
+      const primaryStorage = this.options.hybridOptions?.primaryStorage || 'local'
+      return primaryStorage === 'local' ? this.localAdapter : this.cloudAdapter
+    }
+    return undefined
+  }
+
+  /**
+   * 获取 Prisma 客户端实例
+   * 便于其他服务（如 DocumentService）使用
+   */
+  getPrisma(): any {
+    const currentAdapter = this.adapter
+    if (!currentAdapter) {
+      throw new Error('No adapter available. Make sure StorageManager is connected.')
+    }
+    return (currentAdapter as any).prisma
+  }
+
+}

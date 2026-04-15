@@ -1,0 +1,489 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* 导入 VSCode 官方主题 */
+@import './themes/dark-modern.css';
+@import './themes/light-modern.css';
+
+/* 默认主题（深色） */
+:root {
+  /* 使用 Dark Modern 作为默认主题 */
+  /* 所有变量已在 dark-modern.css 中定义 */
+
+  /* Bootstrap 变量覆盖 */
+  --bs-primary: #0078d4;
+  --bs-secondary: #6c757d;
+  --bs-success: #28a745;
+  --bs-danger: #dc3545;
+  --bs-warning: #ffc107;
+  --bs-info: #17a2b8;
+  --bs-light: #f8f9fa;
+  --bs-dark: #343a40;
+
+  /* 暗色主题覆盖 */
+  --bs-body-bg: var(--vscode-bg);
+  --bs-body-color: var(--vscode-fg);
+  --bs-border-color: var(--vscode-border);
+  --bs-link-color: var(--vscode-accent);
+  --bs-link-hover-color: var(--vscode-accent-hover);
+}
+
+/* 全局样式重置 */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
+    'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--vscode-bg);
+  color: var(--vscode-fg);
+}
+
+/* 代码字体 */
+code,
+pre,
+.font-mono {
+  font-family: 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', monospace;
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--vscode-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--vscode-bg-lighter);
+  border-radius: 6px;
+  border: 2px solid var(--vscode-bg);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--vscode-border);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--vscode-bg);
+}
+
+/* 选择文本样式 */
+::selection {
+  background: var(--vscode-accent);
+  color: white;
+}
+
+/* Bootstrap 组件暗色主题适配 */
+.btn {
+  border-radius: 2px;
+  font-weight: 500;
+  transition: all 0.15s ease-in-out;
+}
+
+.btn-primary {
+  background-color: var(--vscode-accent);
+  border-color: var(--vscode-accent);
+}
+
+.btn-primary:hover {
+  background-color: var(--vscode-accent-hover);
+  border-color: var(--vscode-accent-hover);
+}
+
+/* VSCode 风格表单控件 - 全局样式 */
+.form-control,
+input[type='text'],
+input[type='email'],
+input[type='password'],
+input[type='number'],
+input[type='search'],
+input[type='url'],
+input[type='tel'],
+textarea {
+  background-color: var(--vscode-bg-input);
+  border: 1px solid transparent;
+  color: var(--vscode-fg);
+  font-size: 13px;
+  height: 26px;
+  padding: 3px 8px;
+  border-radius: 2px;
+  transition: all 0.15s ease;
+}
+
+/* Select 元素单独处理 - 避免内容显示不全 */
+select {
+  background-color: var(--vscode-bg-input);
+  border: 1px solid transparent;
+  color: var(--vscode-fg);
+  font-size: 13px;
+  min-height: 26px;
+  height: 26px;
+  padding: 0 8px;
+  line-height: normal;
+  border-radius: 2px;
+  transition: all 0.15s ease;
+  cursor: pointer;
+  /* 使用浏览器原生下拉箭头 */
+}
+
+/* Select 下拉选项样式 */
+select option {
+  background-color: var(--vscode-bg-input);
+  color: var(--vscode-fg);
+  padding: 4px 8px;
+  min-height: 22px;
+  line-height: 1.3;
+}
+
+/* 表单控件类 - 统一样式 */
+.form-input,
+.form-textarea,
+.form-select,
+.form-multiselect {
+  padding: 0 12px;
+  background-color: var(--vscode-bg-input);
+  border: 1px solid transparent;
+  color: var(--vscode-fg);
+  font-size: 13px;
+  border-radius: 2px;
+  transition: all 0.15s ease;
+}
+
+.form-input,
+.form-select,
+.form-multiselect {
+  height: 26px;
+}
+
+.form-textarea {
+  min-height: 60px;
+  padding: 6px 12px;
+  resize: vertical;
+  line-height: 1.4;
+}
+
+/* Textarea 特殊处理 - 允许多行 */
+textarea {
+  height: auto;
+  min-height: 60px;
+  padding: 6px 8px;
+  resize: vertical;
+  line-height: 1.4;
+}
+
+/* 聚焦状态 */
+.form-control:focus,
+input:focus,
+textarea:focus {
+  background-color: var(--vscode-bg-input);
+  border-color: var(--vscode-accent);
+  color: var(--vscode-fg);
+  box-shadow: none;
+  outline: none;
+}
+
+select:focus {
+  background-color: var(--vscode-bg-input);
+  border-color: var(--vscode-accent);
+  color: var(--vscode-fg);
+  box-shadow: none;
+  outline: 1px solid var(--vscode-accent);
+  outline-offset: -1px;
+}
+
+/* 占位符 */
+.form-control::placeholder,
+input::placeholder,
+textarea::placeholder {
+  color: var(--vscode-fg-muted);
+}
+
+/* 禁用状态 */
+.form-control:disabled,
+input:disabled,
+textarea:disabled {
+  background-color: var(--vscode-bg-lighter);
+  color: var(--vscode-fg-muted);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+select:disabled {
+  background-color: var(--vscode-bg-lighter);
+  color: var(--vscode-fg-muted);
+  cursor: not-allowed;
+  opacity: 0.6;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='%236c6c6c' opacity='0.5' d='M8 11L3 6h10z'/%3e%3c/svg%3e");
+}
+
+/* 表单尺寸工具类 - VSCode 标准 */
+.form-input-sm {
+  width: 120px;
+}
+
+.form-input-md {
+  width: 200px;
+}
+
+.form-input-lg {
+  width: 280px;
+}
+
+.form-input-xl {
+  width: 400px;
+}
+
+.form-input-full {
+  width: 100%;
+}
+
+/* 表单错误状态 */
+.form-control.error,
+input.error,
+textarea.error {
+  border-color: var(--vscode-error);
+}
+
+.form-control.error:focus,
+input.error:focus,
+textarea.error:focus {
+  border-color: var(--vscode-error);
+}
+
+select.error {
+  border-color: var(--vscode-error);
+  outline-color: var(--vscode-error);
+}
+
+select.error:focus {
+  border-color: var(--vscode-error);
+  outline-color: var(--vscode-error);
+}
+
+/* 表单成功状态 */
+.form-control.success,
+input.success,
+textarea.success {
+  border-color: var(--vscode-success);
+}
+
+.form-control.success:focus,
+input.success:focus,
+textarea.success:focus {
+  border-color: var(--vscode-success);
+}
+
+select.success {
+  border-color: var(--vscode-success);
+  outline-color: var(--vscode-success);
+}
+
+select.success:focus {
+  border-color: var(--vscode-success);
+  outline-color: var(--vscode-success);
+}
+
+.modal-content {
+  background-color: var(--vscode-bg-light);
+  border-color: var(--vscode-border);
+}
+
+.modal-header {
+  border-bottom-color: var(--vscode-border);
+}
+
+.modal-footer {
+  border-top-color: var(--vscode-border);
+}
+
+.dropdown-menu {
+  background-color: var(--vscode-bg-light);
+  border-color: var(--vscode-border);
+}
+
+.dropdown-item {
+  color: var(--vscode-fg);
+}
+
+.dropdown-item:hover {
+  background-color: var(--vscode-bg-lighter);
+  color: var(--vscode-fg);
+}
+
+.nav-tabs {
+  border-bottom-color: var(--vscode-border);
+}
+
+.nav-tabs .nav-link {
+  color: var(--vscode-fg-muted);
+  border-color: transparent;
+}
+
+.nav-tabs .nav-link:hover {
+  color: var(--vscode-fg);
+  border-color: var(--vscode-border) var(--vscode-border) transparent;
+}
+
+.nav-tabs .nav-link.active {
+  color: var(--vscode-fg);
+  background-color: var(--vscode-bg);
+  border-color: var(--vscode-border) var(--vscode-border) var(--vscode-bg);
+}
+
+.table-dark {
+  --bs-table-bg: var(--vscode-bg-light);
+  --bs-table-border-color: var(--vscode-border);
+}
+
+/* 自定义工具类 */
+.text-muted-light {
+  color: var(--vscode-fg-muted) !important;
+}
+
+.bg-vscode {
+  background-color: var(--vscode-bg) !important;
+}
+
+.bg-vscode-light {
+  background-color: var(--vscode-bg-light) !important;
+}
+
+.bg-vscode-lighter {
+  background-color: var(--vscode-bg-lighter) !important;
+}
+
+.border-vscode {
+  border-color: var(--vscode-border) !important;
+}
+
+.text-vscode-accent {
+  color: var(--vscode-accent) !important;
+}
+
+.text-vscode-fg {
+  color: var(--vscode-fg) !important;
+}
+
+.text-vscode-fg-muted {
+  color: var(--vscode-fg-muted) !important;
+}
+
+.border-vscode-border {
+  border-color: var(--vscode-border) !important;
+}
+
+/* 动画效果 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* 通知动画 */
+.notification-enter-active,
+.notification-leave-active {
+  transition: all 0.3s ease;
+}
+
+.notification-enter-from {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+.notification-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: all 0.3s ease-out;
+}
+
+.slide-up-enter-from {
+  transform: translateY(10px);
+  opacity: 0;
+}
+
+.slide-up-leave-to {
+  transform: translateY(-10px);
+  opacity: 0;
+}
+
+/* 加载动画 */
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--vscode-fg-muted);
+  border-radius: 50%;
+  border-top-color: var(--vscode-accent);
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 代码高亮样式 */
+.code-block {
+  background: var(--vscode-bg-lighter);
+  border: 1px solid var(--vscode-border);
+  border-radius: 2px;
+  padding: 12px;
+  font-family: 'Menlo', 'Monaco', 'Consolas', monospace;
+  font-size: 13px;
+  line-height: 1.4;
+  overflow-x: auto;
+}
+
+.code-inline {
+  background: var(--vscode-bg-lighter);
+  border: 1px solid var(--vscode-border);
+  border-radius: 2px;
+  padding: 2px 4px;
+  font-family: 'Menlo', 'Monaco', 'Consolas', monospace;
+  font-size: 0.9em;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .container-fluid {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .btn {
+    font-size: 0.875rem;
+    padding: 0.375rem 0.75rem;
+  }
+}
+
+/* 打印样式 */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}

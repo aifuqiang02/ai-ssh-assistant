@@ -1,0 +1,48 @@
+{
+  "name": "@ai-ssh/database",
+  "version": "1.8.20",
+  "description": "AI SSH Assistant Database Layer",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/src/index.js",
+      "require": "./dist/src/index.js",
+      "types": "./dist/src/index.d.ts"
+    }
+  },
+  "private": true,
+  "scripts": {
+    "build": "prisma generate --schema prisma/schema-postgresql.prisma && prisma generate --schema prisma/schema-sqlite.prisma && tsc --build --force && npm run copy-generated",
+    "copy-generated": "node -e \"const fs=require('fs');const path=require('path');function safeCopy(src,dest){try{fs.copyFileSync(src,dest)}catch(e){if(e&&(['EBUSY','EPERM'].includes(e.code))){console.warn('[copy-generated] skip locked:',dest)}else{throw e}}}function copyDir(src,dest){fs.mkdirSync(dest,{recursive:true});for(const file of fs.readdirSync(src)){const s=path.join(src,file);const d=path.join(dest,file);if(fs.statSync(s).isDirectory()){copyDir(s,d)}else{safeCopy(s,d)}}}copyDir('src/generated/client','dist/src/generated/client');copyDir('src/generated/client-sqlite','dist/src/generated/client-sqlite');\"",
+    "dev": "tsc --watch",
+    "db:generate": "prisma generate --schema prisma/schema-postgresql.prisma && prisma generate --schema prisma/schema-sqlite.prisma",
+    "db:push": "prisma db push --schema prisma/schema-postgresql.prisma",
+    "db:migrate": "prisma migrate dev --schema prisma/schema-postgresql.prisma",
+    "db:migrate:reset": "prisma migrate reset --force --schema prisma/schema-postgresql.prisma",
+    "db:migrate:deploy": "prisma migrate deploy --schema prisma/schema-postgresql.prisma",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:studio": "prisma studio",
+    "db:format": "prisma format",
+    "type-check": "tsc --noEmit",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@ai-ssh/shared": "workspace:*",
+    "@prisma/client": "5.7.0",
+    "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^12.4.1",
+    "nanoid": "^5.0.4",
+    "vite-plugin-vue-inspector-ai": "^1.0.31"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/better-sqlite3": "^7.6.13",
+    "prisma": "5.7.0",
+    "tsx": "^4.6.0",
+    "typescript": "^5.3.0"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  }
+}

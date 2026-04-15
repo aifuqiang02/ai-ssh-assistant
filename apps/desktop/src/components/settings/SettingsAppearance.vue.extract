@@ -1,0 +1,77 @@
+        <!-- 外观设置 -->
+        <section :id="'section-appearance'" class="setting-section">
+          <h2 class="section-title">
+            <i class="bi bi-palette"></i>
+            {{ $t('settings.appearanceTitle') }}
+          </h2>
+          <p class="section-description">{{ $t('settings.appearanceDesc') }}</p>
+        
+        <!-- 主题模式 -->
+          <div class="setting-row">
+            <div class="setting-left">
+              <label class="setting-label">{{ $t('settings.themeMode') }}</label>
+              <p class="setting-hint">{{ $t('settings.themeModeHint') }}</p>
+          </div>
+            <div class="setting-right">
+              <select v-model="selectedThemeMode" @change="onThemeModeChange" class="form-select">
+                <option 
+                  v-for="themeOption in availableThemes" 
+                  :key="themeOption.value"
+                  :value="themeOption.value"
+                >
+                  {{ themeOption.label }}
+                </option>
+          </select>
+            </div>
+        </div>
+        
+        <!-- 颜色方案 -->
+          <div class="setting-row">
+            <div class="setting-left">
+              <label class="setting-label">{{ $t('settings.colorScheme') }}</label>
+              <p class="setting-hint">{{ $t('settings.colorSchemeHint') }}</p>
+            </div>
+            <div class="setting-right">
+              <select 
+                v-model="selectedColorScheme" 
+                @change="onColorSchemeChange(selectedColorScheme)" 
+                class="form-select"
+              >
+                <option 
+                  v-for="scheme in availableColorSchemes" 
+                  :key="scheme.value"
+                  :value="scheme.value"
+                >
+                  {{ scheme.label }}
+                </option>
+              </select>
+          </div>
+        </div>
+        
+        <!-- 字体大小 -->
+          <div class="setting-row">
+            <div class="setting-left">
+              <label class="setting-label">{{ $t('settings.fontSize') }}</label>
+              <p class="setting-hint">{{ $t('settings.fontSizeHint') }}</p>
+          </div>
+            <div class="setting-right">
+              <select v-model="fontSize" @change="onFontSizeChange" class="form-select">
+            <option value="small">{{ $t('settings.sizeSmall') }}</option>
+            <option value="medium">{{ $t('settings.sizeMedium') }}</option>
+            <option value="large">{{ $t('settings.sizeLarge') }}</option>
+          </select>
+            </div>
+        </div>
+        
+        <!-- 语言设置 -->
+          <div class="setting-row">
+            <div class="setting-left">
+              <label class="setting-label">{{ $t('settings.language') }}</label>
+              <p class="setting-hint">{{ $t('settings.language') === '语言' ? '选择应用界面语言' : 'Select the application interface language' }}</p>
+          </div>
+            <div class="setting-right">
+              <LanguageSwitcher />
+            </div>
+        </div>
+        </section>
+

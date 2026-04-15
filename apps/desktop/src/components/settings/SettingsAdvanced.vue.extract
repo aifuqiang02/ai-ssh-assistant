@@ -1,0 +1,52 @@
+        <section :id="'section-advanced'" class="setting-section">
+          <h2 class="section-title">
+            <i class="bi bi-gear-fill"></i>
+            {{ $t('settings.advancedTitle') }}
+          </h2>
+          <p class="section-description">高级功能和实验性选项</p>
+
+          <!-- 启动时自动连接 -->
+          <div class="setting-row">
+            <div class="setting-left">
+              <label class="setting-label">启动时自动连接</label>
+              <p class="setting-hint">应用启动时自动连接上次使用的 SSH</p>
+            </div>
+            <div class="setting-right">
+              <label class="toggle-switch">
+                <input v-model="autoConnect" type="checkbox" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 记录命令历史 -->
+          <div class="setting-row">
+            <div class="setting-left">
+              <label class="setting-label">命令历史记录</label>
+              <p class="setting-hint">记录所有执行的命令</p>
+            </div>
+            <div class="setting-right">
+              <label class="toggle-switch">
+                <input v-model="saveCommandHistory" type="checkbox" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 开发者工具 -->
+          <div class="setting-row">
+            <div class="setting-left">
+              <label class="setting-label">开发者模式</label>
+              <p class="setting-hint">启用调试功能和详细日志</p>
+            </div>
+            <div class="setting-right">
+              <label class="toggle-switch">
+                <input v-model="developerMode" type="checkbox" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <!-- 关于 -->
+        <section :id="'section-about'" class="setting-section">

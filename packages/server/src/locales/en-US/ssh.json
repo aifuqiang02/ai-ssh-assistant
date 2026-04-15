@@ -1,0 +1,10 @@
+{
+  "connectSuccess": "Connected successfully",
+  "connectFailed": "Connection failed: {{message}}",
+  "disconnectSuccess": "Disconnected successfully",
+  "executionFailed": "Execution failed: {{message}}",
+  "invalidHost": "Invalid host address",
+  "invalidPort": "Invalid port number",
+  "connectionTimeout": "Connection timeout"
+}
+

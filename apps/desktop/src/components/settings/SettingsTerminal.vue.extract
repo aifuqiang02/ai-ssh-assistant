@@ -1,0 +1,55 @@
+        <section :id="'section-terminal'" class="setting-section">
+          <h2 class="section-title">
+            <i class="bi bi-terminal-fill"></i>
+            {{ $t('settings.terminalTitle') }}
+          </h2>
+          <p class="section-description">自定义终端的外观和行为</p>
+
+          <!-- 终端字体大小 -->
+          <div class="setting-row">
+            <div class="setting-left">
+              <label class="setting-label">{{ $t('settings.fontSize') }}</label>
+              <p class="setting-hint">终端文字大小</p>
+            </div>
+            <div class="setting-right">
+              <input 
+                v-model.number="terminalFontSize" 
+                type="number" 
+                class="form-input"
+                min="10"
+                max="24"
+              />
+            </div>
+          </div>
+
+          <!-- 光标样式 -->
+          <div class="setting-row">
+            <div class="setting-left">
+              <label class="setting-label">光标样式</label>
+              <p class="setting-hint">选择终端光标的样式</p>
+            </div>
+            <div class="setting-right">
+              <select v-model="cursorStyle" class="form-select">
+                <option value="block">方块</option>
+                <option value="underline">下划线</option>
+                <option value="bar">竖线</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- 光标闪烁 -->
+          <div class="setting-row">
+            <div class="setting-left">
+              <label class="setting-label">光标闪烁</label>
+              <p class="setting-hint">是否启用光标闪烁效果</p>
+            </div>
+            <div class="setting-right">
+              <label class="toggle-switch">
+                <input v-model="cursorBlink" type="checkbox" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <!-- 高级设置 -->

@@ -1,0 +1,97 @@
+        <section :id="'section-storage'" class="setting-section">
+          <h2 class="section-title">
+            <i class="bi bi-database"></i>
+            {{ $t('settings.storageTitle') }}
+          </h2>
+          <p class="section-description">配置数据存储方式和同步选项</p>
+
+          <!-- 存储模式 -->
+          <div class="setting-row">
+            <div class="setting-left">
+              <label class="setting-label">存储模式</label>
+              <p class="setting-hint">选择数据存储的方式</p>
+            </div>
+            <div class="setting-right">
+              <select v-model="storageMode" @change="onStorageModeChange" class="form-select">
+            <option value="local">仅本地存储</option>
+            <option value="cloud">仅云端存储</option>
+            <option value="hybrid">混合模式 (本地+云端)</option>
+          </select>
+              <p class="setting-info">
+                <i class="bi bi-info-circle"></i>
+            <span v-if="storageMode === 'local'">数据仅保存在本地，隐私性最高</span>
+            <span v-else-if="storageMode === 'cloud'">数据保存在云端，可跨设备同步</span>
+            <span v-else>本地存储为主，云端同步备份</span>
+          </p>
+            </div>
+        </div>
+
+        <!-- 云端存储配置 -->
+          <template v-if="storageMode !== 'local'">
+            <!-- 登录状态 -->
+            <div class="setting-row">
+              <div class="setting-left">
+                <label class="setting-label">云端账户</label>
+                <p class="setting-hint">登录后可使用云端存储功能</p>
+            </div>
+              <div class="setting-right">
+                <div v-if="userInfo" class="user-info-card">
+                  <div class="user-avatar">
+                  {{ userInfo.name?.charAt(0) || 'U' }}
+                </div>
+                  <div class="user-details">
+                    <p class="user-name">{{ userInfo.name }}</p>
+                    <p class="user-email">{{ userInfo.email }}</p>
+                </div>
+                  <button @click="logout" class="btn-logout">
+                    <i class="bi bi-box-arrow-right"></i>
+                    退出
+                </button>
+              </div>
+            <div v-else class="login-prompt">
+                  <button @click="showLoginModal = true" class="btn-login">
+                    <i class="bi bi-box-arrow-in-right"></i>
+                登录云端账户
+              </button>
+                </div>
+            </div>
+          </div>
+
+            <!-- 同步频率 -->
+            <div v-if="storageMode === 'hybrid'" class="setting-row">
+              <div class="setting-left">
+                <label class="setting-label">同步频率</label>
+                <p class="setting-hint">设置数据同步的频率</p>
+              </div>
+              <div class="setting-right">
+                <select v-model="syncFrequency" class="form-select">
+              <option value="realtime">实时同步</option>
+              <option value="high">高频 (15秒)</option>
+              <option value="moderate">中频 (1分钟)</option>
+              <option value="low">低频 (5分钟)</option>
+              <option value="manual">手动同步</option>
+            </select>
+              </div>
+          </div>
+
+            <!-- 同步状态 -->
+            <div v-if="userInfo && storageMode === 'hybrid'" class="setting-row">
+              <div class="setting-left">
+                <label class="setting-label">上次同步时间</label>
+                <p class="setting-hint">查看最后一次同步的时间</p>
+              </div>
+              <div class="setting-right">
+                <div class="sync-status">
+                  <span class="sync-time">{{ lastSyncTime || '从未同步' }}</span>
+                  <button @click="manualSync" :disabled="syncLoading" class="btn-sync">
+                    <i :class="['bi', syncLoading ? 'bi-arrow-repeat rotating' : 'bi-arrow-repeat']"></i>
+                {{ syncLoading ? '同步中...' : '立即同步' }}
+              </button>
+            </div>
+          </div>
+        </div>
+          </template>
+        </section>
+
+        <!-- SSH 配置 -->
+        <section :id="'section-ssh'" class="setting-section">

@@ -1,0 +1,192 @@
+name: 🛠️ Manual Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      platforms:
+        description: 'Select platforms to build'
+        required: true
+        default: 'windows,macos,linux'
+        type: choice
+        options:
+          - 'windows'
+          - 'macos'
+          - 'linux'
+          - 'windows,macos'
+          - 'windows,linux'
+          - 'macos,linux'
+          - 'windows,macos,linux'
+      upload_artifacts:
+        description: 'Upload build artifacts'
+        required: true
+        default: true
+        type: boolean
+      run_tests:
+        description: 'Run tests before building'
+        required: true
+        default: true
+        type: boolean
+
+concurrency:
+  group: manual-build-${{ github.ref }}-${{ github.run_number }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: 🧪 Test & Lint
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.run_tests == 'true' }}
+    steps:
+      - name: ⬇️ Checkout
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.12.0
+
+      - name: ⚡ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: 📥 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🔗 Link workspace dependencies
+        run: pnpm install
+
+      - name: 🏗️ Build shared packages
+        run: pnpm build:shared
+
+      # - name: 🔍 Type check
+      #   run: pnpm type-check
+
+      # - name: 🧹 Lint
+      #   run: pnpm lint
+
+      - name: 🏗️ Build server
+        run: pnpm build:server
+
+  build:
+    name: 🏗️ Build ${{ matrix.platform }}
+    needs: test
+    if: always() && (needs.test.result == 'success' || needs.test.result == 'skipped')
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: 'Windows'
+            os: windows-latest
+            build_script: 'build:win'
+            artifacts: 'apps/desktop/release/*/AI-SSH-Assistant-*-setup-*.exe'
+            condition: ${{ contains(github.event.inputs.platforms, 'windows') }}
+          - platform: 'macOS'
+            os: macos-latest
+            build_script: 'build:mac'
+            artifacts: 'apps/desktop/release/*/ai-ssh-assistant-*-macos-*.dmg,apps/desktop/release/*/ai-ssh-assistant-*-macos-*.zip'
+            condition: ${{ contains(github.event.inputs.platforms, 'macos') }}
+          - platform: 'Linux'
+            os: ubuntu-latest
+            build_script: 'build:linux'
+            artifacts: 'apps/desktop/release/*/ai-ssh-assistant-*-linux-*.AppImage,apps/desktop/release/*/ai-ssh-assistant-*-linux-*.deb'
+            condition: ${{ contains(github.event.inputs.platforms, 'linux') }}
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: ⬇️ Checkout
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.12.0
+
+      - name: ⚡ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      # Linux specific dependencies
+      - name: 🐧 Install Linux dependencies
+        if: matrix.platform == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libnss3-dev libatk-bridge2.0-dev libdrm-dev libxcomposite-dev libxdamage-dev libxrandr-dev libgbm-dev libxss1 libasound2-dev
+
+      # macOS specific setup for node-gyp
+      - name: 🍎 Setup macOS Python for node-gyp
+        if: matrix.platform == 'macOS'
+        run: |
+          # Fix Python distutils issue for node-gyp
+          pip3 install --break-system-packages setuptools
+
+      - name: 📥 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🔗 Link workspace dependencies
+        run: pnpm install
+
+      - name: 🏗️ Build shared packages
+        run: pnpm build:shared
+
+      - name: 🏗️ Build server
+        run: pnpm build:server
+
+      # Skip all native dependency rebuild on Windows
+      - name: 🔧 Configure Windows build environment
+        if: matrix.platform == 'Windows'
+        run: |
+          echo "ELECTRON_BUILDER_SKIP_INSTALL_APP_DEPS=true" >> $GITHUB_ENV
+          echo "ELECTRON_SKIP_BINARY_DOWNLOAD=true" >> $GITHUB_ENV
+          echo "npm_config_electron_rebuild=false" >> $GITHUB_ENV
+          echo "ELECTRON_REBUILD_FORCE=false" >> $GITHUB_ENV
+
+      - name: 🚀 Build desktop app
+        run: pnpm ${{ matrix.build_script }}
+        env:
+          ELECTRON_CACHE: ${{ github.workspace }}/.cache/electron
+          ELECTRON_BUILDER_CACHE: ${{ github.workspace }}/.cache/electron-builder
+          VITE_APP_VERSION: manual-${{ github.sha }}
+
+      - name: 📤 Upload build artifacts
+        if: ${{ github.event.inputs.upload_artifacts == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: manual-build-${{ matrix.platform }}-${{ github.run_number }}
+          path: ${{ matrix.artifacts }}
+          retention-days: 7
+
+      - name: 📊 Build Summary
+        run: |
+          echo "### 🎉 Manual build completed!" >> $GITHUB_STEP_SUMMARY
+          echo "**Platform:** ${{ matrix.platform }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Run Number:** ${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Upload Artifacts:** ${{ github.event.inputs.upload_artifacts }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Build Files:**" >> $GITHUB_STEP_SUMMARY
+          ls -la apps/desktop/release/*/ >> $GITHUB_STEP_SUMMARY 2>/dev/null || echo "No release files found" >> $GITHUB_STEP_SUMMARY
+
+  summary:
+    name: 📋 Build Summary
+    needs: build
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: 🎯 Final Summary
+        run: |
+          echo "### 🛠️ Manual Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Requested Platforms:** ${{ github.event.inputs.platforms }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Tests Enabled:** ${{ github.event.inputs.run_tests }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Artifacts Upload:** ${{ github.event.inputs.upload_artifacts }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Trigger:** Manual by @${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ github.event.inputs.upload_artifacts }}" == "true" ]; then
+            echo "### 📦 Download Artifacts" >> $GITHUB_STEP_SUMMARY
+            echo "Artifacts are available in the [Actions tab](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) for 7 days." >> $GITHUB_STEP_SUMMARY
+          fi

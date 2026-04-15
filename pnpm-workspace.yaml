@@ -1,0 +1,24 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+
+# 共享依赖配置
+shared-workspace-lockfile: true
+
+# 依赖提升配置
+hoist-pattern:
+  - '*eslint*'
+  - '*prettier*'
+  - '*typescript*'
+  - '@types/*'
+  - 'vue'
+  - 'vue-*'
+  - 'vite'
+  - 'vite-*'
+
+# 公共依赖不提升
+public-hoist-pattern:
+  - '*'
+
+# 严格的 peer 依赖
+strict-peer-dependencies: false

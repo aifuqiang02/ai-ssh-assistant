@@ -1,0 +1,179 @@
+/**
+ * 应用状态管理 Composable
+ * 替代原 App Store
+ */
+
+import { ref, computed } from 'vue'
+
+// 全局状态（单例模式）
+const isInitialized = ref(false)
+const isLoading = ref(false)
+const currentRoute = ref('/')
+const sidebarCollapsed = ref(false)
+
+const settings = ref({
+  language: 'zh-CN',
+  autoSave: true,
+  notifications: true,
+  theme: 'auto'
+})
+
+const error = ref<string | null>(null)
+const errors = ref<string[]>([])
+
+export function useApp() {
+  // 计算属性
+  const hasErrors = computed(() => errors.value.length > 0)
+  const isReady = computed(() => isInitialized.value && !isLoading.value)
+  
+  // 加载设置
+  const loadSettings = async () => {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const savedSettings = localStorage.getItem('app-settings')
+        if (savedSettings) {
+          settings.value = { ...settings.value, ...JSON.parse(savedSettings) }
+        }
+      }
+    } catch (err) {
+
+    }
+  }
+  
+  // 保存设置
+  const saveSettings = async () => {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        localStorage.setItem('app-settings', JSON.stringify(settings.value))
+      }
+    } catch (err) {
+
+      throw new Error('保存设置失败')
+    }
+  }
+  
+  // 初始化服务
+  const initializeServices = async () => {
+    // 这里可以初始化各种服务
+    // 例如：WebSocket 连接、数据库连接等
+    return Promise.resolve()
+  }
+  
+  // 初始化应用
+  const initialize = async () => {
+    if (isInitialized.value) return
+    
+    try {
+      isLoading.value = true
+      
+      // 加载用户设置
+      await loadSettings()
+      
+      // 初始化其他服务
+      await initializeServices()
+      
+      isInitialized.value = true
+
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : '应用初始化失败'
+      addError(errorMessage)
+
+    } finally {
+      isLoading.value = false
+    }
+  }
+  
+  // 更新设置
+  const updateSetting = <K extends keyof typeof settings.value>(
+    key: K,
+    value: typeof settings.value[K]
+  ) => {
+    settings.value[key] = value
+    saveSettings()
+  }
+  
+  // 切换侧边栏
+  const toggleSidebar = () => {
+    sidebarCollapsed.value = !sidebarCollapsed.value
+  }
+  
+  // 设置当前路由
+  const setCurrentRoute = (route: string) => {
+    currentRoute.value = route
+  }
+  
+  // 错误处理
+  const addError = (message: string) => {
+    error.value = message
+    errors.value.push(message)
+  }
+  
+  const clearError = () => {
+    error.value = null
+  }
+  
+  const clearAllErrors = () => {
+    error.value = null
+    errors.value = []
+  }
+  
+  const removeError = (index: number) => {
+    errors.value.splice(index, 1)
+    if (errors.value.length === 0) {
+      error.value = null
+    }
+  }
+  
+  // 打开设置页面
+  const openSettings = () => {
+
+    
+    // 在组件外部无法直接使用 useRouter，需要在调用的地方处理路由
+    currentRoute.value = '/settings'
+    
+    // 触发自定义事件来通知路由变化
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('navigate-to-settings'))
+    }
+  }
+  
+  // 重置应用状态
+  const reset = () => {
+    isInitialized.value = false
+    isLoading.value = false
+    currentRoute.value = '/'
+    sidebarCollapsed.value = false
+    error.value = null
+    errors.value = []
+  }
+  
+  return {
+    // 状态
+    isInitialized,
+    isLoading,
+    currentRoute,
+    sidebarCollapsed,
+    settings,
+    error,
+    errors,
+    
+    // 计算属性
+    hasErrors,
+    isReady,
+    
+    // 方法
+    initialize,
+    loadSettings,
+    saveSettings,
+    updateSetting,
+    toggleSidebar,
+    setCurrentRoute,
+    addError,
+    clearError,
+    clearAllErrors,
+    removeError,
+    openSettings,
+    reset
+  }
+}
+

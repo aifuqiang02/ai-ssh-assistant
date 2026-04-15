@@ -1,0 +1,11 @@
+{
+  "uploadSuccess": "上传成功",
+  "uploadFailed": "上传失败：{{message}}",
+  "downloadSuccess": "下载成功",
+  "downloadFailed": "下载失败：{{message}}",
+  "deleteSuccess": "删除成功",
+  "fileNotFound": "文件不存在",
+  "invalidFileName": "无效的文件名",
+  "fileTooLarge": "文件过大"
+}
+

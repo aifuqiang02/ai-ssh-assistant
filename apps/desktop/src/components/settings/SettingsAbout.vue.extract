@@ -1,0 +1,3281 @@
+        <section :id="'section-about'" class="setting-section">
+          <h2 class="section-title">
+            <i class="bi bi-info-circle"></i>
+            {{ $t('settings.aboutTitle') }}
+          </h2>
+          <p class="section-description">应用程序信息和版本详情</p>
+
+          <div class="about-info">
+            <div class="app-logo">
+              <i class="bi bi-terminal-fill"></i>
+            </div>
+            <h3 class="app-name">AI SSH Assistant</h3>
+            <p class="app-version">版本 1.0.0</p>
+            <p class="app-description">
+              一款智能的 SSH 管理工具，结合 AI 技术，让远程服务器管理更加简单高效。
+            </p>
+            <div class="about-links">
+              <a href="#" class="about-link">
+                <i class="bi bi-github"></i>
+                GitHub
+              </a>
+              <a href="#" class="about-link">
+                <i class="bi bi-file-text"></i>
+                文档
+              </a>
+              <a href="#" class="about-link">
+                <i class="bi bi-bug"></i>
+                反馈
+              </a>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- 登录模态框 -->
+    <LoginModal 
+      :show="showLoginModal" 
+      @close="showLoginModal = false"
+      @login-success="onLoginSuccess"
+    />
+
+    <!-- 添加模型对话框 -->
+    <div v-if="showAddModelDialog" class="dialog-overlay" @click.self="cancelAddModel">
+      <div class="dialog-container">
+        <div class="dialog-header">
+          <h3 class="dialog-title">
+            <i class="bi bi-plus-circle"></i>
+            添加自定义模型
+          </h3>
+          <button class="dialog-close" @click="cancelAddModel">
+            <i class="bi bi-x"></i>
+          </button>
+        </div>
+        <div class="dialog-body">
+          <div class="form-group">
+            <label class="form-label">
+              模型 ID <span class="required">*</span>
+            </label>
+            <input 
+              v-model="newModel.id" 
+              type="text" 
+              class="form-input"
+              placeholder="例如: gemini-2.5-pro"
+            />
+            <p class="form-hint">
+              <i class="bi bi-info-circle"></i>
+              请输入服务商文档中提供的准确模型 ID
+            </p>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              模型名称 <span class="required">*</span>
+            </label>
+            <input 
+              v-model="newModel.name" 
+              type="text" 
+              class="form-input"
+              placeholder="例如: Gemini 2.5 Pro"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">描述（可选）</label>
+            <input 
+              v-model="newModel.description" 
+              type="text" 
+              class="form-input"
+              placeholder="例如: 推荐使用，性能更强"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">上下文窗口（tokens）</label>
+            <input 
+              v-model.number="newModel.contextWindow" 
+              type="number" 
+              class="form-input"
+              min="1024"
+              step="1024"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">能力</label>
+            <div class="checkbox-group">
+              <label class="checkbox-item">
+                <input type="checkbox" v-model="newModel.capabilities.text" />
+                <span>文本对话</span>
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" v-model="newModel.capabilities.vision" />
+                <span>视觉理解</span>
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" v-model="newModel.capabilities.image" />
+                <span>图像生成</span>
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" v-model="newModel.capabilities.functionCall" />
+                <span>函数调用</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">价格（USD / 百万 tokens，可选）</label>
+            <div class="price-inputs">
+              <div class="price-input-group">
+                <label class="price-label">输入</label>
+                <input 
+                  v-model.number="newModel.price.input" 
+                  type="number" 
+                  class="form-input"
+                  min="0"
+                  step="0.01"
+                  placeholder="0.00"
+                />
+              </div>
+              <div class="price-input-group">
+                <label class="price-label">输出</label>
+                <input 
+                  v-model.number="newModel.price.output" 
+                  type="number" 
+                  class="form-input"
+                  min="0"
+                  step="0.01"
+                  placeholder="0.00"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="dialog-footer">
+          <button class="btn-cancel" @click="cancelAddModel">取消</button>
+          <button class="btn-confirm" @click="addCustomModel">添加</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import { storeToRefs } from 'pinia'
+import LoginModal from '../components/auth/LoginModal.vue'
+import ProviderIcon from '../components/common/ProviderIcon.vue'
+import LanguageSwitcher from '../components/LanguageSwitcher.vue'
+import { useTheme } from '../composables/useTheme'
+import { themeService, type ThemeMode } from '../services/theme.service'
+import { settingsService } from '../services/settings.service'
+import { 
+  DEFAULT_PROVIDERS, 
+  PROVIDER_STATS,
+  INTERNATIONAL_PROVIDERS,
+  CHINESE_PROVIDERS,
+  CHINESE_EXTENDED_PROVIDERS,
+  PLATFORM_PROVIDERS,
+  CLOUD_PROVIDERS,
+  OPENSOURCE_PROVIDERS,
+  SPECIALIZED_PROVIDERS,
+  type AIProvider,
+  type AIModel 
+} from '../types/ai-providers'
+import { decryptApiKey } from '../utils/encryption'
+import { testProviderConnection as testProviderAPI, type TestResult } from '../services/ai-test.service'
+import { fetchModelsForProvider } from '../services/model-fetcher.service'
+
+// 设置分类
+const settingsSections = computed(() => [
+  { id: 'appearance', label: $t('settings.navAppearance'), icon: 'bi bi-palette' },
+  { id: 'ai-providers', label: $t('settings.navAiProviders'), icon: 'bi bi-robot' },
+  { id: 'ai-assistant', label: $t('settings.navAiAssistant'), icon: 'bi bi-chat-dots' },
+  { id: 'storage', label: $t('settings.navStorage'), icon: 'bi bi-database' },
+  { id: 'ssh', label: $t('settings.navSsh'), icon: 'bi bi-terminal' },
+  { id: 'terminal', label: $t('settings.navTerminal'), icon: 'bi bi-terminal-fill' },
+  { id: 'advanced', label: $t('settings.navAdvanced'), icon: 'bi bi-gear-fill' },
+  { id: 'about', label: $t('settings.navAbout'), icon: 'bi bi-info-circle' }
+])
+
+// 主题 Composable
+const theme = useTheme()
+const { mode, colorScheme, fontSize: themeFontSize } = theme
+
+// 国际化
+const { t: $t } = useI18n()
+
+// Vue Router
+const route = useRoute()
+
+// 导航相关
+const activeSection = ref('appearance')
+const contentContainer = ref<HTMLElement | null>(null)
+const isScrolling = ref(false)
+
+// 基础设置
+// 注意：theme 相关的状态已经从 useTheme() composable 中获取
+// mode, colorScheme, themeFontSize 已经在上面解构
+const fontSize = ref<'small' | 'medium' | 'large'>('medium')
+const selectedColorScheme = ref<'blue' | 'green' | 'purple' | 'orange' | 'red'>('blue')
+
+// 新主题系统
+const selectedThemeMode = ref<ThemeMode>(themeService.getCurrentTheme())
+const availableThemes = computed(() => themeService.getAvailableThemes())
+
+// SSH 设置
+const sshTimeout = ref(30)
+const keepAlive = ref(true)
+const defaultSSHPort = ref(22)
+
+// 终端设置
+const terminalFontSize = ref(14)
+const cursorStyle = ref('block')
+const cursorBlink = ref(true)
+
+// AI 助手设置
+const autoApproveReadOnly = ref(true)
+const commandRiskLevel = ref(2) // 命令风险等级：1-5，自动通过此等级及以下的命令
+const enableChatHistory = ref(true)
+const maxHistoryMessages = ref(50)
+
+// 高级设置
+const autoConnect = ref(false)
+const saveCommandHistory = ref(true)
+const developerMode = ref(false)
+
+// AI 服务商设置
+const aiProviders = ref<AIProvider[]>([])
+const expandedProviders = ref<string[]>([])
+const showApiKey = ref<Record<string, boolean>>({})
+const testingProviders = ref<Record<string, boolean>>({})
+const testResults = ref<Record<string, TestResult>>({})
+const expandedModels = ref<Record<string, boolean>>({})
+const fetchingModels = ref<Record<string, boolean>>({})
+
+// 过滤和搜索
+const providerSearchQuery = ref('')
+const selectedCategory = ref<'all' | 'international' | 'chinese' | 'platforms' | 'cloud' | 'opensource' | 'specialized'>('all')
+const capabilityFilter = ref<'all' | 'vision' | 'image' | 'functionCall'>('all')
+
+// 模型搜索和筛选（针对每个服务商的模型列表）
+const modelSearchQuery = ref<Record<string, string>>({}) // 每个服务商独立的搜索词
+const modelPriceFilter = ref<Record<string, 'all' | 'free' | 'low' | 'medium' | 'high'>>({}) // 每个服务商独立的价格筛选
+
+// 手动添加模型对话框
+const showAddModelDialog = ref(false)
+const currentEditingProvider = ref<AIProvider | null>(null)
+const newModel = ref({
+  id: '',
+  name: '',
+  contextWindow: 8192,
+  capabilities: {
+    text: true,
+    image: false,
+    functionCall: false,
+    vision: false
+  },
+  price: {
+    input: 0,
+    output: 0
+  },
+  description: ''
+})
+
+// 可用的颜色方案
+const availableColorSchemes = computed(() => theme.getAvailableColorSchemes())
+
+// 服务商分类配置
+const providerCategories = computed(() => [
+  { 
+    id: 'all' as const, 
+    label: '全部', 
+    icon: 'bi bi-grid-3x3-gap',
+    description: '显示所有服务商',
+    count: aiProviders.value.length 
+  },
+  { 
+    id: 'international' as const, 
+    label: '国际', 
+    icon: 'bi bi-globe',
+    description: '国际主流服务商',
+    count: INTERNATIONAL_PROVIDERS.length 
+  },
+  { 
+    id: 'chinese' as const, 
+    label: '中国', 
+    icon: 'bi bi-translate',
+    description: '中国服务商',
+    count: CHINESE_PROVIDERS.length + CHINESE_EXTENDED_PROVIDERS.length 
+  },
+  { 
+    id: 'platforms' as const, 
+    label: '平台', 
+    icon: 'bi bi-hdd-stack',
+    description: '开发者平台',
+    count: PLATFORM_PROVIDERS.length 
+  },
+  { 
+    id: 'cloud' as const, 
+    label: '云服务', 
+    icon: 'bi bi-cloud',
+    description: '云服务平台',
+    count: CLOUD_PROVIDERS.length 
+  },
+  { 
+    id: 'opensource' as const, 
+    label: '开源', 
+    icon: 'bi bi-github',
+    description: '开源和小型服务商',
+    count: OPENSOURCE_PROVIDERS.length 
+  },
+  { 
+    id: 'specialized' as const, 
+    label: '专业', 
+    icon: 'bi bi-palette',
+    description: '专业服务（图像、音乐等）',
+    count: SPECIALIZED_PROVIDERS.length 
+  }
+])
+
+// 过滤后的服务商列表
+const filteredProviders = computed(() => {
+  let result = [...aiProviders.value]
+  
+  // 按分类过滤
+  if (selectedCategory.value !== 'all') {
+    const categoryProviderIds = (() => {
+      switch (selectedCategory.value) {
+        case 'international':
+          return new Set(INTERNATIONAL_PROVIDERS.map(p => p.id))
+        case 'chinese':
+          return new Set([...CHINESE_PROVIDERS, ...CHINESE_EXTENDED_PROVIDERS].map(p => p.id))
+        case 'platforms':
+          return new Set(PLATFORM_PROVIDERS.map(p => p.id))
+        case 'cloud':
+          return new Set(CLOUD_PROVIDERS.map(p => p.id))
+        case 'opensource':
+          return new Set(OPENSOURCE_PROVIDERS.map(p => p.id))
+        case 'specialized':
+          return new Set(SPECIALIZED_PROVIDERS.map(p => p.id))
+        default:
+          return new Set<string>()
+      }
+    })()
+    result = result.filter(p => categoryProviderIds.has(p.id))
+  }
+  
+  // 按搜索词过滤
+  if (providerSearchQuery.value.trim()) {
+    const query = providerSearchQuery.value.toLowerCase().trim()
+    result = result.filter(provider => {
+      // 搜索名称、描述
+      const matchesName = provider.name.toLowerCase().includes(query)
+      const matchesDescription = provider.description.toLowerCase().includes(query)
+      // 搜索模型名称
+      const matchesModel = provider.models.some(m => 
+        m.name.toLowerCase().includes(query) || 
+        m.id.toLowerCase().includes(query)
+      )
+      return matchesName || matchesDescription || matchesModel
+    })
+  }
+  
+  // 按能力过滤
+  if (capabilityFilter.value !== 'all') {
+    result = result.filter(provider => {
+      return provider.models.some(model => {
+        switch (capabilityFilter.value) {
+          case 'vision':
+            return model.capabilities.vision
+          case 'image':
+            return model.capabilities.image
+          case 'functionCall':
+            return model.capabilities.functionCall
+          default:
+            return true
+        }
+      })
+    })
+  }
+  
+  return result
+})
+
+// 分离已配置和未配置的服务商
+const configuredProviders = computed(() => {
+  return filteredProviders.value.filter(provider => {
+    // 如果有 API Key 或者是 Ollama（不需要 API Key），则视为已配置
+    return provider.apiKey || provider.id === 'ollama'
+  })
+})
+
+const unconfiguredProviders = computed(() => {
+  return filteredProviders.value.filter(provider => {
+    // 没有 API Key 且不是 Ollama，则视为未配置
+    return !provider.apiKey && provider.id !== 'ollama'
+  })
+})
+
+// 检查是否为默认筛选状态
+const isFiltersDefault = computed(() => {
+  return providerSearchQuery.value === '' &&
+         selectedCategory.value === 'all' &&
+         capabilityFilter.value === 'all'
+})
+
+// 重置所有筛选条件
+const resetFilters = () => {
+  providerSearchQuery.value = ''
+  selectedCategory.value = 'all'
+  capabilityFilter.value = 'all'
+}
+
+// 存储设置
+const storageMode = ref<'local' | 'cloud' | 'hybrid'>('local')
+const syncFrequency = ref<'realtime' | 'high' | 'moderate' | 'low' | 'manual'>('moderate')
+const userInfo = ref<any>(null)
+const showLoginModal = ref(false)
+const syncLoading = ref(false)
+const lastSyncTime = ref<string>('')
+
+// 滚动到指定区域
+const scrollToSection = (sectionId: string) => {
+  const element = document.getElementById(`section-${sectionId}`)
+  if (element && contentContainer.value) {
+    isScrolling.value = true
+    activeSection.value = sectionId
+    
+    const container = contentContainer.value
+    const offsetTop = element.offsetTop - 82 // 距离顶部，标题在合适位置
+    
+    container.scrollTo({
+      top: offsetTop,
+      behavior: 'smooth'
+    })
+    
+    // 滚动完成后重置标志
+    setTimeout(() => {
+      isScrolling.value = false
+    }, 600)
+  }
+}
+
+// 监听滚动，更新激活的导航项
+const onScroll = () => {
+  if (isScrolling.value) return
+  
+  const container = contentContainer.value
+  if (!container) return
+  
+  const scrollTop = container.scrollTop
+  const sections = settingsSections.value.map(s => ({
+    id: s.id,
+    element: document.getElementById(`section-${s.id}`)
+  }))
+  
+  // 找到当前滚动位置对应的section
+  for (let i = sections.length - 1; i >= 0; i--) {
+    const section = sections[i]
+    if (section.element) {
+      const offsetTop = section.element.offsetTop - 60 // 提前一点切换
+      if (scrollTop >= offsetTop) {
+        activeSection.value = section.id
+        break
+      }
+    }
+  }
+}
+
+// 获取用户 Token
+const getUserToken = (): string | null => {
+  return localStorage.getItem('userToken') || sessionStorage.getItem('userToken')
+}
+
+const getUserId = (): string | null => {
+  const savedUserInfo = localStorage.getItem('userInfo') || sessionStorage.getItem('userInfo')
+  if (savedUserInfo) {
+    try {
+      const user = JSON.parse(savedUserInfo)
+      return user.id || null
+    } catch {
+      return null
+    }
+  }
+  return null
+}
+
+// 检查登录状态
+const checkLoginStatus = () => {
+  const token = getUserToken()
+  const savedUserInfo = localStorage.getItem('userInfo') || sessionStorage.getItem('userInfo')
+  
+  if (token && savedUserInfo) {
+    try {
+      userInfo.value = JSON.parse(savedUserInfo)
+    } catch (error) {
+      console.error('Parse user info error:', error)
+      logout()
+    }
+  }
+}
+
+// 存储模式变化处理
+const onStorageModeChange = async () => {
+  if (storageMode.value !== 'local' && !userInfo.value) {
+    showLoginModal.value = true
+    return
+  }
+  
+  // ✅ 简化：直接保存到 localStorage
+  localStorage.setItem('storageMode', storageMode.value)
+  console.log('[Settings] ✅ 存储模式已切换为:', storageMode.value)
+  
+  // 触发事件通知其他组件（如 AppTitleBar）
+  window.dispatchEvent(new CustomEvent('storage-mode-changed', {
+    detail: { storageMode: storageMode.value }
+  }))
+  
+  await saveSettings()
+}
+
+// 登录成功处理
+const onLoginSuccess = async (user: any) => {
+  userInfo.value = user
+  console.log('[Settings] Login successful:', user)
+  
+  // ✅ 登录成功后，切换到云端/混合模式
+  const userToken = getUserToken()
+  if (userToken && storageMode.value !== 'local') {
+    try {
+      await window.electronAPI.storage.switchToCloud(userToken)
+      console.log('[Settings] ✅ 已切换到云端存储模式')
+    } catch (error) {
+      console.error('[Settings] 切换到云端模式失败:', error)
+    }
+  }
+  
+  // 触发登录状态变化事件
+  window.dispatchEvent(new CustomEvent('login-status-changed', {
+    detail: { isLoggedIn: true, user }
+  }))
+  
+  // 重新加载设置
+  await loadSettings()
+  console.log('[Settings] ✅ 登录成功，设置已重新加载')
+}
+
+// 退出登录
+const logout = async () => {
+  localStorage.removeItem('userToken')
+  localStorage.removeItem('userInfo')
+  sessionStorage.removeItem('userToken')
+  sessionStorage.removeItem('userInfo')
+  userInfo.value = null
+  storageMode.value = 'local'
+  
+  // ✅ 切换到本地存储模式
+  try {
+    await window.electronAPI.storage.switchToLocal()
+    console.log('[Settings] ✅ 用户登出，已切换到本地存储')
+  } catch (error) {
+    console.error('[Settings] 切换到本地模式失败:', error)
+  }
+  
+  // 触发登录状态变化事件
+  window.dispatchEvent(new CustomEvent('login-status-changed', {
+    detail: { isLoggedIn: false, user: null }
+  }))
+  
+  localStorage.setItem('storageMode', 'local')
+  await saveSettings()
+}
+
+// 手动同步（简化版：重新从云端加载）
+const manualSync = async () => {
+  if (!userInfo.value || storageMode.value === 'local') {
+    showErrorNotification('仅在云端或混合存储模式下可用')
+    return
+  }
+  
+  syncLoading.value = true
+  try {
+    // ✅ 使用 StorageManager 的 sync 功能
+    const result = await window.electronAPI.storage.sync()
+    console.log('[Settings] Sync result:', result)
+    
+    if (result.success) {
+      await loadSettings()
+      lastSyncTime.value = new Date().toLocaleString()
+      showSuccessNotification(`同步成功：${result.recordsSynced || 0} 条记录`)
+    } else {
+      showErrorNotification('同步失败')
+    }
+  } catch (error) {
+    console.error('Sync error:', error)
+    showErrorNotification('同步失败')
+  } finally {
+    syncLoading.value = false
+  }
+}
+
+// 主题变化处理
+const onThemeChange = () => {
+  theme.setMode(mode.value)
+  showSuccessNotification('主题模式已更新')
+}
+
+// 新主题系统的切换处理
+const onThemeModeChange = () => {
+  console.log('[Settings] 🎨 切换主题:', selectedThemeMode.value)
+  themeService.applyTheme(selectedThemeMode.value)
+  showSuccessNotification(`主题已切换为: ${availableThemes.value.find(t => t.value === selectedThemeMode.value)?.label}`)
+}
+
+const onColorSchemeChange = (scheme: 'blue' | 'green' | 'purple' | 'orange' | 'red') => {
+  selectedColorScheme.value = scheme
+  theme.setColorScheme(scheme)
+  showSuccessNotification('颜色方案已更新')
+}
+
+const onFontSizeChange = () => {
+  theme.setFontSize(fontSize.value)
+  showSuccessNotification('字体大小已更新')
+}
+
+// 显示通知
+const showSuccessNotification = (message: string) => {
+  showNotification(message, 'success')
+}
+
+const showErrorNotification = (message: string) => {
+  showNotification(message, 'error')
+}
+
+const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
+  const notification = document.createElement('div')
+  notification.textContent = message
+  notification.className = `notification ${type === 'success' ? 'notification-success' : 'notification-error'}`
+  document.body.appendChild(notification)
+  
+  setTimeout(() => {
+    notification.classList.add('show')
+  }, 10)
+  
+  setTimeout(() => {
+    notification.classList.remove('show')
+    setTimeout(() => {
+        document.body.removeChild(notification)
+    }, 300)
+  }, 3000)
+}
+
+// 保存设置
+const saveSettings = async () => {
+  console.log('[SettingsView] 🚀 开始保存设置...')
+  
+  // 将响应式对象转换为纯 JSON 对象（避免 IPC 序列化错误）
+  const settings = {
+    appearance: {
+    theme: mode.value,
+    fontSize: fontSize.value,
+      colorScheme: selectedColorScheme.value
+    },
+    ssh: {
+      timeout: sshTimeout.value,
+    keepAlive: keepAlive.value,
+      defaultPort: defaultSSHPort.value
+    },
+    terminal: {
+      fontSize: terminalFontSize.value,
+    cursorStyle: cursorStyle.value,
+      cursorBlink: cursorBlink.value
+    },
+    aiAssistant: {
+      autoApproveReadOnly: autoApproveReadOnly.value,
+      commandRiskLevel: commandRiskLevel.value,
+      enableChatHistory: enableChatHistory.value,
+      maxHistoryMessages: maxHistoryMessages.value
+    },
+    // 转换为纯 JSON，移除响应式代理和不可序列化的对象
+    aiProviders: JSON.parse(JSON.stringify(aiProviders.value)),
+    advanced: {
+    autoConnect: autoConnect.value,
+    saveCommandHistory: saveCommandHistory.value,
+    developerMode: developerMode.value,
+    storageMode: storageMode.value,
+    syncFrequency: syncFrequency.value
+    },
+    storage: {
+      mode: storageMode.value
+    },
+    version: '1.0.0',
+    lastUpdated: new Date().toISOString()
+  }
+  
+  console.log('[SettingsView] 📦 设置内容:', JSON.stringify(settings, null, 2))
+  
+  try {
+    console.log('[SettingsView] 📡 调用 settingsService.saveSettings...')
+    
+    // ✅ 使用 settingsService，自动处理 userId
+    const result = await settingsService.saveSettings(settings)
+    
+    console.log('[SettingsView] ✅ 保存结果:', result)
+    console.log('[SettingsView] ✅ 设置保存成功')
+    
+    // ✅ 保存元配置到 localStorage
+    console.log('[SettingsView] 💾 保存 storageMode 到 localStorage:', storageMode.value)
+    localStorage.setItem('storageMode', storageMode.value)
+    
+    // 更新主题 Composable
+  theme.setMode(mode.value)
+  theme.setColorScheme(selectedColorScheme.value)
+  theme.setFontSize(fontSize.value)
+  
+    // 触发设置更新事件
+    window.dispatchEvent(new CustomEvent('settings-updated'))
+    
+    console.log('[SettingsView] 🎉 所有保存操作完成')
+  } catch (error) {
+    console.error('[SettingsView] ❌ 保存设置失败:', error)
+    console.error('[SettingsView] 错误详情:', error instanceof Error ? error.stack : error)
+    showNotification('保存设置失败', 'error')
+  }
+}
+
+// 加载设置
+const loadSettings = async () => {
+  try {
+    // 从主题 Composable 加载主题设置（mode, colorScheme, themeFontSize 已经从 composable 解构）
+    fontSize.value = themeFontSize.value
+    selectedColorScheme.value = colorScheme.value
+    
+    // ✅ 使用 settingsService，自动处理 userId
+    const settings = await settingsService.getSettings()
+    
+    if (settings) {
+      // 外观设置
+      if (settings.appearance) {
+        mode.value = settings.appearance.theme || 'auto'
+        fontSize.value = settings.appearance.fontSize || 'medium'
+        selectedColorScheme.value = settings.appearance.colorScheme || 'blue'
+      }
+      
+      // SSH 设置
+      if (settings.ssh) {
+        sshTimeout.value = settings.ssh.timeout || 30
+        keepAlive.value = settings.ssh.keepAlive !== undefined ? settings.ssh.keepAlive : true
+        defaultSSHPort.value = settings.ssh.defaultPort || 22
+      }
+      
+      // 终端设置
+      if (settings.terminal) {
+        terminalFontSize.value = settings.terminal.fontSize || 14
+        cursorStyle.value = settings.terminal.cursorStyle || 'block'
+        cursorBlink.value = settings.terminal.cursorBlink !== undefined ? settings.terminal.cursorBlink : true
+      }
+      
+      // AI 助手设置
+      if (settings.aiAssistant) {
+        autoApproveReadOnly.value = settings.aiAssistant.autoApproveReadOnly !== undefined ? settings.aiAssistant.autoApproveReadOnly : true
+        commandRiskLevel.value = settings.aiAssistant.commandRiskLevel !== undefined ? settings.aiAssistant.commandRiskLevel : 2
+        enableChatHistory.value = settings.aiAssistant.enableChatHistory !== undefined ? settings.aiAssistant.enableChatHistory : true
+        maxHistoryMessages.value = settings.aiAssistant.maxHistoryMessages || 50
+      }
+      
+      // AI 服务商配置（优先使用数据库数据）
+      if (settings.aiProviders && settings.aiProviders.length > 0) {
+        console.log('[Settings] 📦 从数据库加载 AI Providers，数量:', settings.aiProviders.length)
+        
+        // 合并数据库配置和默认配置
+        aiProviders.value = DEFAULT_PROVIDERS.map(defaultProvider => {
+          const savedProvider = settings.aiProviders?.find((p: any) => p.id === defaultProvider.id)
+          
+          if (savedProvider) {
+            return {
+              ...defaultProvider,
+              ...savedProvider,
+              // 确保必填属性存在
+              apiKey: savedProvider.apiKey || (defaultProvider as any).apiKey || '',
+              isDefault: (savedProvider as any).isDefault ?? false,
+              // 【关键】保留数据库中保存的模型列表
+              models: savedProvider.models && savedProvider.models.length > 0
+                ? savedProvider.models
+                : defaultProvider.models
+            } as any
+          }
+          
+          return {
+            ...defaultProvider,
+            apiKey: (defaultProvider as any).apiKey || '',
+            enabled: false,
+            isDefault: false
+          } as any
+        }) as any
+        
+        console.log('[Settings] ✅ AI Providers 加载完成')
+      } else {
+        console.log('[Settings] ⚠️ 数据库中无 AI Providers 配置，使用默认配置')
+        // 初始化默认配置
+  aiProviders.value = DEFAULT_PROVIDERS.map(provider => ({
+    ...provider,
+    apiKey: '',
+    enabled: false,
+    isDefault: false
+  }))
+      }
+      
+      // 高级设置
+      if (settings.advanced) {
+        autoConnect.value = settings.advanced.autoConnect || false
+        saveCommandHistory.value = settings.advanced.saveCommandHistory !== undefined ? settings.advanced.saveCommandHistory : true
+        developerMode.value = settings.advanced.developerMode || false
+        storageMode.value = settings.advanced.storageMode || 'local'
+        syncFrequency.value = settings.advanced.syncFrequency || 'moderate'
+      }
+      
+      checkLoginStatus()
+      console.log('[Settings] Settings loaded, storage mode:', storageMode.value)
+    }
+  } catch (error) {
+    console.error('[Settings] Failed to load settings:', error)
+    
+    // 失败时尝试从 localStorage 迁移
+    await migrateFromLocalStorage()
+  }
+}
+
+// 从 localStorage 迁移到数据库
+const migrateFromLocalStorage = async () => {
+  try {
+    const localSettings = localStorage.getItem('appSettings')
+    const localProviders = localStorage.getItem('aiProviderConfigs')
+    
+    if (localSettings || localProviders) {
+      console.log('[Settings] 检测到 localStorage 数据，开始迁移...')
+      
+      const data: any = {}
+      
+      if (localSettings) {
+        data.appSettings = JSON.parse(localSettings)
+      }
+      
+      if (localProviders) {
+        data.aiProviderConfigs = JSON.parse(localProviders)
+      }
+      
+      // ✅ 使用 settingsService 保存迁移的数据
+      const migratedSettings = {
+        ...data.appSettings,
+        aiProviders: data.aiProviderConfigs
+      }
+      
+      // 保存到新架构（自动处理 userId）
+      await settingsService.saveSettings(migratedSettings)
+      
+      // 迁移成功后清除 localStorage
+      localStorage.removeItem('appSettings')
+      localStorage.removeItem('aiProviderConfigs')
+      
+      console.log('[Settings] ✅ 成功从 localStorage 迁移到数据库')
+      showNotification('设置已自动迁移到数据库', 'success')
+      
+      // 重新加载设置
+      await loadSettings()
+    }
+  } catch (error) {
+    console.error('[Settings] 迁移失败:', error)
+    showNotification('设置迁移失败，请手动重新配置', 'error')
+  }
+}
+
+// 自动保存
+watch([
+  mode, fontSize, selectedColorScheme, sshTimeout, keepAlive, defaultSSHPort,
+  terminalFontSize, cursorStyle, cursorBlink,
+  // AI 助手设置
+  autoApproveReadOnly, commandRiskLevel,
+  enableChatHistory, maxHistoryMessages,
+  // 高级设置
+  autoConnect, saveCommandHistory,
+  developerMode, storageMode, syncFrequency
+], () => {
+  saveSettings()
+}, { deep: true })
+
+// AI 服务商相关函数（已废弃，逻辑已整合到 loadSettings 中）
+
+const toggleProvider = (providerId: string) => {
+  const index = expandedProviders.value.indexOf(providerId)
+  if (index > -1) {
+    expandedProviders.value.splice(index, 1)
+  } else {
+    expandedProviders.value.push(providerId)
+  }
+}
+
+const toggleApiKeyVisibility = (providerId: string) => {
+  showApiKey.value[providerId] = !showApiKey.value[providerId]
+}
+
+const testProviderConnection = async (provider: AIProvider) => {
+  if (!provider.apiKey && provider.id !== 'ollama') {
+    showNotification('请先输入 API Key', 'error')
+    return
+  }
+  
+  testingProviders.value[provider.id] = true
+  testResults.value[provider.id] = {
+    success: false,
+    message: '测试中...'
+  }
+  
+  try {
+    const result = await testProviderAPI(provider)
+    testResults.value[provider.id] = result
+    
+    if (result.success) {
+      showNotification(result.message, 'success')
+    } else {
+      showNotification(`${result.message}: ${result.error}`, 'error')
+    }
+  } catch (error: any) {
+    testResults.value[provider.id] = {
+      success: false,
+      message: '测试失败',
+      error: error.message
+    }
+    showNotification('测试连接失败', 'error')
+  } finally {
+    testingProviders.value[provider.id] = false
+  }
+}
+
+const refreshModelList = async (provider: AIProvider) => {
+  if (!provider.apiKey) {
+    showNotification('请先输入 API Key', 'error')
+    return
+  }
+  
+  console.log(`[Settings] 🔄 开始刷新 ${provider.id} 的模型列表...`)
+  fetchingModels.value[provider.id] = true
+  
+  try {
+    const result = await fetchModelsForProvider(
+      provider.id,
+      provider.apiKey,
+      provider.endpoint
+    )
+    
+    if (result.success && result.models) {
+      // 合并获取的模型列表和现有配置
+      const existingModels = provider.models || []
+      const fetchedModels = result.models
+      
+      console.log(`[Settings] 📥 获取到 ${fetchedModels.length} 个模型，现有 ${existingModels.length} 个`)
+      
+      // 保留用户对现有模型的 enabled 配置，新模型默认禁用
+      const mergedModels = fetchedModels.map(fetchedModel => {
+        const existing = existingModels.find(m => m.id === fetchedModel.id)
+        const enabled = existing?.enabled !== undefined ? existing.enabled : false
+        return {
+          ...fetchedModel,
+          enabled  // 新模型默认禁用
+        }
+      })
+      
+      console.log(`[Settings] ✅ 合并后模型数量: ${mergedModels.length}`)
+      
+      // 更新模型列表
+      provider.models = mergedModels
+      
+      // 自动保存
+      console.log(`[Settings] 💾 正在保存 ${provider.id} 的模型列表...`)
+      await saveAIProviderConfigs()
+      
+      showNotification(`成功获取 ${mergedModels.length} 个模型`, 'success')
+    } else {
+      console.error(`[Settings] ❌ 刷新模型失败:`, result.error)
+      showNotification(result.error || '获取模型列表失败', 'error')
+    }
+  } catch (error: any) {
+    console.error('[Settings] ❌ 刷新模型列表失败:', error)
+    showNotification('刷新模型列表失败: ' + error.message, 'error')
+  } finally {
+    fetchingModels.value[provider.id] = false
+  }
+}
+
+// 打开添加模型对话框
+const openAddModelDialog = (provider: AIProvider) => {
+  currentEditingProvider.value = provider
+  // 重置表单
+  newModel.value = {
+    id: '',
+    name: '',
+    contextWindow: 8192,
+    capabilities: {
+      text: true,
+      image: false,
+      functionCall: false,
+      vision: false
+    },
+    price: {
+      input: 0,
+      output: 0
+    },
+    description: ''
+  }
+  showAddModelDialog.value = true
+}
+
+// 添加自定义模型
+const addCustomModel = async () => {
+  if (!currentEditingProvider.value) {
+    return
+  }
+  
+  // 验证必填字段
+  if (!newModel.value.id.trim()) {
+    showNotification('请输入模型 ID', 'error')
+    return
+  }
+  if (!newModel.value.name.trim()) {
+    showNotification('请输入模型名称', 'error')
+    return
+  }
+  
+  const provider = currentEditingProvider.value
+  
+  // 检查模型 ID 是否已存在
+  if (provider.models.some(m => m.id === newModel.value.id)) {
+    showNotification('该模型 ID 已存在', 'error')
+    return
+  }
+  
+  // 添加模型
+  const model = {
+    id: newModel.value.id.trim(),
+    name: newModel.value.name.trim(),
+    providerId: provider.id,
+    contextWindow: newModel.value.contextWindow,
+    capabilities: { ...newModel.value.capabilities },
+    price: {
+      input: newModel.value.price.input,
+      output: newModel.value.price.output
+    },
+    description: newModel.value.description.trim(),
+    enabled: true  // 新添加的模型默认启用
+  }
+  
+  console.log(`[Settings] ➕ 添加自定义模型:`, model)
+  
+  provider.models.push(model)
+  
+  // 保存配置
+  await saveAIProviderConfigs()
+  
+  showNotification(`已添加模型: ${model.name}`, 'success')
+  showAddModelDialog.value = false
+}
+
+// 取消添加模型
+const cancelAddModel = () => {
+  showAddModelDialog.value = false
+  currentEditingProvider.value = null
+}
+
+const clearProviderConfig = (providerId: string) => {
+  const provider = aiProviders.value.find(p => p.id === providerId)
+  if (provider) {
+    provider.apiKey = ''
+    provider.enabled = false
+    testResults.value[providerId] = undefined as any
+    saveAIProviderConfigs()
+    showNotification('配置已清除', 'success')
+  }
+}
+
+const toggleModelDetails = (providerId: string) => {
+  expandedModels.value[providerId] = !expandedModels.value[providerId]
+  
+  // 初始化筛选状态（如果还未初始化）
+  if (expandedModels.value[providerId]) {
+    if (!modelSearchQuery.value[providerId]) {
+      modelSearchQuery.value[providerId] = ''
+    }
+    if (!modelPriceFilter.value[providerId]) {
+      modelPriceFilter.value[providerId] = 'all'
+    }
+  }
+}
+
+const onModelToggle = (providerId: string, modelId: string) => {
+  const provider = aiProviders.value.find(p => p.id === providerId)
+  const model = provider?.models.find(m => m.id === modelId)
+  
+  console.log(`[Settings] 🔄 模型状态切换: ${providerId}/${modelId}, enabled: ${model?.enabled}`)
+  
+  // watch 会自动触发保存
+}
+
+// 模型过滤函数
+const filterModels = (models: AIModel[], providerId: string): AIModel[] => {
+  let result = [...models]
+  
+  // 按搜索关键词过滤
+  const searchQuery = modelSearchQuery.value[providerId]?.trim().toLowerCase()
+  if (searchQuery) {
+    result = result.filter(model => {
+      const matchesName = model.name.toLowerCase().includes(searchQuery)
+      const matchesId = model.id.toLowerCase().includes(searchQuery)
+      const matchesDescription = model.description?.toLowerCase().includes(searchQuery)
+      return matchesName || matchesId || matchesDescription
+    })
+  }
+  
+  // 按价格筛选
+  const priceFilter = modelPriceFilter.value[providerId]
+  if (priceFilter && priceFilter !== 'all') {
+    result = result.filter(model => {
+      if (!model.price) {
+        return priceFilter === 'free' // 无价格信息的视为免费
+      }
+      
+      // 计算平均价格（输入+输出）/2
+      const avgPrice = (model.price.input + model.price.output) / 2
+      
+      switch (priceFilter) {
+        case 'free':
+          return avgPrice === 0
+        case 'low':
+          return avgPrice > 0 && avgPrice <= 1 // $0-$1/1M tokens
+        case 'medium':
+          return avgPrice > 1 && avgPrice <= 10 // $1-$10/1M tokens
+        case 'high':
+          return avgPrice > 10 // >$10/1M tokens
+        default:
+          return true
+      }
+    })
+  }
+  
+  return result
+}
+
+const getEnabledModels = (models: AIModel[], providerId?: string) => {
+  const filtered = providerId ? filterModels(models, providerId) : models
+  return filtered.filter(model => model.enabled !== false)
+}
+
+const getDisabledModels = (models: AIModel[], providerId?: string) => {
+  const filtered = providerId ? filterModels(models, providerId) : models
+  return filtered.filter(model => model.enabled === false)
+}
+
+// 从模型 ID 中提取真实的供应商 ID（用于彩色图标组件）
+const getProviderIdFromModel = (model: AIModel, provider: AIProvider): string => {
+  // 如果不是聚合平台，直接返回供应商 ID
+  if (provider.id !== 'openrouter' && provider.id !== 'together') {
+    return provider.id
+  }
+  
+  // 从模型 ID 中提取真实供应商
+  const modelId = model.id.toLowerCase()
+  
+  // 根据模型 ID 前缀或关键字识别供应商
+  if (modelId.includes('openai/') || modelId.includes('gpt-')) return 'openai'
+  if (modelId.includes('anthropic/') || modelId.includes('claude')) return 'anthropic'
+  if (modelId.includes('google/') || modelId.includes('gemini') || modelId.includes('palm')) return 'google'
+  if (modelId.includes('meta/') || modelId.includes('llama')) return 'meta'
+  if (modelId.includes('mistral/') || modelId.includes('mistral')) return 'mistral'
+  if (modelId.includes('cohere/')) return 'cohere'
+  if (modelId.includes('deepseek/')) return 'deepseek'
+  if (modelId.includes('qwen/') || modelId.includes('qwen')) return 'qwen'
+  if (modelId.includes('yi/')) return 'yi'
+  if (modelId.includes('huggingface/')) return 'huggingface'
+  if (modelId.includes('groq/')) return 'groq'
+  if (modelId.includes('perplexity/')) return 'perplexity'
+  if (modelId.includes('alibaba/')) return 'qwen'
+  if (modelId.includes('baichuan/')) return 'baichuan'
+  if (modelId.includes('minimax/')) return 'minimax'
+  
+  // 默认返回平台自身的 ID
+  return provider.id
+}
+
+// 获取模型的真实供应商图标（用于 OpenRouter 等聚合平台）
+const getModelProviderIcon = (model: AIModel, provider: AIProvider): { icon: string, name: string } => {
+  // 如果是聚合平台（如 OpenRouter），从模型 ID 中提取真实供应商
+  if (provider.id === 'openrouter' || provider.id === 'together') {
+    const modelId = model.id.toLowerCase()
+    
+    // 根据模型 ID 前缀或关键字识别供应商
+    if (modelId.includes('openai/') || modelId.includes('gpt')) {
+      return { icon: 'bi bi-robot', name: 'OpenAI' }
+    }
+    if (modelId.includes('anthropic/') || modelId.includes('claude')) {
+      return { icon: 'bi bi-brain', name: 'Anthropic' }
+    }
+    if (modelId.includes('google/') || modelId.includes('gemini') || modelId.includes('palm')) {
+      return { icon: 'bi bi-search', name: 'Google' }
+    }
+    if (modelId.includes('meta/') || modelId.includes('llama')) {
+      return { icon: 'bi bi-facebook', name: 'Meta' }
+    }
+    if (modelId.includes('mistral/') || modelId.includes('mistral')) {
+      return { icon: 'bi bi-wind', name: 'Mistral AI' }
+    }
+    if (modelId.includes('cohere/')) {
+      return { icon: 'bi bi-graph-up', name: 'Cohere' }
+    }
+    if (modelId.includes('deepseek/')) {
+      return { icon: 'bi bi-search-heart', name: 'DeepSeek' }
+    }
+    if (modelId.includes('qwen/') || modelId.includes('qwen')) {
+      return { icon: 'bi bi-cloud', name: '通义千问' }
+    }
+    if (modelId.includes('yi/')) {
+      return { icon: 'bi bi-lightning', name: '零一万物' }
+    }
+  }
+  
+  // 默认返回当前供应商的图标
+  return { icon: provider.icon, name: provider.name }
+}
+
+const formatContextWindow = (tokens: number): string => {
+  if (tokens >= 1000000) {
+    return `${(tokens / 1000000).toFixed(1)}M tokens`
+  } else if (tokens >= 1000) {
+    return `${(tokens / 1000).toFixed(0)}K tokens`
+  }
+  return `${tokens} tokens`
+}
+
+const saveAIProviderConfigs = async () => {
+  try {
+    console.log('[Settings] 💾 开始保存 AI Provider 配置...')
+    
+    // ✅ 使用 settingsService，自动处理 userId
+    const currentSettings = await settingsService.getSettings()
+    
+    // 创建纯 JSON 对象（避免响应式代理）
+    const cleanProviders = aiProviders.value.map(provider => {
+      const enabledModelsCount = provider.models?.filter(m => m.enabled !== false).length || 0
+      
+      return {
+      id: provider.id,
+      name: provider.name,
+      apiKey: provider.apiKey || '',
+      endpoint: provider.endpoint,
+      enabled: provider.enabled,
+      isDefault: provider.isDefault,
+        config: provider.config ? JSON.parse(JSON.stringify(provider.config)) : undefined,
+      models: provider.models?.map(model => ({
+        id: model.id,
+        name: model.name,
+        description: model.description,
+        providerId: model.providerId,
+        contextWindow: model.contextWindow,
+        capabilities: model.capabilities,
+        price: model.price,
+        recommended: model.recommended,
+          // 只有明确为 false 才禁用，undefined 或 true 都视为启用
+          enabled: model.enabled !== false
+        }))
+      }
+    })
+    
+    console.log(`[Settings] 📦 准备保存 ${cleanProviders.length} 个服务商配置`)
+    
+    // 更新 AI 服务商配置（使用纯 JSON 对象）
+    const updatedSettings = {
+      ...currentSettings,
+      aiProviders: cleanProviders,
+      lastUpdated: new Date().toISOString()
+    }
+    
+    // ✅ 保存到存储（使用 settingsService，自动处理 userId）
+    await settingsService.saveSettings(JSON.parse(JSON.stringify(updatedSettings)))
+    
+    console.log('[Settings] ✅ AI Provider 配置保存成功')
+    
+    // 触发自定义事件通知其他组件配置已更新
+    console.log('[Settings] 📢 触发 ai-provider-configs-updated 事件')
+    window.dispatchEvent(new CustomEvent('ai-provider-configs-updated'))
+  } catch (error) {
+    console.error('[Settings] ❌ 保存 AI Provider 配置失败:', error)
+  }
+}
+
+// 监听 AI 服务商配置变化
+watch(aiProviders, () => {
+  saveAIProviderConfigs()
+}, { deep: true })
+
+// 监听主题 Composable 变化，同步到本地状态
+watch([mode, colorScheme, themeFontSize], () => {
+  // mode 已经是从 composable 解构出来的，无需再赋值
+  fontSize.value = themeFontSize.value
+  selectedColorScheme.value = colorScheme.value
+})
+
+// 监听路由 query 参数变化（用于从其他页面导航到设置页面的特定部分）
+watch(() => route.query, async (newQuery, oldQuery) => {
+  // 只有当 query 真正变化时才处理
+  if (JSON.stringify(newQuery) !== JSON.stringify(oldQuery)) {
+    const section = newQuery.section as string | undefined
+    const action = newQuery.action as string | undefined
+    
+    if (section) {
+      console.log('[Settings] 路由参数变化 - section:', section, 'action:', action)
+      
+      // 滚动到指定的 section
+      await nextTick()
+      scrollToSection(section)
+      
+      // 如果是存储部分且 action 是 login
+      if (section === 'storage' && action === 'login') {
+        console.log('[Settings] 处理云存储登录请求')
+        
+        // 如果未登录，弹出登录框
+        if (!userInfo.value) {
+          showLoginModal.value = true
+          console.log('[Settings] ✅ 已弹出登录框')
+        } else {
+          console.log('[Settings] ℹ️ 用户已登录，跳过弹窗')
+        }
+        
+        // 如果是本地存储，自动切换到云存储
+        if (storageMode.value === 'local') {
+          storageMode.value = 'cloud'
+          await onStorageModeChange()
+          console.log('[Settings] ✅ 已切换到云存储模式')
+        }
+      }
+    }
+  }
+}, { deep: true })
+
+onMounted(async () => {
+  // 检查登录状态
+  checkLoginStatus()
+  
+  // ✅ 简化：从 localStorage 读取元配置
+  const savedMode = localStorage.getItem('storageMode') as 'local' | 'cloud' | 'hybrid' | null
+  storageMode.value = savedMode || 'local'
+  
+  console.log('[Settings] 当前存储模式:', storageMode.value)
+  
+  // 监听主题变化
+  const handleThemeChange = (event: Event) => {
+    const customEvent = event as CustomEvent
+    selectedThemeMode.value = customEvent.detail.theme
+  }
+  window.addEventListener('theme-changed', handleThemeChange)
+  
+  // 处理 URL query 参数的函数
+  const handleQueryParams = async () => {
+    const section = route.query.section as string | undefined
+    const action = route.query.action as string | undefined
+    
+    if (section) {
+      console.log('[Settings] 检测到 query 参数 - section:', section, 'action:', action)
+      
+      // 滚动到指定的 section
+      await nextTick()
+      scrollToSection(section)
+      
+      // 如果是存储部分且 action 是 login
+      if (section === 'storage' && action === 'login') {
+        console.log('[Settings] 处理云存储登录请求')
+        
+        // 如果未登录，弹出登录框
+        if (!userInfo.value) {
+          showLoginModal.value = true
+          console.log('[Settings] ✅ 已弹出登录框')
+        } else {
+          console.log('[Settings] ℹ️ 用户已登录，跳过弹窗')
+        }
+        
+        // 如果是本地存储，自动切换到云存储
+        if (storageMode.value === 'local') {
+          storageMode.value = 'cloud'
+          await onStorageModeChange()
+          console.log('[Settings] ✅ 已切换到云存储模式')
+        }
+      }
+    }
+  }
+  
+  // 初次加载时处理 query 参数
+  await handleQueryParams()
+  
+  // 监听自定义导航事件（从 AppTitleBar 触发）
+  const handleNavigateToSettings = (event: Event) => {
+    const customEvent = event as CustomEvent
+    const { section: navSection, action: navAction } = customEvent.detail || {}
+    
+    if (navSection) {
+      activeSection.value = navSection
+      
+      if (navSection === 'storage' && navAction === 'login') {
+        if (!userInfo.value) {
+          showLoginModal.value = true
+        }
+        if (storageMode.value === 'local') {
+          storageMode.value = 'cloud'
+          onStorageModeChange()
+        }
+      }
+    }
+  }
+  
+  window.addEventListener('navigate-to-settings', handleNavigateToSettings)
+  
+  // 加载完整设置
+  await loadSettings()
+  
+  console.log('SettingsView mounted')
+})
+</script>
+
+<style scoped>
+.settings-view {
+  display: flex;
+  height: 100vh;
+  background: var(--vscode-bg);
+  color: var(--vscode-fg);
+}
+
+/* ========== 左侧导航 ========== */
+.settings-sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: var(--vscode-bg-lighter);
+  border-right: 1px solid var(--vscode-border);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--vscode-border);
+}
+
+.sidebar-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--vscode-fg);
+}
+
+.settings-nav {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--vscode-fg-muted);
+  user-select: none;
+}
+
+.nav-item:hover {
+  background: var(--vscode-bg);
+  color: var(--vscode-fg);
+}
+
+.nav-item.active {
+  background: var(--vscode-bg);
+  color: var(--vscode-accent);
+  border-left: 2px solid var(--vscode-accent);
+  padding-left: 18px;
+}
+
+.nav-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.nav-label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* ========== 右侧内容 ========== */
+.settings-content {
+  flex: 1;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+.content-inner {
+  max-width: 800px;
+  padding: 32px 48px;
+}
+
+.setting-section {
+  margin-bottom: 48px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  color: var(--vscode-fg);
+}
+
+.section-title i {
+  font-size: 22px;
+  color: var(--vscode-accent);
+}
+
+.section-description {
+  margin: 0 0 24px 0;
+  color: var(--vscode-fg-muted);
+  font-size: 14px;
+}
+
+.setting-row {
+  display: flex;
+  gap: 32px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--vscode-border);
+}
+
+.setting-row:last-child {
+  border-bottom: none;
+}
+
+.setting-left {
+  flex: 1;
+  min-width: 0;
+}
+
+.setting-right {
+  flex-shrink: 0;
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.setting-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--vscode-fg);
+  margin-bottom: 4px;
+}
+
+.setting-hint {
+  font-size: 12px;
+  color: var(--vscode-fg-muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.setting-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--vscode-fg-muted);
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: var(--vscode-bg-lighter);
+  border-radius: 2px;
+}
+
+/* ========== 表单控件 ========== */
+.form-select,
+.form-input {
+  width: 100%;
+  background: var(--vscode-input-bg);
+  border: 1px solid var(--vscode-border);
+  border-radius: 2px;
+  color: var(--vscode-fg);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-input {
+  padding: 0 12px;
+}
+
+.form-select:focus,
+.form-input:focus {
+  border-color: var(--vscode-accent);
+}
+
+.form-select:hover,
+.form-input:hover {
+  border-color: var(--vscode-fg-muted);
+}
+
+/* Toggle Switch */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--vscode-border);
+  border-radius: 24px;
+  transition: 0.3s;
+}
+
+.toggle-slider:before {
+  content: "";
+  position: absolute;
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+  background-color: var(--vscode-accent);
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+  transform: translateX(24px);
+}
+
+/* ========== 颜色方案选择器 ========== */
+.color-scheme-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 12px;
+}
+
+.color-scheme-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border: 2px solid var(--vscode-border);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.color-scheme-item:hover {
+  border-color: var(--vscode-fg-muted);
+  background: var(--vscode-bg-lighter);
+}
+
+.color-scheme-item.active {
+  border-color: var(--vscode-accent);
+  background: var(--vscode-bg-lighter);
+}
+
+.color-preview {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.color-label {
+  font-size: 12px;
+  color: var(--vscode-fg);
+  text-align: center;
+}
+
+.check-icon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  color: var(--vscode-accent);
+  font-size: 14px;
+}
+
+/* ========== 主题预览 ========== */
+.theme-preview {
+  padding: 16px;
+  background: var(--vscode-bg-lighter);
+  border: 1px solid var(--vscode-border);
+  border-radius: 4px;
+}
+
+.preview-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.preview-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 18px;
+}
+
+.preview-info {
+  flex: 1;
+}
+
+.preview-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--vscode-fg);
+}
+
+.preview-subtitle {
+  margin: 4px 0 0 0;
+  font-size: 12px;
+  color: var(--vscode-fg-muted);
+}
+
+.preview-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.preview-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.preview-button:active {
+  transform: translateY(0);
+}
+
+/* ========== 用户信息卡片 ========== */
+.user-info-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: var(--vscode-bg-lighter);
+  border: 1px solid var(--vscode-border);
+  border-radius: 4px;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--vscode-accent);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.user-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.user-name {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--vscode-fg);
+}
+
+.user-email {
+  margin: 2px 0 0 0;
+  font-size: 12px;
+  color: var(--vscode-fg-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.btn-logout {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: transparent;
+  border: 1px solid var(--vscode-border);
+  border-radius: 4px;
+  color: #e74c3c;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.btn-logout:hover {
+  background: rgba(231, 76, 60, 0.1);
+  border-color: #e74c3c;
+}
+
+/* ========== 登录按钮 ========== */
+.login-prompt {
+  width: 100%;
+}
+
+.btn-login {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--vscode-accent);
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-login:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.btn-login:active {
+  transform: translateY(0);
+}
+
+/* ========== 同步状态 ========== */
+.sync-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.sync-time {
+  font-size: 13px;
+  color: var(--vscode-fg-muted);
+}
+
+.btn-sync {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: transparent;
+  border: 1px solid var(--vscode-border);
+  border-radius: 4px;
+  color: var(--vscode-accent);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-sync:hover:not(:disabled) {
+  background: var(--vscode-bg-lighter);
+  border-color: var(--vscode-accent);
+}
+
+.btn-sync:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.rotating {
+  animation: rotate 1s linear infinite;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ========== 关于部分 ========== */
+.about-info {
+  text-align: center;
+  padding: 32px 24px;
+  background: var(--vscode-bg-lighter);
+  border: 1px solid var(--vscode-border);
+  border-radius: 6px;
+}
+
+.app-logo {
+  font-size: 64px;
+  color: var(--vscode-accent);
+  margin-bottom: 16px;
+}
+
+.app-name {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--vscode-fg);
+  margin: 0 0 8px 0;
+}
+
+.app-version {
+  font-size: 14px;
+  color: var(--vscode-fg-muted);
+  margin: 0 0 16px 0;
+}
+
+.app-description {
+  font-size: 14px;
+  color: var(--vscode-fg-muted);
+  line-height: 1.6;
+  max-width: 400px;
+  margin: 0 auto 24px auto;
+}
+
+.about-links {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.about-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: transparent;
+  border: 1px solid var(--vscode-border);
+  border-radius: 4px;
+  color: var(--vscode-accent);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.about-link:hover {
+  background: var(--vscode-bg);
+  border-color: var(--vscode-accent);
+  transform: translateY(-2px);
+}
+
+/* ========== 通知 ========== */
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 10000;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+}
+
+.notification.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.notification-success {
+  background: var(--vscode-editorGutter-addedBackground);
+  color: var(--vscode-button-foreground);
+}
+
+.notification-error {
+  background: var(--vscode-editorGutter-deletedBackground);
+  color: var(--vscode-button-foreground);
+}
+
+/* ========== AI 服务商 ========== */
+/* 服务商过滤工具栏 */
+.provider-count-badge {
+  display: inline-block;
+  margin-left: 12px;
+  padding: 4px 12px;
+  background: var(--vscode-accent);
+  color: white;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  vertical-align: middle;
+}
+
+.providers-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding: 20px;
+  background: var(--vscode-bg-lighter);
+  border: 1px solid var(--vscode-border);
+  border-radius: 8px;
+}
+
+/* 搜索框 */
+.search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.search-icon {
+  position: absolute;
+  left: 14px;
+  color: var(--vscode-fg-muted);
+  font-size: 16px;
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 44px 12px 44px;
+  background: var(--vscode-bg);
+  border: 1px solid var(--vscode-border);
+  border-radius: 6px;
+  color: var(--vscode-fg);
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--vscode-accent);
+  box-shadow: 0 0 0 3px rgba(var(--vscode-accent-rgb), 0.1);
+}
+
+.search-input::placeholder {
+  color: var(--vscode-fg-muted);
+}
+
+.clear-search-btn {
+  position: absolute;
+  right: 10px;
+  padding: 6px;
+  background: transparent;
+  border: none;
+  color: var(--vscode-fg-muted);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.clear-search-btn:hover {
+  background: var(--vscode-bg);
+  color: var(--vscode-fg);
+}
+
+/* 分类筛选按钮 */
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.filter-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--vscode-bg);
+  border: 1px solid var(--vscode-border);
+  border-radius: 20px;
+  color: var(--vscode-fg);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.filter-chip i {
+  font-size: 14px;
+}
+
+.filter-chip:hover {
+  background: var(--vscode-accent);
+  color: white;
+  border-color: var(--vscode-accent);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.filter-chip.active {
+  background: var(--vscode-accent);
+  color: white;
+  border-color: var(--vscode-accent);
+  box-shadow: 0 2px 8px rgba(var(--vscode-accent-rgb), 0.3);
+}
+
+.chip-count {
+  display: inline-block;
+  padding: 2px 6px;
+  background: var(--vscode-badge-background);
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--vscode-badge-foreground);
+}
+
+.filter-chip.active .chip-count {
+  opacity: 0.9;
+}
+
+/* 高级过滤 */
+.advanced-filters {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 150px;
+}
+
+.filter-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--vscode-fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.filter-label i {
+  font-size: 13px;
+}
+
+.filter-select {
+  background: var(--vscode-bg);
+  border: 1px solid var(--vscode-border);
+  border-radius: 2px;
+  color: var(--vscode-fg);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: var(--vscode-accent);
+  box-shadow: 0 0 0 3px rgba(var(--vscode-accent-rgb), 0.1);
+}
+
+.reset-filters-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--vscode-bg);
+  border: 1px solid var(--vscode-border);
+  border-radius: 6px;
+  color: var(--vscode-fg);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  height: fit-content;
+}
+
+.reset-filters-btn:hover:not(:disabled) {
+  background: var(--vscode-accent);
+  color: white;
+  border-color: var(--vscode-accent);
+}
+
+.reset-filters-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.reset-filters-btn i {
+  font-size: 14px;
+}
+
+/* 过滤结果信息 */
+.filter-result-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--vscode-accent-bg);
+  border: 1px solid var(--vscode-accent);
+  border-radius: 6px;
+  color: var(--vscode-accent);
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.filter-result-info i {
+  font-size: 16px;
+}
+
+.filter-result-info strong {
+  font-weight: 700;
+}
+
+/* 无结果状态 */
+.no-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  color: var(--vscode-fg-muted);
+}
+
+.no-results i {
+  font-size: 64px;
+  margin-bottom: 16px;
+  opacity: 0.3;
+}
+
+.no-results p {
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.btn-reset {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: var(--vscode-accent);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-reset:hover {
+  background: var(--vscode-accent-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(var(--vscode-accent-rgb), 0.3);
+}
+
+.btn-reset i {
+  font-size: 16px;
+}
+
+.providers-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* 服务商板块 */
+.provider-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.provider-section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: rgba(var(--vscode-accent-rgb), 0.1);
+  border-left: 4px solid var(--vscode-accent);
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--vscode-fg);
+  margin-bottom: 4px;
+}
+
+.provider-section-header i {
+  color: var(--vscode-accent);
+  font-size: 16px;
+}
+
+.provider-section-header.unconfigured {
+  background: rgba(var(--vscode-fg-rgb), 0.05);
+  border-left-color: var(--vscode-fg-muted);
+}
+
+.provider-section-header.unconfigured i {
+  color: var(--vscode-fg-muted);
+}
+
+.provider-card {
+  background: var(--vscode-bg-lighter);
+  border: 1px solid var(--vscode-border);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+
+.provider-card:hover {
+  border-color: var(--vscode-fg-muted);
+}
+
+.provider-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  cursor: pointer;
+  transition: background 0.2s;
+  user-select: none;
+}
+
+.provider-header:hover {
+  background: var(--vscode-list-hoverBackground);
+}
+
+.provider-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+}
+
+.provider-icon-wrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--vscode-accent), rgba(var(--vscode-accent-rgb), 0.6));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.provider-icon-wrapper i {
+  font-size: 24px;
+  color: #ffffff;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+}
+
+.provider-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.provider-name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--vscode-fg);
+}
+
+.provider-description {
+  margin: 4px 0 0 0;
+  font-size: 13px;
+  color: var(--vscode-fg-muted);
+}
+
+.provider-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.status-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-badge.configured {
+  color: var(--vscode-editorGutter-modifiedBackground);
+  background-color: rgba(var(--vscode-editorGutter-modifiedBackground-rgb, 234, 179, 8), 0.15);
+  border: 1px solid var(--vscode-editorGutter-modifiedBackground);
+}
+
+.status-badge.success {
+  color: var(--vscode-editorGutter-addedBackground);
+  background-color: rgba(var(--vscode-editorGutter-addedBackground-rgb, 22, 174, 96), 0.15);
+  border: 1px solid var(--vscode-editorGutter-addedBackground);
+}
+
+.status-badge.error {
+  color: var(--vscode-editorGutter-deletedBackground);
+  background-color: rgba(var(--vscode-editorGutter-deletedBackground-rgb, 239, 68, 68), 0.15);
+  border: 1px solid var(--vscode-editorGutter-deletedBackground);
+}
+
+.expand-icon {
+  font-size: 16px;
+  color: var(--vscode-fg-muted);
+  transition: transform 0.2s;
+}
+
+.provider-config {
+  padding: 0 20px 20px 20px;
+  border-top: 1px solid var(--vscode-border);
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 1000px;
+  }
+}
+
+.config-row {
+  margin-bottom: 20px;
+}
+
+.config-row:last-child {
+  margin-bottom: 0;
+}
+
+.config-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--vscode-fg);
+  margin-bottom: 8px;
+}
+
+.config-label i {
+  font-size: 16px;
+  color: var(--vscode-accent);
+}
+
+.config-input {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--vscode-input-bg);
+  border: 1px solid var(--vscode-border);
+  border-radius: 4px;
+  color: var(--vscode-fg);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.config-input:focus {
+  border-color: var(--vscode-accent);
+}
+
+.input-with-action {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-with-action .config-input {
+  padding-right: 44px;
+}
+
+.input-action-btn {
+  position: absolute;
+  right: 4px;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: var(--vscode-fg-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.input-action-btn:hover {
+  background: var(--vscode-bg);
+  color: var(--vscode-fg);
+}
+
+.config-hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--vscode-fg-muted);
+  margin-top: 6px;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.config-hint:hover {
+  color: var(--vscode-accent);
+}
+
+.models-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.model-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  background: var(--vscode-bg);
+  border: 1px solid var(--vscode-border);
+  border-radius: 16px;
+  font-size: 12px;
+  color: var(--vscode-fg);
+}
+
+.model-badge.recommended {
+  background: rgba(var(--vscode-accent-rgb), 0.1);
+  border-color: var(--vscode-accent);
+  color: var(--vscode-accent);
+}
+
+.model-badge.more {
+  background: transparent;
+  color: var(--vscode-fg-muted);
+}
+
+.model-badge i {
+  font-size: 10px;
+}
+
+/* 模型详情 */
+.config-label-with-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.btn-link {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: var(--vscode-accent);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-link:hover {
+  background: rgba(var(--vscode-accent-rgb), 0.1);
+}
+
+.models-detail-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+/* 模型筛选工具栏 */
+.model-filter-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: var(--vscode-editor-background);
+  border: 1px solid var(--vscode-border);
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.model-search-input {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--vscode-input-background);
+  border: 1px solid var(--vscode-input-border);
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.model-search-input:focus-within {
+  border-color: var(--vscode-accent);
+  box-shadow: 0 0 0 1px var(--vscode-accent);
+}
+
+.model-search-input i.bi-search {
+  color: var(--vscode-fg-muted);
+  font-size: 14px;
+}
+
+.model-search-input .search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--vscode-fg);
+  font-size: 13px;
+  padding: 0;
+}
+
+.model-search-input .search-input::placeholder {
+  color: var(--vscode-fg-muted);
+}
+
+.model-search-input .clear-search-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--vscode-fg-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s;
+}
+
+.model-search-input .clear-search-btn:hover {
+  color: var(--vscode-fg);
+}
+
+.model-price-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--vscode-input-background);
+  border: 1px solid var(--vscode-input-border);
+  border-radius: 4px;
+}
+
+.model-price-filter i {
+  color: var(--vscode-fg-muted);
+  font-size: 14px;
+}
+
+.model-price-filter .price-filter-select {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--vscode-fg);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+  min-width: 120px;
+}
+
+.model-price-filter .price-filter-select option {
+  background: var(--vscode-dropdown-background);
+  color: var(--vscode-dropdown-foreground);
+}
+
+/* 模型分组 */
+.model-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.model-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(var(--vscode-accent-rgb), 0.08);
+  border-left: 3px solid var(--vscode-accent);
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--vscode-fg);
+  margin-bottom: 4px;
+}
+
+.model-section-header i {
+  color: var(--vscode-accent);
+  font-size: 14px;
+}
+
+.model-section-header.disabled {
+  background: rgba(var(--vscode-fg-rgb), 0.05);
+  border-left-color: var(--vscode-fg-muted);
+}
+
+.model-section-header.disabled i {
+  color: var(--vscode-fg-muted);
+}
+
+/* 模型行布局 */
+.model-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: var(--vscode-bg);
+  border: 1px solid var(--vscode-border);
+  border-radius: 4px;
+  transition: all 0.2s;
+  font-size: 13px;
+}
+
+.model-row:hover {
+  border-color: var(--vscode-fg-muted);
+  background: rgba(var(--vscode-accent-rgb), 0.03);
+}
+
+.model-row.disabled {
+  opacity: 0.5;
+  background: rgba(var(--vscode-fg-rgb), 0.02);
+}
+
+.model-row.disabled:hover {
+  opacity: 0.7;
+  background: rgba(var(--vscode-fg-rgb), 0.04);
+}
+
+.model-name-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.model-name-text {
+  font-weight: 600;
+  color: var(--vscode-fg);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.provider-icon {
+  color: var(--vscode-accent);
+  font-size: 14px;
+  flex-shrink: 0;
+  opacity: 0.7;
+  margin-right: 2px;
+}
+
+.model-star {
+  color: #ffc107;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.model-info-col {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.model-icon {
+  color: var(--vscode-accent);
+  font-size: 14px;
+  cursor: help;
+}
+
+.model-info-text {
+  color: var(--vscode-fg-muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.model-capabilities-col {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.model-capability-icon {
+  color: var(--vscode-accent);
+  font-size: 14px;
+  cursor: help;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.model-capability-icon:hover {
+  opacity: 1;
+}
+
+.model-price-col {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  min-width: 80px;
+}
+
+.model-toggle-col {
+  flex-shrink: 0;
+}
+
+.model-toggle {
+  margin: 0;
+}
+
+.config-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--vscode-border);
+}
+
+.btn-test,
+.btn-refresh,
+.btn-clear {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-test {
+  background: var(--vscode-accent);
+  color: white;
+}
+
+.btn-test:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.btn-test:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-refresh {
+  background: transparent;
+  border: 1px solid var(--vscode-accent);
+  color: var(--vscode-accent);
+}
+
+.btn-refresh:hover:not(:disabled) {
+  background: rgba(var(--vscode-accent-rgb), 0.1);
+  transform: translateY(-1px);
+}
+
+.btn-refresh:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-color: var(--vscode-border);
+  color: var(--vscode-fg-muted);
+}
+
+.btn-clear {
+  background: transparent;
+  border: 1px solid var(--vscode-border);
+  color: var(--vscode-fg-muted);
+}
+
+.btn-clear:hover {
+  background: rgba(231, 76, 60, 0.1);
+  border-color: #e74c3c;
+  color: #e74c3c;
+}
+
+/* 测试结果显示 */
+.test-result {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+  opacity: 0;
+  transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.test-result.success {
+  background: rgba(39, 174, 96, 0.1);
+  border: 1px solid rgba(39, 174, 96, 0.3);
+}
+
+.test-result.error {
+  background: rgba(231, 76, 60, 0.1);
+  border: 1px solid rgba(231, 76, 60, 0.3);
+}
+
+.test-result > i {
+  font-size: 20px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.test-result.success > i {
+  color: #27ae60;
+}
+
+.test-result.error > i {
+  color: #e74c3c;
+}
+
+.test-result-content {
+  flex: 1;
+}
+
+.test-message {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--vscode-fg);
+}
+
+.test-error {
+  margin: 4px 0 0 0;
+  font-size: 12px;
+  color: var(--vscode-fg-muted);
+}
+
+/* 加载动画 */
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--vscode-fg-muted);
+}
+
+.empty-state i {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* ========== 滚动条 ========== */
+.settings-content::-webkit-scrollbar,
+.settings-nav::-webkit-scrollbar {
+  width: 8px;
+}
+
+.settings-content::-webkit-scrollbar-track,
+.settings-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.settings-content::-webkit-scrollbar-thumb,
+.settings-nav::-webkit-scrollbar-thumb {
+  background: var(--vscode-border);
+  border-radius: 4px;
+}
+
+.settings-content::-webkit-scrollbar-thumb:hover,
+.settings-nav::-webkit-scrollbar-thumb:hover {
+  background: var(--vscode-fg-muted);
+}
+
+/* ==================== 添加模型对话框样式 ==================== */
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.dialog-container {
+  background: var(--vscode-editor-background);
+  border: 1px solid var(--vscode-border);
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--vscode-border);
+}
+
+.dialog-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--vscode-foreground);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dialog-title i {
+  font-size: 18px;
+  color: var(--vscode-accent);
+}
+
+.dialog-close {
+  background: transparent;
+  border: none;
+  color: var(--vscode-foreground);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.dialog-close:hover {
+  background: var(--vscode-list-hoverBackground);
+}
+
+.dialog-body {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group:last-child {
+  margin-bottom: 0;
+}
+
+.form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--vscode-foreground);
+  margin-bottom: 8px;
+}
+
+.required {
+  color: var(--vscode-errorForeground);
+  margin-left: 4px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--vscode-input-background);
+  border: 1px solid var(--vscode-input-border);
+  border-radius: 4px;
+  color: var(--vscode-input-foreground);
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--vscode-accent);
+  box-shadow: 0 0 0 1px var(--vscode-accent);
+}
+
+.form-hint {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--vscode-descriptionForeground);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.form-hint i {
+  font-size: 13px;
+}
+
+.checkbox-group {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.checkbox-item:hover {
+  background: var(--vscode-list-hoverBackground);
+}
+
+.checkbox-item input[type="checkbox"] {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+}
+
+.checkbox-item span {
+  font-size: 13px;
+  color: var(--vscode-foreground);
+  user-select: none;
+}
+
+.price-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.price-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.price-label {
+  font-size: 12px;
+  color: var(--vscode-descriptionForeground);
+}
+
+.dialog-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 20px;
+  border-top: 1px solid var(--vscode-border);
+}
+
+.btn-cancel,
+.btn-confirm {
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.btn-cancel {
+  background: transparent;
+  border-color: var(--vscode-button-secondaryBorder);
+  color: var(--vscode-button-secondaryForeground);
+}
+
+.btn-cancel:hover {
+  background: var(--vscode-button-secondaryHoverBackground);
+}
+
+.btn-confirm {
+  background: var(--vscode-accent);
+  color: var(--vscode-button-foreground);
+  border-color: var(--vscode-accent);
+}
+
+.btn-confirm:hover {
+  background: var(--vscode-accent-hover);
+  border-color: var(--vscode-accent-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-confirm:active {
+  transform: translateY(0);
+}
+</style>

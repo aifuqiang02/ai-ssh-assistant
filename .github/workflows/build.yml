@@ -1,0 +1,53 @@
+name: 🔨 Build & Test
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: 🧪 Test & Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.12.0
+
+      - name: ⚡ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: 📥 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🔗 Link workspace dependencies
+        run: pnpm install
+
+      - name: 🏗️ Build shared packages
+        run: pnpm build:shared
+
+      # - name: 🔍 Type check  
+      #   run: pnpm type-check
+
+      # - name: 🧹 Lint
+      #   run: pnpm lint
+
+      - name: 🏗️ Build server
+        run: pnpm build:server
+
+  # 注意：完整的打包构建已移至 release.yml 工作流
+  # 日常提交只进行代码测试和检查，不进行完整打包
+  # 如需完整构建，请推送 tag 触发发布流程或手动触发 Release 工作流

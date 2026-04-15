@@ -1,0 +1,49 @@
+{
+  "name": "ai-ssh-assistant",
+  "version": "1.8.20",
+  "description": "AI-powered SSH remote server management assistant",
+  "private": true,
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "dev": "pnpm build:database && concurrently \"pnpm dev:server\" \"pnpm dev:desktop\"",
+    "devall": "pnpm build:database && pnpm build:shared && pnpm dev:desktop",
+    "dev:desktop": "pnpm --filter @ai-ssh/desktop dev",
+    "dev:server": "pnpm --filter @ai-ssh/server dev:debug",
+    "build:database": "pnpm --filter @ai-ssh/database build",
+    "build": "pnpm build:database && pnpm build:shared && pnpm build:server && pnpm build:desktop && pnpm build:web",
+    "build:shared": "pnpm --filter @ai-ssh/shared build",
+    "build:server": "pnpm --filter @ai-ssh/server build",
+    "build:desktop": "pnpm --filter @ai-ssh/desktop build:skip-check",
+    "test": "pnpm --recursive test",
+    "lint": "pnpm --recursive lint",
+    "type-check": "pnpm --recursive type-check",
+    "clean": "pnpm --recursive clean && rimraf node_modules",
+    "release": "node scripts/prepare-release.js",
+    "icon:help": "node scripts/generate-icon.js",
+    "db:generate": "pnpm --filter @ai-ssh/database db:generate",
+    "db:push": "pnpm --filter @ai-ssh/database db:push",
+    "db:migrate": "pnpm --filter @ai-ssh/database db:migrate",
+    "db:seed": "pnpm --filter @ai-ssh/database db:seed",
+    "db:studio": "pnpm --filter @ai-ssh/database db:studio",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0",
+    "concurrently": "^8.2.2",
+    "eslint": "^8.54.0",
+    "eslint-config-prettier": "^9.0.0",
+    "prettier": "^3.1.0",
+    "rimraf": "^5.0.5",
+    "tsx": "^4.6.0",
+    "typescript": "^5.3.0"
+  },
+  "packageManager": "pnpm@8.12.0",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}

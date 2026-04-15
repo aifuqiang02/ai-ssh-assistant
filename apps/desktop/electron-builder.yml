@@ -1,0 +1,93 @@
+appId: com.ai-ssh-assistant.desktop
+productName: AI SSH Assistant
+compression: maximum
+directories:
+  output: release/${version}
+  buildResources: build
+files:
+  - dist/**/*
+  - dist-electron/**/*
+  - package.json
+  # 包含所有运行时需要的 node_modules（默认策略）
+  - node_modules/**/*
+  # 排除根目录的开发文件
+  - '!src/*'
+  - '!**/.vscode/*'
+  - '!electron.vite.config.{js,ts,mjs,cjs}'
+  - '!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
+  - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
+  - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
+  # 排除数据库文件
+  - '!**/*.db'
+  - '!**/*.db-shm'
+  - '!**/*.db-wal'
+  # 排除工作空间包的源文件和开发文件
+  - '!node_modules/@ai-ssh/*/src/**'
+  - '!node_modules/@ai-ssh/*/tsconfig*.json'
+  - '!node_modules/@ai-ssh/**/*.tsbuildinfo'
+  - '!node_modules/@ai-ssh/*/migrations/**'
+  - '!node_modules/@ai-ssh/*/prisma/schema*.prisma'
+  - '!node_modules/@ai-ssh/*/prisma/migrations/**'
+  # 排除测试文件（明确知道不需要）
+  - '!node_modules/**/test/**'
+  - '!node_modules/**/tests/**'
+  - '!node_modules/**/__tests__/**'
+  - '!node_modules/**/*.test.js'
+  - '!node_modules/**/*.spec.js'
+  # 排除原生模块的源代码（只需要编译后的 .node 文件）
+  - '!node_modules/**/*.cpp'
+  - '!node_modules/**/*.h'
+  - '!node_modules/**/*.c'
+  - '!node_modules/**/*.cc'
+  - '!node_modules/**/*.gyp'
+  - '!node_modules/**/*.gypi'
+# 禁用 asar（避免 macOS/Linux 硬链接冲突）
+asar: false
+# 禁用自动重建（原生模块通过 rebuild-native.js 手动处理）
+npmRebuild: false
+buildDependenciesFromSource: false
+# 打包前清理目标目录（避免硬链接冲突）
+beforePack: "./build-scripts/before-pack.js"
+afterPack: "./build-scripts/after-pack.js"
+# 禁用子模块自动包含（避免硬链接冲突，通过 after-pack.js 手动处理）
+includeSubNodeModules: false
+icon: build/icon.ico
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  executableName: AI SSH Assistant
+  artifactName: AI-SSH-Assistant-${version}-setup-${arch}.${ext}
+nsis:
+  artifactName: AI-SSH-Assistant-${version}-setup-${arch}.${ext}
+  shortcutName: ${productName}
+  uninstallDisplayName: ${productName}
+  createDesktopShortcut: always
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+mac:
+  icon: build/icon.icns
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+    - target: zip
+      arch:
+        - x64
+        - arm64
+  category: public.app-category.developer-tools
+  # 统一文件名格式（去除空格）
+  artifactName: ai-ssh-assistant-${version}-macos-${arch}.${ext}
+dmg:
+  artifactName: ai-ssh-assistant-${version}-macos-${arch}.${ext}
+linux:
+  target:
+    - AppImage
+    - deb
+  category: Development
+  artifactName: ai-ssh-assistant-${version}-linux-${arch}.${ext}
+electronDownload:
+  mirror: https://npmmirror.com/mirrors/electron/
+

@@ -1,0 +1,11 @@
+{
+  "uploadSuccess": "Upload successful",
+  "uploadFailed": "Upload failed: {{message}}",
+  "downloadSuccess": "Download successful",
+  "downloadFailed": "Download failed: {{message}}",
+  "deleteSuccess": "Deleted successfully",
+  "fileNotFound": "File not found",
+  "invalidFileName": "Invalid file name",
+  "fileTooLarge": "File too large"
+}
+

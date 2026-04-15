@@ -1,0 +1,199 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/client-postgresql"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("CLOUD_DATABASE_URL")
+}
+
+// ==================== 用户相关表 ====================
+
+// 用户表 - PostgreSQL 版本，支持完整功能
+model User {
+  id        String   @id @default(cuid())
+  uuid      String   @unique @default(cuid()) // 兼容 lobe-chat 的 uuid 设计
+  email     String?  @unique
+  username  String?  @unique
+  password  String?  // 可选，支持第三方登录
+  avatar    String?
+  wechatOpenId  String? @unique
+  wechatUnionId String? @unique
+  role      UserRole @default(USER) // 使用枚举
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 关联关系
+  sshConnections SSHConnection[]
+  commandLogs    CommandLog[]
+  userSettings   UserSettings?
+  subscription   UserSubscription?
+  paymentOrders  PaymentOrder[]
+
+  @@map("users")
+}
+
+// 用户设置表
+model UserSettings {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  data      Json     // 存储所有用户设置（JSON格式）
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 关联用户
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_settings")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  PREMIUM
+}
+
+// SSH 连接配置表
+model SSHConnection {
+  id       String @id @default(cuid())
+  name     String // 连接名称
+  host     String // 主机地址
+  port     Int    @default(22) // 端口
+  username String // 用户名
+
+  // 认证信息
+  authType    SSHAuthType  // 认证类型枚举
+  password    String? // 密码（加密存储）
+  privateKey  String? // 私钥路径或内容
+  publicKey   String? // 公钥内容
+  passphrase  String? // 私钥密码（加密存储）
+
+  // 连接状态
+  status       ConnectionStatus   @default(DISCONNECTED) // 连接状态枚举
+  lastUsed     DateTime?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // 连接元数据 - JSON 格式
+  meta        Json?             // 存储额外的元数据信息
+
+  // 关联用户
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // 关联关系
+  commandLogs  CommandLog[]
+
+  @@map("ssh_connections")
+}
+
+enum SSHAuthType {
+  PASSWORD
+  PRIVATE_KEY
+  SSH_AGENT
+}
+
+enum ConnectionStatus {
+  CONNECTED
+  DISCONNECTED
+  CONNECTING
+  ERROR
+}
+
+// 命令日志表
+model CommandLog {
+  id        String   @id @default(cuid())
+  command   String   // 执行的命令
+  output    String?  // 命令输出
+  exitCode  Int?     // 退出码
+  duration  Int?     // 执行时间（毫秒）
+  createdAt DateTime @default(now())
+
+  // 安全级别
+  safetyLevel SafetyLevel @default(SAFE) // 安全级别枚举
+
+  // 命令元数据
+  metadata      Json?       // 额外的元数据信息
+
+  // 关联用户和 SSH 连接
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  sshConnectionId String?
+  sshConnection   SSHConnection? @relation(fields: [sshConnectionId], references: [id])
+
+  @@map("command_logs")
+}
+
+model UserSubscription {
+  id             String                @id @default(cuid())
+  userId         String                @unique
+  trialExpiresAt DateTime?
+  basePlanType   SubscriptionPlanType?
+  baseExpiresAt  DateTime?
+  aiPlanType     SubscriptionPlanType?
+  aiExpiresAt    DateTime?
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_subscriptions")
+}
+
+model PaymentOrder {
+  id                 String               @id @default(cuid())
+  bizId              String               @unique
+  sessionId          String               @unique
+  userId             String
+  planCode           SubscriptionPlanCode
+  paymentProductId   String
+  amount             Int
+  status             PaymentOrderStatus   @default(PENDING)
+  paidAt             DateTime?
+  activatedAt        DateTime?
+  rawPlatformPayload Json?
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("payment_orders")
+}
+
+enum SubscriptionPlanType {
+  MONTHLY
+  YEARLY
+  LIFETIME
+}
+
+enum SubscriptionPlanCode {
+  BASE_MONTHLY
+  BASE_YEARLY
+  BASE_LIFETIME
+  AI_MONTHLY
+  FULL_MONTHLY
+  FULL_YEARLY
+  FULL_LIFETIME
+}
+
+enum PaymentOrderStatus {
+  PENDING
+  PAID
+  ACTIVATED
+  EXPIRED
+  CLOSED
+  FAILED
+}
+
+enum SafetyLevel {
+  SAFE
+  CAUTION
+  DANGEROUS
+}

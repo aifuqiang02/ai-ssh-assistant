@@ -1,0 +1,50 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": [
+      "ES2022"
+    ],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "composite": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "@ai-ssh/shared/*": [
+        "packages/shared/src/*"
+      ],
+      "@ai-ssh/database/*": [
+        "packages/database/src/*"
+      ],
+      "@ai-ssh/server/*": [
+        "packages/server/src/*"
+      ]
+    }
+  },
+  "include": [],
+  "references": [
+    {
+      "path": "./packages/shared"
+    },
+    {
+      "path": "./packages/database"
+    },
+    {
+      "path": "./packages/server"
+    },
+    {
+      "path": "./apps/desktop"
+    }
+  ]
+}

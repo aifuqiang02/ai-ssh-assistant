@@ -1,0 +1,468 @@
+import { contextBridge, ipcRenderer } from 'electron'
+
+const webUtils = (
+  require('electron') as {
+    webUtils: {
+      getPathForFile: (file: File) => string
+    }
+  }
+).webUtils
+
+// 自定义 API 定义
+const api = {
+  // 应用控制
+  minimizeWindow: () => ipcRenderer.invoke('app:minimize'),
+  maximizeWindow: () => ipcRenderer.invoke('app:maximize'),
+  closeWindow: () => ipcRenderer.invoke('app:close'),
+  toggleFullscreen: () => ipcRenderer.invoke('app:toggle-fullscreen'),
+  quit: () => ipcRenderer.invoke('app:quit'),
+
+  // 应用信息
+  getVersion: () => ipcRenderer.invoke('app:get-version'),
+  getPath: (name: string) => ipcRenderer.invoke('app:get-path', name),
+
+  updater: {
+    getState: () => ipcRenderer.invoke('updater:get-state'),
+    startBackgroundCheck: () => ipcRenderer.invoke('updater:start-background-check'),
+    installDownloadedUpdate: () => ipcRenderer.invoke('updater:install-downloaded-update')
+  },
+
+  // 对话框
+  showMessageBox: (options: any) => ipcRenderer.invoke('app:show-message-box', options),
+  showErrorBox: (title: string, content: string) =>
+    ipcRenderer.invoke('app:show-error-box', title, content),
+
+  // 开发者工具
+  toggleDevTools: () => ipcRenderer.invoke('devtools:toggle'),
+
+  // API 相关
+  api: {
+    // 通用API请求
+    request: (
+      endpoint: string,
+      method: 'GET' | 'POST' | 'PUT' | 'DELETE',
+      data?: any,
+      headers?: Record<string, string>
+    ) => ipcRenderer.invoke('api:request', { endpoint, method, data, headers }),
+
+    // 认证相关
+    auth: {
+      login: (credentials: { email: string; password: string; rememberMe?: boolean }) =>
+        ipcRenderer.invoke('api:auth:login', credentials),
+      register: (userData: { email: string; username: string; password: string }) =>
+        ipcRenderer.invoke('api:auth:register', userData),
+      wechatLogin: (payload: {
+        bizId: string
+        appId: string
+        openId: string
+        unionId?: string
+        nickname: string
+        avatarUrl?: string
+      }) => ipcRenderer.invoke('api:auth:wechat-login', payload),
+      logout: (token?: string) => ipcRenderer.invoke('api:auth:logout', token),
+      refresh: (refreshToken: string) => ipcRenderer.invoke('api:auth:refresh', refreshToken),
+      verify: (token: string) => ipcRenderer.invoke('api:auth:verify', token)
+    },
+    wechatRequest: (
+      endpoint: string,
+      method: 'GET' | 'POST' | 'PUT' | 'DELETE',
+      data?: any,
+      headers?: Record<string, string>,
+      absoluteUrl?: string
+    ) => ipcRenderer.invoke('api:wechat:request', { endpoint, method, data, headers, absoluteUrl })
+  },
+
+  // SSH 相关
+  ssh: {
+    // 树形结构管理
+    getTree: (userId: string) => ipcRenderer.invoke('ssh:get-tree', userId),
+    createFolder: (userId: string, data: any) =>
+      ipcRenderer.invoke('ssh:create-folder', userId, data),
+    updateFolder: (userId: string, folderId: string, data: any) =>
+      ipcRenderer.invoke('ssh:update-folder', userId, folderId, data),
+    deleteFolder: (userId: string, folderId: string) =>
+      ipcRenderer.invoke('ssh:delete-folder', userId, folderId),
+    createConnection: (userId: string, data: any) =>
+      ipcRenderer.invoke('ssh:create-connection-config', userId, data),
+    updateConnection: (userId: string, id: string, data: any) =>
+      ipcRenderer.invoke('ssh:update-connection-config', userId, id, data),
+    deleteConnection: (userId: string, id: string) =>
+      ipcRenderer.invoke('ssh:delete-connection-config', userId, id),
+    moveNode: (userId: string, data: any) => ipcRenderer.invoke('ssh:move-node', userId, data),
+
+    // 运行时连接管理
+    connect: (config: any) => ipcRenderer.invoke('ssh:connect', config),
+    disconnect: (id: string) => ipcRenderer.invoke('ssh:disconnect', id),
+    resize: (id: string, cols: number, rows: number) =>
+      ipcRenderer.invoke('ssh:resize', id, cols, rows), // 调整终端尺寸
+    execute: (id: string, command: string, requestId?: string) =>
+      ipcRenderer.invoke('ssh:execute', id, command, requestId),
+    cancelExecute: (requestId: string) => ipcRenderer.invoke('ssh:cancel-execute', requestId),
+    executeSilent: (id: string, command: string) =>
+      ipcRenderer.invoke('ssh:execute-silent', id, command), // 静默执行（不在终端显示）
+    getCurrentDirectory: (id: string) => ipcRenderer.invoke('ssh:get-current-directory', id),
+    write: (id: string, data: string) => ipcRenderer.invoke('ssh:write', id, data), // 直接写入终端输入
+    getInitialOutput: (id: string) => ipcRenderer.invoke('ssh:get-initial-output', id),
+    getConnections: () => ipcRenderer.invoke('ssh:get-connections'),
+    saveConnection: (config: any) => ipcRenderer.invoke('ssh:save-connection', config),
+    testConnection: (config: any) => ipcRenderer.invoke('ssh:test-connection', config),
+
+    // SFTP 相关
+    listFiles: (id: string, remotePath: string) =>
+      ipcRenderer.invoke('ssh:list-files', id, remotePath),
+    uploadFile: (id: string, localPath: string, remotePath: string) =>
+      ipcRenderer.invoke('ssh:upload-file', id, localPath, remotePath),
+    downloadFile: (id: string, remotePath: string, localPath: string) =>
+      ipcRenderer.invoke('ssh:download-file', id, remotePath, localPath),
+    deleteFile: (id: string, remotePath: string, isDirectory: boolean) =>
+      ipcRenderer.invoke('ssh:delete-file', id, remotePath, isDirectory),
+    createDirectory: (id: string, remotePath: string) =>
+      ipcRenderer.invoke('ssh:create-directory', id, remotePath)
+  },
+
+  // AI 相关
+  ai: {
+    analyze: (data: any) => ipcRenderer.invoke('ai:analyze', data),
+    suggest: (command: string) => ipcRenderer.invoke('ai:suggest', command),
+    translate: (text: string, from: string, to: string) =>
+      ipcRenderer.invoke('ai:translate', text, from, to)
+  },
+
+  // Shell 相关
+  shell: {
+    showItemInFolder: (filePath: string) =>
+      ipcRenderer.invoke('shell:show-item-in-folder', filePath),
+    openPath: (path: string) => ipcRenderer.invoke('shell:open-path', path),
+    openExternal: (url: string) => ipcRenderer.invoke('shell:open-external', url)
+  },
+
+  // 文档存储
+  docStorage: {
+    save: (category: string, filename: string, content: string) =>
+      ipcRenderer.invoke('doc-storage:save', category, filename, content),
+    read: (category: string, filename: string) =>
+      ipcRenderer.invoke('doc-storage:read', category, filename),
+    delete: (category: string, filename: string) =>
+      ipcRenderer.invoke('doc-storage:delete', category, filename),
+    list: (category: string) => ipcRenderer.invoke('doc-storage:list', category),
+    exists: (category: string, filename: string) =>
+      ipcRenderer.invoke('doc-storage:exists', category, filename),
+    saveServerEnv: (connectionId: string, content: string) =>
+      ipcRenderer.invoke('doc-storage:save-server-env', connectionId, content),
+    readServerEnv: (connectionId: string) =>
+      ipcRenderer.invoke('doc-storage:read-server-env', connectionId)
+  },
+
+  // 文件系统
+  fs: {
+    readFile: (path: string) => ipcRenderer.invoke('fs:readFile', path),
+    writeFile: (path: string, data: string) => ipcRenderer.invoke('fs:writeFile', path, data),
+    appendFile: (path: string, data: string) => ipcRenderer.invoke('fs:appendFile', path, data),
+    mkdirRecursive: (dirPath: string) => ipcRenderer.invoke('fs:mkdirRecursive', dirPath),
+    deleteFile: (path: string) => ipcRenderer.invoke('fs:delete-file', path),
+    listDirectory: (path: string) => ipcRenderer.invoke('fs:list-directory', path),
+    createDirectory: (path: string) => ipcRenderer.invoke('fs:create-directory', path),
+    exists: (path: string) => ipcRenderer.invoke('fs:exists', path),
+    getStats: (path: string) => ipcRenderer.invoke('fs:stat', path),
+    getPathForFile: (file: File) => webUtils.getPathForFile(file),
+    stat: (path: string) => ipcRenderer.invoke('fs:stat', path),
+    readdir: (dirPath: string) => ipcRenderer.invoke('fs:readdir', dirPath),
+    mkdir: (dirPath: string) => ipcRenderer.invoke('fs:mkdir', dirPath),
+    unlink: (filePath: string) => ipcRenderer.invoke('fs:unlink', filePath),
+    rename: (oldPath: string, newPath: string) => ipcRenderer.invoke('fs:rename', oldPath, newPath),
+    copyFile: (src: string, dest: string) => ipcRenderer.invoke('fs:copyFile', src, dest),
+
+    // 文件传输
+    uploadFile: (localPath: string, remotePath: string, connectionId: string) =>
+      ipcRenderer.invoke('fs:upload-file', localPath, remotePath, connectionId),
+    downloadFile: (remotePath: string, localPath: string, connectionId: string) =>
+      ipcRenderer.invoke('fs:download-file', remotePath, localPath, connectionId),
+
+    // 文件对话框
+    showOpenDialog: (options: any) => ipcRenderer.invoke('fs:showOpenDialog', options),
+    showSaveDialog: (options: any) => ipcRenderer.invoke('fs:showSaveDialog', options),
+
+    // 打开文件夹
+    openPath: (targetPath: string) => ipcRenderer.invoke('fs:open-path', targetPath),
+
+    // 压缩文件
+    createArchive: (baseDir: string, files: string[], outputPath: string) =>
+      ipcRenderer.invoke('fs:create-archive', baseDir, files, outputPath)
+  },
+
+  // 系统信息
+  system: {
+    getInfo: () => ipcRenderer.invoke('system:get-info'),
+    getMemoryUsage: () => ipcRenderer.invoke('system:get-memory-usage'),
+    getCpuUsage: () => ipcRenderer.invoke('system:get-cpu-usage'),
+    getNetworkInfo: () => ipcRenderer.invoke('system:get-network-info'),
+    openExternal: (url: string) => ipcRenderer.invoke('system:open-external', url),
+    getSystemInfo: () => ipcRenderer.invoke('system:get-info')
+  },
+
+  // 兼容性快捷方式
+  getSystemInfo: () => ipcRenderer.invoke('system:get-info'),
+
+  // 命令执行
+  exec: {
+    command: (command: string, options?: any) =>
+      ipcRenderer.invoke('exec:command', command, options),
+    script: (scriptPath: string, options?: any) =>
+      ipcRenderer.invoke('exec:script', scriptPath, options),
+    which: (command: string) => ipcRenderer.invoke('exec:which', command),
+    platform: () => ipcRenderer.invoke('exec:platform'),
+    onOutput: (callback: (data: any) => void) => {
+      ipcRenderer.on('exec:output', (_, data) => callback(data))
+    },
+    offOutput: (callback: (data: any) => void) => {
+      ipcRenderer.removeListener('exec:output', callback as any)
+    }
+  },
+
+  // 通知系统
+  notification: {
+    show: (title: string, body: string, options?: any) =>
+      ipcRenderer.invoke('notification:show', title, body, options),
+    clear: (id: string) => ipcRenderer.invoke('notification:clear', id)
+  },
+
+  // 事件监听器
+  on: (channel: string, callback: (...args: any[]) => void) => {
+    // 创建包装函数并保存引用，以便正确移除监听器
+    const wrappedCallback = (_: any, ...args: any[]) => callback(...args)
+    ipcRenderer.on(channel, wrappedCallback)
+    // 返回清理函数，移除正确的监听器
+    return () => ipcRenderer.removeListener(channel, wrappedCallback)
+  },
+
+  once: (channel: string, callback: (...args: any[]) => void) => {
+    ipcRenderer.once(channel, (_, ...args) => callback(...args))
+  },
+
+  // 特定事件监听器
+  onWindowStateChange: (callback: (state: any) => void) => {
+    return api.on('window:state-changed', callback)
+  },
+
+  onFullscreenChange: (callback: (isFullscreen: boolean) => void) => {
+    return api.on('window:fullscreen-changed', callback)
+  },
+
+  onConnectionStatusChange: (callback: (status: any) => void) => {
+    return api.on('ssh:connection-status-changed', callback)
+  },
+
+  onTerminalOutput: (callback: (output: string) => void) => {
+    return api.on('ssh:terminal-output', callback)
+  },
+
+  onNotification: (callback: (notification: any) => void) => {
+    return api.on('notification:received', callback)
+  },
+
+  onStatusUpdate: (callback: (status: any) => void) => {
+    return api.on('status:update', callback)
+  },
+
+  onUpdaterStateChange: (callback: (state: any) => void) => {
+    return api.on('updater:state-changed', callback)
+  },
+
+  // 菜单事件监听器
+  onMenuAction: (action: string, callback: (...args: any[]) => void) => {
+    return api.on(`menu:${action}`, callback)
+  },
+
+  // 设置相关 - 统一接口，StorageManager 自动处理模式
+  settings: {
+    get: (userId?: string) => ipcRenderer.invoke('settings:get', userId),
+    save: (userId: string, settings: any) => ipcRenderer.invoke('settings:save', userId, settings),
+    reset: (userId?: string) => ipcRenderer.invoke('settings:reset', userId),
+    export: (userId: string, exportPath: string) =>
+      ipcRenderer.invoke('settings:export', userId, exportPath),
+    import: (userId: string, importPath: string) =>
+      ipcRenderer.invoke('settings:import', userId, importPath)
+  },
+
+  // 存储管理 - 动态模式切换
+  storage: {
+    switchToCloud: (userToken: string) => ipcRenderer.invoke('storage:switch-to-cloud', userToken),
+    switchToLocal: () => ipcRenderer.invoke('storage:switch-to-local'),
+    getStatus: () => ipcRenderer.invoke('storage:get-status'),
+    sync: () => ipcRenderer.invoke('storage:sync')
+  }
+}
+
+// 类型定义
+interface ElectronAPI {
+  // 应用控制
+  minimizeWindow: () => Promise<any>
+  maximizeWindow: () => Promise<any>
+  closeWindow: () => Promise<any>
+  toggleFullscreen: () => Promise<any>
+  quit: () => Promise<any>
+
+  // 应用信息
+  getVersion: () => Promise<string>
+  getPath: (name: string) => Promise<string>
+
+  // 对话框
+  showMessageBox: (options: any) => Promise<any>
+  showErrorBox: (title: string, content: string) => Promise<void>
+
+  // 开发者工具
+  toggleDevTools: () => Promise<boolean>
+
+  // API 相关
+  api: {
+    request: (
+      endpoint: string,
+      method: 'GET' | 'POST' | 'PUT' | 'DELETE',
+      data?: any,
+      headers?: Record<string, string>
+    ) => Promise<any>
+    auth: {
+      login: (credentials: any) => Promise<any>
+      register: (userData: any) => Promise<any>
+      logout: (token?: string) => Promise<any>
+      refresh: (refreshToken: string) => Promise<any>
+      verify: (token: string) => Promise<any>
+    }
+  }
+
+  // SSH 相关
+  ssh: {
+    // 树形结构管理
+    getTree: (userId: string) => Promise<any[]>
+    createFolder: (userId: string, data: any) => Promise<any>
+    updateFolder: (userId: string, folderId: string, data: any) => Promise<any>
+    deleteFolder: (userId: string, folderId: string) => Promise<void>
+    createConnection: (userId: string, data: any) => Promise<any>
+    updateConnection: (userId: string, id: string, data: any) => Promise<any>
+    deleteConnection: (userId: string, id: string) => Promise<void>
+    moveNode: (userId: string, data: any) => Promise<void>
+
+    // 运行时连接管理
+    connect: (config: any) => Promise<any>
+    disconnect: (id: string) => Promise<any>
+    execute: (id: string, command: string, requestId?: string) => Promise<any>
+    cancelExecute: (requestId: string) => Promise<any>
+    write: (id: string, data: string) => Promise<void> // 直接写入终端输入
+    getInitialOutput: (id: string) => Promise<string>
+    getConnections: () => Promise<any>
+    saveConnection: (config: any) => Promise<any>
+    testConnection: (config: any) => Promise<any>
+
+    // SFTP 相关
+    listFiles: (id: string, remotePath: string) => Promise<any>
+    uploadFile: (id: string, localPath: string, remotePath: string) => Promise<any>
+    downloadFile: (id: string, remotePath: string, localPath: string) => Promise<any>
+    deleteFile: (id: string, remotePath: string, isDirectory: boolean) => Promise<any>
+    createDirectory: (id: string, remotePath: string) => Promise<any>
+  }
+
+  // AI 相关
+  ai: {
+    chat: (message: string, context?: any) => Promise<string>
+    analyze: (data: any) => Promise<any>
+    suggest: (command: string) => Promise<string[]>
+    translate: (text: string, from: string, to: string) => Promise<string>
+  }
+
+  // 文件系统
+  fs: {
+    readFile: (path: string) => Promise<string>
+    writeFile: (path: string, data: string) => Promise<boolean>
+    appendFile: (path: string, data: string) => Promise<void>
+    mkdirRecursive: (dirPath: string) => Promise<void>
+    deleteFile: (path: string) => Promise<boolean>
+    listDirectory: (path: string) => Promise<any[]>
+    createDirectory: (path: string) => Promise<boolean>
+    exists: (path: string) => Promise<boolean>
+    getStats: (path: string) => Promise<any>
+    stat: (path: string) => Promise<{ size: number; isDirectory: boolean; isFile: boolean }>
+    readdir: (dirPath: string) => Promise<string[]>
+    uploadFile: (localPath: string, remotePath: string, connectionId: string) => Promise<boolean>
+    downloadFile: (remotePath: string, localPath: string, connectionId: string) => Promise<boolean>
+
+    // 文件对话框
+    showOpenDialog: (options: any) => Promise<string[]>
+    showSaveDialog: (options: any) => Promise<string | null>
+
+    // 打开文件夹
+    openPath: (targetPath: string) => Promise<string>
+  }
+
+  // 系统信息
+  system: {
+    getInfo: () => Promise<any>
+    getMemoryUsage: () => Promise<any>
+    getCpuUsage: () => Promise<any>
+    getNetworkInfo: () => Promise<any>
+    openExternal: (url: string) => Promise<void>
+    getSystemInfo: () => Promise<any>
+  }
+
+  // 兼容性快捷方式
+  getSystemInfo: () => Promise<any>
+
+  // 通知系统
+  notification: {
+    show: (title: string, body: string, options?: any) => Promise<any>
+    clear: (id: string) => Promise<any>
+  }
+
+  // 事件监听器
+  on: (channel: string, callback: (...args: any[]) => void) => () => void
+  once: (channel: string, callback: (...args: any[]) => void) => void
+
+  // 特定事件监听器
+  onWindowStateChange: (callback: (state: any) => void) => () => void
+  onFullscreenChange: (callback: (isFullscreen: boolean) => void) => () => void
+  onConnectionStatusChange: (callback: (status: any) => void) => () => void
+  onTerminalOutput: (callback: (output: string) => void) => () => void
+  onNotification: (callback: (notification: any) => void) => () => void
+  onStatusUpdate: (callback: (status: any) => void) => () => void
+  onMenuAction: (action: string, callback: (...args: any[]) => void) => () => void
+
+  // 设置相关 - 统一接口，StorageManager 自动处理模式
+  settings: {
+    get: (userId?: string) => Promise<any>
+    save: (userId: string, settings: any) => Promise<{ success: boolean }>
+    reset: (userId?: string) => Promise<{ success: boolean }>
+    export: (userId: string, exportPath: string) => Promise<{ success: boolean }>
+    import: (userId: string, importPath: string) => Promise<{ success: boolean; settings?: any }>
+  }
+
+  // 存储管理 - 动态模式切换
+  storage: {
+    switchToCloud: (userToken: string) => Promise<{ success: boolean; mode: string }>
+    switchToLocal: () => Promise<{ success: boolean; mode: string }>
+    getStatus: () => Promise<any>
+    sync: () => Promise<any>
+  }
+
+  // Shell 操作
+  shell: {
+    showItemInFolder: (filePath: string) => Promise<void>
+    openPath: (path: string) => Promise<string>
+    openExternal: (url: string) => Promise<void>
+  }
+}
+
+// 全局类型声明 - 移除以避免冲突
+
+// 通过 contextBridge 暴露 API
+if (process.contextIsolated) {
+  try {
+    contextBridge.exposeInMainWorld('electronAPI', api as unknown as ElectronAPI)
+    contextBridge.exposeInMainWorld('api', api as unknown as ElectronAPI) // 添加别名
+  } catch (error) {
+    console.error('Failed to expose electron APIs:', error)
+  }
+} else {
+  // @ts-ignore (define in dts)
+  window.electronAPI = api as ElectronAPI
+  // @ts-ignore (define in dts)
+  window.api = api as ElectronAPI // 添加别名
+}

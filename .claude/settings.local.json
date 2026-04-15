@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add apps/desktop/src/App.vue)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nfeat: Add mouse middle-click to close tabs\n\n实现鼠标中键关闭标签页功能，提升用户体验：\n- 在标签上按下鼠标中键（滚轮）即可关闭标签\n- 保持原有的左键点击切换标签功能\n- 与现有的关闭按钮功能并存\n\n类似 VS Code、Chrome 等现代编辑器的标签关闭行为\nEOF\n)\")",
+      "Bash(git push origin main)",
+      "Bash(git add apps/desktop/src/components/chat/AIChatSessionWithTools.vue apps/desktop/src/views/DeployView.vue)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nfix: UI improvements for deploy view and chat input\n\n部署视图修复：\n- DeployView.vue: 修复了 scriptFiles computed 函数中的语法错误\n- 移除了重复和嵌套错误的代码块\n- 优化了代码结构和空行处理\n\n聊天输入框优化：\n- AIChatSessionWithTools.vue: 移除了输入框的边框\n- 使界面更加简洁现代\nEOF\n)\")",
+      "Bash(npx vue-tsc --noEmit --project tsconfig.json)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

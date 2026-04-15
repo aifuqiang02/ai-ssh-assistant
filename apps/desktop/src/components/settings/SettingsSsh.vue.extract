@@ -1,0 +1,57 @@
+        <section :id="'section-ssh'" class="setting-section">
+          <h2 class="section-title">
+            <i class="bi bi-terminal"></i>
+            {{ $t('settings.sshTitle') }}
+          </h2>
+          <p class="section-description">配置 SSH 连接的默认参数</p>
+
+          <!-- 默认超时时间 -->
+          <div class="setting-row">
+            <div class="setting-left">
+              <label class="setting-label">连接超时时间</label>
+              <p class="setting-hint">SSH 连接超时时间（秒）</p>
+            </div>
+            <div class="setting-right">
+          <input 
+                v-model.number="sshTimeout" 
+            type="number" 
+                class="form-input"
+            min="10"
+            max="300"
+          />
+            </div>
+        </div>
+        
+          <!-- 保持连接 -->
+          <div class="setting-row">
+            <div class="setting-left">
+              <label class="setting-label">保持连接</label>
+              <p class="setting-hint">保持 SSH 连接活跃，防止超时断开</p>
+            </div>
+            <div class="setting-right">
+              <label class="toggle-switch">
+                <input v-model="keepAlive" type="checkbox" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 默认端口 -->
+          <div class="setting-row">
+            <div class="setting-left">
+              <label class="setting-label">默认端口</label>
+              <p class="setting-hint">新建 SSH 连接时的默认端口</p>
+            </div>
+            <div class="setting-right">
+          <input 
+                v-model.number="defaultSSHPort" 
+                type="number" 
+                class="form-input"
+                min="1"
+                max="65535"
+          />
+        </div>
+      </div>
+        </section>
+
+        <!-- 终端设置 -->

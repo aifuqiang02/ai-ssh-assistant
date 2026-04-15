@@ -1,0 +1,12 @@
+{
+  "unknown": "Unknown error",
+  "network": "Network error",
+  "timeout": "Request timeout",
+  "serverError": "Internal server error",
+  "badRequest": "Bad request parameters",
+  "notFound": "Resource not found",
+  "forbidden": "Access forbidden",
+  "conflict": "Resource conflict",
+  "validationFailed": "Data validation failed"
+}
+

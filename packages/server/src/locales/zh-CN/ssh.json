@@ -1,0 +1,10 @@
+{
+  "connectSuccess": "连接成功",
+  "connectFailed": "连接失败：{{message}}",
+  "disconnectSuccess": "断开连接成功",
+  "executionFailed": "执行失败：{{message}}",
+  "invalidHost": "无效的主机地址",
+  "invalidPort": "无效的端口号",
+  "connectionTimeout": "连接超时"
+}
+

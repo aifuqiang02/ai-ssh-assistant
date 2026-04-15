@@ -1,0 +1,99 @@
+// SQLite schema for local desktop storage
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/client-sqlite"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./local.db"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  uuid      String   @unique @default(cuid())
+  email     String?  @unique
+  username  String?  @unique
+  password  String?
+  avatar    String?
+  role      String   @default("USER")
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sshFolders     SSHFolder[]
+  sshConnections SSHConnection[]
+  commandLogs    CommandLog[]
+  userSettings   UserSettings?
+
+  @@map("users")
+}
+
+model UserSettings {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  data      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@map("user_settings")
+}
+
+model SSHFolder {
+  id        String   @id @default(cuid())
+  name      String
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  parentId  String?
+  parent    SSHFolder?  @relation("FolderHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
+  children  SSHFolder[] @relation("FolderHierarchy")
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  connections SSHConnection[]
+  @@map("ssh_folders")
+}
+
+model SSHConnection {
+  id       String @id @default(cuid())
+  name     String
+  host     String
+  port     Int    @default(22)
+  username String
+  order    Int    @default(0)
+  authType    String
+  password    String?
+  privateKey  String?
+  publicKey   String?
+  passphrase  String?
+  status       String   @default("DISCONNECTED")
+  lastUsed     DateTime?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  meta        String?
+  folderId  String?
+  folder    SSHFolder? @relation(fields: [folderId], references: [id], onDelete: SetNull)
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  commandLogs  CommandLog[]
+  @@map("ssh_connections")
+}
+
+model CommandLog {
+  id        String   @id @default(cuid())
+  command   String
+  output    String?
+  exitCode  Int?
+  duration  Int?
+  createdAt DateTime @default(now())
+  safetyLevel String @default("SAFE")
+  metadata      String?
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sshConnectionId String?
+  sshConnection   SSHConnection? @relation(fields: [sshConnectionId], references: [id])
+  @@map("command_logs")
+}
