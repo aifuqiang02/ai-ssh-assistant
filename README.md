@@ -31,10 +31,9 @@
 - 🔗 **SSH 连接管理** - 安全管理多个远程服务器连接，支持密码和私钥认证
 - 💻 **实时终端** - 基于 xterm.js 的完整终端模拟器，支持所有 SSH 功能
 - 📁 **文件管理** - 可视化的远程文件浏览和 SFTP 文件传输
-- 🔒 **安全可靠** - 命令安全审计、风险等级评估、执行日志记录
+- 🔒 **安全可靠** - SSH 凭据与配置信息保存在本地，降低云端泄露风险
 - 🎨 **现代化 UI** - 仿 VS Code 的美观界面，支持亮色/暗色主题
-- 📊 **数据统计** - 详细的使用数据、性能分析和 Token 统计
-- 💾 **双存储模式** - 支持本地存储（无需登录）和云端存储（多设备同步）
+- 💾 **本地存储** - SSH 连接、密钥和相关配置仅保存在本地设备
 - 🌐 **多 AI 平台** - 支持 OpenAI、Anthropic、Google Gemini、Ollama、通义千问等
 - 📱 **跨平台** - 完整支持 Windows、macOS 和 Linux 系统
 
@@ -44,20 +43,6 @@
   <img src="docs/images/soft.png" alt="AI SSH Assistant 应用界面展示" width="100%">
   <p><em>AI SSH Assistant 最新界面展示</em></p>
 </div>
-
-<details>
-<summary>查看截图说明</summary>
-
-当前仓库中的历史演示媒体文件 `docs/demo.gif`、`docs/demo.png`、`docs/demo.mp4`
-已不存在，因此这里改为直接展示目前可用的项目截图
-`docs/images/soft.png`，确保 GitHub 首页可以正常加载预览图。
-
-<div align="center">
-  <img src="docs/images/soft.png" alt="AI SSH Assistant 主界面截图" width="100%">
-  <p><em>应用主界面</em></p>
-</div>
-
-</details>
 
 ## 🚀 快速开始
 
@@ -90,122 +75,6 @@
   ```bash
   sudo dpkg -i ai-ssh-assistant-x.x.x-linux-x64.deb
   ```
-
-### 🛠️ 从源码运行
-
-#### 环境要求
-
-- Node.js 20+
-- pnpm 8+
-- SQLite 3+ (开发环境)
-- PostgreSQL 14+ / Redis 6+ (生产环境可选)
-
-#### 安装依赖
-
-```bash
-pnpm install
-```
-
-#### 配置环境变量
-
-```bash
-# 复制环境变量模板
-cp .env.example .env
-
-# 编辑 .env 文件，填入必要的配置（可选）
-# 如果只使用桌面应用的本地模式，可以跳过此步骤
-```
-
-<details>
-<summary>查看环境变量配置详情（可选，用于云端模式或开发）</summary>
-
-```bash
-# 数据库配置
-DATABASE_URL="file:./packages/database/dev.db"  # SQLite (开发)
-
-# 服务器配置
-PORT=3000
-HOST=0.0.0.0
-
-# JWT 安全密钥（生产环境请修改）
-JWT_SECRET="your-jwt-secret-32-chars-minimum"
-ENCRYPTION_KEY="your-32-char-encryption-key-here"
-SESSION_SECRET="your-session-secret-32-chars-min"
-
-# AI 服务配置（可在应用内配置）
-OPENAI_API_KEY="your-openai-api-key"
-ANTHROPIC_API_KEY="your-anthropic-api-key"
-```
-
-</details>
-
-#### 数据库初始化（仅开发环境需要）
-
-```bash
-# 生成 Prisma 客户端
-cd packages/database
-pnpm prisma generate
-
-# 创建数据库并运行迁移
-pnpm prisma migrate dev --name init
-
-# 插入种子数据
-pnpm prisma db seed
-```
-
-#### 启动开发环境
-
-```bash
-# 启动桌面应用（推荐，包含完整功能）
-pnpm dev:desktop
-
-# 或同时启动所有服务
-pnpm dev
-
-# 或分别启动
-pnpm dev:server    # 启动后端服务（云端模式需要）
-pnpm dev:web       # 启动 Web 应用
-```
-
-#### 构建生产版本
-
-##### 🚀 云端自动构建（推荐）
-
-项目已配置完整的 GitHub Actions 云端构建流程，支持全平台自动打包：
-
-```bash
-# 方法 1: 标签发版（推荐）
-git tag v1.0.4
-git push origin v1.0.4  # 自动构建并发布到 GitHub Releases
-
-# 方法 2: 手动触发
-# 访问 GitHub Actions 页面，选择"🚀 Release"工作流手动触发
-```
-
-**云端构建优势:**
-
-- ✅ 自动构建 Windows/macOS/Linux 全平台安装包
-- ✅ 自动创建 GitHub Release 并上传构建产物
-- ✅ 无需本地配置复杂的构建环境
-- ✅ 支持 macOS 的 Intel + Apple Silicon 双架构
-- ✅ 完整的构建日志和错误信息
-
-> 💡 详细使用说明请参考：[GitHub Actions 云端构建指南](./docs/github-actions-build.md)
-
-##### 🛠️ 本地构建
-
-```bash
-# 构建桌面应用安装包
-pnpm build:desktop
-
-# 构建所有应用
-pnpm build
-
-# 分平台构建
-pnpm build:win     # Windows (需要 Windows 环境)
-pnpm build:mac     # macOS (需要 macOS 环境)
-pnpm build:linux   # Linux (需要 Linux 环境)
-```
 
 ### 服务端部署
 
@@ -254,19 +123,30 @@ pnpm --filter @ai-ssh/database db:generate
 
 ## 📚 使用指南
 
-### 本地模式（无需登录）
+### 登录后开始使用
 
-1. 启动应用后，默认使用本地存储模式
+1. 启动应用后，先登录账号
 2. 在左侧边栏创建 SSH 连接
-3. 配置您的 AI 服务提供商（设置 → AI 配置）
-4. 开始与您的服务器对话！
+3. 在设置中配置您的 AI 服务提供商
+4. 开始与您的服务器对话
 
-### 云端模式（多设备同步）
+> 当前版本只有本地存储一种方式。登录是使用软件的必要步骤，但 SSH 连接、私钥和相关配置仍以本地保存为主，不默认做云端同步。
 
-1. 点击右上角登录按钮
-2. 注册/登录账户
-3. 您的数据将自动同步到云端
-4. 可在多个设备间无缝切换
+### 订阅说明
+
+- 项目代码开源，桌面软件为持续运营的付费产品
+- 基础功能套餐：`2 元 / 月`
+- AI 套餐：`3 元 / 月`
+
+这不是为了把简单功能层层收费，而是为了让一个长期维护的独立项目，能够持续投入时间去修问题、做优化、补细节、提升稳定性。
+
+### 为什么值得支持
+
+- 您支付的不只是一个安装包，而是在支持一个持续打磨体验的工具
+- 低门槛订阅可以帮助项目长期更新，而不是发布后停在原地
+- 对独立开发者来说，稳定而克制的收入，才能换来更长期、更认真、更负责的维护
+
+如果这个工具确实帮您省下了时间、减少了重复操作，愿意订阅支持，就是在帮助一个认真做产品的人把这件事继续做好。
 
 ### AI 配置
 
@@ -457,10 +337,19 @@ Key。支持多个 AI 平台，推荐使用 Anthropic Claude 或 OpenAI GPT-4。
 </details>
 
 <details>
-<summary>本地模式和云端模式有什么区别？</summary>
+<summary>数据存储在哪里？</summary>
 
-- **本地模式**: 数据存储在本地，无需登录，适合个人使用
-- **云端模式**: 数据同步到云端，需要登录，支持多设备同步
+- SSH 连接、私钥和相关配置默认保存在本地设备
+- 当前版本不提供配置自动云端同步，优先保证数据可控与本地安全
+
+</details>
+
+<details>
+<summary>为什么软件需要登录和付费？</summary>
+
+- 项目代码开源，但桌面软件以持续运营的产品方式维护
+- 登录用于识别订阅状态并保障服务可持续，不等于把敏感配置全部上传云端
+- 订阅价格保持在较低水平，希望让更多用户愿意长期支持独立开发
 
 </details>
 
