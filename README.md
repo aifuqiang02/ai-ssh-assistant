@@ -52,30 +52,6 @@
 **[Releases 页面](https://github.com/aifuqiang02/ai-ssh-assistant/releases/latest)**
 下载最新版本：
 
-#### Windows
-
-- 下载 `AI-SSH-Assistant-x.x.x-setup-x64.exe`
-- 双击运行安装程序
-- 支持 Windows 10/11 (64-bit)
-
-#### macOS
-
-- **Intel 芯片**: 下载 `ai-ssh-assistant-x.x.x-macos-x64.dmg`
-- **Apple Silicon**: 下载 `ai-ssh-assistant-x.x.x-macos-arm64.dmg`
-- 首次运行需在"系统偏好设置 → 安全性与隐私"中允许
-
-#### Linux
-
-- **AppImage (推荐)**:
-  ```bash
-  chmod +x ai-ssh-assistant-x.x.x-linux-x64.AppImage
-  ./ai-ssh-assistant-x.x.x-linux-x64.AppImage
-  ```
-- **Debian/Ubuntu**:
-  ```bash
-  sudo dpkg -i ai-ssh-assistant-x.x.x-linux-x64.deb
-  ```
-
 ## 📚 使用指南
 
 ### 登录后开始使用
