@@ -135,6 +135,19 @@ jobs:
       - name: 🏗️ Build server
         run: pnpm build:server
 
+      - name: 📝 Create desktop production env
+        shell: bash
+        run: |
+          if [ -z "${DESKTOP_VITE_API_BASE_URL}" ]; then
+            echo "DESKTOP_VITE_API_BASE_URL is not configured"
+            exit 1
+          fi
+          cat <<EOF > apps/desktop/.env.production
+          VITE_API_BASE_URL=${DESKTOP_VITE_API_BASE_URL}
+          EOF
+        env:
+          DESKTOP_VITE_API_BASE_URL: ${{ vars.DESKTOP_VITE_API_BASE_URL }}
+
       # Skip all native dependency rebuild on Windows
       - name: 🔧 Configure Windows build environment
         if: matrix.platform == 'Windows'
