@@ -128,7 +128,7 @@
 欢迎加入 QQ 交流群，与其他用户交流使用经验、分享技巧、反馈问题！
 
 <div align="center">
-  <img src="docs/qq.jpg" alt="AI SSH 交流群" width="300">
+  <img src="docs/images/qq.jpg" alt="AI SSH 交流群" width="300">
   <p>
     <strong>AI SSH 交流群</strong><br>
     QQ 群号：<code>307460844</code><br>
