@@ -15,11 +15,7 @@
     <a href="https://github.com/aifuqiang02/ai-ssh-assistant/stargazers">
       <img src="https://img.shields.io/github/stars/aifuqiang02/ai-ssh-assistant?style=flat-square" alt="Stars">
     </a>
-    <img src="https://img.shields.io/badge/Node.js-20+-green?style=flat-square" alt="Node Version">
     <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-blue?style=flat-square" alt="Platform">
-    <a href="https://github.com/aifuqiang02/ai-ssh-assistant/actions">
-      <img src="https://img.shields.io/github/actions/workflow/status/aifuqiang02/ai-ssh-assistant/build.yml?branch=main&style=flat-square&label=Build" alt="Build Status">
-    </a>
   </p>
 </div>
 
@@ -48,9 +44,9 @@
 
 ### 📦 下载安装包（推荐）
 
-访问
+请前往
 **[Releases 页面](https://github.com/aifuqiang02/ai-ssh-assistant/releases/latest)**
-下载最新版本：
+下载最新版本。
 
 ## 📚 使用指南
 
@@ -69,7 +65,7 @@
 - 基础功能套餐：`2 元 / 月`
 - AI 套餐：`3 元 / 月`
 
-这不是为了把简单功能层层收费，而是为了让一个长期维护的独立项目，能够持续投入时间去修问题、做优化、补细节、提升稳定性。
+桌面软件采用低门槛订阅制，用于支持持续维护、体验优化、问题修复和长期更新。
 
 ### 为什么值得支持
 
@@ -90,7 +86,8 @@
 - **通义千问** - 阿里云大模型
 - **其他** - DeepSeek、月之暗面等
 
-在"设置 → AI 配置"中添加 API Key 即可使用。
+您可以在"设置 → AI 配置"中添加自己的 API
+Key 后使用；不同套餐的具体能力范围，以软件内说明为准。
 
 ## 🤝 问题反馈
 
@@ -159,33 +156,11 @@ Key。支持多个 AI 平台，推荐使用 Anthropic Claude 或 OpenAI GPT-4。
 
 </details>
 
----
+## 📎 更多信息
 
-## 📋 更新日志
-
-查看 [CHANGELOG.md](./CHANGELOG.md) 了解版本更新历史。
-
-最新版本的详细说明请访问
-[Releases 页面](https://github.com/aifuqiang02/ai-ssh-assistant/releases)。
-
----
-
-## 🙏 致谢
-
-感谢以下开源项目：
-
-- [Electron](https://www.electronjs.org/) - 跨平台桌面应用框架
-- [Vue.js](https://vuejs.org/) - 渐进式 JavaScript 框架
-- [xterm.js](https://xtermjs.org/) - 终端模拟器
-- [ssh2](https://github.com/mscdex/ssh2) - SSH2 客户端
-- [Prisma](https://www.prisma.io/) - 现代化 ORM
-- [Fastify](https://www.fastify.io/) - 快速 Web 框架
-
----
-
-## 📄 许可证
-
-本项目采用 [MIT License](./LICENSE) 开源协议。
+- 更新日志：[CHANGELOG.md](./CHANGELOG.md)
+- 开源协议：[MIT License](./LICENSE)
+- 项目地址：[GitHub Repository](https://github.com/aifuqiang02/ai-ssh-assistant)
 
 ---
 
