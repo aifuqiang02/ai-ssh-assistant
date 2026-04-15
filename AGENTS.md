@@ -46,3 +46,28 @@
 
 不要只改客户端生成产物目录
 `packages/database/src/generated/*`；生成产物不是源文件。
+
+## 部署约定
+
+### 服务端部署
+
+使用项目内置部署脚本一键部署：
+
+```bash
+node deploy/deploy-server.mjs
+```
+
+部署脚本职责：
+
+- `deploy/deploy.config.mjs` - 服务器配置（host、port、目录）
+- `deploy/deploy-server.mjs` - 部署执行（打包 → 上传 → 解压 → PM2 重启）
+
+部署流程自动完成：
+
+1. 本地 `esbuild` 打包 server bundle
+2. 打包成 `.tar.gz` 归档
+3. 上传到服务器 `/www/wwwroot/ai-ssh-assistant/server/releases/<timestamp>/`
+4. 创建软链接到 `current`
+5. 重启 PM2 进程
+
+**注意**：不要在本地执行 `pnpm build` 再手动 scp，用部署脚本一键完成。

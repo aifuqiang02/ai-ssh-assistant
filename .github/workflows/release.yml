@@ -21,13 +21,12 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  create-release:
-    name: 📝 Create Release
+  prepare-release:
+    name: 📝 Prepare Release
     runs-on: ubuntu-latest
     outputs:
-      release_id: ${{ steps.create_release.outputs.id }}
-      release_upload_url: ${{ steps.create_release.outputs.upload_url }}
       version: ${{ steps.get_version.outputs.version }}
+      changelog: ${{ steps.changelog.outputs.CHANGELOG }}
     steps:
       - name: ⬇️ Checkout
         uses: actions/checkout@v4
@@ -89,22 +88,9 @@ jobs:
           echo "" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: 🎯 Create Release
-        id: create_release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ steps.get_version.outputs.version }}
-          name: AI SSH Assistant ${{ steps.get_version.outputs.version }}
-          body: ${{ steps.changelog.outputs.CHANGELOG }}
-          draft: true
-          prerelease: ${{ contains(steps.get_version.outputs.version, 'beta') || contains(steps.get_version.outputs.version, 'alpha') }}
-          generate_release_notes: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   build-and-upload:
     name: 🏗️ Build & Upload ${{ matrix.platform }}
-    needs: create-release
+    needs: prepare-release
     strategy:
       fail-fast: false
       matrix:
@@ -201,14 +187,14 @@ jobs:
         env:
           ELECTRON_CACHE: ${{ github.workspace }}/.cache/electron
           ELECTRON_BUILDER_CACHE: ${{ github.workspace }}/.cache/electron-builder
-          VITE_APP_VERSION: ${{ needs.create-release.outputs.version }}
+          VITE_APP_VERSION: ${{ needs.prepare-release.outputs.version }}
           DEBUG: electron-builder # 启用详细日志
 
       - name: 🧾 Generate update manifests
         run: node apps/desktop/scripts/generate-update-manifest.mjs
         env:
           RELEASE_DIR: apps/desktop/release
-          RELEASE_VERSION: ${{ needs.create-release.outputs.version }}
+          RELEASE_VERSION: ${{ needs.prepare-release.outputs.version }}
           GITHUB_REPOSITORY: ${{ github.repository }}
 
       - name: 📋 List generated files
@@ -220,11 +206,12 @@ jobs:
           echo "Finding all artifacts:"
           find apps/desktop/release -type f \( -name "*.AppImage" -o -name "*.deb" -o -name "*.dmg" -o -name "*.zip" -o -name "*.exe" \) || true
 
-      - name: 📤 Upload Release Assets
-        uses: softprops/action-gh-release@v1
+      - name: 📤 Upload Build Artifacts
+        uses: actions/upload-artifact@v4
         with:
-          tag_name: ${{ needs.create-release.outputs.version }}
-          files: |
+          name: release-assets-${{ matrix.platform }}
+          if-no-files-found: error
+          path: |
             apps/desktop/release/**/ai-ssh-assistant-*-linux-*.AppImage
             apps/desktop/release/**/*.blockmap
             apps/desktop/release/**/ai-ssh-assistant-*-linux-*.deb
@@ -233,38 +220,59 @@ jobs:
             apps/desktop/release/**/AI-SSH-Assistant-*-setup-*.exe
             apps/desktop/release/**/latest*.yml
             apps/desktop/release/update-manifest-*.json
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 📊 Build Summary
         shell: bash
         run: |
           echo "### 🏗️ Build completed for ${{ matrix.platform }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Version:** ${{ needs.create-release.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Version:** ${{ needs.prepare-release.outputs.version }}" >> $GITHUB_STEP_SUMMARY
           echo "**Platform:** ${{ matrix.platform }}" >> $GITHUB_STEP_SUMMARY
           echo "**Files:**" >> $GITHUB_STEP_SUMMARY
           ls -la apps/desktop/release/*/ >> $GITHUB_STEP_SUMMARY 2>/dev/null || echo "No release files found" >> $GITHUB_STEP_SUMMARY
 
   post-release:
     name: 📢 Post Release Tasks
-    needs: [create-release, build-and-upload]
+    needs: [prepare-release, build-and-upload]
     runs-on: ubuntu-latest
     if: ${{ needs.build-and-upload.result == 'success' }}
     steps:
-      - name: ✅ Publish Release
+      - name: 📥 Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-artifacts
+          pattern: release-assets-*
+          merge-multiple: true
+
+      - name: 📋 List Release Assets
+        shell: bash
+        run: |
+          ls -la release-artifacts/ || true
+
+      - name: ✅ Create Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ needs.create-release.outputs.version }}
-          draft: false
-          prerelease: ${{ contains(needs.create-release.outputs.version, 'beta') || contains(needs.create-release.outputs.version, 'alpha') }}
+          tag_name: ${{ needs.prepare-release.outputs.version }}
+          name: AI SSH Assistant ${{ needs.prepare-release.outputs.version }}
+          body: ${{ needs.prepare-release.outputs.changelog }}
+          prerelease: ${{ contains(needs.prepare-release.outputs.version, 'beta') || contains(needs.prepare-release.outputs.version, 'alpha') }}
+          generate_release_notes: true
+          files: |
+            release-artifacts/**/ai-ssh-assistant-*-linux-*.AppImage
+            release-artifacts/**/*.blockmap
+            release-artifacts/**/ai-ssh-assistant-*-linux-*.deb
+            release-artifacts/**/ai-ssh-assistant-*-macos-*.dmg
+            release-artifacts/**/ai-ssh-assistant-*-macos-*.zip
+            release-artifacts/**/AI-SSH-Assistant-*-setup-*.exe
+            release-artifacts/**/latest*.yml
+            release-artifacts/update-manifest-*.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 🎉 Release Summary
         run: |
-          echo "### 🚀 Release ${{ needs.create-release.outputs.version }} completed!" >> $GITHUB_STEP_SUMMARY
+          echo "### 🚀 Release ${{ needs.prepare-release.outputs.version }} completed!" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Release URL:** https://github.com/${{ github.repository }}/releases/tag/${{ needs.create-release.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Release URL:** https://github.com/${{ github.repository }}/releases/tag/${{ needs.prepare-release.outputs.version }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 📦 Available Downloads:" >> $GITHUB_STEP_SUMMARY
           echo "- Windows (x64)" >> $GITHUB_STEP_SUMMARY
