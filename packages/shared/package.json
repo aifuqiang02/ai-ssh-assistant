@@ -1,6 +1,6 @@
 {
   "name": "@ai-ssh/shared",
-  "version": "1.8.22",
+  "version": "1.8.23",
   "description": "AI SSH Assistant Shared Types and Utilities",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

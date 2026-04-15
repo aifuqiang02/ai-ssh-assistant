@@ -1,6 +1,6 @@
 {
   "name": "@ai-ssh/core",
-  "version": "1.8.22",
+  "version": "1.8.23",
   "description": "AI SSH Assistant Core Utilities",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
