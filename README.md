@@ -63,7 +63,7 @@
 
 - 项目代码开源，桌面软件为持续运营的付费产品
 - 基础功能套餐：`2 元 / 月`
-- AI 套餐：`3 元 / 月` 每月 `1000` 次，工具多次调用不重复计次，平均每次约
+- AI 套餐：`3 元 / 月`，每月 `1000` 次，工具多次调用不重复计次，平均每次约
   `0.003` 元
 
 桌面软件采用低门槛订阅制，用于支持持续维护、体验优化、问题修复和长期更新。
@@ -144,8 +144,7 @@ Key。支持多个 AI 平台，推荐使用 Anthropic Claude 或 OpenAI GPT-4。
 <details>
 <summary>支持哪些操作系统？</summary>
 
-完整支持 Windows 10/11、macOS (Intel + Apple Silicon) 和 Linux
-(Ubuntu/Debian/AppImage)。
+完整支持 Windows 10/11、macOS 和 Linux。
 
 </details>
 
