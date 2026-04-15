@@ -41,23 +41,21 @@
 ## 📸 应用演示
 
 <div align="center">
-  <img src="docs/demo.gif" alt="AI SSH Assistant 功能演示" width="100%">
-  <p><em>AI SSH Assistant 功能演示</em></p>
+  <img src="docs/images/soft.png" alt="AI SSH Assistant 应用界面展示" width="100%">
+  <p><em>AI SSH Assistant 最新界面展示</em></p>
 </div>
 
 <details>
-<summary>查看更多截图和视频</summary>
+<summary>查看截图说明</summary>
 
-### 静态截图
+当前仓库中的历史演示媒体文件 `docs/demo.gif`、`docs/demo.png`、`docs/demo.mp4`
+已不存在，因此这里改为直接展示目前可用的项目截图
+`docs/images/soft.png`，确保 GitHub 首页可以正常加载预览图。
 
 <div align="center">
-  <img src="docs/demo.png" alt="AI SSH Assistant 界面展示" width="100%">
+  <img src="docs/images/soft.png" alt="AI SSH Assistant 主界面截图" width="100%">
   <p><em>应用主界面</em></p>
 </div>
-
-### 完整演示视频
-
-> 💡 如需观看完整高清演示，请[下载视频](docs/demo.mp4)
 
 </details>
 
