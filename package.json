@@ -1,6 +1,6 @@
 {
   "name": "ai-ssh-assistant",
-  "version": "1.8.21",
+  "version": "1.8.22",
   "description": "AI-powered SSH remote server management assistant",
   "private": true,
   "workspaces": ["apps/*", "packages/*"],
