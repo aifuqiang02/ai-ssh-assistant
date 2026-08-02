@@ -13,7 +13,7 @@ const mockCreateWechatUser = vi.fn().mockResolvedValue({
   createdAt: new Date('2026-01-01T00:00:00.000Z'),
   updatedAt: new Date('2026-01-01T00:00:00.000Z')
 })
-const mockOfficialGetStatus = vi.fn().mockResolvedValue({
+const mockOfficialGetStatus = vi.fn().mockReturnValue({
   enabled: true,
   models: [
     {
@@ -212,6 +212,20 @@ describe('App', () => {
 
     expect(response.statusCode).toBe(401)
     expect(mockOfficialGetStatus).not.toHaveBeenCalled()
+  })
+
+  it('serves fresh official model status for authenticated users', async () => {
+    const token = app.jwt.sign({ userId: 'user_wechat_1', uuid: 'uuid_wechat_1', role: 'USER' })
+    const response = await app.inject({
+      method: 'GET',
+      url: '/api/v1/ai/official/status',
+      headers: { authorization: `Bearer ${token}` }
+    })
+
+    expect(response.statusCode).toBe(200)
+    expect(response.headers['cache-control']).toBe('no-store, no-cache, must-revalidate')
+    expect(response.headers.pragma).toBe('no-cache')
+    expect(response.json().data.models[0].id).toBe('gpt-last')
   })
 
   it('creates official model chat for authenticated user', async () => {

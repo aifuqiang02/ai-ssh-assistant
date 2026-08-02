@@ -80,6 +80,13 @@ test('title bar defaults to the first available official model when no selection
   assert.match(source, /applyOfficialModelSelection\(defaultOfficialModel\)/)
 })
 
+test('title bar persists the replacement when a saved official model is removed', async () => {
+  const source = await readFile(appTitleBarPath, 'utf8')
+
+  assert.match(source, /resolved\.model && resolved\.shouldPersist/)
+  assert.match(source, /applyOfficialModelSelection\(resolved\.model\)/)
+})
+
 test('title bar logs official model loading failures instead of silently hiding them', async () => {
   const source = await readFile(appTitleBarPath, 'utf8')
 

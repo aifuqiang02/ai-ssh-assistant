@@ -21,7 +21,8 @@ test('api service exposes official model status and chat endpoints', async () =>
   const source = await readFile(apiServicePath, 'utf8')
 
   assert.match(source, /async getOfficialModelStatus\(/)
-  assert.match(source, /return this\.get\('\/ai\/official\/status'\)/)
+  assert.match(source, /this\.request\('\/ai\/official\/status'/)
+  assert.match(source, /cache: 'no-store'/)
   assert.match(source, /async createOfficialChat\(/)
   assert.match(source, /return this\.post\('\/ai\/official\/chat', payload\)/)
 })

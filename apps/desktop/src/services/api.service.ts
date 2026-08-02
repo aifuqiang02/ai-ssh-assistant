@@ -332,7 +332,11 @@ class ApiService {
   }
 
   async getOfficialModelStatus(): Promise<ApiResponse<OfficialModelStatus>> {
-    return this.get('/ai/official/status')
+    return this.request('/ai/official/status', {
+      method: 'GET',
+      cache: 'no-store',
+      headers: { 'Cache-Control': 'no-cache' }
+    })
   }
 
   async createOfficialChat(

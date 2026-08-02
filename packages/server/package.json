@@ -1,6 +1,6 @@
 {
   "name": "@ai-ssh/server",
-  "version": "1.8.26",
+  "version": "1.8.27",
   "description": "AI SSH Assistant Server API",
   "main": "dist/index.js",
   "private": true,

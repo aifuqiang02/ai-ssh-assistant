@@ -21,7 +21,10 @@ export async function officialAiRoutes(fastify: FastifyInstance) {
     { preHandler: fastify.authenticate },
     async (_request: FastifyRequest, reply: FastifyReply) => {
       const data = officialAiUsageService.getStatus()
-      return reply.send({ success: true, message: '获取官方模型状态成功', data })
+      return reply
+        .header('Cache-Control', 'no-store, no-cache, must-revalidate')
+        .header('Pragma', 'no-cache')
+        .send({ success: true, message: '获取官方模型状态成功', data })
     }
   )
 

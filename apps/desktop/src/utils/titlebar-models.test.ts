@@ -53,6 +53,7 @@ test('resolveSelectedTitleBarModel clears stale selection when model no longer e
 
   assert.equal(result.model, null)
   assert.equal(result.shouldClear, true)
+  assert.equal(result.shouldPersist, false)
 })
 
 test('buildOfficialTitleBarModels marks official models as official group entries', () => {
@@ -103,4 +104,30 @@ test('resolveSelectedTitleBarModel keeps official selection when official model 
   assert.equal(result.model?.providerId, 'official')
   assert.equal(result.model?.id, 'MiniMax-M2.7-highspeed')
   assert.equal(result.shouldClear, false)
+  assert.equal(result.shouldPersist, false)
+})
+
+test('resolveSelectedTitleBarModel replaces a removed official model with the current one', () => {
+  const result = resolveSelectedTitleBarModel(
+    [
+      {
+        id: 'gpt-last',
+        name: 'gpt-last',
+        shortName: 'gpt-last',
+        providerId: 'official',
+        providerName: '官方模型',
+        source: 'official',
+        group: 'official'
+      }
+    ],
+    JSON.stringify({
+      source: 'official',
+      providerId: 'official',
+      modelId: 'gpt5.5'
+    })
+  )
+
+  assert.equal(result.model?.id, 'gpt-last')
+  assert.equal(result.shouldClear, false)
+  assert.equal(result.shouldPersist, true)
 })

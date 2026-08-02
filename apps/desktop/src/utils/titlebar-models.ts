@@ -81,9 +81,9 @@ export function buildOfficialTitleBarModels(
 export function resolveSelectedTitleBarModel(
   availableModels: TitleBarModelOption[],
   savedSelection: string | null
-): { model: TitleBarModelOption | null; shouldClear: boolean } {
+): { model: TitleBarModelOption | null; shouldClear: boolean; shouldPersist: boolean } {
   if (!savedSelection) {
-    return { model: null, shouldClear: false }
+    return { model: null, shouldClear: false, shouldPersist: false }
   }
 
   try {
@@ -92,14 +92,25 @@ export function resolveSelectedTitleBarModel(
     const modelId = parsed?.model?.id || parsed?.modelId
     const model =
       availableModels.find(item => item.id === modelId && item.providerId === providerId) || null
+
+    if (!model && providerId === 'official') {
+      const replacement =
+        availableModels.find(item => item.providerId === 'official' && !item.disabled) || null
+      if (replacement) {
+        return { model: replacement, shouldClear: false, shouldPersist: true }
+      }
+    }
+
     return {
       model,
-      shouldClear: !model
+      shouldClear: !model,
+      shouldPersist: false
     }
   } catch {
     return {
       model: null,
-      shouldClear: true
+      shouldClear: true,
+      shouldPersist: false
     }
   }
 }

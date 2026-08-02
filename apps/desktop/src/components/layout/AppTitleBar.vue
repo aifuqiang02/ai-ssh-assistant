@@ -482,7 +482,9 @@ const loadCurrentModel = () => {
 
     const resolved = resolveSelectedTitleBarModel(availableModels.value, savedStr)
 
-    if (resolved.model) {
+    if (resolved.model && resolved.shouldPersist) {
+      applyOfficialModelSelection(resolved.model)
+    } else if (resolved.model) {
       currentModel.value = resolved.model
     } else {
       if (resolved.shouldClear) {
