@@ -18,3 +18,13 @@ test('wechat login service logs key checkpoints from business login to logout cl
   assert.match(source, /\[wechat-login\] logoutWechatLogin cleared local auth state/)
   assert.match(source, /\[wechat-login\] logoutWechatLogin done/)
 })
+
+test('stored user requires a token and user info from the same storage', async () => {
+  const source = await readFile(servicePath, 'utf8')
+
+  assert.match(source, /for \(const storage of \[localStorage, sessionStorage\]\)/)
+  assert.match(source, /const token = storage\.getItem\('userToken'\)/)
+  assert.match(source, /const raw = storage\.getItem\('userInfo'\)/)
+  assert.match(source, /if \(!token \|\| !raw\) continue/)
+  assert.match(source, /return Boolean\(getStoredUser\(\)\)/)
+})

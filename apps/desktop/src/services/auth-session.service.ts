@@ -1,8 +1,9 @@
 import { computed, ref } from 'vue'
 import { getStoredUser, hasStoredLogin } from './wechat-login.service'
 
-const currentUser = ref(getStoredUser())
-const isAuthenticated = ref(hasStoredLogin())
+const initialUser = getStoredUser()
+const currentUser = ref(initialUser)
+const isAuthenticated = ref(!!initialUser)
 
 function syncAuthState() {
   currentUser.value = getStoredUser()

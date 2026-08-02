@@ -146,6 +146,12 @@ class ApiService {
    * 清除认证token
    */
   clearToken(): void {
+    const hadAuthState =
+      !!this.token ||
+      !!localStorage.getItem('userToken') ||
+      !!sessionStorage.getItem('userToken') ||
+      !!localStorage.getItem('userInfo') ||
+      !!sessionStorage.getItem('userInfo')
     console.log('[api] clearToken start', {
       hadToken: !!this.token,
       tokenPreview: this.token?.slice(0, 16)
@@ -157,6 +163,13 @@ class ApiService {
     sessionStorage.removeItem('refreshToken')
     localStorage.removeItem('userInfo')
     sessionStorage.removeItem('userInfo')
+    if (hadAuthState) {
+      window.dispatchEvent(
+        new CustomEvent('auth-state-changed', {
+          detail: { user: null, token: null }
+        })
+      )
+    }
     console.log('[api] clearToken done')
   }
 
@@ -205,6 +218,10 @@ class ApiService {
           hasToken: !!this.token,
           tokenPreview: this.token?.slice(0, 16)
         })
+        if (response.status === 401) {
+          this.clearToken()
+        }
+
         const error = new Error(
           data.message || `HTTP error! status: ${response.status}`
         ) as Error & {

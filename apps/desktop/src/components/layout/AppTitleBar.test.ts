@@ -47,6 +47,14 @@ test('title bar emits open-login when user area is clicked while logged out', as
   assert.match(source, /if \(!wechatUser\.value\)/)
 })
 
+test('title bar refreshes the displayed user when authentication state changes', async () => {
+  const source = await readFile(appTitleBarPath, 'utf8')
+
+  assert.match(source, /const handleAuthStateChange = \(\) =>/)
+  assert.match(source, /wechatUser\.value = getStoredUser\(\)/)
+  assert.match(source, /addEventListener\('auth-state-changed', handleAuthStateChange\)/)
+})
+
 test('profile center opens standalone profile tab instead of settings profile section', async () => {
   const source = await readFile(appTitleBarPath, 'utf8')
 

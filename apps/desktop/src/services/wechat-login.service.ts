@@ -157,21 +157,23 @@ export async function exchangeWechatProfileForLogin(
 }
 
 export function getStoredUser(): LoggedInWechatUser | null {
-  const raw = localStorage.getItem('userInfo') || sessionStorage.getItem('userInfo')
-  console.log('[wechat-login] getStoredUser raw', raw)
-  if (!raw) return null
+  for (const storage of [localStorage, sessionStorage]) {
+    const token = storage.getItem('userToken')
+    const raw = storage.getItem('userInfo')
+    if (!token || !raw) continue
 
-  try {
-    return JSON.parse(raw) as LoggedInWechatUser
-  } catch {
-    return null
+    try {
+      return JSON.parse(raw) as LoggedInWechatUser
+    } catch {
+      continue
+    }
   }
+
+  return null
 }
 
 export function hasStoredLogin() {
-  const token = localStorage.getItem('userToken') || sessionStorage.getItem('userToken')
-  console.log('[wechat-login] hasStoredLogin token?', !!token)
-  return Boolean(token)
+  return Boolean(getStoredUser())
 }
 
 export async function logoutWechatLogin() {
@@ -197,12 +199,6 @@ export async function logoutWechatLogin() {
     hasLocalUser: !!localStorage.getItem('userInfo'),
     hasSessionUser: !!sessionStorage.getItem('userInfo')
   })
-
-  window.dispatchEvent(
-    new CustomEvent('auth-state-changed', {
-      detail: { user: null, token: null }
-    })
-  )
 
   console.log('[wechat-login] logoutWechatLogin done')
 }

@@ -48,6 +48,15 @@ test('api service clears both access and refresh tokens on logout cleanup', asyn
   assert.match(source, /sessionStorage\.removeItem\('refreshToken'\)/)
 })
 
+test('api service clears stale login state and notifies the UI after a 401 response', async () => {
+  const source = await readFile(apiServicePath, 'utf8')
+
+  assert.match(source, /if \(response\.status === 401\)/)
+  assert.match(source, /this\.clearToken\(\)/)
+  assert.match(source, /new CustomEvent\('auth-state-changed'/)
+  assert.match(source, /detail: \{ user: null, token: null \}/)
+})
+
 test('api service logs token preview for request lifecycle debugging', async () => {
   const source = await readFile(apiServicePath, 'utf8')
 
