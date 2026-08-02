@@ -97,6 +97,9 @@ export const ExecuteSSHCommandTool = Tool.define('execute_ssh_command', async ()
 
       ctx.metadata({ title: `Executing: ${command}` })
       const result = await executeSSHCommand(connectionId, command, ctx.abort)
+      if (!result.success) {
+        throw new Error(result.error || `SSH command failed: ${command}`)
+      }
       return {
         title: `Executed: ${command}`,
         metadata: {},
@@ -192,24 +195,11 @@ export const ReadServerEnvDocTool = Tool.define('read_server_env_doc', async () 
   return {
     description:
       "Read the canonical env.md from the authenticated remote user's $HOME. Returns raw content for update_server_env_doc.",
-    parameters: z.object({
-      __serverEnvDocId: z
-        .string()
-        .optional()
-        .describe('Document ID (optional, uses serverEnvDocId by default)')
-    }),
-    async execute(params: any, ctx) {
+    parameters: z.object({}),
+    async execute(_params: any, ctx) {
       const docId = ctx.extra?.connectionId
       if (!docId) {
         throw new Error('No document ID or connection ID available')
-      }
-
-      if (params.__serverEnvDocId && params.__serverEnvDocId !== docId) {
-        console.warn('[SSHTools] 忽略模型传入的环境文档 ID，改用运行时上下文中的稳定 ID', {
-          tool: 'read_server_env_doc',
-          requestedDocId: params.__serverEnvDocId,
-          resolvedDocId: docId
-        })
       }
 
       console.info('[SSHTools] 读取服务器环境文档', {
@@ -258,24 +248,12 @@ export const UpdateServerEnvDocTool = Tool.define('update_server_env_doc', async
           return z.boolean().optional().parse(value)
         }, z.boolean().optional())
         .optional()
-        .describe('Set true only when the user explicitly confirms full-document overwrite.'),
-      __serverEnvDocId: z
-        .string()
-        .optional()
-        .describe('Document ID (optional, uses serverEnvDocId by default)')
+        .describe('Set true only when the user explicitly confirms full-document overwrite.')
     }),
     async execute(params: any, ctx) {
       const docId = ctx.extra?.connectionId
       if (!docId) {
         throw new Error('No document ID or connection ID available')
-      }
-
-      if (params.__serverEnvDocId && params.__serverEnvDocId !== docId) {
-        console.warn('[SSHTools] 忽略模型传入的环境文档 ID，改用运行时上下文中的稳定 ID', {
-          tool: 'update_server_env_doc',
-          requestedDocId: params.__serverEnvDocId,
-          resolvedDocId: docId
-        })
       }
 
       const content = typeof params.content === 'string' ? params.content : ''

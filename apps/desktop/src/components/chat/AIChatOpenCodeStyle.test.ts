@@ -109,6 +109,31 @@ test('active SSH chat system prompt explains how to update env docs without forc
   assert.match(source, /shared by every computer that connects as that same remote user/)
 })
 
+test('active SSH chat system prompt requires complete and readable software inventory updates', async () => {
+  const source = await readFile(chatViewPath, 'utf8')
+
+  assert.match(source, /Software documentation workflow:/)
+  assert.match(source, /read the full env\.md.*inspect the live server.*update only that section.*read env\.md again/)
+  assert.match(source, /exact version and build options/)
+  assert.match(source, /package manager, and verified install\/update\/remove commands/)
+  assert.match(source, /installation, configuration, include, module, certificate, web root, data, cache, temporary, PID, and log paths/)
+  assert.match(source, /Adapt inspection to the target type instead of using a product-specific checklist/)
+  assert.match(source, /for databases inspect client\/server versions/)
+  assert.match(source, /for containers inspect runtime/)
+  assert.match(source, /for language runtimes inspect executable/)
+  assert.match(source, /for web applications inspect deployment root/)
+  assert.match(source, /Collect only fields applicable to the target/)
+  assert.match(source, /do not stop after a version check/)
+  assert.doesNotMatch(source, /For Nginx specifically/)
+  assert.match(source, /record it as 未确认 and briefly state why/)
+  assert.match(source, /Do not paste raw command output into env\.md/)
+  assert.match(source, /基本信息 table/)
+  assert.match(source, /路径与文件 table/)
+  assert.match(source, /网络与实例 table/)
+  assert.match(source, /常用命令 fenced shell block/)
+  assert.match(source, /target software section exists exactly once/)
+})
+
 test('official model errors preserve server quota errors and normalize availability errors', async () => {
   const source = await readFile(chatViewPath, 'utf8')
 

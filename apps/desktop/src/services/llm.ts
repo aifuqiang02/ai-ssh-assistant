@@ -1,6 +1,7 @@
 import { Tool } from './tools/tool'
 import type { AIProvider, AIModel } from '../types/ai-providers'
 import { getRendererApiOrigin } from '@/config/api-environment'
+import { zodToOpenAIParameters } from './zod-schema'
 
 const OFFICIAL_API_BASE_URL = getRendererApiOrigin()
 
@@ -89,7 +90,7 @@ export class LLMSession {
           function: {
             name: tool.id,
             description: info.description,
-            parameters: this.zodToOpenAIParameters(parameters)
+            parameters: zodToOpenAIParameters(parameters)
           }
         }
       })
@@ -364,55 +365,6 @@ export class LLMSession {
     return result
   }
 
-  private zodToOpenAIParameters(zodType: any): any {
-    if (!zodType || typeof zodType !== 'object') {
-      return { type: 'object', properties: {} }
-    }
-
-    const def = zodType._def || zodType
-    const shape = def.shape
-
-    if (!shape) {
-      return { type: 'object', properties: {} }
-    }
-
-    const properties: Record<string, any> = {}
-    const required: string[] = []
-
-    for (const [key, value] of Object.entries(shape)) {
-      const zodField = value as any
-      const fieldDef = zodField._def || {}
-      const typeMap: Record<string, string> = {
-        ZodString: 'string',
-        ZodNumber: 'number',
-        ZodBoolean: 'boolean',
-        ZodArray: 'array',
-        ZodObject: 'object'
-      }
-
-      const typeName = fieldDef.typeName || 'ZodString'
-      const type = typeMap[typeName] || 'string'
-
-      properties[key] = {
-        type,
-        description: zodField.description || ''
-      }
-
-      if (fieldDef.defaultValue !== undefined) {
-        properties[key].default = fieldDef.defaultValue
-      }
-
-      if (zodField._def?.isOptional !== true && !fieldDef.isOptional) {
-        required.push(key)
-      }
-    }
-
-    return {
-      type: 'object',
-      properties,
-      required: required.length > 0 ? required : undefined
-    }
-  }
 }
 
 export function createLLMSession(

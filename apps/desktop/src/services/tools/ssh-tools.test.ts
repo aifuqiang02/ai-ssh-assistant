@@ -55,3 +55,11 @@ test('update_server_env_doc description tells the model when to use exact replac
     /Only set force_replace=true after the user explicitly confirms a full-document overwrite\./
   )
 })
+
+test('SSH command failures are surfaced and env doc tools do not expose internal document IDs', async () => {
+  const source = await readFile(sshToolsPath, 'utf8')
+
+  assert.match(source, /if \(!result\.success\) \{\s*throw new Error\(result\.error/)
+  assert.match(source, /ReadServerEnvDocTool[\s\S]*?parameters: z\.object\(\{\}\)/)
+  assert.doesNotMatch(source, /__serverEnvDocId/)
+})

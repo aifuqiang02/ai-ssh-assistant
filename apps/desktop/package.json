@@ -1,6 +1,6 @@
 {
   "name": "@ai-ssh/desktop",
-  "version": "1.8.28",
+  "version": "1.8.29",
   "description": "AI SSH Assistant Desktop Application",
   "main": "dist-electron/main/index.js",
   "private": true,
