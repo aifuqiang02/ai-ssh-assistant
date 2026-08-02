@@ -156,10 +156,10 @@ jobs:
           pip3 install setuptools
 
       - name: 📥 Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: 🔗 Link workspace dependencies
-        run: pnpm install
+        run: pnpm install --ignore-scripts
 
       - name: 🏗️ Generate Prisma Client
         run: pnpm db:generate
