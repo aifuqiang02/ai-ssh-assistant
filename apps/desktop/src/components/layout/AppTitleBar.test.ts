@@ -79,3 +79,9 @@ test('title bar defaults to the first available official model when no selection
   assert.match(source, /groupedModels\.value\.official\.find\(model => !model\.disabled\)/)
   assert.match(source, /applyOfficialModelSelection\(defaultOfficialModel\)/)
 })
+
+test('title bar logs official model loading failures instead of silently hiding them', async () => {
+  const source = await readFile(appTitleBarPath, 'utf8')
+
+  assert.match(source, /\[AppTitleBar\] Failed to load official model status:/)
+})

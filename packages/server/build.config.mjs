@@ -1,9 +1,11 @@
 import { build } from 'esbuild'
 import { copy } from 'fs-extra'
+import { readFile, writeFile } from 'fs/promises'
 import { createRequire } from 'node:module'
 import { dirname, join } from 'node:path'
 
 const require = createRequire(import.meta.url)
+const serverPackage = JSON.parse(await readFile('package.json', 'utf8'))
 
 await build({
   entryPoints: ['src/index.ts'],
@@ -12,6 +14,9 @@ await build({
   target: 'node20',
   format: 'esm',
   outfile: 'dist-bundle/index.js',
+  define: {
+    'process.env.APP_VERSION': JSON.stringify(serverPackage.version)
+  },
   external: [
     // 原生二进制依赖不打包
     'sharp',
@@ -61,7 +66,6 @@ try {
 }
 
 // 创建 package.json（标记为 ESM）
-import { writeFile } from 'fs/promises'
 console.log('📝 创建 package.json...')
 await writeFile(
   'dist-bundle/package.json',
@@ -69,7 +73,7 @@ await writeFile(
     {
       type: 'module',
       name: '@ai-ssh/server-bundle',
-      version: '1.0.0',
+      version: serverPackage.version,
       private: true
     },
     null,

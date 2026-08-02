@@ -154,7 +154,7 @@ export async function buildApp(): Promise<FastifyInstance> {
           status: 'healthy',
           timestamp: new Date().toISOString(),
           uptime: process.uptime(),
-          version: process.env.npm_package_version || '1.0.0',
+          version: process.env.APP_VERSION || process.env.npm_package_version || '1.0.0',
           services: {
             database: dbStatus,
             redis: redisStatus

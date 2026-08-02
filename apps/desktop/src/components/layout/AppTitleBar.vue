@@ -432,7 +432,8 @@ const loadOfficialStatus = async () => {
   try {
     const response = await apiService.getOfficialModelStatus()
     officialStatus.value = response.data || null
-  } catch {
+  } catch (error) {
+    console.error('[AppTitleBar] Failed to load official model status:', error)
     officialStatus.value = null
   }
 }
@@ -459,6 +460,7 @@ const loadAvailableModels = async () => {
     // 加载当前选择的模型
     loadCurrentModel()
   } catch (error) {
+    console.error('[AppTitleBar] Failed to load available models:', error)
     availableModels.value = []
   }
 }

@@ -3,13 +3,18 @@
  */
 import { StorageManager } from '@ai-ssh/database'
 
-let storageManagerInstance: StorageManager | null = null
+const storageManagerKey = Symbol.for('ai-ssh-assistant.storage-manager')
+
+type StorageGlobal = typeof globalThis & {
+  [storageManagerKey]?: StorageManager
+}
 
 export function initializeStorageManager(instance: StorageManager) {
-  storageManagerInstance = instance
+  ;(globalThis as StorageGlobal)[storageManagerKey] = instance
 }
 
 export function getStorageManager(): StorageManager {
+  const storageManagerInstance = (globalThis as StorageGlobal)[storageManagerKey]
   if (!storageManagerInstance) {
     throw new Error('StorageManager not initialized. Call initializeStorageManager first.')
   }

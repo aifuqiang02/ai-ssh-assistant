@@ -112,12 +112,19 @@ jobs:
           - platform: 'Windows'
             os: windows-latest
             build_script: 'build:win'
-          - platform: 'macOS'
+            target_arch: 'x64'
+          - platform: 'macOS x64'
             os: macos-latest
-            build_script: 'build:mac'
+            build_script: 'build:mac:x64'
+            target_arch: 'x64'
+          - platform: 'macOS arm64'
+            os: macos-latest
+            build_script: 'build:mac:arm64'
+            target_arch: 'arm64'
           - platform: 'Linux'
             os: ubuntu-latest
             build_script: 'build:linux'
+            target_arch: 'x64'
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -144,7 +151,7 @@ jobs:
 
       # macOS specific setup
       - name: 🍎 Setup macOS Python for node-gyp
-        if: matrix.platform == 'macOS'
+        if: runner.os == 'macOS'
         run: |
           pip3 install --break-system-packages setuptools
           xcode-select --print-path || sudo xcode-select --install
@@ -201,6 +208,8 @@ jobs:
         env:
           ELECTRON_CACHE: ${{ github.workspace }}/.cache/electron
           ELECTRON_BUILDER_CACHE: ${{ github.workspace }}/.cache/electron-builder
+          TARGET_ARCH: ${{ matrix.target_arch }}
+          npm_config_better_sqlite3_binary_host: https://npmmirror.com/mirrors/better-sqlite3
           VITE_APP_VERSION: ${{ needs.create-release.outputs.version }}
           DEBUG: electron-builder # 启用详细日志
 
@@ -231,7 +240,6 @@ jobs:
             apps/desktop/release/**/ai-ssh-assistant-*-macos-*.dmg
             apps/desktop/release/**/ai-ssh-assistant-*-macos-*.zip
             apps/desktop/release/**/AI-SSH-Assistant-*-setup-*.exe
-            apps/desktop/release/**/latest*.yml
             apps/desktop/release/update-manifest-*.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
