@@ -70,7 +70,8 @@ export class LLMSession {
     tools: ToolInfo[],
     private connectionId: string,
     private onProgress?: (msg: string) => void,
-    private serverEnvDocId?: string
+    private serverEnvDocId?: string,
+    private signal?: AbortSignal
   ) {
     this.provider = provider
     this.model = model
@@ -110,8 +111,6 @@ export class LLMSession {
       tool_choice: 'auto'
     }
 
-    const controller = new AbortController()
-
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
@@ -119,7 +118,7 @@ export class LLMSession {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(body),
-      signal: controller.signal
+      signal: this.signal
     })
 
     if (!response.ok) {
@@ -127,14 +126,13 @@ export class LLMSession {
       throw new Error(`HTTP ${response.status}: ${response.statusText} - ${errorText}`)
     }
 
-    yield* this.parseStream(response.body!, controller)
+    yield* this.parseStream(response.body!, this.signal)
   }
 
   private async *streamOfficialModel(
     messages: ChatMessage[],
     toolDefinitions: object[]
   ): AsyncGenerator<StreamChunk, void, unknown> {
-    const controller = new AbortController()
     const response = await fetch(`${OFFICIAL_API_BASE_URL}/api/v1/ai/official/chat`, {
       method: 'POST',
       headers: {
@@ -149,7 +147,7 @@ export class LLMSession {
         tools: toolDefinitions.length > 0 ? toolDefinitions : undefined,
         toolChoice: 'auto'
       }),
-      signal: controller.signal
+      signal: this.signal
     })
 
     if (!response.ok) {
@@ -157,107 +155,123 @@ export class LLMSession {
       throw new Error(payload.message || `HTTP ${response.status}: ${response.statusText}`)
     }
 
-    yield* this.parseStream(response.body!, controller)
+    yield* this.parseStream(response.body!, this.signal)
   }
 
   async *parseStream(
     body: ReadableStream,
-    controller: AbortController
+    signal?: AbortSignal
   ): AsyncGenerator<StreamChunk, void, unknown> {
     const reader = body.getReader()
     const decoder = new TextDecoder()
     let buffer = ''
     let toolCallsBuffer: Record<string, { name: string; arguments: string; originalId?: string }> =
       {}
-    let firstChunkReceived: Record<number, boolean> = {}
 
-    while (!controller.signal.aborted) {
-      const { done, value } = await reader.read()
-      if (done) break
+    const cancelReader = () => {
+      void reader.cancel(createAbortError()).catch(() => {})
+    }
 
-      buffer += decoder.decode(value, { stream: true })
-      const lines = buffer.split('\n')
-      buffer = lines.pop() || ''
+    if (signal?.aborted) {
+      cancelReader()
+      throw createAbortError()
+    }
 
-      for (const line of lines) {
-        if (line.startsWith('data: ')) {
-          const data = line.slice(6)
-          if (data === '[DONE]') {
-            yield { type: 'done', done: true }
-            return
-          }
+    signal?.addEventListener('abort', cancelReader, { once: true })
 
-          try {
-            const parsed = JSON.parse(data)
-            const choice = parsed.choices?.[0]
+    try {
+      while (true) {
+        const { done, value } = await reader.read()
+        if (signal?.aborted) throw createAbortError()
+        if (done) break
 
-            if (!choice) continue
+        buffer += decoder.decode(value, { stream: true })
+        const lines = buffer.split('\n')
+        buffer = lines.pop() || ''
 
-            if (choice.delta?.content) {
-              yield {
-                type: 'text',
-                content: choice.delta.content
-              }
-            }
-
-            if (choice.delta?.tool_calls) {
-              for (const tc of choice.delta.tool_calls) {
-                const index = tc.index ?? 0
-                const apiId = tc.id
-
-                const bufferKey = String(index)
-
-                if (!toolCallsBuffer[bufferKey]) {
-                  toolCallsBuffer[bufferKey] = { name: '', arguments: '', originalId: apiId }
-                } else if (apiId && !toolCallsBuffer[bufferKey].originalId) {
-                  toolCallsBuffer[bufferKey].originalId = apiId
-                }
-
-                if (tc.function?.name) {
-                  toolCallsBuffer[bufferKey].name = tc.function.name
-                }
-                if (tc.function?.arguments) {
-                  toolCallsBuffer[bufferKey].arguments += tc.function.arguments
-                }
-              }
-            }
-
-            if (choice.finish_reason === 'tool_calls' || choice.finish_reason === 'stop') {
-              for (const [bufferKey, tc] of Object.entries(toolCallsBuffer)) {
-                if (tc.name) {
-                  const yieldId = tc.originalId || bufferKey
-
-                  let parsedArgs = {}
-                  if (tc.arguments) {
-                    try {
-                      parsedArgs = JSON.parse(tc.arguments)
-                    } catch (e) {
-                      // parse error
-                    }
-                  }
-
-                  yield {
-                    type: 'tool-call',
-                    toolCallId: yieldId,
-                    toolName: tc.name,
-                    toolInput: parsedArgs
-                  }
-                }
-              }
-              toolCallsBuffer = {}
-
-              if (choice.finish_reason === 'tool_calls') {
-                yield { type: 'done', finish: 'tool-calls' }
-              } else {
-                yield { type: 'done', finish: 'stop' }
-              }
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = line.slice(6)
+            if (data === '[DONE]') {
+              yield { type: 'done', done: true }
               return
             }
-          } catch (e) {
-            // parse error
+
+            try {
+              const parsed = JSON.parse(data)
+              const choice = parsed.choices?.[0]
+
+              if (!choice) continue
+
+              if (choice.delta?.content) {
+                yield {
+                  type: 'text',
+                  content: choice.delta.content
+                }
+              }
+
+              if (choice.delta?.tool_calls) {
+                for (const tc of choice.delta.tool_calls) {
+                  const index = tc.index ?? 0
+                  const apiId = tc.id
+
+                  const bufferKey = String(index)
+
+                  if (!toolCallsBuffer[bufferKey]) {
+                    toolCallsBuffer[bufferKey] = { name: '', arguments: '', originalId: apiId }
+                  } else if (apiId && !toolCallsBuffer[bufferKey].originalId) {
+                    toolCallsBuffer[bufferKey].originalId = apiId
+                  }
+
+                  if (tc.function?.name) {
+                    toolCallsBuffer[bufferKey].name = tc.function.name
+                  }
+                  if (tc.function?.arguments) {
+                    toolCallsBuffer[bufferKey].arguments += tc.function.arguments
+                  }
+                }
+              }
+
+              if (choice.finish_reason === 'tool_calls' || choice.finish_reason === 'stop') {
+                for (const [bufferKey, tc] of Object.entries(toolCallsBuffer)) {
+                  if (tc.name) {
+                    const yieldId = tc.originalId || bufferKey
+
+                    let parsedArgs = {}
+                    if (tc.arguments) {
+                      try {
+                        parsedArgs = JSON.parse(tc.arguments)
+                      } catch (e) {
+                        // parse error
+                      }
+                    }
+
+                    yield {
+                      type: 'tool-call',
+                      toolCallId: yieldId,
+                      toolName: tc.name,
+                      toolInput: parsedArgs
+                    }
+                  }
+                }
+                toolCallsBuffer = {}
+
+                if (choice.finish_reason === 'tool_calls') {
+                  yield { type: 'done', finish: 'tool-calls' }
+                } else {
+                  yield { type: 'done', finish: 'stop' }
+                }
+                return
+              }
+            } catch (e) {
+              // Ignore malformed SSE events without discarding the stream.
+            }
           }
         }
       }
+    } finally {
+      signal?.removeEventListener('abort', cancelReader)
+      reader.releaseLock()
     }
   }
 
@@ -272,7 +286,7 @@ export class LLMSession {
       sessionID: '',
       messageID: '',
       agent: 'ssh-agent',
-      abort: new AbortController().signal,
+      abort: this.signal || new AbortController().signal,
       metadata: () => {},
       extra: {
         connectionId: this.connectionId,
@@ -407,7 +421,14 @@ export function createLLMSession(
   tools: ToolInfo[],
   connectionId: string,
   onProgress?: (msg: string) => void,
-  serverEnvDocId?: string
+  serverEnvDocId?: string,
+  signal?: AbortSignal
 ): LLMSession {
-  return new LLMSession(provider, model, tools, connectionId, onProgress, serverEnvDocId)
+  return new LLMSession(provider, model, tools, connectionId, onProgress, serverEnvDocId, signal)
+}
+
+function createAbortError(): Error {
+  const error = new Error('Request aborted')
+  error.name = 'AbortError'
+  return error
 }

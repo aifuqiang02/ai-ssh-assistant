@@ -1,6 +1,6 @@
 {
   "name": "@ai-ssh/desktop",
-  "version": "1.8.23",
+  "version": "1.8.24",
   "description": "AI SSH Assistant Desktop Application",
   "main": "dist-electron/main/index.js",
   "private": true,
@@ -30,7 +30,6 @@
     "@ai-sdk/google": "^3.0.13",
     "@ai-sdk/openai": "^3.0.18",
     "@ai-sdk/vue": "^3.0.62",
-    "@ai-ssh/core": "workspace:*",
     "@ai-ssh/database": "workspace:*",
     "@ai-ssh/shared": "workspace:*",
     "@heroicons/vue": "^2.0.18",

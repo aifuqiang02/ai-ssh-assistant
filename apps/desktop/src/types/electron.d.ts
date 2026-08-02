@@ -52,6 +52,8 @@ interface ElectronAPI {
   ssh: {
     // 树形结构管理
     getTree: (userId: string) => Promise<any[]>
+    exportConnections: (userId: string) => Promise<SSHConnectionExportResult>
+    importConnections: (userId: string) => Promise<SSHConnectionImportDialogResult>
     createFolder: (userId: string, data: any) => Promise<any>
     updateFolder: (userId: string, folderId: string, data: any) => Promise<any>
     deleteFolder: (userId: string, folderId: string) => Promise<void>
@@ -66,6 +68,8 @@ interface ElectronAPI {
     resize: (id: string, cols: number, rows: number) => Promise<any> // 调整终端尺寸
     execute: (id: string, command: string, requestId?: string) => Promise<any>
     cancelExecute: (requestId: string) => Promise<boolean>
+    readEnvDoc: (id: string) => Promise<{ content: string; fullPath: string } | null>
+    writeEnvDoc: (id: string, content: string) => Promise<{ content: string; fullPath: string }>
     executeSilent: (
       id: string,
       command: string
@@ -83,7 +87,12 @@ interface ElectronAPI {
     listFiles: (id: string, remotePath: string) => Promise<any>
     uploadFile: (id: string, localPath: string, remotePath: string) => Promise<any>
     downloadFile: (id: string, remotePath: string, localPath: string) => Promise<any>
-    deleteFile: (id: string, remotePath: string, isDirectory: boolean) => Promise<any>
+    deleteFile: (
+      id: string,
+      remotePath: string,
+      isDirectory: boolean,
+      identity?: string
+    ) => Promise<any>
     createDirectory: (id: string, remotePath: string) => Promise<any>
   }
 
@@ -194,6 +203,18 @@ interface ElectronAPI {
     saveServerEnv: (connectionId: string, content: string) => Promise<any>
     readServerEnv: (connectionId: string) => Promise<any>
   }
+}
+
+interface SSHConnectionExportResult {
+  canceled: boolean
+  exported?: number
+}
+
+interface SSHConnectionImportDialogResult {
+  canceled: boolean
+  imported?: number
+  skipped?: number
+  invalid?: number
 }
 
 // 全局类型声明

@@ -157,15 +157,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, nextTick, watch, onMounted, onBeforeUnmount, inject } from 'vue'
+import { ref, computed, nextTick, watch, onMounted, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRouter } from 'vue-router'
-import { $confirm } from '@/composables/useDialog'
-import {
-  canUseSsh,
-  getSubscriptionState,
-  getSshUpgradeMessage
-} from '@/services/subscription.service'
 
 export interface SSHTreeNodeData {
   id: string
@@ -207,9 +200,6 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const { t: $t } = useI18n()
-const router = useRouter()
-const openNewTab =
-  inject<(id: string, name: string, icon: string, path: string) => void>('openNewTab')
 
 const emit = defineEmits<{
   select: [node: SSHTreeNodeData]
@@ -254,41 +244,7 @@ const actionDropdownStyle = computed(() => ({
   top: `${actionMenuPosition.value.top}px`
 }))
 
-const openProfileForUpgrade = () => {
-  if (openNewTab) {
-    openNewTab('profile', '个人中心', 'bi bi-person-circle', '/profile')
-    return
-  }
-
-  router.push('/profile')
-}
-
-const ensureSshSubscription = async () => {
-  const state = getSubscriptionState()
-  if (canUseSsh(state)) {
-    return true
-  }
-
-  const confirmed = await $confirm({
-    title: '需要继续订阅',
-    message: getSshUpgradeMessage(state) || '试用期结束,需要继续订阅才能使用。',
-    confirmText: '去订阅',
-    cancelText: '取消',
-    type: 'warning'
-  })
-
-  if (confirmed) {
-    openProfileForUpgrade()
-  }
-
-  return false
-}
-
-const tryConnectNode = async () => {
-  if (!(await ensureSshSubscription())) {
-    return
-  }
-
+const tryConnectNode = () => {
   emit('connect', props.node)
 }
 

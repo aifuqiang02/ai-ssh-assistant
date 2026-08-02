@@ -124,6 +124,12 @@ export default {
     sidebarTitle: 'SSH 连接',
     newFolder: '新建文件夹',
     connectionList: '连接列表',
+    importConnections: '导入',
+    exportConnections: '导出',
+    importResult: '导入完成：新增 {imported}，跳过重复 {skipped}，无效 {invalid}',
+    exportResult: '已导出 {exported} 个连接',
+    importFailed: '导入连接失败',
+    exportFailed: '导出连接失败',
 
     // Buttons
     cancel: '取消',
@@ -169,6 +175,8 @@ export default {
     menuHelp: '帮助',
 
     // File menu
+    importConnections: '导入连接…',
+    exportConnections: '导出连接…',
     newConnection: '新建连接',
     openFile: '打开文件',
     save: '保存',
@@ -588,42 +596,5 @@ export default {
     invalidInput: '输入无效',
     operationFailed: '操作失败',
     dataNotFound: '数据不存在'
-  },
-
-  mcp: {
-    title: 'MCP 服务器',
-    description: '连接 MCP (Model Context Protocol) 服务器以扩展 AI 工具能力',
-    addServer: '添加服务器',
-    editServer: '编辑服务器',
-    empty: '暂无 MCP 服务器，添加一个以开始使用',
-    serverName: '服务器名称',
-    serverNamePlaceholder: '例如：文件系统服务器',
-    serverUrl: '服务器 URL',
-    serverUrlPlaceholder: '例如：ws://localhost:3000',
-    enabled: '启用',
-    autoConnect: '自动连接',
-    connected: '已连接',
-    disconnected: '已断开',
-    connecting: '连接中...',
-    connect: '连接',
-    disconnect: '断开',
-    edit: '编辑',
-    remove: '删除',
-    toolsCount: '已加载 {count} 个工具'
-  },
-
-  plugins: {
-    title: '插件',
-    install: '安装插件',
-    installTitle: '安装插件',
-    manifestUrl: '插件清单 URL',
-    manifestUrlPlaceholder: 'https://example.com/plugin.json',
-    empty: '暂无插件',
-    loaded: '已加载',
-    unloaded: '未加载',
-    load: '加载',
-    enable: '启用',
-    disable: '禁用',
-    uninstall: '卸载'
   }
 }

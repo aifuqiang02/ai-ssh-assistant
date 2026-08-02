@@ -76,10 +76,10 @@ test('renderer SSH command service cancels in-flight execute requests on abort',
 test('main-process SSH handlers expose cancelable exec requests', async () => {
   const source = await readFile(sshHandlersPath, 'utf8')
 
-  assert.match(source, /private pendingExecs: Map<string, any> = new Map\(\)/)
+  assert.match(source, /private pendingExecs: Map<string, PendingExec> = new Map\(\)/)
   assert.match(source, /async cancelExecute\(requestId: string\): Promise<boolean>/)
   assert.match(source, /ipcMain\.handle\('ssh:cancel-execute'/)
-  assert.match(source, /connection\.client!\.exec\(command, \(err, stream\) =>/)
+  assert.match(source, /connection\.client!\.exec\(finalCommand, \(err, stream\) =>/)
 })
 
 test('desktop CSP allows all http and https connect targets', async () => {

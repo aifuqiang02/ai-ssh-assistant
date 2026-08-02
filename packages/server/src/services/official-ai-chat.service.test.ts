@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const createCompletionMock = vi.fn()
-const getSubscriptionStateMock = vi.fn()
 const getOfficialModelMock = vi.fn()
 const reserveUsageMock = vi.fn()
 const refundUsageMock = vi.fn()
@@ -13,12 +12,6 @@ vi.mock('openai', () => ({
         create: createCompletionMock
       }
     }
-  }
-}))
-
-vi.mock('./billing.service.js', () => ({
-  billingService: {
-    getSubscriptionState: getSubscriptionStateMock
   }
 }))
 
@@ -34,32 +27,17 @@ describe('OfficialAiChatService', () => {
   beforeEach(() => {
     vi.resetModules()
     vi.clearAllMocks()
-    getSubscriptionStateMock.mockResolvedValue({ hasAiPlan: true })
-    getOfficialModelMock.mockReturnValue({ id: 'MiniMax-M2.7-highspeed' })
-    reserveUsageMock.mockResolvedValue({ reserved: true, periodKey: '2026-04' })
+    getOfficialModelMock.mockReturnValue({ id: 'gpt-last' })
+    reserveUsageMock.mockResolvedValue({ reserved: true, periodKey: '2026-04-12' })
     createCompletionMock.mockResolvedValue({
       choices: [{ message: { content: 'ok' } }],
-      model: 'MiniMax-M2.7-highspeed',
+      model: 'gpt-last',
       usage: {
         prompt_tokens: 1,
         completion_tokens: 2,
         total_tokens: 3
       }
     })
-  })
-
-  it('rejects when ai membership is missing', async () => {
-    getSubscriptionStateMock.mockResolvedValue({ hasAiPlan: false })
-    const { officialAiChatService } = await import('./official-ai-chat.service.js')
-
-    await expect(
-      officialAiChatService.createChatCompletion({
-        userId: 'user_1',
-        modelId: 'MiniMax-M2.7-highspeed',
-        messages: [{ role: 'user', content: 'hello' }],
-        stream: false
-      })
-    ).rejects.toMatchObject({ code: 'AI_PLAN_REQUIRED' })
   })
 
   it('rejects when official model is missing', async () => {
@@ -80,7 +58,7 @@ describe('OfficialAiChatService', () => {
     const { officialAiChatService } = await import('./official-ai-chat.service.js')
     const result = await officialAiChatService.createChatCompletion({
       userId: 'user_1',
-      modelId: 'MiniMax-M2.7-highspeed',
+      modelId: 'gpt-last',
       messages: [{ role: 'user', content: 'hello' }],
       tools: [{ type: 'function', function: { name: 'bash', parameters: { type: 'object' } } }],
       toolChoice: 'auto',
@@ -89,7 +67,7 @@ describe('OfficialAiChatService', () => {
 
     expect(result).toEqual({
       content: 'ok',
-      model: 'MiniMax-M2.7-highspeed',
+      model: 'gpt-last',
       usage: {
         promptTokens: 1,
         completionTokens: 2,
@@ -100,7 +78,8 @@ describe('OfficialAiChatService', () => {
       expect.objectContaining({
         tools: [{ type: 'function', function: { name: 'bash', parameters: { type: 'object' } } }],
         tool_choice: 'auto'
-      })
+      }),
+      expect.any(Object)
     )
   })
 
@@ -111,12 +90,48 @@ describe('OfficialAiChatService', () => {
     await expect(
       officialAiChatService.createChatCompletion({
         userId: 'user_1',
-        modelId: 'MiniMax-M2.7-highspeed',
+        modelId: 'gpt-last',
         messages: [{ role: 'user', content: 'hello' }],
         stream: false
       })
     ).rejects.toMatchObject({ code: 'OFFICIAL_MODEL_UPSTREAM_ERROR' })
 
-    expect(refundUsageMock).toHaveBeenCalledWith('user_1', '2026-04')
+    expect(refundUsageMock).toHaveBeenCalledWith('user_1', '2026-04-12')
+  })
+
+  it('passes request cancellation to the OpenAI SDK', async () => {
+    const controller = new AbortController()
+    const { officialAiChatService } = await import('./official-ai-chat.service.js')
+
+    await officialAiChatService.createChatCompletion({
+      userId: 'user_1',
+      modelId: 'gpt-last',
+      messages: [{ role: 'user', content: 'hello' }],
+      stream: true,
+      signal: controller.signal
+    })
+
+    expect(createCompletionMock).toHaveBeenCalledWith(
+      expect.objectContaining({ stream: true }),
+      { signal: controller.signal }
+    )
+  })
+
+  it('surfaces daily quota exhaustion without calling upstream', async () => {
+    reserveUsageMock.mockResolvedValue({ reserved: false, periodKey: '2026-04-12' })
+    const { officialAiChatService } = await import('./official-ai-chat.service.js')
+
+    await expect(
+      officialAiChatService.createChatCompletion({
+        userId: 'user_1',
+        modelId: 'gpt-last',
+        messages: [{ role: 'user', content: 'hello' }]
+      })
+    ).rejects.toMatchObject({
+      code: 'OFFICIAL_MODEL_QUOTA_EXCEEDED',
+      statusCode: 429,
+      message: '今日官方模型调用次数已用完'
+    })
+    expect(createCompletionMock).not.toHaveBeenCalled()
   })
 })

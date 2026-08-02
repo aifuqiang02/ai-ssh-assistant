@@ -98,6 +98,14 @@ test('file manager invalidates cached directory listings after mutations', async
   assert.match(source, /invalidateFileListCache\(currentPath\.value\)/)
 })
 
+test('file deletion passes opaque listing identity instead of relying on display text', async () => {
+  const source = await readFile(fileManagerViewPath, 'utf8')
+
+  assert.match(source, /identity\?: string/)
+  assert.match(source, /file\.type === 'directory',\s*file\.identity/)
+  assert.match(source, /:key="file\.identity \|\| file\.name"/)
+})
+
 test('file manager merges drag entry data with dropped files so desktop multi-file drops do not lose paths', async () => {
   const source = await readFile(fileManagerViewPath, 'utf8')
 

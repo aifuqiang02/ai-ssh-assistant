@@ -27,6 +27,7 @@ registerDocStorageHandlers()
 
 class Application {
   private mainWindow: BrowserWindow | null = null
+  private storageReady = false
   private forceProdRenderer = process.env.ELECTRON_FORCE_PROD_RENDERER === '1'
   private isDev =
     (!app.isPackaged && !this.forceProdRenderer) || process.env.NODE_ENV === 'development'
@@ -75,21 +76,13 @@ class Application {
 
     app.on('activate', () => {
       // macOS 上，当点击 dock 图标且没有其他窗口打开时，重新创建窗口
-      if (BrowserWindow.getAllWindows().length === 0) {
+      if (this.storageReady && BrowserWindow.getAllWindows().length === 0) {
         this.createWindow()
       }
     })
 
     // 应用准备就绪时创建窗口
     app.whenReady().then(async () => {
-      this.createWindow()
-
-      // 注册F12快捷键控制调试窗口
-      this.registerShortcuts()
-
-      // 注册开发者工具切换IPC处理器
-      this.setupDevToolsIPC()
-
       // 初始化 StorageManager 并注册 Settings IPC 处理器
       try {
         console.log('[Main] 初始化 StorageManager...')
@@ -114,6 +107,7 @@ class Application {
         // 初始化共享的 StorageManager 实例
         // ✅ IPC handlers 会通过 getStorageManager() 自动获取
         initializeStorageManager(storageManager)
+        this.storageReady = true
         console.log('[Main] ✅ Shared StorageManager initialized')
 
         console.log('[Main] ✅ All IPC handlers registered (static)')
@@ -200,6 +194,15 @@ class Application {
         console.error('[Main] ❌ CRITICAL: Failed to initialize StorageManager:', settingsError)
         throw settingsError // 不再降级，必须有 StorageManager
       }
+
+      // Renderer 会在挂载后立即读取 SSH 树，必须先完成存储初始化。
+      this.createWindow()
+
+      // 注册F12快捷键控制调试窗口
+      this.registerShortcuts()
+
+      // 注册开发者工具切换IPC处理器
+      this.setupDevToolsIPC()
 
       // IPC 处理器已通过静态导入自动注册
       console.log('[Main] ✅ All IPC handlers registered')

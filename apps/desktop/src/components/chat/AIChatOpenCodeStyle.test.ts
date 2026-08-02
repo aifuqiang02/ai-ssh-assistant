@@ -102,13 +102,17 @@ test('active SSH chat system prompt explains how to update env docs without forc
     source,
     /Only use force_replace=true after the user explicitly confirms a full-document overwrite\./
   )
+  assert.match(
+    source,
+    /canonical environment document is env\.md in the authenticated remote user's \$HOME/
+  )
+  assert.match(source, /shared by every computer that connects as that same remote user/)
 })
 
-test('official model errors are normalized into member and quota friendly messages', async () => {
+test('official model errors preserve server quota errors and normalize availability errors', async () => {
   const source = await readFile(chatViewPath, 'utf8')
 
-  assert.match(source, /请开通 AI 会员后使用官方模型/)
-  assert.match(source, /本月官方模型次数已用完/)
+  assert.doesNotMatch(source, /AI 会员|本月官方模型次数已用完/)
   assert.match(source, /官方模型不存在/)
   assert.match(source, /官方模型暂不可用/)
   assert.match(source, /官方模型暂时不可用，请稍后再试/)

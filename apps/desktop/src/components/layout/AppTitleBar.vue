@@ -327,6 +327,8 @@ import type { AIModel, AIProvider as SharedAIProvider, AIProviderConfig } from '
 import { useTheme } from '../../composables/useTheme'
 import { themeService } from '../../services/theme.service'
 import { settingsService } from '../../services/settings.service'
+import { sshService } from '../../services/ssh.service'
+import { $alert } from '../../composables/useDialog'
 import {
   logoutWechatLogin,
   type LoggedInWechatUser,
@@ -419,25 +421,10 @@ const groupedModels = computed(() => ({
 }))
 
 const officialGroupLabel = computed(() => {
-  if (!officialStatus.value) {
-    return '官方模型'
-  }
-  return `官方模型 · 本月剩余 ${officialStatus.value.remainingCount} / ${officialStatus.value.monthlyLimit}`
+  return '官方模型'
 })
 
 const officialModelsDisabledReason = computed(() => {
-  if (!officialStatus.value) {
-    return undefined
-  }
-  if (officialStatus.value.guest) {
-    return '请先登录'
-  }
-  if (!officialStatus.value.hasAiPlan) {
-    return '需开通 AI 会员'
-  }
-  if (officialStatus.value.remainingCount <= 0) {
-    return '本月次数已用完'
-  }
   return undefined
 })
 
@@ -618,6 +605,7 @@ const handleLogout = async () => {
 
 // 菜单配置
 const menus = computed(() => [
+  { id: 'file', label: $t('titlebar.menuFile') },
   { id: 'view', label: $t('titlebar.menuView') },
   { id: 'help', label: $t('titlebar.menuHelp') }
 ])
@@ -638,22 +626,15 @@ interface MenuItems {
 const menuItems = computed<MenuItems>(() => ({
   file: [
     {
-      id: 'new',
-      label: $t('titlebar.newConnection'),
-      action: 'new-connection',
-      shortcut: 'Ctrl+N'
+      id: 'import-connections',
+      label: $t('titlebar.importConnections'),
+      action: 'import-connections'
     },
-    { id: 'open', label: $t('titlebar.openFile'), action: 'open-file', shortcut: 'Ctrl+O' },
-    { id: 'save', label: $t('titlebar.save'), action: 'save', shortcut: 'Ctrl+S' },
-    { id: 'separator1', label: '', action: '', type: 'separator' },
-    { id: 'exit', label: $t('titlebar.exit'), action: 'exit', shortcut: 'Alt+F4' }
-  ],
-  edit: [
-    { id: 'undo', label: $t('titlebar.undo'), action: 'undo', shortcut: 'Ctrl+Z' },
-    { id: 'redo', label: $t('titlebar.redo'), action: 'redo', shortcut: 'Ctrl+Y' },
-    { id: 'separator1', label: '', action: '', type: 'separator' },
-    { id: 'copy', label: $t('titlebar.copy'), action: 'copy', shortcut: 'Ctrl+C' },
-    { id: 'paste', label: $t('titlebar.paste'), action: 'paste', shortcut: 'Ctrl+V' }
+    {
+      id: 'export-connections',
+      label: $t('titlebar.exportConnections'),
+      action: 'export-connections'
+    }
   ],
   view: [
     {
@@ -732,10 +713,35 @@ const clearHideMenuTimeout = () => {
   }
 }
 
-const executeMenuAction = (action: string) => {
+const executeMenuAction = async (action: string) => {
   activeMenu.value = null
 
   switch (action) {
+    case 'import-connections':
+      try {
+        const result = await sshService.importConnections()
+        if (!result.canceled) {
+          window.dispatchEvent(new CustomEvent('ssh-connections-imported'))
+          $alert($t('ssh.importResult', {
+            imported: result.imported || 0,
+            skipped: result.skipped || 0,
+            invalid: result.invalid || 0
+          }))
+        }
+      } catch (error: any) {
+        $alert(error.message || $t('ssh.importFailed'))
+      }
+      break
+    case 'export-connections':
+      try {
+        const result = await sshService.exportConnections()
+        if (!result.canceled) {
+          $alert($t('ssh.exportResult', { exported: result.exported || 0 }))
+        }
+      } catch (error: any) {
+        $alert(error.message || $t('ssh.exportFailed'))
+      }
+      break
     case 'toggle-fullscreen':
       if (window.electronAPI?.toggleFullscreen) {
         window.electronAPI.toggleFullscreen()

@@ -15,11 +15,17 @@ test('welcome view does not render the quick start section', async () => {
   assert.doesNotMatch(source, /openSSHConnections/)
 })
 
-test('welcome view renders official model quota summary and reset time labels', async () => {
+test('welcome view does not expose subscription or official model quota details', async () => {
   const source = await readFile(welcomeViewPath, 'utf8')
 
-  assert.match(source, /官方模型月额度/)
-  assert.match(source, /下次重置时间/)
-  assert.match(source, /officialUsageSummary/)
-  assert.match(source, /officialResetLabel/)
+  assert.doesNotMatch(source, /订阅|升级|额度|剩余次数|重置时间/)
+  assert.match(source, /登录即可使用官方 AI/)
+})
+
+test('welcome view links feedback to GitHub issues in the external browser', async () => {
+  const source = await readFile(welcomeViewPath, 'utf8')
+
+  assert.match(source, /使用过程中，如有问题，或者体验不好的地方，可以加群反馈/)
+  assert.match(source, /https:\/\/github\.com\/aifuqiang02\/ai-ssh-assistant\/issues\/new/)
+  assert.match(source, /electronAPI\.system\.openExternal\(githubFeedbackUrl\)/)
 })

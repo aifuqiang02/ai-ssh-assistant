@@ -76,6 +76,8 @@ const api = {
   ssh: {
     // 树形结构管理
     getTree: (userId: string) => ipcRenderer.invoke('ssh:get-tree', userId),
+    exportConnections: (userId: string) => ipcRenderer.invoke('ssh:export-connections', userId),
+    importConnections: (userId: string) => ipcRenderer.invoke('ssh:import-connections', userId),
     createFolder: (userId: string, data: any) =>
       ipcRenderer.invoke('ssh:create-folder', userId, data),
     updateFolder: (userId: string, folderId: string, data: any) =>
@@ -98,6 +100,9 @@ const api = {
     execute: (id: string, command: string, requestId?: string) =>
       ipcRenderer.invoke('ssh:execute', id, command, requestId),
     cancelExecute: (requestId: string) => ipcRenderer.invoke('ssh:cancel-execute', requestId),
+    readEnvDoc: (id: string) => ipcRenderer.invoke('ssh:read-env-doc', id),
+    writeEnvDoc: (id: string, content: string) =>
+      ipcRenderer.invoke('ssh:write-env-doc', id, content),
     executeSilent: (id: string, command: string) =>
       ipcRenderer.invoke('ssh:execute-silent', id, command), // 静默执行（不在终端显示）
     getCurrentDirectory: (id: string) => ipcRenderer.invoke('ssh:get-current-directory', id),
@@ -114,8 +119,8 @@ const api = {
       ipcRenderer.invoke('ssh:upload-file', id, localPath, remotePath),
     downloadFile: (id: string, remotePath: string, localPath: string) =>
       ipcRenderer.invoke('ssh:download-file', id, remotePath, localPath),
-    deleteFile: (id: string, remotePath: string, isDirectory: boolean) =>
-      ipcRenderer.invoke('ssh:delete-file', id, remotePath, isDirectory),
+    deleteFile: (id: string, remotePath: string, isDirectory: boolean, identity?: string) =>
+      ipcRenderer.invoke('ssh:delete-file', id, remotePath, isDirectory, identity),
     createDirectory: (id: string, remotePath: string) =>
       ipcRenderer.invoke('ssh:create-directory', id, remotePath)
   },
@@ -334,6 +339,8 @@ interface ElectronAPI {
   ssh: {
     // 树形结构管理
     getTree: (userId: string) => Promise<any[]>
+    exportConnections: (userId: string) => Promise<any>
+    importConnections: (userId: string) => Promise<any>
     createFolder: (userId: string, data: any) => Promise<any>
     updateFolder: (userId: string, folderId: string, data: any) => Promise<any>
     deleteFolder: (userId: string, folderId: string) => Promise<void>
@@ -347,6 +354,8 @@ interface ElectronAPI {
     disconnect: (id: string) => Promise<any>
     execute: (id: string, command: string, requestId?: string) => Promise<any>
     cancelExecute: (requestId: string) => Promise<any>
+    readEnvDoc: (id: string) => Promise<{ content: string; fullPath: string } | null>
+    writeEnvDoc: (id: string, content: string) => Promise<{ content: string; fullPath: string }>
     write: (id: string, data: string) => Promise<void> // 直接写入终端输入
     getInitialOutput: (id: string) => Promise<string>
     getConnections: () => Promise<any>
@@ -357,7 +366,12 @@ interface ElectronAPI {
     listFiles: (id: string, remotePath: string) => Promise<any>
     uploadFile: (id: string, localPath: string, remotePath: string) => Promise<any>
     downloadFile: (id: string, remotePath: string, localPath: string) => Promise<any>
-    deleteFile: (id: string, remotePath: string, isDirectory: boolean) => Promise<any>
+    deleteFile: (
+      id: string,
+      remotePath: string,
+      isDirectory: boolean,
+      identity?: string
+    ) => Promise<any>
     createDirectory: (id: string, remotePath: string) => Promise<any>
   }
 

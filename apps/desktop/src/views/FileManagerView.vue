@@ -120,7 +120,7 @@
           <!-- 文件和文件夹列表 -->
           <div
             v-for="file in files"
-            :key="file.name"
+            :key="file.identity || file.name"
             :class="['file-item', { selected: isFileSelected(file) }]"
             draggable="true"
             @click="handleFileClick(file)"
@@ -466,6 +466,7 @@ import { $alert, $confirm } from '@/composables/useDialog'
 
 interface FileItem {
   name: string
+  identity?: string
   type: 'file' | 'directory'
   size: number
   modifiedTime: string
@@ -884,11 +885,13 @@ const refreshFiles = () => {
 
 // 文件选择
 const isFileSelected = (file: FileItem) => {
-  return selectedFiles.value.some(f => f.name === file.name)
+  return selectedFiles.value.some(f => (f.identity || f.name) === (file.identity || file.name))
 }
 
 const toggleFileSelection = (file: FileItem) => {
-  const index = selectedFiles.value.findIndex(f => f.name === file.name)
+  const index = selectedFiles.value.findIndex(
+    f => (f.identity || f.name) === (file.identity || file.name)
+  )
   if (index >= 0) {
     selectedFiles.value.splice(index, 1)
   } else {
@@ -1997,7 +2000,8 @@ const deleteFile = async (file: FileItem) => {
     await window.electronAPI.ssh.deleteFile(
       currentConnectionId.value,
       remotePath,
-      file.type === 'directory'
+      file.type === 'directory',
+      file.identity
     )
 
     invalidateFileListCache(currentPath.value)
@@ -2023,7 +2027,8 @@ const handleBulkDelete = async () => {
       await window.electronAPI.ssh.deleteFile(
         currentConnectionId.value,
         remotePath,
-        file.type === 'directory'
+        file.type === 'directory',
+        file.identity
       )
     }
 

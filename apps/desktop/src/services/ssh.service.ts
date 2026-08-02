@@ -10,6 +10,8 @@ import { BaseLocalImpl } from './base/base-api-impl'
 export interface ISSHService {
   // ======== 树形结构管理 ========
   getSSHTree(): Promise<any[]> // SSHTreeNode[] from @ai-ssh/shared
+  exportConnections(): Promise<SSHConnectionExportResult>
+  importConnections(): Promise<SSHConnectionImportResult>
 
   // 文件夹管理
   createFolder(data: any): Promise<any> // CreateSSHFolderDto
@@ -83,11 +85,31 @@ export interface FileInfo {
   modifiedAt: number
 }
 
+export interface SSHConnectionExportResult {
+  canceled: boolean
+  exported?: number
+}
+
+export interface SSHConnectionImportResult {
+  canceled: boolean
+  imported?: number
+  skipped?: number
+  invalid?: number
+}
+
 // ============= 本地 IPC 实现 =============
 class SSHLocalImpl extends BaseLocalImpl implements ISSHService {
   // ======== 树形结构管理 ========
   async getSSHTree(): Promise<any[]> {
     return this.electronAPI.ssh.getTree(this.getUserId())
+  }
+
+  async exportConnections(): Promise<SSHConnectionExportResult> {
+    return this.electronAPI.ssh.exportConnections(this.getUserId())
+  }
+
+  async importConnections(): Promise<SSHConnectionImportResult> {
+    return this.electronAPI.ssh.importConnections(this.getUserId())
   }
 
   async createFolder(data: any): Promise<any> {

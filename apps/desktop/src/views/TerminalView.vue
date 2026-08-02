@@ -125,8 +125,8 @@
     >
       <div class="modal-content server-env-doc-modal">
         <ServerEnvDocEditor
-          v-if="serverEnvDocId"
-          :connection-id="serverEnvDocId"
+          v-if="currentConnectionId"
+          :connection-id="currentConnectionId"
           :connection-info="connectionInfoForDoc"
           @close="showServerEnvDocEditor = false"
         />

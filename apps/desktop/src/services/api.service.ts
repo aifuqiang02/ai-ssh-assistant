@@ -75,70 +75,8 @@ export interface WechatLoginExchangeRequest {
   avatarUrl?: string
 }
 
-export interface BillingSubscriptionState {
-  trialExpiresAt: string | null
-  hasBasePlan: boolean
-  hasAiPlan: boolean
-  basePlanType: 'monthly' | 'yearly' | 'lifetime' | null
-  aiPlanType: 'monthly' | 'yearly' | 'lifetime' | null
-  baseExpiresAt: string | null
-  aiExpiresAt: string | null
-}
-
-export interface CreatePaymentSessionRequest {
-  bizId: string
-  planCode:
-    | 'BASE_MONTHLY'
-    | 'BASE_YEARLY'
-    | 'BASE_LIFETIME'
-    | 'AI_MONTHLY'
-    | 'FULL_MONTHLY'
-    | 'FULL_YEARLY'
-    | 'FULL_LIFETIME'
-}
-
-export interface PaymentSessionResponse {
-  sessionId: string
-  appId: string
-  bizId: string
-  status: 'pending' | 'paid' | 'expired' | 'closed'
-  amount: number
-  notifyUrl: string
-  qrCodeUrl: string
-  checkoutUrl: string
-  pollUrl: string
-  expiresAt: string
-  paidAt: string | null
-  paymentProduct: {
-    id: string
-    name: string
-    description: string
-    price: number
-  }
-  businessNotify?: {
-    status: string
-    attempts: number
-    notifiedAt: string | null
-    response: string | null
-    error: string | null
-  }
-}
-
-export interface ActivateSubscriptionRequest {
-  bizId: string
-  sessionId: string
-  planCode: CreatePaymentSessionRequest['planCode']
-}
-
 export interface OfficialModelStatus {
   enabled: boolean
-  guest?: boolean
-  requiresAiPlan: boolean
-  hasAiPlan: boolean
-  monthlyLimit: number
-  usedCount: number
-  remainingCount: number
-  resetAt: string
   models: Array<{
     id: string
     name: string
@@ -391,22 +329,6 @@ class ApiService {
       return window.electronAPI.api.auth.verify(this.token)
     }
     return this.get('/auth/verify')
-  }
-
-  async getSubscription(): Promise<ApiResponse<BillingSubscriptionState>> {
-    return this.get('/billing/subscription')
-  }
-
-  async createPaymentSession(
-    payload: CreatePaymentSessionRequest
-  ): Promise<ApiResponse<PaymentSessionResponse>> {
-    return this.post('/payment/sessions', payload)
-  }
-
-  async activateSubscription(
-    payload: ActivateSubscriptionRequest
-  ): Promise<ApiResponse<BillingSubscriptionState>> {
-    return this.post('/billing/activate-subscription', payload)
   }
 
   async getOfficialModelStatus(): Promise<ApiResponse<OfficialModelStatus>> {

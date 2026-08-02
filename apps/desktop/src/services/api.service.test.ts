@@ -26,6 +26,13 @@ test('api service exposes official model status and chat endpoints', async () =>
   assert.match(source, /return this\.post\('\/ai\/official\/chat', payload\)/)
 })
 
+test('api service does not expose subscription or payment business methods', async () => {
+  const source = await readFile(apiServicePath, 'utf8')
+
+  assert.doesNotMatch(source, /getSubscription|createPaymentSession|activateSubscription/)
+  assert.doesNotMatch(source, /\/billing\/|\/payment\//)
+})
+
 test('api service preserves backend error code for downstream official model handling', async () => {
   const source = await readFile(apiServicePath, 'utf8')
 

@@ -53,9 +53,6 @@ importers:
       '@ai-sdk/vue':
         specifier: ^3.0.62
         version: 3.0.116(vue@3.5.29)(zod@4.3.6)
-      '@ai-ssh/core':
-        specifier: workspace:*
-        version: link:../../packages/core
       '@ai-ssh/database':
         specifier: workspace:*
         version: link:../../packages/database
@@ -261,22 +258,6 @@ importers:
       vue-tsc:
         specifier: ^1.8.25
         version: 1.8.27(typescript@5.3.3)
-
-  packages/core:
-    dependencies:
-      nanoid:
-        specifier: ^5.1.6
-        version: 5.1.6
-      vite-plugin-vue-inspector-ai:
-        specifier: ^1.0.31
-        version: 1.0.31(vite@5.4.21)
-      zod:
-        specifier: ^3.25.76
-        version: 3.25.76
-    devDependencies:
-      typescript:
-        specifier: ^5.3.0
-        version: 5.3.3
 
   packages/database:
     dependencies:

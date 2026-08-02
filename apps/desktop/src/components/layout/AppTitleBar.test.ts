@@ -18,6 +18,17 @@ test('about menu action opens a new tab instead of replacing the current route',
   assert.doesNotMatch(aboutCase, /router\.push\('\/about'\)/)
 })
 
+test('file menu owns connection import and export actions', async () => {
+  const source = await readFile(appTitleBarPath, 'utf8')
+
+  assert.match(source, /id: 'file'.*titlebar\.menuFile/)
+  assert.match(source, /case 'import-connections':/)
+  assert.match(source, /sshService\.importConnections\(\)/)
+  assert.match(source, /ssh-connections-imported/)
+  assert.match(source, /case 'export-connections':/)
+  assert.match(source, /sshService\.exportConnections\(\)/)
+})
+
 test('title bar exposes wechat avatar, nickname, profile entry, and logout action', async () => {
   const source = await readFile(appTitleBarPath, 'utf8')
 
@@ -43,11 +54,12 @@ test('profile center opens standalone profile tab instead of settings profile se
   assert.doesNotMatch(source, /\/settings\?section=profile/)
 })
 
-test('title bar renders official models as a separate group with remaining quota text', async () => {
+test('title bar renders official models without quota details', async () => {
   const source = await readFile(appTitleBarPath, 'utf8')
 
   assert.match(source, /groupedModels\.official/)
-  assert.match(source, /官方模型 · 本月剩余/)
+  assert.match(source, /return '官方模型'/)
+  assert.doesNotMatch(source, /monthlyLimit|remainingCount|本月剩余/)
   assert.match(source, /我的模型/)
   assert.match(source, /buildOfficialTitleBarModels/)
 })

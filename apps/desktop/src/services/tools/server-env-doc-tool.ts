@@ -14,8 +14,7 @@ export async function generateServerEnvDocTool(
   connectionId: string
 ): Promise<ToolResult> {
   try {
-    // 使用稳定的文档 ID（优先使用前端传入的 serverEnvDocId，其次使用 connectionId）
-    const docId = (params as any).__serverEnvDocId || connectionId
+    const docId = connectionId
 
     // 用户提供的更新内容（必需参数）
     const newContent = typeof params.content === 'string' ? params.content.trim() : ''
@@ -59,7 +58,7 @@ export async function readServerEnvDocTool(
   connectionId: string
 ): Promise<ToolResult> {
   try {
-    const docId = (params as any).__serverEnvDocId || connectionId
+    const docId = connectionId
     console.info('[ServerEnvDocTool] 读取服务器环境文档', {
       docId,
       connectionId

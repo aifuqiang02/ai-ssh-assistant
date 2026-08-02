@@ -68,7 +68,8 @@ class DocStorageService {
       connectionId,
       contentLength: content.length
     })
-    return await window.electronAPI.docStorage.saveServerEnv(connectionId, content)
+    const doc = await window.electronAPI.ssh.writeEnvDoc(connectionId, content)
+    return this.toRemoteEnvDoc(doc)
   }
 
   /**
@@ -76,7 +77,8 @@ class DocStorageService {
    */
   async readServerEnvDoc(connectionId: string): Promise<DocFile | null> {
     console.info('[DocStorage] 读取服务器环境文档', { connectionId })
-    return await window.electronAPI.docStorage.readServerEnv(connectionId)
+    const doc = await window.electronAPI.ssh.readEnvDoc(connectionId)
+    return doc ? this.toRemoteEnvDoc(doc) : null
   }
 
   /**
@@ -122,6 +124,19 @@ class DocStorageService {
 
     const updatedContent = currentContent.replace(oldString, newString)
     return await this.saveServerEnvDoc(connectionId, updatedContent)
+  }
+
+  private toRemoteEnvDoc(doc: { content: string; fullPath: string }): DocFile {
+    const now = new Date()
+    return {
+      id: doc.fullPath,
+      category: DocCategory.SSH_SERVER_ENV,
+      filename: 'env.md',
+      content: doc.content,
+      fullPath: doc.fullPath,
+      createdAt: now,
+      updatedAt: now
+    }
   }
 }
 

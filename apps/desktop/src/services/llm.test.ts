@@ -15,5 +15,15 @@ test('llm session routes official provider through backend official chat endpoin
   assert.match(source, /\/api\/v1\/ai\/official\/chat/)
   assert.match(source, /tools: toolDefinitions.length > 0 \? toolDefinitions : undefined/)
   assert.match(source, /toolChoice: 'auto'/)
-  assert.match(source, /yield\* this\.parseStream\(response\.body!, controller\)/)
+  assert.match(source, /signal: this\.signal/)
+  assert.match(source, /yield\* this\.parseStream\(response\.body!, this\.signal\)/)
+})
+
+test('llm session aborts fetch and a blocked stream reader with one signal', async () => {
+  const source = await readFile(llmPath, 'utf8')
+
+  assert.doesNotMatch(source, /const controller = new AbortController\(\)/)
+  assert.match(source, /signal\?\.addEventListener\('abort', cancelReader, \{ once: true \}\)/)
+  assert.match(source, /reader\.cancel\(createAbortError\(\)\)/)
+  assert.match(source, /if \(signal\?\.aborted\) throw createAbortError\(\)/)
 })

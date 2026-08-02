@@ -1,6 +1,5 @@
 import { OpenAI } from 'openai'
 import { config } from '../config/app.config.js'
-import { billingService } from './billing.service.js'
 import { officialAiUsageService } from './official-ai-usage.service.js'
 
 type OfficialChatMessage = {
@@ -17,6 +16,7 @@ type OfficialChatInput = {
   maxTokens?: number
   tools?: object[]
   toolChoice?: string | object
+  signal?: AbortSignal
 }
 
 export class OfficialAiChatService {
@@ -34,17 +34,6 @@ export class OfficialAiChatService {
       throw error
     }
 
-    const subscription = await billingService.getSubscriptionState(input.userId)
-    if (!subscription.hasAiPlan) {
-      const error = new Error('请开通 AI 会员后使用官方模型') as Error & {
-        statusCode?: number
-        code?: string
-      }
-      error.statusCode = 403
-      error.code = 'AI_PLAN_REQUIRED'
-      throw error
-    }
-
     if (!officialAiUsageService.getOfficialModel(input.modelId)) {
       const error = new Error('官方模型不存在') as Error & { statusCode?: number; code?: string }
       error.statusCode = 404
@@ -54,7 +43,7 @@ export class OfficialAiChatService {
 
     const reservation = await officialAiUsageService.reserveUsage(input.userId)
     if (!reservation.reserved) {
-      const error = new Error('本月官方模型次数已用完') as Error & {
+      const error = new Error('今日官方模型调用次数已用完') as Error & {
         statusCode?: number
         code?: string
       }
@@ -65,26 +54,32 @@ export class OfficialAiChatService {
 
     try {
       if (input.stream) {
-        return await this.client.chat.completions.create({
+        return await this.client.chat.completions.create(
+          {
+            model: input.modelId,
+            messages: input.messages,
+            stream: true,
+            temperature: input.temperature,
+            max_tokens: input.maxTokens,
+            tools: input.tools as any,
+            tool_choice: input.toolChoice as any
+          },
+          { signal: input.signal }
+        )
+      }
+
+      const response = await this.client.chat.completions.create(
+        {
           model: input.modelId,
           messages: input.messages,
-          stream: true,
+          stream: false,
           temperature: input.temperature,
           max_tokens: input.maxTokens,
           tools: input.tools as any,
           tool_choice: input.toolChoice as any
-        })
-      }
-
-      const response = await this.client.chat.completions.create({
-        model: input.modelId,
-        messages: input.messages,
-        stream: false,
-        temperature: input.temperature,
-        max_tokens: input.maxTokens,
-        tools: input.tools as any,
-        tool_choice: input.toolChoice as any
-      })
+        },
+        { signal: input.signal }
+      )
 
       return {
         content: response.choices[0]?.message?.content || '',

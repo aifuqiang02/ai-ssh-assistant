@@ -156,8 +156,6 @@ export class LocalStorageAdapter extends BaseStorageAdapter {
         extra TEXT,
         isDeleted INTEGER DEFAULT 0 NOT NULL,
         isEdited INTEGER DEFAULT 0 NOT NULL,
-        plugin TEXT,
-        pluginState TEXT,
         translate TEXT,
         tts TEXT,
         sessionId TEXT NOT NULL,

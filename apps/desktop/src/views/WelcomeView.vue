@@ -5,7 +5,7 @@
         <header class="welcome-header">
           <h1 class="welcome-title">AI SSH</h1>
           <p class="welcome-subtitle">
-            集成 AI Agent 的下一代终端，兼具传统 SSH 连接与高效文件管理功能。
+            集成 AI Agent 的终端，兼具传统 SSH 连接与高效文件管理功能。
           </p>
         </header>
 
@@ -16,7 +16,9 @@
           <div>
             <h4 class="developer-card__title">来自开发者</h4>
             <p class="developer-card__body">
-              “因软件作者是独立开发者，所以只有有收入，才能支撑不断迭代更新。希望大家能理解，如果工具大家用的不错的话，就支持下。”
+              使用过程中，如有问题，或者体验不好的地方，可以加群反馈，或者在
+              <button type="button" class="feedback-link" @click="openGithubFeedback">GitHub</button>
+              上反馈。
             </p>
             <div class="developer-card__group">
               <i class="bi bi-people-fill text-xl"></i>
@@ -31,15 +33,9 @@
           <div class="subscription-card">
             <div class="subscription-card__header">
               <div>
-                <span class="subscription-card__badge">当前订阅状态</span>
-                <h2 class="subscription-card__title">{{ currentStatusLabel }}</h2>
-                <p class="subscription-card__text">{{ currentStatusDescription }}</p>
-              </div>
-              <div class="subscription-card__meta">
-                <div class="subscription-card__label">到期时间</div>
-                <div class="subscription-card__title subscription-card__title--small">
-                  {{ subscriptionExpiryLabel }}
-                </div>
+                <span class="subscription-card__badge">核心能力</span>
+                <h2 class="subscription-card__title">登录即可使用官方 AI</h2>
+                <p class="subscription-card__text">SSH、自定义模型与本地工具均可直接使用。</p>
               </div>
             </div>
 
@@ -65,34 +61,9 @@
           </div>
 
           <aside class="trial-card">
-            <div>
-              <h3 class="trial-card__title">{{ trialCardTitle }}</h3>
-              <div class="trial-card__progress-wrap">
-                <div class="trial-card__progress-top">
-                  <span class="trial-card__pill">{{ trialCardPillText }}</span>
-                  <span class="trial-card__accent">{{ trialProgressPercent }}%</span>
-                </div>
-                <div class="trial-card__track">
-                  <div class="trial-card__bar" :style="{ width: `${trialProgressPercent}%` }"></div>
-                </div>
-              </div>
-            </div>
-
-            <div class="trial-card__stats">
-              <div class="trial-card__row">
-                <span class="trial-card__text">官方模型月额度</span>
-                <strong class="trial-card__value">{{ officialUsageSummary }}</strong>
-              </div>
-              <div class="trial-card__row">
-                <span class="trial-card__text">下次重置时间</span>
-                <strong class="trial-card__value">{{ officialResetLabel }}</strong>
-              </div>
-            </div>
-
-            <button class="trial-card__button" @click="openSubscriptionTab">
-              立即升级
-              <i class="bi bi-lightning-charge-fill text-sm"></i>
-            </button>
+            <i class="bi bi-stars trial-card__accent text-3xl"></i>
+            <h3 class="trial-card__title">官方模型</h3>
+            <p class="trial-card__text">使用账号登录后，可在标题栏直接选择 gpt-last。</p>
           </aside>
         </section>
 
@@ -137,57 +108,18 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import {
-  getRemainingTrialDays,
-  getSubscriptionState,
-  isTrialActive
-} from '@/services/subscription.service'
-import { fetchOfficialModelStatus } from '@/services/official-model-status.service'
 import { $alert } from '@/composables/useDialog'
 
-const router = useRouter()
-const openNewTab =
-  inject<(id: string, name: string, icon: string, path: string) => void>('openNewTab')
-const subscriptionState = getSubscriptionState()
 const qqGroupNumber = '307460844'
-const officialStatus = ref<null | {
-  monthlyLimit: number
-  usedCount: number
-  remainingCount: number
-  resetAt: string
-}>(null)
+const githubFeedbackUrl = 'https://github.com/aifuqiang02/ai-ssh-assistant/issues/new'
 
-onMounted(async () => {
-  try {
-    officialStatus.value = await fetchOfficialModelStatus()
-  } catch {
-    officialStatus.value = null
-  }
-})
-
-const isTrialFullAccess = computed(() => {
-  return (
-    isTrialActive(subscriptionState.trialExpiresAt) &&
-    !subscriptionState.basePlanType &&
-    !subscriptionState.aiPlanType
-  )
-})
-
-const openSubscriptionTab = () => {
-  console.log('[WelcomeView] openSubscriptionTab', {
-    hasOpenNewTab: !!openNewTab
-  })
-
-  if (openNewTab) {
-    console.log('[WelcomeView] opening profile via openNewTab')
-    openNewTab('profile', '个人中心', 'bi bi-person-circle', '/profile')
+const openGithubFeedback = async () => {
+  if (window.electronAPI?.system?.openExternal) {
+    await window.electronAPI.system.openExternal(githubFeedbackUrl)
     return
   }
 
-  console.log('[WelcomeView] opening profile via router.push')
-  router.push('/profile')
+  window.open(githubFeedbackUrl, '_blank')
 }
 
 const copyQqGroupNumber = async () => {
@@ -200,147 +132,6 @@ const copyQqGroupNumber = async () => {
   }
 }
 
-const currentStatusLabel = computed(() => {
-  if (isTrialFullAccess.value) {
-    return '1个月全功能试用'
-  }
-
-  if (subscriptionState.hasBasePlan && subscriptionState.hasAiPlan) {
-    return '完整版已开通'
-  }
-
-  if (subscriptionState.hasBasePlan) {
-    return '基础版已开通'
-  }
-
-  if (!subscriptionState.trialExpiresAt) {
-    return '未登录'
-  }
-
-  return '试用已结束'
-})
-
-const currentStatusDescription = computed(() => {
-  if (isTrialFullAccess.value) {
-    return '您正享有全部专业功能的完整访问权限。'
-  }
-
-  if (subscriptionState.hasBasePlan && subscriptionState.hasAiPlan) {
-    return '当前账号已开通完整功能与官方模型额度。'
-  }
-
-  if (subscriptionState.hasBasePlan) {
-    return '当前账号已开通基础功能，可继续使用 SSH 与自定义模型。'
-  }
-
-  if (!subscriptionState.trialExpiresAt) {
-    return '当前尚未登录账号，登录后可查看订阅权益并继续使用完整能力。'
-  }
-
-  return '试用期已结束，请继续订阅后使用完整能力。'
-})
-
-const subscriptionExpiryLabel = computed(() => {
-  if (subscriptionState.hasAiPlan && subscriptionState.aiPlanType) {
-    if (subscriptionState.aiPlanType === 'lifetime') {
-      return '永久有效'
-    }
-
-    if (subscriptionState.aiExpiresAt) {
-      return new Date(subscriptionState.aiExpiresAt).toLocaleDateString()
-    }
-
-    return '已开通'
-  }
-
-  if (subscriptionState.hasBasePlan && subscriptionState.basePlanType) {
-    if (subscriptionState.basePlanType === 'lifetime') {
-      return '永久有效'
-    }
-
-    if (subscriptionState.baseExpiresAt) {
-      return new Date(subscriptionState.baseExpiresAt).toLocaleDateString()
-    }
-
-    return '已开通'
-  }
-
-  if (isTrialActive(subscriptionState.trialExpiresAt) && subscriptionState.trialExpiresAt) {
-    return new Date(subscriptionState.trialExpiresAt).toLocaleDateString()
-  }
-
-  return '已结束'
-})
-
-const remainingTrialDays = computed(() => getRemainingTrialDays(subscriptionState.trialExpiresAt))
-
-const officialUsageSummary = computed(() => {
-  if (!officialStatus.value) {
-    return '未加载'
-  }
-  return `${officialStatus.value.remainingCount} / ${officialStatus.value.monthlyLimit}`
-})
-
-const officialResetLabel = computed(() => {
-  if (!officialStatus.value?.resetAt) {
-    return '未设置'
-  }
-  return new Date(officialStatus.value.resetAt).toLocaleDateString()
-})
-
-const trialCardTitle = computed(() => {
-  if (isTrialFullAccess.value) {
-    return '试用剩余天数'
-  }
-
-  if (subscriptionState.hasBasePlan && subscriptionState.hasAiPlan) {
-    return '完整版状态'
-  }
-
-  if (subscriptionState.hasBasePlan) {
-    return '基础版状态'
-  }
-
-  return '订阅状态'
-})
-
-const trialCardPillText = computed(() => {
-  if (isTrialFullAccess.value) {
-    return `剩余 ${remainingTrialDays.value} 天`
-  }
-
-  if (subscriptionState.hasBasePlan && subscriptionState.hasAiPlan) {
-    return '完整版已开通'
-  }
-
-  if (subscriptionState.hasBasePlan) {
-    return '基础版已开通'
-  }
-
-  return '试用已结束'
-})
-
-const trialProgressPercent = computed(() => {
-  if (isTrialFullAccess.value) {
-    const days = remainingTrialDays.value
-    if (days <= 0) return 0
-    return Math.max(0, Math.min(100, Math.round((days / 30) * 100)))
-  }
-
-  if (subscriptionState.hasBasePlan && subscriptionState.hasAiPlan) {
-    return 100
-  }
-
-  if (subscriptionState.hasBasePlan) {
-    return 100
-  }
-
-  if (!isTrialActive(subscriptionState.trialExpiresAt)) {
-    return 0
-  }
-
-  return 0
-})
 </script>
 
 <style scoped>
@@ -444,6 +235,23 @@ const trialProgressPercent = computed(() => {
   margin: 0;
   font-style: italic;
   line-height: 1.7;
+}
+
+.feedback-link {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--vscode-accent);
+  font: inherit;
+  font-weight: 600;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.feedback-link:hover {
+  color: var(--vscode-fg);
 }
 
 .developer-card__group {

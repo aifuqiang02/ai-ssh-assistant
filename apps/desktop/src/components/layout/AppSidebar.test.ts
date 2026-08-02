@@ -7,9 +7,17 @@ import { fileURLToPath } from 'node:url'
 const currentDir = dirname(fileURLToPath(import.meta.url))
 const appSidebarPath = join(currentDir, 'AppSidebar.vue')
 
-test('ssh connection flow checks subscription gate before connecting', async () => {
+test('ssh connection flow has no subscription gate before connecting', async () => {
   const source = await readFile(appSidebarPath, 'utf8')
 
-  assert.match(source, /canUseSsh|ensureSshAccess|subscription/i)
+  assert.doesNotMatch(source, /canUseSsh|ensureSshAccess|subscription/i)
   assert.match(source, /window\.electronAPI\.ssh\.connect/)
+})
+
+test('connection import and export are not rendered in the sidebar', async () => {
+  const source = await readFile(appSidebarPath, 'utf8')
+
+  assert.doesNotMatch(source, /sshService\.(importConnections|exportConnections)/)
+  assert.doesNotMatch(source, /ssh\.(importConnections|exportConnections)/)
+  assert.match(source, /ssh-connections-imported/)
 })

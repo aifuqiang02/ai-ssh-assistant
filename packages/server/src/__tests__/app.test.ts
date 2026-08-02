@@ -13,71 +13,20 @@ const mockCreateWechatUser = vi.fn().mockResolvedValue({
   createdAt: new Date('2026-01-01T00:00:00.000Z'),
   updatedAt: new Date('2026-01-01T00:00:00.000Z')
 })
-const mockGetSubscriptionState = vi.fn().mockResolvedValue({
-  trialExpiresAt: '2026-05-10T12:00:00.000Z',
-  hasBasePlan: true,
-  hasAiPlan: true,
-  basePlanType: null,
-  aiPlanType: null,
-  baseExpiresAt: null,
-  aiExpiresAt: null
-})
-const mockCreatePaymentSession = vi.fn().mockResolvedValue({
-  sessionId: 'payment_session_xxx',
-  appId: 'app_mnby1nrf4abd1f24f71395b7aba6',
-  bizId: 'pay_xxx',
-  status: 'pending',
-  amount: 100,
-  notifyUrl: 'http://127.0.0.1:3000/api/v1/payment/notify',
-  qrCodeUrl: 'weixin://wxpay/bizpayurl?pr=example_native_code',
-  checkoutUrl: 'weixin://wxpay/bizpayurl?pr=example_native_code',
-  pollUrl:
-    'https://open.tx07.cn/api/v1/apps/app_mnby1nrf4abd1f24f71395b7aba6/payment/sessions/by-biz/pay_xxx',
-  expiresAt: '2026-03-18T10:00:00.000Z',
-  paidAt: null,
-  paymentProduct: {
-    id: 'cmnt1em8j001xsao1ohcrn2x9',
-    name: 'ai ssh订阅服务费',
-    description: 'ai ssh订阅服务费',
-    price: 100
-  }
-})
-const mockActivateSubscription = vi.fn().mockResolvedValue({
-  trialExpiresAt: '2026-05-10T12:00:00.000Z',
-  hasBasePlan: true,
-  hasAiPlan: false,
-  basePlanType: 'monthly',
-  aiPlanType: null,
-  baseExpiresAt: '2026-06-10T12:00:00.000Z',
-  aiExpiresAt: null
-})
 const mockOfficialGetStatus = vi.fn().mockResolvedValue({
   enabled: true,
-  guest: true,
-  requiresAiPlan: true,
-  hasAiPlan: true,
-  monthlyLimit: 1000,
-  usedCount: 0,
-  remainingCount: 0,
-  resetAt: '2026-05-01T00:00:00.000Z',
   models: [
     {
-      id: 'MiniMax-M2.7-highspeed',
-      name: 'MiniMax-M2.7-highspeed',
-      shortName: 'M2.7-highspeed',
-      enabled: true
-    },
-    {
-      id: 'MiniMax-M2.7',
-      name: 'MiniMax-M2.7',
-      shortName: 'MiniMax-M2.7',
+      id: 'gpt-last',
+      name: 'gpt-last',
+      shortName: 'gpt-last',
       enabled: true
     }
   ]
 })
 const mockOfficialCreateChat = vi.fn().mockResolvedValue({
   content: '官方模型回复',
-  model: 'MiniMax-M2.7-highspeed',
+  model: 'gpt-last',
   usage: {
     promptTokens: 10,
     completionTokens: 20,
@@ -137,29 +86,14 @@ vi.mock('../config/redis.js', () => ({
   }
 }))
 
-vi.mock('../services/billing.service.js', () => ({
-  billingService: {
-    getSubscriptionState: mockGetSubscriptionState,
-    createPaymentSession: mockCreatePaymentSession,
-    activateSubscription: mockActivateSubscription,
-    handlePaymentNotify: vi.fn().mockResolvedValue({ success: true })
-  }
-}))
-
 vi.mock('../services/official-ai-usage.service.js', () => ({
   officialAiUsageService: {
     getStatus: mockOfficialGetStatus,
     getOfficialModels: vi.fn().mockReturnValue([
       {
-        id: 'MiniMax-M2.7-highspeed',
-        name: 'MiniMax-M2.7-highspeed',
-        shortName: 'M2.7-highspeed',
-        enabled: true
-      },
-      {
-        id: 'MiniMax-M2.7',
-        name: 'MiniMax-M2.7',
-        shortName: 'MiniMax-M2.7',
+        id: 'gpt-last',
+        name: 'gpt-last',
+        shortName: 'gpt-last',
         enabled: true
       }
     ]),
@@ -270,29 +204,14 @@ describe('App', () => {
     expect(mockCreateWechatUser).toHaveBeenCalled()
   })
 
-  it('returns current subscription state for authenticated user', async () => {
-    const token = app.jwt.sign({ userId: 'user_wechat_1', uuid: 'uuid_wechat_1', role: 'USER' })
-    const response = await app.inject({
-      method: 'GET',
-      url: '/api/v1/billing/subscription',
-      headers: { authorization: `Bearer ${token}` }
-    })
-
-    expect(response.statusCode).toBe(200)
-    expect(response.json().data.hasBasePlan).toBe(true)
-    expect(mockGetSubscriptionState).toHaveBeenCalledWith('user_wechat_1')
-  })
-
-  it('returns official model guest status without authentication', async () => {
+  it('requires authentication for official model status', async () => {
     const response = await app.inject({
       method: 'GET',
       url: '/api/v1/ai/official/status'
     })
 
-    expect(response.statusCode).toBe(200)
-    expect(response.json().data.guest).toBe(true)
-    expect(response.json().data.models).toHaveLength(2)
-    expect(mockOfficialGetStatus).toHaveBeenCalledWith(undefined)
+    expect(response.statusCode).toBe(401)
+    expect(mockOfficialGetStatus).not.toHaveBeenCalled()
   })
 
   it('creates official model chat for authenticated user', async () => {
@@ -302,7 +221,7 @@ describe('App', () => {
       url: '/api/v1/ai/official/chat',
       headers: { authorization: `Bearer ${token}` },
       payload: {
-        modelId: 'MiniMax-M2.7-highspeed',
+        modelId: 'gpt-last',
         messages: [{ role: 'user', content: '你好' }],
         stream: false
       }
@@ -310,55 +229,22 @@ describe('App', () => {
 
     expect(response.statusCode).toBe(200)
     expect(response.json().data.content).toBe('官方模型回复')
-    expect(mockOfficialCreateChat).toHaveBeenCalledWith({
-      userId: 'user_wechat_1',
-      modelId: 'MiniMax-M2.7-highspeed',
-      messages: [{ role: 'user', content: '你好' }],
-      stream: false,
-      temperature: undefined,
-      maxTokens: undefined,
-      tools: undefined,
-      toolChoice: undefined
-    })
+    expect(mockOfficialCreateChat).toHaveBeenCalledWith(
+      expect.objectContaining({
+        userId: 'user_wechat_1',
+        modelId: 'gpt-last',
+        messages: [{ role: 'user', content: '你好' }],
+        stream: false,
+        signal: expect.any(AbortSignal)
+      })
+    )
   })
 
-  it('creates payment session for authenticated user', async () => {
-    const token = app.jwt.sign({ userId: 'user_wechat_1', uuid: 'uuid_wechat_1', role: 'USER' })
-    const response = await app.inject({
-      method: 'POST',
-      url: '/api/v1/payment/sessions',
-      headers: { authorization: `Bearer ${token}` },
-      payload: {
-        bizId: 'pay_xxx',
-        planCode: 'BASE_MONTHLY'
-      }
-    })
-
-    expect(response.statusCode).toBe(200)
-    expect(response.json().data.sessionId).toBe('payment_session_xxx')
-    expect(mockCreatePaymentSession).toHaveBeenCalled()
-  })
-
-  it('activates subscription after successful payment verification', async () => {
-    const token = app.jwt.sign({ userId: 'user_wechat_1', uuid: 'uuid_wechat_1', role: 'USER' })
-    const response = await app.inject({
-      method: 'POST',
-      url: '/api/v1/billing/activate-subscription',
-      headers: { authorization: `Bearer ${token}` },
-      payload: {
-        bizId: 'pay_xxx',
-        sessionId: 'payment_session_xxx',
-        planCode: 'BASE_MONTHLY'
-      }
-    })
-
-    expect(response.statusCode).toBe(200)
-    expect(response.json().data.hasBasePlan).toBe(true)
-    expect(mockActivateSubscription).toHaveBeenCalledWith({
-      userId: 'user_wechat_1',
-      bizId: 'pay_xxx',
-      sessionId: 'payment_session_xxx',
-      planCode: 'BASE_MONTHLY'
-    })
-  })
+  it.each(['/api/v1/billing/subscription', '/api/v1/payment/sessions'])(
+    'does not expose removed billing route %s',
+    async url => {
+      const response = await app.inject({ method: 'GET', url })
+      expect(response.statusCode).toBe(404)
+    }
+  )
 })

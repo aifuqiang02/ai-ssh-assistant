@@ -1273,16 +1273,6 @@
           </div>
         </section>
 
-        <!-- MCP 服务器设置 -->
-        <section :id="'section-mcp'" class="setting-section">
-          <SettingsMCP />
-        </section>
-
-        <!-- 插件设置 -->
-        <section :id="'section-plugins'" class="setting-section">
-          <SettingsPlugins />
-        </section>
-
         <section :id="'section-updates'" class="setting-section">
           <h2 class="section-title">
             <i class="bi bi-arrow-repeat"></i>
@@ -1756,16 +1746,12 @@ import {
 import { fetchModelsForProvider } from '../services/model-fetcher.service'
 import { useUpdateClient } from '@/services/update-client'
 import SettingsAppearance from '@/components/settings/SettingsAppearance.vue'
-import SettingsMCP from '@/components/settings/SettingsMCP.vue'
-import SettingsPlugins from '@/components/settings/SettingsPlugins.vue'
 
 // 设置分类
 const settingsSections = computed(() => [
   { id: 'appearance', label: $t('settings.navAppearance'), icon: 'bi bi-palette' },
   { id: 'ai-providers', label: $t('settings.navAiProviders'), icon: 'bi bi-robot' },
   { id: 'ai-assistant', label: $t('settings.navAiAssistant'), icon: 'bi bi-chat-dots' },
-  { id: 'mcp', label: $t('mcp.title'), icon: 'bi bi-plug' },
-  { id: 'plugins', label: $t('plugins.title'), icon: 'bi bi-puzzle' },
   { id: 'updates', label: '应用更新', icon: 'bi bi-arrow-repeat' },
   { id: 'storage', label: $t('settings.navStorage'), icon: 'bi bi-database' },
   { id: 'ssh', label: $t('settings.navSsh'), icon: 'bi bi-terminal' },

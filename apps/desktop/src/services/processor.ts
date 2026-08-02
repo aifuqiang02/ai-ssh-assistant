@@ -55,7 +55,6 @@ const MAX_STEPS = 100
 export class SessionProcessor {
   private config: ProcessorConfig
   private state: SessionState
-  private abortController: AbortController
   private onProgress?: (msg: string) => void
   private messages: ModelMessage[]
 
@@ -67,14 +66,20 @@ export class SessionProcessor {
       aborted: false,
       stepCount: 0
     }
-    this.abortController = new AbortController()
     this.onProgress = onProgress
 
     if (config.abortSignal) {
-      config.abortSignal.addEventListener('abort', () => {
-        this.abortController.abort()
+      if (config.abortSignal.aborted) {
         this.state.aborted = true
-      })
+      } else {
+        config.abortSignal.addEventListener(
+          'abort',
+          () => {
+            this.state.aborted = true
+          },
+          { once: true }
+        )
+      }
     }
   }
 
@@ -265,7 +270,8 @@ export class SessionProcessor {
       this.config.tools,
       this.config.connectionId || '',
       msg => this.onProgress?.(msg),
-      this.config.serverEnvDocId
+      this.config.serverEnvDocId,
+      this.config.abortSignal
     )
 
     yield* session.stream(messages)

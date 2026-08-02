@@ -7,15 +7,6 @@
         <h3>{{ connectionInfo?.name || '服务器环境文档' }}</h3>
       </div>
       <div class="header-actions">
-        <button
-          @click="handleOpenDirectory"
-          class="btn btn-sm btn-secondary"
-          :disabled="!currentDocPath"
-          title="打开文档所在目录"
-        >
-          <i class="bi bi-folder2-open"></i>
-          打开目录
-        </button>
         <button @click="handleSave" class="btn btn-sm btn-primary" :disabled="saving">
           <i class="bi bi-save" :class="{ 'spinning': saving }"></i>
           {{ saving ? '保存中...' : '保存' }}
@@ -41,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import * as monaco from 'monaco-editor'
 import loader from '@monaco-editor/loader'
 import { docStorageService } from '@/services/doc-storage.service'
@@ -67,7 +58,6 @@ const editorContainer = ref<HTMLElement>()
 let editor: monaco.editor.IStandaloneCodeEditor | null = null
 const saving = ref(false)
 const saveStatus = ref<{ type: 'success' | 'error'; icon: string; message: string } | null>(null)
-const currentDocPath = ref<string | null>(null)
 
 // 配置 Monaco Editor
 loader.config({ monaco })
@@ -86,7 +76,6 @@ const loadDocument = async () => {
     
     if (editor && doc) {
       editor.setValue(doc.content)
-      currentDocPath.value = doc.fullPath
     }
   } catch (error) {
     console.error('[ServerEnvDocEditor] 加载文档失败:', error)
@@ -112,7 +101,6 @@ const handleSave = async () => {
       icon: 'bi bi-check-circle-fill',
       message: '文档已保存'
     }
-    currentDocPath.value = doc.fullPath
     
     emit('saved', doc)
     
@@ -135,28 +123,6 @@ const handleSave = async () => {
 // 关闭编辑器
 const handleClose = () => {
   emit('close')
-}
-
-// 打开文档所在目录
-const handleOpenDirectory = async () => {
-  if (!currentDocPath.value) {
-    console.warn('[ServerEnvDocEditor] 当前没有可打开的文档路径')
-    return
-  }
-  
-  try {
-    await window.electronAPI.shell.showItemInFolder(currentDocPath.value)
-  } catch (error: any) {
-    console.error('[ServerEnvDocEditor] 打开目录失败:', error)
-    saveStatus.value = {
-      type: 'error',
-      icon: 'bi bi-x-circle-fill',
-      message: '打开目录失败，请手动查看文档路径'
-    }
-    setTimeout(() => {
-      saveStatus.value = null
-    }, 3000)
-  }
 }
 
 // 初始化编辑器

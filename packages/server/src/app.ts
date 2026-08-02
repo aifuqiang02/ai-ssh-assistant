@@ -14,9 +14,7 @@ import { i18nMiddleware } from './config/i18n.js'
 
 // 路由导入
 import { authRoutes } from './routes/auth.routes.js'
-import { billingRoutes } from './routes/billing.routes.js'
 import { officialAiRoutes } from './routes/official-ai.routes.js'
-import { paymentRoutes } from './routes/payment.routes.js'
 
 export async function buildApp(): Promise<FastifyInstance> {
   const app = Fastify({
@@ -234,9 +232,7 @@ export async function buildApp(): Promise<FastifyInstance> {
 
   // 注册 API 路由
   await app.register(authRoutes, { prefix: '/api/v1/auth' })
-  await app.register(billingRoutes, { prefix: '/api/v1/billing' })
   await app.register(officialAiRoutes, { prefix: '/api/v1/ai/official' })
-  await app.register(paymentRoutes, { prefix: '/api/v1/payment' })
 
   // 404 处理
   app.setNotFoundHandler(

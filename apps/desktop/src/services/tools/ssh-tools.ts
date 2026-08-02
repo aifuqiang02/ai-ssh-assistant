@@ -191,7 +191,7 @@ export const AskFollowupQuestionTool = Tool.define('ask_followup_question', asyn
 export const ReadServerEnvDocTool = Tool.define('read_server_env_doc', async () => {
   return {
     description:
-      'Read the server environment document. Returns the raw document content for use with update_server_env_doc tool.',
+      "Read the canonical env.md from the authenticated remote user's $HOME. Returns raw content for update_server_env_doc.",
     parameters: z.object({
       __serverEnvDocId: z
         .string()
@@ -199,7 +199,7 @@ export const ReadServerEnvDocTool = Tool.define('read_server_env_doc', async () 
         .describe('Document ID (optional, uses serverEnvDocId by default)')
     }),
     async execute(params: any, ctx) {
-      const docId = ctx.extra?.serverEnvDocId || ctx.extra?.connectionId
+      const docId = ctx.extra?.connectionId
       if (!docId) {
         throw new Error('No document ID or connection ID available')
       }
@@ -233,7 +233,7 @@ export const ReadServerEnvDocTool = Tool.define('read_server_env_doc', async () 
 export const UpdateServerEnvDocTool = Tool.define('update_server_env_doc', async () => {
   return {
     description:
-      'Update the server environment document for the current SSH connection. Default to old_string/new_string exact replacements for existing documents. Use content only when creating a new document or when the user explicitly requests a full rewrite. Only set force_replace=true after the user explicitly confirms a full-document overwrite.',
+      "Update the canonical env.md in the authenticated remote user's $HOME using an atomic remote write. Default to old_string/new_string exact replacements for existing documents. Use content only when creating a new document or when the user explicitly requests a full rewrite. Only set force_replace=true after the user explicitly confirms a full-document overwrite.",
     parameters: z.object({
       content: z
         .string()
@@ -265,7 +265,7 @@ export const UpdateServerEnvDocTool = Tool.define('update_server_env_doc', async
         .describe('Document ID (optional, uses serverEnvDocId by default)')
     }),
     async execute(params: any, ctx) {
-      const docId = ctx.extra?.serverEnvDocId || ctx.extra?.connectionId
+      const docId = ctx.extra?.connectionId
       if (!docId) {
         throw new Error('No document ID or connection ID available')
       }

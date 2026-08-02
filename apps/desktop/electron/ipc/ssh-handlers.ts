@@ -1,4 +1,4 @@
-import { ipcMain } from 'electron'
+import { dialog, ipcMain } from 'electron'
 import { Client, SFTPWrapper } from 'ssh2'
 import fs from 'fs/promises'
 import path from 'path'
@@ -43,55 +43,16 @@ type SerializedSSHConnection = Omit<
   lastUsed: string
 }
 
+interface PendingExec {
+  stream: any | null
+  aborted: boolean
+  reject: (error: Error) => void
+}
+
 class SSHManager {
   private connections: Map<string, SSHConnection> = new Map()
-  private pendingExecs: Map<string, any> = new Map()
+  private pendingExecs: Map<string, PendingExec> = new Map()
   private fileListShellChannels: Map<string, any> = new Map()
-  private configPath: string
-
-  constructor() {
-    this.configPath = path.join(
-      process.env.HOME || process.env.USERPROFILE || '',
-      '.ai-ssh-assistant',
-      'connections.json'
-    )
-    this.loadConnections()
-  }
-
-  private async loadConnections() {
-    try {
-      const data = await fs.readFile(this.configPath, 'utf-8')
-      const connections = JSON.parse(data)
-      connections.forEach((conn: SSHConnection) => {
-        this.connections.set(conn.id, { ...conn, isConnected: false, client: undefined })
-      })
-    } catch (error) {
-      // 文件不存在或格式错误，使用空的连接列表
-    }
-  }
-
-  private async saveConnections() {
-    try {
-      const configDir = path.dirname(this.configPath)
-      await fs.mkdir(configDir, { recursive: true })
-
-      const connections = Array.from(this.connections.values()).map(conn => ({
-        id: conn.id,
-        name: conn.name,
-        host: conn.host,
-        port: conn.port,
-        username: conn.username,
-        password: conn.password,
-        privateKey: conn.privateKey,
-        lastUsed: conn.lastUsed
-      }))
-
-      await fs.writeFile(this.configPath, JSON.stringify(connections, null, 2))
-    } catch (error) {
-      console.error('Failed to save connections:', error)
-      throw error
-    }
-  }
 
   async connect(
     config: Omit<SSHConnection, 'id' | 'client' | 'isConnected' | 'lastUsed'>
@@ -376,6 +337,10 @@ class SSHManager {
         reject(error)
       }
 
+      if (requestId) {
+        this.pendingExecs.set(requestId, { stream: null, aborted: false, reject: settleReject })
+      }
+
       const finalizeOutput = () => {
         if (settled) return
 
@@ -466,7 +431,15 @@ class SSHManager {
 
         execStream = stream
         if (requestId) {
-          this.pendingExecs.set(requestId, { stream, aborted: false })
+          const pendingExec = this.pendingExecs.get(requestId)
+          if (!pendingExec || pendingExec.aborted) {
+            try {
+              stream.close()
+            } catch {}
+            settleReject(this.createCommandAbortError())
+            return
+          }
+          pendingExec.stream = stream
         }
 
         commandSentTime = Date.now()
@@ -502,20 +475,32 @@ class SSHManager {
     }
 
     pendingExec.aborted = true
+    const stream = pendingExec.stream
+    pendingExec.reject(this.createCommandAbortError())
+
+    if (!stream) {
+      return true
+    }
 
     try {
-      pendingExec.stream.signal?.('INT')
+      stream.signal?.('INT')
     } catch (error) {
       console.warn('[SSHManager] Failed to send SIGINT to exec stream:', error)
     }
 
     try {
-      pendingExec.stream.close()
+      stream.close()
     } catch (error) {
       console.warn('[SSHManager] Failed to close exec stream:', error)
     }
 
     return true
+  }
+
+  private createCommandAbortError(): Error {
+    const error = new Error('Command aborted')
+    error.name = 'AbortError'
+    return error
   }
 
   /**
@@ -848,9 +833,9 @@ class SSHManager {
       .filter(Boolean)
 
     const files = lines.map(line => {
-      const [name, rawType, rawSize, rawModifiedTime, rawPermissions] = line.split('\t')
+      const [identity, rawType, rawSize, rawModifiedTime, rawPermissions] = line.split('\t')
 
-      if (!name || !rawType || !rawSize || !rawModifiedTime || !rawPermissions) {
+      if (!identity || !rawType || !rawSize || !rawModifiedTime || !rawPermissions) {
         throw new Error(`Invalid exec listing row: ${line}`)
       }
 
@@ -867,7 +852,8 @@ class SSHManager {
       }
 
       return {
-        name,
+        name: this.displayNameFromIdentity(identity),
+        identity,
         type: rawType === 'd' ? 'directory' : 'file',
         size,
         modifiedTime: new Date(modifiedTimestamp * 1000).toISOString(),
@@ -879,10 +865,20 @@ class SSHManager {
     return files
   }
 
+  private displayNameFromIdentity(identity: string): string {
+    const rawPath = Buffer.from(identity, 'base64')
+    const slashIndex = rawPath.lastIndexOf(0x2f)
+    return rawPath.subarray(slashIndex + 1).toString('utf8')
+  }
+
+  private buildStructuredListCommand(remotePath: string): string {
+    const escapedRemotePath = this.escapeShellSingleQuotes(remotePath)
+    return `LC_ALL=C find '${escapedRemotePath}' -mindepth 1 -maxdepth 1 -exec sh -c 'for p do if [ -d "$p" ]; then t=d; else t=f; fi; identity=$(printf %s "$p" | base64 | tr -d "\\n"); stat=$(stat -c "%s\\t%Y\\t%a" -- "$p") || exit; printf "%s\\t%s\\t%s\\n" "$identity" "$t" "$stat"; done' sh {} +`
+  }
+
   private async listFilesViaPersistentShell(id: string, remotePath: string): Promise<any[] | null> {
     const startTime = Date.now()
-    const escapedRemotePath = this.escapeShellSingleQuotes(remotePath)
-    const shellCommand = `LC_ALL=C find '${escapedRemotePath}' -mindepth 1 -maxdepth 1 -printf '%f\\t%y\\t%s\\t%T@\\t%m\\n'`
+    const shellCommand = this.buildStructuredListCommand(remotePath)
 
     try {
       const shellResult = await this.executeOnFileListShell(id, shellCommand)
@@ -916,8 +912,7 @@ class SSHManager {
 
   private async listFilesViaExec(id: string, remotePath: string): Promise<any[] | null> {
     const startTime = Date.now()
-    const escapedRemotePath = this.escapeShellSingleQuotes(remotePath)
-    const execCommand = `LC_ALL=C find '${escapedRemotePath}' -mindepth 1 -maxdepth 1 -printf '%f\t%y\t%s\t%T@\t%m\n'`
+    const execCommand = this.buildStructuredListCommand(remotePath)
     const execResult = await this.executeSilent(id, execCommand)
 
     if (!execResult.success) {
@@ -1027,7 +1022,6 @@ class SSHManager {
     }
 
     this.connections.set(id, connection)
-    await this.saveConnections()
     return id
   }
 
@@ -1038,7 +1032,6 @@ class SSHManager {
     }
 
     this.connections.delete(id)
-    await this.saveConnections()
   }
 
   async testConnection(
@@ -1288,64 +1281,84 @@ class SSHManager {
     })
   }
 
-  // 删除文件或目录
-  async deleteFile(id: string, remotePath: string, isDirectory: boolean): Promise<void> {
+  // Delete by the opaque raw path returned by listing, including all descendants.
+  async deleteFile(
+    id: string,
+    remotePath: string,
+    isDirectory: boolean,
+    identity?: string
+  ): Promise<void> {
+    const exactIdentity = identity || Buffer.from(remotePath, 'utf8').toString('base64')
+    if (!/^[A-Za-z0-9+/]+={0,2}$/.test(exactIdentity)) {
+      throw new Error('Invalid remote file identity')
+    }
+
+    const removeFlag = isDirectory ? '-rf' : '-f'
+    const successMarker = '__OC_DELETE_OK__'
+    const result = await this.executeSilent(
+      id,
+      `printf '%s' '${exactIdentity}' | base64 -d | xargs -0 rm ${removeFlag} -- && printf '${successMarker}'`
+    )
+    if (!result.success || !result.output?.includes(successMarker)) {
+      throw new Error(result.error || 'Failed to delete remote file')
+    }
+  }
+
+  private async getRemoteHome(id: string): Promise<string> {
+    const result = await this.executeSilent(id, `printf '%s' "$HOME"`)
+    const home = result.output?.trim()
+    if (!result.success || !home || !home.startsWith('/')) {
+      throw new Error(result.error || 'Unable to resolve remote HOME')
+    }
+    return home
+  }
+
+  async readEnvDoc(id: string): Promise<{ content: string; fullPath: string } | null> {
+    const home = await this.getRemoteHome(id)
+    const fullPath = `${home.replace(/\/$/, '')}/env.md`
     const sftp = await this.getSFTP(id)
 
-    return new Promise((resolve, reject) => {
-      if (isDirectory) {
-        // 递归删除目录
-        this.deleteDirectory(sftp, remotePath)
-          .then(() => resolve())
-          .catch(reject)
-      } else {
-        sftp.unlink(remotePath, err => {
-          if (err) {
-            reject(err)
-            return
-          }
-          resolve()
-        })
-      }
+    return await new Promise((resolve, reject) => {
+      sftp.readFile(fullPath, (error, content) => {
+        if ((error as any)?.code === 2 || (error as any)?.code === 'ENOENT') {
+          resolve(null)
+          return
+        }
+        if (error) {
+          reject(error)
+          return
+        }
+        resolve({ content: content.toString('utf8'), fullPath })
+      })
     })
   }
 
-  // 递归删除目录
-  private async deleteDirectory(sftp: SFTPWrapper, remotePath: string): Promise<void> {
-    return new Promise(async (resolve, reject) => {
-      // 先列出目录内容
-      sftp.readdir(remotePath, async (err, list) => {
-        if (err) {
-          reject(err)
-          return
-        }
+  async writeEnvDoc(id: string, content: string): Promise<{ content: string; fullPath: string }> {
+    const home = await this.getRemoteHome(id)
+    const fullPath = `${home.replace(/\/$/, '')}/env.md`
+    const tempPath = `${fullPath}.tmp-${process.pid}-${Date.now()}`
+    const sftp = await this.getSFTP(id)
 
-        try {
-          // 删除所有子项
-          for (const item of list) {
-            const itemPath = `${remotePath}/${item.filename}`
-            if (item.attrs.isDirectory()) {
-              await this.deleteDirectory(sftp, itemPath)
-            } else {
-              await new Promise<void>((res, rej) => {
-                sftp.unlink(itemPath, e => {
-                  if (e) rej(e)
-                  else res()
-                })
-              })
-            }
-          }
-
-          // 删除空目录
-          sftp.rmdir(remotePath, e => {
-            if (e) reject(e)
-            else resolve()
-          })
-        } catch (error) {
-          reject(error)
-        }
-      })
+    await new Promise<void>((resolve, reject) => {
+      sftp.writeFile(tempPath, content, error => (error ? reject(error) : resolve()))
     })
+    try {
+      await new Promise<void>((resolve, reject) => {
+        const supportsPosixRename =
+          (sftp as any)._extensions?.['posix-rename@openssh.com'] === '1'
+        const rename = supportsPosixRename
+          ? (sftp as any).ext_openssh_rename.bind(sftp)
+          : sftp.rename.bind(sftp)
+        rename(tempPath, fullPath, (error: Error | undefined) =>
+          error ? reject(error) : resolve()
+        )
+      })
+    } catch (error) {
+      await new Promise<void>(resolve => sftp.unlink(tempPath, () => resolve()))
+      throw error
+    }
+
+    return { content, fullPath }
   }
 
   // 创建目录
@@ -1530,9 +1543,9 @@ ipcMain.handle(
 
 ipcMain.handle(
   'ssh:delete-file',
-  async (_, id: string, remotePath: string, isDirectory: boolean) => {
+  async (_, id: string, remotePath: string, isDirectory: boolean, identity?: string) => {
     try {
-      await sshManager.deleteFile(id, remotePath, isDirectory)
+      await sshManager.deleteFile(id, remotePath, isDirectory, identity)
       return { success: true }
     } catch (error: any) {
       console.error('SSH delete file error:', error)
@@ -1562,6 +1575,40 @@ ipcMain.handle('ssh:get-tree', async (_, userId: string) => {
     console.error('[IPC] ssh:get-tree error:', error)
     throw error
   }
+})
+
+ipcMain.handle('ssh:read-env-doc', async (_, id: string) => {
+  return await sshManager.readEnvDoc(id)
+})
+
+ipcMain.handle('ssh:write-env-doc', async (_, id: string, content: string) => {
+  return await sshManager.writeEnvDoc(id, content)
+})
+
+ipcMain.handle('ssh:export-connections', async (_, userId: string) => {
+  const result = await dialog.showSaveDialog({
+    title: 'Export SSH connections',
+    defaultPath: 'ai-ssh-connections.json',
+    filters: [{ name: 'JSON files', extensions: ['json'] }]
+  })
+  if (result.canceled || !result.filePath) return { canceled: true }
+
+  const envelope = await sshTreeService.exportConnections(userId)
+  await fs.writeFile(result.filePath, JSON.stringify(envelope, null, 2), 'utf-8')
+  return { canceled: false, exported: envelope.connections.length }
+})
+
+ipcMain.handle('ssh:import-connections', async (_, userId: string) => {
+  const result = await dialog.showOpenDialog({
+    title: 'Import SSH connections',
+    properties: ['openFile'],
+    filters: [{ name: 'JSON files', extensions: ['json'] }]
+  })
+  if (result.canceled || result.filePaths.length === 0) return { canceled: true }
+
+  const content = await fs.readFile(result.filePaths[0], 'utf-8')
+  const importResult = await sshTreeService.importConnections(userId, JSON.parse(content))
+  return { canceled: false, ...importResult }
 })
 
 // 创建文件夹

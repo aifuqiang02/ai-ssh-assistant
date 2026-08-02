@@ -1,5 +1,4 @@
 import apiService, { type LoginResponse } from './api.service'
-import { clearSubscriptionState } from './subscription.service'
 
 const WECHAT_LOGIN_APP_ID = 'app_mnby1nrf4abd1f24f71395b7aba6'
 const WECHAT_LOGIN_BASE_URL =
@@ -191,7 +190,6 @@ export async function logoutWechatLogin() {
 
   apiService.clearToken()
 
-  clearSubscriptionState()
 
   console.log('[wechat-login] logoutWechatLogin cleared local auth state', {
     hasLocalToken: !!localStorage.getItem('userToken'),

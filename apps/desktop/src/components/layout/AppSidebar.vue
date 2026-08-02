@@ -9,8 +9,8 @@
     <div class="flex-1 overflow-y-auto scrollbar-thin">
       <!-- SSH 连接视图 -->
       <div v-if="activeView === 'ssh'" class="p-2">
-        <div class="mb-4">
-          <button class="vscode-button primary w-full" @click="createRootFolder">
+        <div class="connection-list-actions mb-4">
+          <button class="vscode-button primary" @click="createRootFolder">
             {{ $t('ssh.newFolder') }}
           </button>
         </div>
@@ -106,17 +106,11 @@
 
 <script setup lang="ts">
 import { computed, ref, onMounted, onUnmounted, watch, nextTick, inject } from 'vue'
-import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import SSHTreeNode, { type SSHTreeNodeData } from '../ssh/SSHTreeNode.vue'
 import SSHConnectionDialog from '../ssh/SSHConnectionDialog.vue'
 import { sshService } from '../../services/ssh.service'
 import { settingsService } from '../../services/settings.service'
-import {
-  canUseSsh,
-  getSubscriptionState,
-  getSshUpgradeMessage
-} from '../../services/subscription.service'
 import { $alert, $confirm } from '@/composables/useDialog'
 
 interface Props {
@@ -125,7 +119,6 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const router = useRouter()
 const { t: $t } = useI18n()
 
 // 输入对话框相关
@@ -166,6 +159,7 @@ const editTrigger = ref(0)
 // ============= SSH 数据加载 =============
 onMounted(() => {
   loadSSHTree()
+  window.addEventListener('ssh-connections-imported', loadSSHTree)
 })
 
 watch(
@@ -188,6 +182,7 @@ const clearConnectionProgress = () => {
 
 onUnmounted(() => {
   clearConnectionProgress()
+  window.removeEventListener('ssh-connections-imported', loadSSHTree)
 })
 
 const getSSHSettings = async () => {
@@ -264,36 +259,6 @@ const openConnectionDialog = (folderId: string | null = null) => {
   editingConnection.value = null
   currentFolderId.value = folderId
   showConnectionDialog.value = true
-}
-
-const openProfileForUpgrade = () => {
-  if (openNewTab) {
-    openNewTab('profile', '个人中心', 'bi bi-person-circle', '/profile')
-    return
-  }
-
-  router.push('/profile')
-}
-
-const ensureSshAccess = async () => {
-  const state = getSubscriptionState()
-  if (canUseSsh(state)) {
-    return true
-  }
-
-  const message = getSshUpgradeMessage(state)
-  const confirmed = await $confirm({
-    title: '需要继续订阅',
-    message: message || '当前账号暂无 SSH 使用权限。',
-    confirmText: '去订阅',
-    cancelText: '取消'
-  })
-
-  if (confirmed) {
-    openProfileForUpgrade()
-  }
-
-  return false
 }
 
 // 打开编辑连接对话框
@@ -418,11 +383,6 @@ const handleNodeConnect = async (node: SSHTreeNodeData) => {
   }
 
   if (connectingNodeId.value) {
-    return
-  }
-
-  const allowed = await ensureSshAccess()
-  if (!allowed) {
     return
   }
 
@@ -557,11 +517,6 @@ const handleOpenFileManager = async (connection: SSHTreeNodeData) => {
     return
   }
 
-  const allowed = await ensureSshAccess()
-  if (!allowed) {
-    return
-  }
-
   try {
     const sshSettings = await getSSHSettings()
     const connectionConfig = {
@@ -678,6 +633,14 @@ const handleRequestInput = (data: {
   align-items: center;
   justify-content: center;
   min-height: 26px;
+}
+
+.connection-list-actions {
+  display: flex;
+}
+
+.connection-list-actions .primary {
+  width: 100%;
 }
 
 .vscode-button:hover {

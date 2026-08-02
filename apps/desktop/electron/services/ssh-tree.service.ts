@@ -4,6 +4,14 @@
  */
 
 import { storageManager } from '../main/storage'
+import {
+  SSH_CONNECTION_EXPORT_FORMAT,
+  SSH_CONNECTION_EXPORT_VERSION,
+  normalizeStoredAuthType,
+  prepareConnectionImport,
+  type SSHConnectionExportEnvelope,
+  type SSHConnectionImportResult
+} from './ssh-connection-transfer'
 
 export interface SSHFolder {
   id: string
@@ -182,6 +190,53 @@ export class SSHTreeService {
     })
 
     console.log('[SSHTreeService] Connection deleted:', connectionId)
+  }
+
+  async exportConnections(userId: string): Promise<SSHConnectionExportEnvelope> {
+    const connections = await storageManager.findMany('SSHConnection', {
+      where: { userId },
+      orderBy: { createdAt: 'asc' }
+    })
+
+    return {
+      format: SSH_CONNECTION_EXPORT_FORMAT,
+      version: SSH_CONNECTION_EXPORT_VERSION,
+      connections: connections
+        .filter((connection: any) =>
+          connection.isActive === true || connection.isActive === 1 || connection.isActive === '1'
+        )
+        .map((connection: any) => ({
+          name: connection.name,
+          host: connection.host,
+          port: connection.port,
+          username: connection.username,
+          authType: normalizeStoredAuthType(connection.authType),
+          ...(connection.password && { password: connection.password }),
+          ...(connection.privateKey && { privateKey: connection.privateKey }),
+          ...(connection.publicKey && { publicKey: connection.publicKey }),
+          ...(connection.passphrase && { passphrase: connection.passphrase })
+        }))
+    }
+  }
+
+  async importConnections(userId: string, envelope: unknown): Promise<SSHConnectionImportResult> {
+    const existing = await storageManager.findMany('SSHConnection', { where: { userId } })
+    const prepared = prepareConnectionImport(
+      envelope,
+      existing.map((connection: any) => connection.host)
+    )
+
+    for (const connection of prepared.connections) {
+      await storageManager.create('SSHConnection', {
+        userId,
+        ...connection,
+        folderId: null,
+        status: 'DISCONNECTED',
+        isActive: true
+      })
+    }
+
+    return prepared.result
   }
 
   // ============= 树形结构 =============

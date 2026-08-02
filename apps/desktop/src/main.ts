@@ -19,7 +19,6 @@ import DialogPlugin from './plugins/dialog'
 
 // 国际化
 import i18n from './locales'
-import { syncSubscriptionState } from './services/subscription.service'
 
 // 创建应用实例
 const app = createApp(App)
@@ -43,10 +42,6 @@ app.use(router)
 app.use(i18n) // 添加国际化支持
 app.use(BootstrapVueNext)
 app.use(DialogPlugin)
-
-syncSubscriptionState().catch(error => {
-  console.warn('[subscription] initial sync failed', error)
-})
 
 // 挂载应用
 app.mount('#app')

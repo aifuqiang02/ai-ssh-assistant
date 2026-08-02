@@ -1,25 +1,16 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-const findUniqueMock = vi.fn()
-const createMock = vi.fn()
+const upsertMock = vi.fn()
 const updateManyMock = vi.fn()
-const getSubscriptionStateMock = vi.fn()
 
 vi.mock('../config/database.js', () => ({
   default: {
     getInstance: () => ({
       managedAiUsage: {
-        findUnique: findUniqueMock,
-        create: createMock,
+        upsert: upsertMock,
         updateMany: updateManyMock
       }
     })
-  }
-}))
-
-vi.mock('./billing.service.js', () => ({
-  billingService: {
-    getSubscriptionState: getSubscriptionStateMock
   }
 }))
 
@@ -27,51 +18,56 @@ describe('OfficialAiUsageService', () => {
   beforeEach(() => {
     vi.resetModules()
     vi.clearAllMocks()
-    findUniqueMock.mockResolvedValue(null)
-    createMock.mockResolvedValue(undefined)
+    upsertMock.mockResolvedValue(undefined)
     updateManyMock.mockResolvedValue({ count: 1 })
-    getSubscriptionStateMock.mockResolvedValue({ hasAiPlan: true })
   })
 
-  it('returns guest official status without quota usage', async () => {
+  it('returns model availability without exposing quota usage', async () => {
     const { officialAiUsageService } = await import('./official-ai-usage.service.js')
-    const result = await officialAiUsageService.getStatus()
+    const result = officialAiUsageService.getStatus()
 
-    expect(result.guest).toBe(true)
-    expect(result.hasAiPlan).toBe(false)
-    expect(result.remainingCount).toBe(0)
-    expect(result.models).toHaveLength(2)
+    expect(result.models).toEqual([
+      expect.objectContaining({ id: 'gpt-last', enabled: true })
+    ])
+    expect(result).not.toHaveProperty('usedCount')
+    expect(result).not.toHaveProperty('remainingCount')
+    expect(result).not.toHaveProperty('dailyLimit')
   })
 
-  it('returns remaining quota for ai member', async () => {
-    findUniqueMock.mockResolvedValue({ usedCount: 12 })
+  it('uses Asia/Shanghai calendar days for usage periods', async () => {
+    const { getBusinessDayKey } = await import('./official-ai-usage.service.js')
 
-    const { officialAiUsageService } = await import('./official-ai-usage.service.js')
-    const result = await officialAiUsageService.getStatus('user_1')
-
-    expect(result.hasAiPlan).toBe(true)
-    expect(result.usedCount).toBe(12)
-    expect(result.remainingCount).toBe(988)
+    expect(getBusinessDayKey(new Date('2026-04-11T15:59:59.999Z'))).toBe('2026-04-11')
+    expect(getBusinessDayKey(new Date('2026-04-11T16:00:00.000Z'))).toBe('2026-04-12')
   })
 
-  it('creates usage row before reserving when monthly record does not exist', async () => {
+  it('upserts a daily usage row before atomically reserving', async () => {
     const { officialAiUsageService } = await import('./official-ai-usage.service.js')
     const result = await officialAiUsageService.reserveUsage('user_1')
 
-    expect(createMock).toHaveBeenCalled()
-    expect(updateManyMock).toHaveBeenCalled()
+    expect(upsertMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        create: expect.objectContaining({ limitCount: 100 })
+      })
+    )
+    expect(updateManyMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ usedCount: { lt: 100 } })
+      })
+    )
     expect(result.reserved).toBe(true)
+    expect(result.periodKey).toMatch(/^\d{4}-\d{2}-\d{2}$/)
   })
 
   it('refunds reserved usage', async () => {
     const { officialAiUsageService } = await import('./official-ai-usage.service.js')
-    await officialAiUsageService.refundUsage('user_1', '2026-04')
+    await officialAiUsageService.refundUsage('user_1', '2026-04-12')
 
     expect(updateManyMock).toHaveBeenCalledWith(
       expect.objectContaining({
         where: expect.objectContaining({
           userId: 'user_1',
-          periodKey: '2026-04'
+          periodKey: '2026-04-12'
         })
       })
     )

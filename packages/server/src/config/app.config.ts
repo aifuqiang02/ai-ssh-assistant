@@ -105,7 +105,6 @@ const envSchema = z.object({
   OFFICIAL_AI_BASE_URL: z.string().default('http://151.245.90.96:3000/v1'),
   OFFICIAL_AI_API_KEY: z.string().optional(),
   OFFICIAL_AI_TIMEOUT_MS: z.coerce.number().default(60000),
-  OFFICIAL_AI_MODELS: z.string().default('MiniMax-M2.7-highspeed,MiniMax-M2.7'),
   OFFICIAL_AI_TIMEZONE: z.string().default('Asia/Shanghai'),
 
   // 启动时自动数据库迁移
@@ -180,9 +179,7 @@ export const config = {
     baseUrl: env.OFFICIAL_AI_BASE_URL,
     apiKey: env.OFFICIAL_AI_API_KEY,
     timeoutMs: env.OFFICIAL_AI_TIMEOUT_MS,
-    models: env.OFFICIAL_AI_MODELS.split(',')
-      .map(model => model.trim())
-      .filter(Boolean),
+    models: ['gpt-last'],
     timezone: env.OFFICIAL_AI_TIMEZONE
   },
 

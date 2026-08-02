@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url'
 
 const currentDir = dirname(fileURLToPath(import.meta.url))
 const sshHandlersPath = join(currentDir, 'ssh-handlers.ts')
+const sshTreeServicePath = join(currentDir, '../services/ssh-tree.service.ts')
 
 test('exec output cleanup only removes the first line when it is an actual command echo', async () => {
   const source = await readFile(sshHandlersPath, 'utf8')
@@ -30,11 +31,7 @@ test('listFiles prefers structured exec output and falls back to SFTP when neede
   assert.match(source, /const execFiles = await this\.listFilesViaExec\(id, remotePath\)/)
   assert.match(source, /if \(execFiles !== null\) \{[\s\S]*return execFiles/)
   assert.match(source, /console\.warn\('\[SSHManager\] \[listFiles\] exec 列目录失败，回退 SFTP'/)
-  assert.match(source, /const escapedRemotePath = this\.escapeShellSingleQuotes\(remotePath\)/)
-  assert.match(
-    source,
-    /const execCommand = `LC_ALL=C find '\$\{escapedRemotePath\}' -mindepth 1 -maxdepth 1 -printf '%f\\t%y\\t%s\\t%T@\\t%m\\n'`/
-  )
+  assert.match(source, /const execCommand = this\.buildStructuredListCommand\(remotePath\)/)
   assert.match(source, /const execResult = await this\.executeSilent\(id, execCommand\)/)
   assert.match(source, /return this\.listFilesViaSftp\(id, remotePath, startTime\)/)
 })
@@ -84,6 +81,37 @@ test('getConnections exposes a serializable lastUsed string shape', async () => 
   assert.match(source, /lastUsed: conn\.lastUsed\.toISOString\(\)/)
 })
 
+test('execute cancellation is registered before ssh2 returns its stream', async () => {
+  const source = await readFile(sshHandlersPath, 'utf8')
+
+  assert.match(
+    source,
+    /pendingExecs\.set\(requestId, \{ stream: null, aborted: false, reject: settleReject \}\)/
+  )
+  assert.match(source, /if \(!pendingExec \|\| pendingExec\.aborted\)/)
+  assert.match(source, /const stream = pendingExec\.stream[\s\S]*pendingExec\.reject\(/)
+})
+
+test('remote env doc resolves HOME and uses temp-file rename through dedicated IPC', async () => {
+  const source = await readFile(sshHandlersPath, 'utf8')
+
+  assert.match(source, /printf '%s' \"\$HOME\"/)
+  assert.match(source, /\$\{fullPath\}\.tmp-/)
+  assert.match(source, /_extensions\?\.\['posix-rename@openssh\.com'\] === '1'/)
+  assert.match(source, /ext_openssh_rename\.bind\(sftp\)/)
+  assert.match(source, /ipcMain\.handle\('ssh:read-env-doc'/)
+  assert.match(source, /ipcMain\.handle\('ssh:write-env-doc'/)
+})
+
+test('file listing carries opaque raw path identity into recursive deletion', async () => {
+  const source = await readFile(sshHandlersPath, 'utf8')
+
+  assert.match(source, /identity=\$\(printf %s \"\$p\" \| base64/)
+  assert.match(source, /name: this\.displayNameFromIdentity\(identity\)/)
+  assert.match(source, /base64 -d \| xargs -0 rm \$\{removeFlag\} --/)
+  assert.doesNotMatch(source, /const itemPath = `\$\{remotePath\}\/\$\{item\.filename\}`/)
+})
+
 test('current directory lookup uses a shell channel before falling back to silent pwd', async () => {
   const source = await readFile(sshHandlersPath, 'utf8')
 
@@ -95,4 +123,20 @@ test('current directory lookup uses a shell channel before falling back to silen
   assert.match(source, /connection\.shell\.write\(wrappedCommand/)
   assert.match(source, /return await this\.executeSilent\(id, 'pwd'\)/)
   assert.match(source, /ipcMain\.handle\('ssh:get-current-directory'/)
+})
+
+test('connection list import and export use native JSON dialogs and SSHTreeService', async () => {
+  const [source, serviceSource] = await Promise.all([
+    readFile(sshHandlersPath, 'utf8'),
+    readFile(sshTreeServicePath, 'utf8')
+  ])
+
+  assert.match(source, /ipcMain\.handle\('ssh:export-connections'/)
+  assert.match(source, /dialog\.showSaveDialog\(\{/)
+  assert.match(source, /sshTreeService\.exportConnections\(userId\)/)
+  assert.match(source, /ipcMain\.handle\('ssh:import-connections'/)
+  assert.match(source, /dialog\.showOpenDialog\(\{/)
+  assert.match(source, /sshTreeService\.importConnections\(userId, JSON\.parse\(content\)\)/)
+  assert.doesNotMatch(source, /\.ai-ssh-assistant[\s\S]*connections\.json/)
+  assert.match(serviceSource, /storageManager\.create\('SSHConnection', \{[\s\S]*userId,[\s\S]*\.\.\.connection,[\s\S]*folderId: null,[\s\S]*status: 'DISCONNECTED',[\s\S]*isActive: true/)
 })

@@ -993,8 +993,8 @@ async function refreshSessionContext(force = false) {
         console.warn('[AIChat] 获取 SSH 连接信息失败:', error)
         return [] as SSHConnection[]
       }),
-      serverEnvDocId
-        ? docStorageService.readServerEnvDoc(serverEnvDocId).catch(error => {
+      connectionId
+        ? docStorageService.readServerEnvDoc(connectionId).catch(error => {
             console.warn('[AIChat] 读取服务器环境文档失败:', error)
             return null
           })
@@ -1072,8 +1072,9 @@ function buildSystemPrompt(
     'When updating the server environment document, default to old_string/new_string exact replacements.',
     'Do not replace the entire document with content unless the user clearly asked for a full rewrite.',
     'Only use force_replace=true after the user explicitly confirms a full-document overwrite.',
-    'Never create or update generic markdown files such as server_env.md, server-env-doc.md, env.md, or similar names for server environment notes.',
-    "The environment document belongs only to the current SSH connection. Never merge or reuse another host's document.",
+    "The canonical environment document is env.md in the authenticated remote user's $HOME.",
+    'It is shared by every computer that connects as that same remote user; never create a machine-local or alternate environment document.',
+    'Never access env.md with generic file or command tools. Use only read_server_env_doc and update_server_env_doc so $HOME is resolved remotely and writes are atomic.',
     '',
     'SSH command execution rules:',
     'All SSH commands must be non-interactive and one-shot.',
@@ -1424,14 +1425,6 @@ function normalizeUserErrorMessage(rawError: string): string {
 
   if (cleaned.includes('未找到 API 密钥配置')) {
     return '当前模型没有可用的 API Key，请先在设置中完成配置。'
-  }
-
-  if (cleaned.includes('请开通 AI 会员后使用官方模型')) {
-    return '当前账号尚未开通 AI 会员，暂时无法使用官方模型。'
-  }
-
-  if (cleaned.includes('本月官方模型次数已用完')) {
-    return '本月官方模型次数已用完，请下个月重置后再试。'
   }
 
   if (cleaned.includes('官方模型不存在')) {

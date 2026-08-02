@@ -101,6 +101,30 @@ export interface MoveNodeDto {
   order?: number
 }
 
+export interface SSHConnectionExportItem {
+  name: string
+  host: string
+  port: number
+  username: string
+  authType: SSHAuthType
+  password?: string
+  privateKey?: string
+  publicKey?: string
+  passphrase?: string
+}
+
+export interface SSHConnectionExportEnvelope {
+  format: 'ai-ssh-assistant-connections'
+  version: 1
+  connections: SSHConnectionExportItem[]
+}
+
+export interface SSHConnectionImportResult {
+  imported: number
+  skipped: number
+  invalid: number
+}
+
 // 树形节点类型（前端使用）
 export interface SSHTreeNode {
   id: string

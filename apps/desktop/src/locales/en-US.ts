@@ -135,6 +135,12 @@ export default {
     sidebarTitle: 'SSH Connections',
     newFolder: 'New Folder',
     connectionList: 'Connection List',
+    importConnections: 'Import',
+    exportConnections: 'Export',
+    importResult: 'Import complete: {imported} added, {skipped} duplicates skipped, {invalid} invalid',
+    exportResult: 'Exported {exported} connections',
+    importFailed: 'Failed to import connections',
+    exportFailed: 'Failed to export connections',
 
     // Quick Navigation
     quickNavigation: 'Quick Navigation',
@@ -192,6 +198,8 @@ export default {
     menuHelp: 'Help',
 
     // File menu
+    importConnections: 'Import Connections…',
+    exportConnections: 'Export Connections…',
     newConnection: 'New Connection',
     openFile: 'Open File',
     save: 'Save',
