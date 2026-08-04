@@ -5,16 +5,18 @@
 
 const path = require('path')
 const fs = require('fs')
+const { assertNativeArch } = require('../scripts/native-arch')
 
 /**
  * @param {import('electron-builder').AfterPackContext} context
  */
 async function afterPack(context) {
-  const { electronPlatformName, appOutDir } = context
+  const { electronPlatformName, appOutDir, arch } = context
   console.log(`[after-pack] 验证打包内容: ${electronPlatformName}`)
 
+  const resourcesPath = getResourcesPath(electronPlatformName, appOutDir)
+
   try {
-    const resourcesPath = path.join(appOutDir, 'resources')
     const appPath = path.join(resourcesPath, 'app')
     const nodeModulesPath = path.join(appPath, 'node_modules')
 
@@ -61,6 +63,52 @@ async function afterPack(context) {
   } catch (error) {
     console.error('[after-pack] ❌ 验证失败:', error.message)
     // 不抛出错误，允许打包继续
+  }
+
+  verifyNativeBindings(resourcesPath, arch)
+}
+
+function getResourcesPath(electronPlatformName, appOutDir) {
+  if (electronPlatformName !== 'darwin') {
+    return path.join(appOutDir, 'resources')
+  }
+
+  const appBundle = fs.readdirSync(appOutDir).find(name => name.endsWith('.app'))
+  if (!appBundle) {
+    throw new Error(`[after-pack] macOS App bundle 未找到: ${appOutDir}`)
+  }
+
+  return path.join(appOutDir, appBundle, 'Contents', 'Resources')
+}
+
+function verifyNativeBindings(resourcesPath, arch) {
+  const expectedArch = { 0: 'ia32', 1: 'x64', 3: 'arm64' }[arch]
+  if (!expectedArch) {
+    throw new Error(`[after-pack] 不支持的目标架构: ${arch}`)
+  }
+
+  const nodeModulesPath = path.join(resourcesPath, 'app', 'node_modules')
+  const bindingPaths = [
+    path.join(nodeModulesPath, 'better-sqlite3', 'build', 'Release', 'better_sqlite3.node'),
+    path.join(
+      nodeModulesPath,
+      '@ai-ssh',
+      'database',
+      'node_modules',
+      'better-sqlite3',
+      'build',
+      'Release',
+      'better_sqlite3.node'
+    )
+  ].filter(bindingPath => fs.existsSync(bindingPath))
+
+  if (bindingPaths.length === 0) {
+    throw new Error('[after-pack] better-sqlite3 原生 binding 未打包')
+  }
+
+  for (const bindingPath of bindingPaths) {
+    assertNativeArch(bindingPath, expectedArch)
+    console.log(`[after-pack] ✅ better-sqlite3 架构正确: ${expectedArch}`)
   }
 }
 

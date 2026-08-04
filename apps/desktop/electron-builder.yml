@@ -68,6 +68,8 @@ nsis:
   allowToChangeInstallationDirectory: true
 mac:
   icon: build/icon.icns
+  # 无 Apple Developer 证书时至少完整执行 ad-hoc 签名，避免只签主可执行文件。
+  identity: "-"
   target:
     - target: dmg
       arch:
@@ -90,4 +92,3 @@ linux:
   artifactName: ai-ssh-assistant-${version}-linux-${arch}.${ext}
 electronDownload:
   mirror: https://npmmirror.com/mirrors/electron/
-

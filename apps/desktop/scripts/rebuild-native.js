@@ -2,6 +2,7 @@
 const { execFileSync } = require('child_process')
 const fs = require('fs')
 const path = require('path')
+const { assertNativeArch } = require('./native-arch')
 
 const desktopDir = path.resolve(__dirname, '..')
 const electronVersion = require(path.join(desktopDir, 'node_modules/electron/package.json')).version
@@ -41,7 +42,9 @@ try {
     throw new Error(`Native binding was not created at ${bindingPath}`)
   }
 
-  console.log('better-sqlite3 prebuilt binary is ready')
+  assertNativeArch(bindingPath, targetArch)
+
+  console.log(`better-sqlite3 prebuilt binary is ready (${targetArch})`)
 } catch (error) {
   console.error('Failed to prepare better-sqlite3:', error.message)
   process.exit(1)
