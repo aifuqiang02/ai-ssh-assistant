@@ -49,6 +49,7 @@ buildDependenciesFromSource: false
 # 打包前清理目标目录（避免硬链接冲突）
 beforePack: "./build-scripts/before-pack.js"
 afterPack: "./build-scripts/after-pack.js"
+afterSign: "./build-scripts/after-sign.js"
 # 禁用子模块自动包含（避免硬链接冲突，通过 after-pack.js 手动处理）
 includeSubNodeModules: false
 icon: build/icon.ico
@@ -68,17 +69,9 @@ nsis:
   allowToChangeInstallationDirectory: true
 mac:
   icon: build/icon.icns
-  # 无 Apple Developer 证书时至少完整执行 ad-hoc 签名，避免只签主可执行文件。
-  identity: "-"
   target:
-    - target: dmg
-      arch:
-        - x64
-        - arm64
-    - target: zip
-      arch:
-        - x64
-        - arm64
+    - dmg
+    - zip
   category: public.app-category.developer-tools
   # 统一文件名格式（去除空格）
   artifactName: ai-ssh-assistant-${version}-macos-${arch}.${ext}

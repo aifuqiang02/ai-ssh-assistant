@@ -12,6 +12,7 @@ const { assertNativeArch, detectNativeArch } = require('./native-arch')
 const rebuildScriptPath = join(currentDir, 'rebuild-native.js')
 const nativeArchScriptPath = join(currentDir, 'native-arch.js')
 const afterPackScriptPath = join(currentDir, '../build-scripts/after-pack.js')
+const afterSignScriptPath = join(currentDir, '../build-scripts/after-sign.js')
 const builderConfigPath = join(currentDir, '../electron-builder.yml')
 const releaseWorkflowPath = join(currentDir, '../../../.github/workflows/release.yml')
 const manualWorkflowPath = join(currentDir, '../../../.github/workflows/manual-build.yml')
@@ -58,16 +59,21 @@ test('native architecture detector distinguishes macOS arm64 and x64 binaries', 
 })
 
 test('release builds macOS architectures separately with target-specific native bindings', async () => {
-  const [source, builderConfig] = await Promise.all([
+  const [source, builderConfig, afterSignSource] = await Promise.all([
     readFile(releaseWorkflowPath, 'utf8'),
-    readFile(builderConfigPath, 'utf8')
+    readFile(builderConfigPath, 'utf8'),
+    readFile(afterSignScriptPath, 'utf8')
   ])
 
   assert.match(source, /build_script: 'build:mac:x64'/)
   assert.match(source, /build_script: 'build:mac:arm64'/)
   assert.match(source, /TARGET_ARCH: \$\{\{ matrix\.target_arch \}\}/)
   assert.doesNotMatch(source, /apps\/desktop\/release\/\*\*\/latest\*\.yml/)
-  assert.match(builderConfig, /identity: "-"/)
+  assert.match(builderConfig, /afterSign: "\.\/build-scripts\/after-sign\.js"/)
+  const macConfig = builderConfig.match(/\nmac:\n([\s\S]*?)\ndmg:/)?.[1] || ''
+  assert.doesNotMatch(macConfig, /^\s+arch:/m)
+  assert.match(afterSignSource, /'--force', '--deep', '--sign', '-'/)
+  assert.match(afterSignSource, /'--verify', '--deep', '--strict'/)
 })
 
 test('manual builds use the same target-specific native binding strategy', async () => {
