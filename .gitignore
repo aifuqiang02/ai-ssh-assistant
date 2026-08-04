@@ -4,10 +4,10 @@ node_modules/
 .pnpm-lock.yaml
 
 # Environment variables
-.env
-.env.*
-**/.env
-**/.env.*
+#.env
+#.env.*
+#**/.env
+#**/.env.*
 !.env.example
 !**/.env.example
 !**/.env.*.example
@@ -199,10 +199,10 @@ Icon?
 Thumbs.db
 
 # Application specific
-ssh-keys/
-certificates/
-secrets/
-deploy/
+#ssh-keys/
+#certificates/
+#secrets/
+#deploy/
 
 # Reference projects (for UI/UX design reference only, not to be committed)
 opencode
