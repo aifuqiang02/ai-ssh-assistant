@@ -7,6 +7,7 @@ import Database from 'better-sqlite3'
 import { dirname } from 'path'
 import { existsSync, mkdirSync } from 'fs'
 import { BaseStorageAdapter, StorageOptions, SyncResult } from './base.adapter'
+import { deserializeStorageRow } from './local-value-codec'
 
 export class LocalStorageAdapter extends BaseStorageAdapter {
   private db: Database.Database
@@ -328,7 +329,7 @@ export class LocalStorageAdapter extends BaseStorageAdapter {
 
     const stmt = this.db.prepare(query)
     const rows = params.length > 0 ? stmt.all(...params) : stmt.all()
-    return rows.map((row: any) => this.deserializeRow(row))
+    return rows.map((row: any) => deserializeStorageRow(model, row))
   }
 
   async findUnique(model: string, options: any): Promise<any> {
@@ -336,7 +337,7 @@ export class LocalStorageAdapter extends BaseStorageAdapter {
     const id = options.where.id
     const stmt = this.db.prepare(`SELECT * FROM ${tableName} WHERE id = ?`)
     const row = stmt.get(id) as any
-    return row ? this.deserializeRow(row) : null
+    return row ? deserializeStorageRow(model, row) : null
   }
 
   async update(model: string, options: any): Promise<any> {
@@ -483,20 +484,4 @@ export class LocalStorageAdapter extends BaseStorageAdapter {
     return JSON.stringify(value)
   }
 
-  private deserializeValue(value: string | null): any {
-    if (value === null || value === undefined) return null
-    try {
-      return JSON.parse(value)
-    } catch {
-      return value
-    }
-  }
-
-  private deserializeRow(row: Record<string, unknown>): any {
-    const result: any = {}
-    for (const [key, value] of Object.entries(row)) {
-      result[key] = this.deserializeValue(value as string | null)
-    }
-    return result
-  }
 }

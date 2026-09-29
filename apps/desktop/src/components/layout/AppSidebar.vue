@@ -303,8 +303,10 @@ const handleConnectionTest = async (data: any) => {
       host: data.host,
       port: data.port || 22,
       username: data.username,
+      authType: data.authType,
       password: data.password,
-      privateKey: data.privateKey
+      privateKey: data.privateKey,
+      passphrase: data.passphrase
     })
 
     if (result.success) {

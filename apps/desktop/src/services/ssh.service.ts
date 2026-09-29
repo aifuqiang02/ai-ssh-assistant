@@ -52,8 +52,10 @@ export interface SSHConfig {
   host: string
   port: number
   username: string
+  authType?: 'PASSWORD' | 'PRIVATE_KEY' | 'SSH_AGENT' | 'password' | 'privateKey' | 'agent'
   password?: string
   privateKey?: string
+  passphrase?: string
   name?: string
   timeout?: number
   keepAlive?: boolean

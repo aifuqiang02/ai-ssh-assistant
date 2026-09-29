@@ -132,7 +132,10 @@ export class SSHTreeService {
   // ============= 连接配置管理 =============
 
   async createConnection(userId: string, data: CreateConnectionDto): Promise<SSHConnectionConfig> {
-    console.log('[SSHTreeService] Creating connection:', { userId, data })
+    console.log('[SSHTreeService] Creating connection:', {
+      userId,
+      data: redactConnectionCredentials(data)
+    })
 
     const connection = await storageManager.create('SSHConnection', {
       userId,
@@ -141,10 +144,10 @@ export class SSHTreeService {
       port: data.port || 22,
       username: data.username,
       authType: data.authType.toUpperCase(),
-      password: data.password || null,
-      privateKey: data.privateKey || null,
-      publicKey: data.publicKey || null,
-      passphrase: data.passphrase || null,
+      password: normalizeOptionalCredential(data.password),
+      privateKey: normalizeOptionalCredential(data.privateKey),
+      publicKey: normalizeOptionalCredential(data.publicKey),
+      passphrase: normalizeOptionalCredential(data.passphrase),
       folderId: data.folderId || null,
       status: 'DISCONNECTED',
       isActive: true
@@ -159,7 +162,11 @@ export class SSHTreeService {
     connectionId: string,
     data: UpdateConnectionDto
   ): Promise<SSHConnectionConfig> {
-    console.log('[SSHTreeService] Updating connection:', { userId, connectionId, data })
+    console.log('[SSHTreeService] Updating connection:', {
+      userId,
+      connectionId,
+      data: redactConnectionCredentials(data)
+    })
 
     const updateData: any = {}
     if (data.name !== undefined) updateData.name = data.name
@@ -167,10 +174,10 @@ export class SSHTreeService {
     if (data.port !== undefined) updateData.port = data.port
     if (data.username !== undefined) updateData.username = data.username
     if (data.authType !== undefined) updateData.authType = data.authType.toUpperCase()
-    if (data.password !== undefined) updateData.password = data.password
-    if (data.privateKey !== undefined) updateData.privateKey = data.privateKey
-    if (data.publicKey !== undefined) updateData.publicKey = data.publicKey
-    if (data.passphrase !== undefined) updateData.passphrase = data.passphrase
+    if (data.password !== undefined) updateData.password = normalizeOptionalCredential(data.password)
+    if (data.privateKey !== undefined) updateData.privateKey = normalizeOptionalCredential(data.privateKey)
+    if (data.publicKey !== undefined) updateData.publicKey = normalizeOptionalCredential(data.publicKey)
+    if (data.passphrase !== undefined) updateData.passphrase = normalizeOptionalCredential(data.passphrase)
     if (data.folderId !== undefined) updateData.folderId = data.folderId
 
     const connection = await storageManager.update('SSHConnection', {
@@ -399,4 +406,20 @@ function formatDate(date: Date | string | null | undefined): string | null {
   if (typeof date === 'string') return date
   if (date instanceof Date) return date.toISOString()
   return null
+}
+
+function normalizeOptionalCredential(value: unknown): string | null {
+  if (value === undefined || value === null || value === '') return null
+  return String(value)
+}
+
+function redactConnectionCredentials(data: any): Record<string, unknown> {
+  const { password, privateKey, publicKey, passphrase, ...safeData } = data
+  return {
+    ...safeData,
+    hasPassword: Boolean(password),
+    hasPrivateKey: Boolean(privateKey),
+    hasPublicKey: Boolean(publicKey),
+    hasPassphrase: Boolean(passphrase)
+  }
 }

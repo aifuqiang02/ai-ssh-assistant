@@ -201,9 +201,9 @@ watch(() => props.connection, (newVal) => {
       port: newVal.port || 22,
       username: newVal.username || '',
       authType: newVal.authType || 'PASSWORD',
-      password: newVal.password || '',
-      privateKey: newVal.privateKey || '',
-      passphrase: newVal.passphrase || '',
+      password: normalizeCredential(newVal.password),
+      privateKey: normalizeCredential(newVal.privateKey),
+      passphrase: normalizeCredential(newVal.passphrase),
       folderId: newVal.folderId
     }
   } else {
@@ -224,6 +224,11 @@ const handleClose = () => {
   if (!isEdit.value) {
     resetForm()
   }
+}
+
+function normalizeCredential(value: unknown): string {
+  if (value === undefined || value === null) return ''
+  return typeof value === 'string' ? value : String(value)
 }
 
 const handleSubmit = async () => {
@@ -265,20 +270,15 @@ const handleTest = async () => {
   loading.value = true
   
   try {
-    const config = {
-      host: formData.value.host,
-      port: formData.value.port || 22,
-      username: formData.value.username,
-      authType: formData.value.authType
-    }
-
-    // 使用 sshService 进行测试，自动根据 storageMode 选择本地或远程实现
+    // 使用与保存后实际连接相同的认证字段进行测试。
     const result = await sshService.testConnection({
       host: formData.value.host,
       port: formData.value.port || 22,
       username: formData.value.username,
+      authType: formData.value.authType,
       password: formData.value.password,
-      privateKey: formData.value.privateKey
+      privateKey: formData.value.privateKey,
+      passphrase: formData.value.passphrase
     })
     
 

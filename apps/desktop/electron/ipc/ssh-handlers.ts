@@ -49,6 +49,11 @@ interface PendingExec {
   reject: (error: Error) => void
 }
 
+function normalizeCredential(value: unknown): string | undefined {
+  if (value === undefined || value === null || value === '') return undefined
+  return typeof value === 'string' ? value : String(value)
+}
+
 class SSHManager {
   private connections: Map<string, SSHConnection> = new Map()
   private pendingExecs: Map<string, PendingExec> = new Map()
@@ -202,14 +207,17 @@ class SSHManager {
         connectConfig.keepaliveCountMax = 3
       }
 
-      if (config.password) {
-        connectConfig.password = config.password
+      const password = normalizeCredential(config.password)
+      if (password !== undefined) {
+        connectConfig.password = password
       }
 
-      if (config.privateKey) {
-        connectConfig.privateKey = config.privateKey
-        if (config.passphrase) {
-          connectConfig.passphrase = config.passphrase
+      const privateKey = normalizeCredential(config.privateKey)
+      if (privateKey !== undefined) {
+        connectConfig.privateKey = privateKey
+        const passphrase = normalizeCredential(config.passphrase)
+        if (passphrase !== undefined) {
+          connectConfig.passphrase = passphrase
         }
       }
 
@@ -1092,12 +1100,18 @@ class SSHManager {
         connectConfig.keepaliveCountMax = 3
       }
 
-      if (config.password) {
-        connectConfig.password = config.password
+      const password = normalizeCredential(config.password)
+      if (password !== undefined) {
+        connectConfig.password = password
       }
 
-      if (config.privateKey) {
-        connectConfig.privateKey = config.privateKey
+      const privateKey = normalizeCredential(config.privateKey)
+      if (privateKey !== undefined) {
+        connectConfig.privateKey = privateKey
+        const passphrase = normalizeCredential(config.passphrase)
+        if (passphrase !== undefined) {
+          connectConfig.passphrase = passphrase
+        }
       }
 
       client.connect(connectConfig)
